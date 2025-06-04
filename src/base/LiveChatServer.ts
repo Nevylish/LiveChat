@@ -21,19 +21,16 @@ import { Logger } from '../utils/logger';
 import { config } from '../utils/config';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import DiscordClient from './DiscordClient';
 
 export class LiveChatServer {
     public connectedStreamers: Map<string, { socketId: string; guildId: string }>;
 
     private app: express.Application;
-    private discordClient: DiscordClient;
     private httpServer;
     public io;
     private readonly port: number;
 
-    constructor(client: DiscordClient) {
-        this.discordClient = client;
+    constructor() {
         this.port = Number(config.livechatPort);
         this.app = express();
         this.httpServer = createServer(this.app);
@@ -91,7 +88,7 @@ export class LiveChatServer {
     private setupRoutes(): void {
         this.app.get('/', (req, res) => {
             res.send(
-                'LiveChat est prêt, ajoutez la source Navigateur sur OBS avec ce lien et changez la valeur PSEUDO par votre pseudo Twitch: http://localhost:3000/overlay.html?streamer=PSEUDO',
+                'LiveChat est prêt, ajoutez la source Navigateur sur OBS avec ce lien et changez la valeur PSEUDO par votre pseudo Twitch ainsi que la valeur ID_SERVEUR pour votre serveur Discord: http://livechat.nevylish.fr/overlay.html?username=PSEUDO&guildId=ID_SERVEUR',
             );
         });
     }

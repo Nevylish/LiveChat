@@ -56,7 +56,7 @@ export default class DiscordClient extends Client {
             Handlers.loadEventsListeners(this);
             await Handlers.loadCommands(this);
 
-            this.livechat = new LiveChatServer(this);
+            this.livechat = new LiveChatServer();
 
             Logger.success('Client', ` Successfully connected to Discord !`);
         } catch (err) {
