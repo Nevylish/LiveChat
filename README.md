@@ -4,10 +4,12 @@ Inspiré par les gars hilarants de la cacabox.
 
 ## Installation
 
-Ajoutez le bot Discord sur un serveur privé via le lien ci-dessous. Tous les membres présents sur ce serveur pourront utiliser le live chat.
-https://discord.com/oauth2/authorize?client_id=1379879612284145895
+Ajoutez le bot Discord sur un **serveur privé** via le lien ci-dessous.<br>
+https://discord.com/oauth2/authorize?client_id=1379879612284145895<br>
 
-Pour le streamer, ajouter une nouvelle source de type "Navigateur" sur votre client OBS.<br>
+**Tous les membres présents sur le serveur pourront utiliser le live chat, n'invitez pas n'importe qui et gardez le privé.**<br>
+
+Pour le streameur, ajoutez une nouvelle source de type "Navigateur" sur votre client OBS.<br>
 Dans le champ URL, entrez: <br>`http://livechat.nevylish.fr/overlay.html?username=VOTRE_PSEUDO_TWITCH&guildId=ID_DE_VOTRE_SERVEUR `<br>
 
 Puis remplacez `VOTRE_PSEUDO_TWITCH` par votre pseudo Twitch de préférence puis remplacez `ID_DE_VOTRE_SERVEUR` par l'identifiant du serveur Discord.<br>
