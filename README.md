@@ -5,7 +5,7 @@ Inspiré par les gars hilarants de la cacabox.
 ## Installation
 
 Ajoutez le bot Discord sur un **serveur privé** via le lien ci-dessous.<br>
-https://discord.com/oauth2/authorize?client_id=1379879612284145895<br>
+https://discord.com/oauth2/authorize?client_id=1379921658109890610<br>
 
 **Tous les membres présents sur le serveur pourront utiliser le live chat, n'invitez pas n'importe qui et gardez le privé.**<br>
 
