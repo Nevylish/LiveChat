@@ -1,22 +1,18 @@
 services:
-    bot:
+    livechat:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: uppercase-bot
+        container_name: livechat-server
         restart: unless-stopped
         env_file:
             - .env
         environment:
             - NODE_ENV=production
             - ENVIRONMENT=RELEASE
+            - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
-            - TOPGG_TOKEN=${TOPGG_TOKEN}
             - WEBHOOK_URL=${WEBHOOK_URL}
-            - DASHBOARD_USERNAME=${DASHBOARD_USERNAME}
-            - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD}
-            - DASHBOARD_PASSWORD=${DASHBOARD_PASSWORD}
-            - DASHBOARD_DOMAIN=${DASHBOARD_DOMAIN}
         ports:
             - '4000:4000'
         volumes:

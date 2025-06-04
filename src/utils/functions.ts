@@ -1,6 +1,5 @@
 /*
- * Finally, use uppercase letters for your channel names.
- * Copyright (C) 2025 UpperCase Bot by Nevylish
+ * Copyright (C) 2025 LiveChat by Nevylish
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,9 +19,7 @@ import { EmbedBuilder } from 'discord.js';
 
 export namespace Functions {
     export const buildErrorEmbed = (msg: string): EmbedBuilder => {
-        return new EmbedBuilder().setDescription(
-            `❗• ${msg}\n\nTo try to fix a lot of errors, give me "Administrator" permission and rerun the command.`,
-        );
+        return new EmbedBuilder().setDescription(`❗• ${msg}`);
     };
 
     export const formatNumber = (num: number): string => {

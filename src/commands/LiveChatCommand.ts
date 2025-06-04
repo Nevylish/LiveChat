@@ -1,6 +1,5 @@
 /*
- * Finally, use uppercase letters for your channel names.
- * Copyright (C) 2025 UpperCase Bot by Nevylish
+ * Copyright (C) 2025 LiveChat by Nevylish
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ApplicationCommandOptionType, AutocompleteInteraction, ChannelType, CommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import Command from '../base/Command';
 import DiscordClient from '../base/DiscordClient';
 

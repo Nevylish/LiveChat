@@ -1,6 +1,5 @@
 /*
- * Finally, use uppercase letters for your channel names.
- * Copyright (C) 2025 UpperCase Bot by Nevylish
+ * Copyright (C) 2025 LiveChat by Nevylish
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,15 +21,7 @@ import { Logger } from '../utils/logger';
 import { config } from '../utils/config';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { create } from 'domain';
 import DiscordClient from './DiscordClient';
-
-/**
- * ''''''''If you want to see a live example of the Dashboard you can click on the url below.''''''''
- * '''I'll make a better version later with fake guilds to see the full range of possible actions.'''
- *                          ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
- *                          https://uppercasebot-live-example.netlify.app/
- */
 
 export class LiveChatServer {
     public connectedStreamers: Map<string, { socketId: string; guildId: string }>;
@@ -67,7 +58,6 @@ export class LiveChatServer {
             console.log("Un client s'est connecté");
 
             socket.on('register', (data: { username: string; guildId: string }) => {
-                // Vérification de sécurité basique
                 if (typeof data.username !== 'string' || data.username.length > 50) {
                     socket.disconnect();
                     return;
@@ -80,9 +70,6 @@ export class LiveChatServer {
 
                 this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
                 console.log(`Streamer enregistré: ${data.username} (Guild: ${data.guildId})`);
-
-                // Envoyer la liste des streamers connectés
-                this.io.emit('streamersList', Array.from(this.connectedStreamers.keys()));
             });
 
             socket.on('disconnect', () => {

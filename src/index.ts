@@ -1,6 +1,5 @@
 /*
- * Finally, use uppercase letters for your channel names.
- * Copyright (C) 2025 UpperCase Bot by Nevylish
+ * Copyright (C) 2025 LiveChat by Nevylish
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,4 +17,5 @@
 
 import DiscordClient from './base/DiscordClient';
 
+/* Discord client, une fois démarré, lance le serveur web */
 new DiscordClient();
