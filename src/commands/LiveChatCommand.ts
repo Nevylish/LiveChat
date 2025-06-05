@@ -93,7 +93,7 @@ export default class LiveChatCommand extends Command {
             }
 
             const extension = url.pathname.split('.').pop()?.toLowerCase();
-            const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'png', 'gif'];
+            const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
             if (!extension || !supportedFormats.includes(extension)) {
                 await interaction.editReply(
