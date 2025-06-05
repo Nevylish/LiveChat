@@ -282,7 +282,6 @@ body {
 @media (max-width: 1355px) {
     .copyright {
         position: static;
-        font-size: 0.8em;
         text-align: center;
     }
 }

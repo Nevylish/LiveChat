@@ -71,9 +71,10 @@
                 <a href="/terms">Terms of Service</a>-->
             </div>
             <div class="footer-watermark">Nevylish</div>
-            <div class="copyright">© <span id="currentYear"></span> LiveChat — Tous droits réservés.</div>
+            <div class="copyright" id="copyright"></div>
             <script>
-                document.getElementById('currentYear').textContent = new Date().getFullYear();
+                document.getElementById('copyright').textContent =
+                    `© ${new Date().getFullYear()} LiveChat — Tous droits réservés.`;
             </script>
         </div>
 
