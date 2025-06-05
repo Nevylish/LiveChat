@@ -45,7 +45,14 @@
                 </p>
                 <div class="form-group" id="first">
                     <label for="username">Nom d'utilisateur Twitch</label>
-                    <input type="text" id="username" placeholder="Votre nom d'utilisateur Twitch" />
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="terracid"
+                        pattern="[a-z0-9_]"
+                        title="Le nom d'utilisateur doit commencer par une lettre ou un chiffre, suivi de 3 à 24 caractères (lettres, chiffres ou underscore)"
+                        oninput="validateUsername(this)"
+                    />
                 </div>
                 <div class="form-group">
                     <label for="guildId">
@@ -56,7 +63,14 @@
                             >?</span
                         >
                     </label>
-                    <input type="text" id="guildId" placeholder="L'ID de votre serveur Discord" />
+                    <input
+                        type="text"
+                        id="guildId"
+                        placeholder="012345678987654321"
+                        pattern="[0-9]+"
+                        title="L'identifiant du serveur doit contenir uniquement des chiffres"
+                        oninput="validateGuildId(this)"
+                    />
                 </div>
                 <button class="btn" onclick="generateLink()">Générer mon lien d'overlay</button>
                 <div id="linkContainer" style="display: none">
@@ -82,16 +96,33 @@
         </div>
 
         <script>
+            function validateUsername(input) {
+                input.value = input.value.replace(/[^a-zA-Z0-9_]/g, '');
+                input.value = input.value.toLowerCase();
+                if (input.value.startsWith('_')) {
+                    input.value = input.value.substring(1);
+                }
+            }
+
+            function validateGuildId(input) {
+                input.value = input.value.replace(/[^0-9]/g, '');
+            }
+
             function generateLink() {
                 const username = document.getElementById('username').value;
                 const guildId = document.getElementById('guildId').value;
 
                 if (!username || !guildId) {
-                    alert('Veuillez remplir tous les champs');
+                    alert('Veuillez remplir tous les champs.');
                     return;
                 }
 
-                const link = `https://livechat.nevylish.fr/overlay.html?username=${username}&guildId=${guildId}`;
+                if (guildId.length !== 18) {
+                    alert("L'identifiant du serveur n'est pas valide.");
+                    return;
+                }
+
+                const link = `https://${window.location.host}/overlay.html?username=${username}&guildId=${guildId}`;
                 document.getElementById('generatedLink').textContent = link;
                 document.getElementById('linkContainer').style.display = 'block';
             }

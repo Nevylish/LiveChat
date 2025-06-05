@@ -18,6 +18,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import Command from '../base/Command';
 import DiscordClient from '../base/DiscordClient';
+import { Logger } from '../utils/logger';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -84,7 +85,22 @@ export default class LiveChatCommand extends Command {
         await interaction.deferReply({ ephemeral: true });
 
         try {
-            new URL(content);
+            const url = new URL(content);
+
+            if (!['https:', 'http:'].includes(url.protocol)) {
+                await interaction.editReply("L'URL doit utiliser le protocole HTTP ou HTTPS");
+                return;
+            }
+
+            const extension = url.pathname.split('.').pop()?.toLowerCase();
+            const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'png', 'gif'];
+
+            if (!extension || !supportedFormats.includes(extension)) {
+                await interaction.editReply(
+                    `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}`,
+                );
+                return;
+            }
         } catch {
             await interaction.editReply("L'URL fournie n'est pas valide");
             return;
@@ -96,7 +112,6 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // Vérifier que le guildId correspond
         if (streamerData.guildId !== interaction.guildId) {
             await interaction.editReply(
                 "Vous ne pouvez pas envoyer du contenu à ce streamer car il n'est pas configuré pour ce serveur",
@@ -104,13 +119,18 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        this.client.livechat.io.to(streamerData.socketId).emit('newContent', {
-            content,
-            from: interaction.user,
-            fullscreen,
-            chromaKey,
-        });
+        try {
+            this.client.livechat.io.to(streamerData.socketId).emit('newContent', {
+                content,
+                from: interaction.user,
+                fullscreen,
+                chromaKey,
+            });
 
-        await interaction.editReply(`LiveChat envoyé sur le stream de [${target}](https://twitch.tv/${target})`);
+            await interaction.editReply(`LiveChat envoyé sur le stream de [${target}](https://twitch.tv/${target})`);
+        } catch (error) {
+            Logger.error('LiveChatCommand', `Erreur lors de l'envoi du contenu: ${error.message}`);
+            await interaction.editReply("Une erreur est survenue lors de l'envoi du contenu");
+        }
     }
 }

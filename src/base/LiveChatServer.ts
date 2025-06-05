@@ -72,7 +72,7 @@ export class LiveChatServer {
                     if (data.socketId === socket.id) {
                         this.connectedStreamers.delete(streamer);
                         Logger.log('LiveChatServer', `${streamer} is no longer connected to LiveChat`);
-                        this.io.emit('streamersList', Array.from(this.connectedStreamers.keys()));
+                        //this.io.emit('streamersList', Array.from(this.connectedStreamers.keys()));
                     }
                 }
             });
