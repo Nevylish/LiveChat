@@ -258,6 +258,14 @@ body {
     opacity: 0.5;
 }
 
+.copyright {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.8rem;
+    color: #888;
+}
+
 .footer-watermark {
     position: fixed;
     bottom: 1rem;
@@ -269,6 +277,14 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+@media (max-width: 1355px) {
+    .copyright {
+        position: static;
+        font-size: 0.8em;
+        text-align: center;
+    }
 }
 
 @media (max-width: 1000px) {
@@ -292,5 +308,6 @@ body {
     .footer-watermark {
         position: static;
         text-align: center;
+        margin-bottom: 10px;
     }
 }
