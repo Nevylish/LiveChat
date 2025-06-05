@@ -1,0 +1,296 @@
+@font-face {
+    font-family: 'ABCGinto';
+    src:
+        local('ABCGinto'),
+        local('ABCGinto-Regular'),
+        url('ABCGintoNormalVariable.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'Brittany Signature';
+    font-style: normal;
+    font-weight: 400;
+    src:
+        local('Brittany Signature'),
+        url('BrittanySignature-LjyZ.woff') format('woff');
+}
+
+:root {
+    --primary-color: #5865f2;
+    --secondary-color: #2c2f33;
+    --text-color: #dfdfdf;
+    --background-color: #1e1f22;
+    --accent-color: #7289da;
+    --border-radius: 8px;
+}
+
+* {
+    font-family:
+        'ABCGinto',
+        'ABCGinto-Regular',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        'Fira Sans',
+        'Droid Sans',
+        'Helvetica Neue',
+        sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: var(--text-color);
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+::selection {
+    color: white;
+    background: var(--accent-color);
+}
+
+::-moz-selection {
+    color: white;
+    background: var(--accent-color);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 0.5rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.section {
+    background: rgba(89, 92, 94, 0.13);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.section h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.section p {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1.25rem;
+}
+
+#paragraph {
+    margin-bottom: 1.25rem;
+}
+
+.btn:hover {
+    background-color: #4752c4;
+    transform: translateY(-1px);
+}
+
+#first {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.info-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    cursor: help;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.info-tooltip:hover {
+    background-color: var(--primary-color);
+}
+
+.info-tooltip:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    white-space: pre-line;
+    width: max-content;
+    max-width: 250px;
+    margin-bottom: 0.5rem;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.info-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% - 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--secondary-color) transparent transparent transparent;
+    z-index: 1000;
+}
+
+.form-group input {
+    background-color: #242424;
+    color: var(--text-color);
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.code-block {
+    background-color: var(--secondary-color);
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
+    position: relative;
+    font-size: 1rem;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+}
+
+.copy-btn:hover {
+    background-color: #2d3748;
+}
+
+.footer-links {
+    text-align: center;
+    padding: 1.5rem 0;
+    margin-top: auto;
+}
+
+.footer-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+    opacity: 1;
+}
+
+.separator {
+    margin: 0 1rem;
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.footer-watermark {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 1.1rem;
+    color: #888;
+    font-family: 'Brittany Signature', sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@media (max-width: 1000px) {
+    body {
+        padding: 1rem;
+    }
+
+    .section {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .footer-watermark {
+        position: static;
+        text-align: center;
+    }
+}

@@ -52,8 +52,6 @@ export class LiveChatServer {
 
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
-            console.log("Un client s'est connecté");
-
             socket.on('register', (data: { username: string; guildId: string }) => {
                 if (typeof data.username !== 'string' || data.username.length > 50) {
                     socket.disconnect();
@@ -66,14 +64,14 @@ export class LiveChatServer {
                 }
 
                 this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
-                console.log(`Streamer enregistré: ${data.username} (Guild: ${data.guildId})`);
+                Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
             });
 
             socket.on('disconnect', () => {
                 for (const [streamer, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.connectedStreamers.delete(streamer);
-                        console.log(`Streamer déconnecté: ${streamer}`);
+                        Logger.log('LiveChatServer', `${streamer} is no longer connected to LiveChat`);
                         this.io.emit('streamersList', Array.from(this.connectedStreamers.keys()));
                     }
                 }
@@ -96,7 +94,7 @@ export class LiveChatServer {
     private start(): void {
         this.httpServer.listen(this.port, () => {
             Logger.success(
-                'Dashboard',
+                'LiveChatServer',
                 `Server is running on port ${this.port} | ${Logger.COLORS.UNDERSCORE}${Logger.COLORS.MAGENTA}${config.livechatPort}${Logger.COLORS.RESET}`,
             );
         });
