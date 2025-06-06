@@ -21,8 +21,13 @@ import { Logger } from '../utils/logger';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
+type ConnectedStreamersType = {
+    socketId: string;
+    guildId: string;
+};
+
 export class LiveChatServer {
-    public connectedStreamers: Map<string, { socketId: string; guildId: string }>;
+    public connectedStreamers: Map<string, ConnectedStreamersType>;
     public io: Server;
 
     private app: express.Application;
