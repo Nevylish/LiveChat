@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ApplicationCommandData, AutocompleteInteraction, CommandInteraction } from 'discord.js';
+import { ApplicationCommandData, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from './DiscordClient';
 
 export type CommandInfo = ApplicationCommandData;
@@ -31,9 +31,7 @@ export default abstract class Command {
         client.commands.set(this.info.name, this);
     }
 
-    onAutocomplete(_interaction: AutocompleteInteraction): Promise<void> {
-        return Promise.resolve();
-    }
+    abstract onAutocomplete(interaction: AutocompleteInteraction): Promise<void>;
 
-    abstract onExecute(interaction: CommandInteraction): Promise<void>;
+    abstract onExecute(interaction: ChatInputCommandInteraction): Promise<void>;
 }

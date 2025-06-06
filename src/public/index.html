@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="web-style.css" rel="stylesheet" />
+        <link href="assets/css/web-style.css" rel="stylesheet" />
         <title>LiveChat - Intégration Twitch & Discord</title>
     </head>
     <body>
@@ -117,10 +117,10 @@
                     return;
                 }
 
-                if (guildId.length !== 18) {
+                /*if (guildId.length !== 18) {
                     alert("L'identifiant du serveur n'est pas valide.");
                     return;
-                }
+                }*/
 
                 const link = `https://${window.location.host}/overlay.html?username=${username}&guildId=${guildId}`;
                 document.getElementById('generatedLink').textContent = link;

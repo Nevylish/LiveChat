@@ -9,10 +9,8 @@ services:
             - .env
         environment:
             - NODE_ENV=production
-            - ENVIRONMENT=RELEASE
             - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
-            - WEBHOOK_URL=${WEBHOOK_URL}
         ports:
             - '4000:4000'
         volumes:

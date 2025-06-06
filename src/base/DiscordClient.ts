@@ -25,12 +25,11 @@ import { LiveChatServer } from './LiveChatServer';
 
 export default class DiscordClient extends Client {
     public readonly commands: Collection<string, Command> = new Collection();
-    public readonly isDevEnvironment: boolean = process.env.ENVIRONMENT === 'DEV';
     public livechat: LiveChatServer;
 
     constructor() {
         super({
-            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildInvites],
+            intents: [GatewayIntentBits.Guilds],
             allowedMentions: {
                 parse: ['users'],
                 repliedUser: true,
@@ -53,8 +52,8 @@ export default class DiscordClient extends Client {
         Logger.log('Client', `Connecting to Discord...`);
         try {
             await this.login(token);
-            Handlers.loadEventsListeners(this);
-            await Handlers.loadCommands(this);
+            Handlers.setupEventsListeners(this);
+            await Handlers.setupCommands(this);
 
             this.livechat = new LiveChatServer();
 

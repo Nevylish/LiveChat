@@ -15,7 +15,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import * as dotenv from 'dotenv';
+import { resolve } from 'path';
 import DiscordClient from './base/DiscordClient';
 
-/* Discord client, une fois démarré, lance le serveur web */
+/* Vérification des variables d'environements parce que je les oublie toujours */
+dotenv.config({ path: resolve(__dirname, '../.env') });
+
+const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN'];
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
+
+if (missingVars.length > 0) {
+    console.error(`Missing environment variables: ${missingVars.join(', ')}`);
+    process.exit(1);
+}
+
+/* Une fois démarré, DiscordClient lance le serveur web */
 new DiscordClient();

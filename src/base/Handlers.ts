@@ -18,47 +18,30 @@
 import { Logger } from '../utils/logger';
 import DiscordClient from './DiscordClient';
 import Command from './Command';
-import { AutocompleteInteraction, CommandInteraction, Events, MessageFlags } from 'discord.js';
-import { Functions } from '../utils/functions';
+import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
 
 export namespace Handlers {
-    export const loadEventsListeners = (client: DiscordClient) => {
-        const setActivity = () => {
-            try {
-                client.user?.setActivity('/livechat', { type: 3 });
-            } catch (err) {
-                Logger.error('Client', 'Failed to update activity\n', err);
-            }
-        };
-
+    export const setupEventsListeners = (client: DiscordClient) => {
         client.on(Events.ClientReady, () => {
-            setTimeout(() => {
-                setActivity();
-                setInterval(setActivity, 60 * 60 * 1000 /* 1 hour */);
-            }, 5 * 1000 /* 5 seconds */);
+            client.user?.setActivity('/livechat', { type: 3 });
         });
 
-        client.on(Events.Error, (err) => {
-            Logger.error('Client', err);
-        });
-
-        client.on(Events.Warn, (warning) => {
-            Logger.warn('Client', warning);
-        });
-
-        client.on(Events.InteractionCreate, async (interaction) => {
-            if (interaction.isCommand()) {
-                await interactionCommandHandler(client, interaction);
-            } else if (interaction.isAutocomplete()) {
-                await autoCompleteHandler(client, interaction);
-            }
-        });
+        client.on(
+            Events.InteractionCreate,
+            async (interaction: ChatInputCommandInteraction | AutocompleteInteraction) => {
+                if (interaction.isCommand()) {
+                    await InteractionCommandHandler(client, interaction);
+                } else if (interaction.isAutocomplete()) {
+                    await AutoCompleteHandler(client, interaction);
+                }
+            },
+        );
 
         Logger.success('Handlers', 'Events listeners loaded');
     };
 
-    export const loadCommands = async (client: DiscordClient) => {
+    export const setupCommands = async (client: DiscordClient) => {
         const commands: Command[] = [new LiveChatCommand(client)];
 
         commands.forEach((command) => {
@@ -73,46 +56,37 @@ export namespace Handlers {
 
         const commandsData = commands.map((cmd) => cmd.info);
 
-        if (!client.isDevEnvironment) {
-            await client.application.commands.set(commandsData);
-            Logger.success(
-                'Handlers',
-                `${Logger.COLORS.GREEN}Slash commands registered for all guilds. ${Logger.COLORS.RESET}(${commandsData.length} commands)`,
-            );
-        } else {
-            const devGuild = client.guilds.cache.get('822720523234181150');
-            if (devGuild) {
-                await devGuild.commands.set(commandsData);
-                Logger.success(
-                    'Handlers',
-                    `${Logger.COLORS.YELLOW}Slash commands registered for *dev* guild. ${Logger.COLORS.RESET}(${commandsData.length} commands)`,
-                );
-            }
-        }
+        await client.application.commands.set(commandsData);
+
+        Logger.success(
+            'Handlers',
+            `${Logger.COLORS.GREEN}Slash commands registered.${Logger.COLORS.RESET} (${commandsData.length} commands)`,
+        );
     };
 
-    export const autoCompleteHandler = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
-        const cmd = client.commands.get(interaction.commandName);
+    const AutoCompleteHandler = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
+        const { user, commandName } = interaction;
+        const cmd = client.commands.get(commandName);
         if (!cmd || !cmd.onAutocomplete) return;
 
         try {
             await cmd.onAutocomplete(interaction);
         } catch (err) {
             Logger.error('Handlers', err, {
-                userId: interaction.user.id,
-                userTag: interaction.user.tag,
-                command: interaction.commandName,
+                userId: user.id,
+                userTag: user.tag,
+                command: commandName,
             });
         }
     };
 
-    export const interactionCommandHandler = async (client: DiscordClient, interaction: CommandInteraction) => {
+    const InteractionCommandHandler = async (client: DiscordClient, interaction: ChatInputCommandInteraction) => {
         const { user, commandName } = interaction;
         const cmd = client.commands.get(commandName);
 
         if (!cmd) {
             return interaction.reply({
-                embeds: [Functions.buildErrorEmbed('This command does not exist or has been deleted.')],
+                content: "Cette commande n'existe pas.",
                 flags: [MessageFlags.Ephemeral],
             });
         }
@@ -120,12 +94,10 @@ export namespace Handlers {
         try {
             await cmd.onExecute(interaction);
         } catch (err) {
-            const embed = Functions.buildErrorEmbed(err.message);
-
             if (interaction.deferred) {
-                await interaction.editReply({ embeds: [embed] });
+                await interaction.editReply({ content: err.message });
             } else {
-                await interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
+                await interaction.reply({ content: err.message, flags: [MessageFlags.Ephemeral] });
             }
 
             Logger.error('Handlers', err, {

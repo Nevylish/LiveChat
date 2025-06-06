@@ -18,20 +18,19 @@
 import express = require('express');
 import path = require('path');
 import { Logger } from '../utils/logger';
-import { config } from '../utils/config';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
 export class LiveChatServer {
     public connectedStreamers: Map<string, { socketId: string; guildId: string }>;
+    public io: Server;
 
     private app: express.Application;
     private httpServer;
-    public io;
     private readonly port: number;
 
     constructor() {
-        this.port = Number(config.livechatPort);
+        this.port = Number(process.env.LIVECHAT_PORT);
         this.app = express();
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
@@ -72,7 +71,6 @@ export class LiveChatServer {
                     if (data.socketId === socket.id) {
                         this.connectedStreamers.delete(streamer);
                         Logger.log('LiveChatServer', `${streamer} is no longer connected to LiveChat`);
-                        //this.io.emit('streamersList', Array.from(this.connectedStreamers.keys()));
                     }
                 }
             });
@@ -85,18 +83,13 @@ export class LiveChatServer {
 
     private setupRoutes(): void {
         this.app.get('/', (req, res) => {
-            res.send(
-                'LiveChat est prêt, ajoutez la source Navigateur sur OBS avec ce lien et changez la valeur PSEUDO par votre pseudo Twitch ainsi que la valeur ID_SERVEUR pour votre serveur Discord: http://livechat.nevylish.fr/overlay.html?username=PSEUDO&guildId=ID_SERVEUR',
-            );
+            res.send('LiveChat est prêt');
         });
     }
 
     private start(): void {
         this.httpServer.listen(this.port, () => {
-            Logger.success(
-                'LiveChatServer',
-                `Server is running on port ${this.port} | ${Logger.COLORS.UNDERSCORE}${Logger.COLORS.MAGENTA}${config.livechatPort}${Logger.COLORS.RESET}`,
-            );
+            Logger.success('LiveChatServer', `Server is running on port ${this.port}`);
         });
     }
 }

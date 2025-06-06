@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ApplicationCommandOptionType, AutocompleteInteraction, CommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import Command from '../base/Command';
 import DiscordClient from '../base/DiscordClient';
 import { Logger } from '../utils/logger';
@@ -28,7 +28,7 @@ export default class LiveChatCommand extends Command {
             dmPermission: false,
             options: [
                 {
-                    name: 'streamer',
+                    name: 'cible',
                     type: ApplicationCommandOptionType.String,
                     description: 'Choisissez sur quel stream vous souhaitez lancer le live chat',
                     autocomplete: true,
@@ -43,15 +43,9 @@ export default class LiveChatCommand extends Command {
                 {
                     name: 'fullscreen',
                     type: ApplicationCommandOptionType.Boolean,
-                    description: "Afficher le live chat sur tout l'écran du stream (1920x1080 horizontal)",
+                    description: "Afficher le live chat sur tout l'écran du stream (16:9 horizontal)",
                     required: false,
                 },
-                /*{
-                    name: 'chromakey',
-                    type: ApplicationCommandOptionType.Boolean,
-                    description: 'Retirer le fond vert (chroma key)',
-                    required: false,
-                },*/
             ],
         });
     }
@@ -59,7 +53,7 @@ export default class LiveChatCommand extends Command {
     async onAutocomplete(interaction: AutocompleteInteraction): Promise<void> {
         const focusedOption = interaction.options.getFocused(true);
 
-        if (focusedOption.name === 'streamer') {
+        if (focusedOption.name === 'cible') {
             const streamers = Array.from(this.client.livechat.connectedStreamers.entries())
                 .filter(([_, data]) => data.guildId === interaction.guildId)
                 .map(([streamer]) => streamer);
@@ -72,15 +66,10 @@ export default class LiveChatCommand extends Command {
         }
     }
 
-    async onExecute(interaction: CommandInteraction): Promise<void> {
-        // @ts-ignore
-        const target = interaction.options.getString('streamer');
-        // @ts-ignore
+    async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
+        const target = interaction.options.getString('cible') as string;
         const content = interaction.options.getString('url');
-        // @ts-ignore
         const fullscreen = interaction.options.getBoolean('fullscreen') ?? false;
-        // @ts-ignore
-        const chromaKey = interaction.options.getBoolean('chromakey') ?? false;
 
         await interaction.deferReply({ ephemeral: true });
 
@@ -88,7 +77,7 @@ export default class LiveChatCommand extends Command {
             const url = new URL(content);
 
             if (!['https:', 'http:'].includes(url.protocol)) {
-                await interaction.editReply("L'URL doit utiliser le protocole HTTP ou HTTPS");
+                await interaction.editReply("Le format de l'url n'est pas correct.");
                 return;
             }
 
@@ -97,40 +86,32 @@ export default class LiveChatCommand extends Command {
 
             if (!extension || !supportedFormats.includes(extension)) {
                 await interaction.editReply(
-                    `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}`,
+                    `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.`,
                 );
                 return;
             }
         } catch {
-            await interaction.editReply("L'URL fournie n'est pas valide");
+            await interaction.editReply("Le lien n'est pas valide.");
             return;
         }
 
         const streamerData = this.client.livechat.connectedStreamers.get(target);
-        if (!streamerData) {
-            await interaction.editReply(`Le streamer ${target} n'est pas connecté`);
-            return;
-        }
-
-        if (streamerData.guildId !== interaction.guildId) {
-            await interaction.editReply(
-                "Vous ne pouvez pas envoyer du contenu à ce streamer car il n'est pas configuré pour ce serveur",
-            );
+        if (!streamerData || streamerData.guildId !== interaction.guildId) {
+            await interaction.editReply(`${target} n'est pas connecté sur ce serveur.`);
             return;
         }
 
         try {
-            this.client.livechat.io.to(streamerData.socketId).emit('newContent', {
+            this.client.livechat.io.to(streamerData.socketId).emit('broadcast', {
                 content,
                 from: interaction.user,
                 fullscreen,
-                chromaKey,
             });
 
             await interaction.editReply(`LiveChat envoyé sur le stream de [${target}](https://twitch.tv/${target})`);
         } catch (error) {
-            Logger.error('LiveChatCommand', `Erreur lors de l'envoi du contenu: ${error.message}`);
-            await interaction.editReply("Une erreur est survenue lors de l'envoi du contenu");
+            Logger.error('LiveChatCommand', `Erreur lors de l'envoi du LiveChat\n${error.message}`);
+            await interaction.editReply("Une erreur est survenue lors de l'envoi du LiveChat");
         }
     }
 }

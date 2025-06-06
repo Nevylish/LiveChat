@@ -1,18 +1,13 @@
 @font-face {
     font-family: 'ABCGinto';
-    src:
-        local('ABCGinto'),
-        local('ABCGinto-Regular'),
-        url('ABCGintoNormalVariable.woff') format('woff');
+    src: local('ABCGinto'), local('ABCGinto-Regular'), url('../fonts/ABCGintoNormalVariable.woff');
 }
 
 @font-face {
     font-family: 'Brittany Signature';
     font-style: normal;
     font-weight: 400;
-    src:
-        local('Brittany Signature'),
-        url('BrittanySignature-LjyZ.woff') format('woff');
+    src: local('Brittany Signature'), url('../fonts/BrittanySignature-LjyZ.woff');
 }
 
 :root {
