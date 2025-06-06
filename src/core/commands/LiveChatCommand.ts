@@ -24,13 +24,13 @@ export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
         super(client, {
             name: 'livechat',
-            description: "Lancer un Live Chat sur le stream de quelqu'un",
+            description: "Lancer un LiveChat sur le stream de quelqu'un",
             dmPermission: false,
             options: [
                 {
                     name: 'cible',
                     type: ApplicationCommandOptionType.String,
-                    description: 'Choisissez sur quel stream vous souhaitez lancer le live chat',
+                    description: 'Choisissez sur quel stream vous souhaitez lancer le LiveChat',
                     autocomplete: true,
                     required: true,
                 },
@@ -43,7 +43,7 @@ export default class LiveChatCommand extends Command {
                 {
                     name: 'fullscreen',
                     type: ApplicationCommandOptionType.Boolean,
-                    description: "Afficher le live chat sur tout l'écran du stream (16:9 horizontal)",
+                    description: "Afficher le livechat sur tout l'écran du stream (16:9 horizontal)",
                     required: false,
                 },
             ],
