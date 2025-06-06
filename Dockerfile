@@ -9,10 +9,6 @@ COPY . .
 
 RUN npm run build
 
-RUN mkdir -p dist/public
-
-COPY src/public/* dist/public/
-
 FROM node:20-alpine
 
 WORKDIR /app
@@ -21,6 +17,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/public ./dist/public
 COPY --from=builder /app/.env ./.env
 
 ENV NODE_ENV=production
