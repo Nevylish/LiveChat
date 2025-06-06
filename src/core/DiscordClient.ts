@@ -16,11 +16,9 @@
  */
 
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import { Handlers } from './Handlers';
-import { Logger } from '../modules/Logger';
-import Command from './Command';
-import * as dotenv from 'dotenv';
-import { resolve } from 'path';
+import { Handlers } from './modules/Handlers';
+import { Logger } from './modules/Logger';
+import Command from './commands/Command';
 import { LiveChatServer } from './LiveChatServer';
 
 export default class DiscordClient extends Client {
@@ -36,8 +34,6 @@ export default class DiscordClient extends Client {
             },
             partials: [Partials.Channel, Partials.User],
         });
-
-        dotenv.config({ path: resolve(__dirname, '../../.env') });
 
         const token = process.env.TOKEN;
         if (!token) {

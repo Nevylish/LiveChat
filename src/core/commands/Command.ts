@@ -16,7 +16,7 @@
  */
 
 import { ApplicationCommandData, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
-import DiscordClient from './DiscordClient';
+import DiscordClient from '../DiscordClient';
 
 type CommandInfo = ApplicationCommandData;
 

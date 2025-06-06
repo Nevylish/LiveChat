@@ -15,14 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import DiscordClient from './DiscordClient';
-import Command from './Command';
+import DiscordClient from '../DiscordClient';
+import Command from '../commands/Command';
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
-import { Logger } from '../modules/Logger';
+import { Logger } from './Logger';
 
 export namespace Handlers {
     export const setupEventsListeners = (client: DiscordClient) => {
+        client.on(Events.ClientReady, async () => {
+            client.updateActivity();
+        });
+
         client.on(
             Events.InteractionCreate,
             async (interaction: ChatInputCommandInteraction | AutocompleteInteraction) => {
