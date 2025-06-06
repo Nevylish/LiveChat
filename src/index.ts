@@ -18,6 +18,7 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import DiscordClient from './core/DiscordClient';
+import { Logger } from './core/modules/Logger';
 
 /* Vérification des variables d'environements parce que je les oublie toujours */
 dotenv.config({ path: resolve(__dirname, '../.env') });
@@ -26,7 +27,7 @@ const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
-    console.error(`Missing environment variables: ${missingVars.join(', ')}`);
+    Logger.error('Index', `Missing environment variables: ${missingVars.join(', ')}`);
     process.exit(1);
 }
 
