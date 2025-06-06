@@ -18,7 +18,7 @@
 import { ApplicationCommandData, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from './DiscordClient';
 
-export type CommandInfo = ApplicationCommandData;
+type CommandInfo = ApplicationCommandData;
 
 export default abstract class Command {
     readonly client: DiscordClient;

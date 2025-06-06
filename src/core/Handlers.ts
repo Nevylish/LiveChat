@@ -15,26 +15,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Logger } from '../utils/logger';
 import DiscordClient from './DiscordClient';
 import Command from './Command';
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
+import { Logger } from '../modules/Logger';
 
 export namespace Handlers {
     export const setupEventsListeners = (client: DiscordClient) => {
-        client.on(Events.ClientReady, () => {
-            client.user?.setActivity('/livechat', { type: 3 });
-        });
-
         client.on(
             Events.InteractionCreate,
             async (interaction: ChatInputCommandInteraction | AutocompleteInteraction) => {
-                if (interaction.isCommand()) {
-                    await InteractionCommandHandler(client, interaction);
-                } else if (interaction.isAutocomplete()) {
-                    await AutoCompleteHandler(client, interaction);
-                }
+                if (!interaction || interaction.user.bot) return;
+
+                if (interaction.isCommand()) await InteractionCommandHandler(client, interaction);
+                else if (interaction.isAutocomplete()) await AutoCompleteHandler(client, interaction);
             },
         );
 
@@ -47,10 +42,7 @@ export namespace Handlers {
         commands.forEach((command) => {
             if (command.info.name) {
                 client.commands.set(command.info.name, command);
-                Logger.success(
-                    'Handlers',
-                    `${Logger.COLORS.GREEN}${command.info.name}${Logger.COLORS.RESET} command loaded`,
-                );
+                Logger.success('Handlers', `${command.info.name} command loaded`);
             }
         });
 
@@ -58,10 +50,7 @@ export namespace Handlers {
 
         await client.application.commands.set(commandsData);
 
-        Logger.success(
-            'Handlers',
-            `${Logger.COLORS.GREEN}Slash commands registered.${Logger.COLORS.RESET} (${commandsData.length} commands)`,
-        );
+        Logger.success('Handlers', `Slash commands registered. (${commandsData.length} commands)`);
     };
 
     const AutoCompleteHandler = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
@@ -85,10 +74,7 @@ export namespace Handlers {
         const cmd = client.commands.get(commandName);
 
         if (!cmd) {
-            return interaction.reply({
-                content: "Cette commande n'existe pas.",
-                flags: [MessageFlags.Ephemeral],
-            });
+            return interaction.reply({ content: "Cette commande n'existe pas.", flags: [MessageFlags.Ephemeral] });
         }
 
         try {

@@ -16,9 +16,9 @@
  */
 
 import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
-import Command from '../base/Command';
-import DiscordClient from '../base/DiscordClient';
-import { Logger } from '../utils/logger';
+import Command from '../core/Command';
+import DiscordClient from '../core/DiscordClient';
+import { Logger } from '../modules/Logger';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {

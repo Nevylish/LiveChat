@@ -17,7 +17,7 @@
 
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
-import DiscordClient from './base/DiscordClient';
+import DiscordClient from './core/DiscordClient';
 
 /* Vérification des variables d'environements parce que je les oublie toujours */
 dotenv.config({ path: resolve(__dirname, '../.env') });

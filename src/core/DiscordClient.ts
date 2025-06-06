@@ -17,7 +17,7 @@
 
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 import { Handlers } from './Handlers';
-import { Logger } from '../utils/logger';
+import { Logger } from '../modules/Logger';
 import Command from './Command';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
@@ -45,17 +45,26 @@ export default class DiscordClient extends Client {
             process.exit(1);
         }
 
-        this.initialize(token);
+        this.start(token);
     }
 
-    private async initialize(token: string): Promise<void> {
+    public updateActivity(connectedStreamersSize?: number): void {
+        this.user?.setActivity(
+            connectedStreamersSize
+                ? `/livechat | ${connectedStreamersSize.toString() ?? '0'} streameur${connectedStreamersSize > 1 ? 's' : ''} utilise${connectedStreamersSize > 1 ? 'nt' : ''} LiveChat en ce moment.`
+                : '/livechat | livechat.nevylish.fr',
+            { type: 3 },
+        );
+    }
+
+    private async start(token: string): Promise<void> {
         Logger.log('Client', `Connecting to Discord...`);
         try {
             await this.login(token);
             Handlers.setupEventsListeners(this);
             await Handlers.setupCommands(this);
 
-            this.livechat = new LiveChatServer();
+            this.livechat = new LiveChatServer(this);
 
             Logger.success('Client', `Successfully connected to Discord !`);
         } catch (err) {

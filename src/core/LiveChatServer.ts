@@ -17,9 +17,10 @@
 
 import express = require('express');
 import path = require('path');
-import { Logger } from '../utils/logger';
+import { Logger } from '../modules/Logger';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import DiscordClient from './DiscordClient';
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -30,12 +31,15 @@ export class LiveChatServer {
     public connectedStreamers: Map<string, ConnectedStreamersType>;
     public io: Server;
 
+    private readonly port: number;
+    private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer;
-    private readonly port: number;
 
-    constructor() {
+    constructor(discordClient: DiscordClient) {
         this.port = Number(process.env.LIVECHAT_PORT);
+        this.discordClient = discordClient;
+
         this.app = express();
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
@@ -68,6 +72,7 @@ export class LiveChatServer {
                 }
 
                 this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
+                this.discordClient.updateActivity(this.connectedStreamers.size);
                 Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
             });
 
@@ -75,6 +80,7 @@ export class LiveChatServer {
                 for (const [streamer, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.connectedStreamers.delete(streamer);
+                        this.discordClient.updateActivity(this.connectedStreamers.size);
                         Logger.log('LiveChatServer', `${streamer} is no longer connected to LiveChat`);
                     }
                 }
