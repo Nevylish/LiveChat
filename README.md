@@ -9,8 +9,6 @@
 
 **Un overlay OBS qui permet à vos amis d'afficher des médias sur votre flux**
 
-[Site Web](https://livechat.nevylish.fr)
-
 </div>
 
 ## 📝 À propos
@@ -19,7 +17,7 @@ LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une i
 
 Plusieurs streameurs peuvent utiliser le même serveur Discord, et les utilisateurs pourront choisir à quel streameur envoyer leur média.
 
-## 🎮 Utilisation
+## 🚀 Utilisation
 
 ### Pour les streameurs
 
@@ -129,13 +127,13 @@ LiveChat/
 
 ### Scripts disponibles
 
-| Commande         | Description                                                             |
-| ---------------- | ----------------------------------------------------------------------- |
-| `npm run dev`    | Lance l'application en mode développement avec rechargement automatique |
-| `npm run build`  | Compile l'application pour la production                                |
-| `npm run start`  | Lance l'application en mode production                                  |
-| `npm run clean`  | Nettoie le dossier de build (dist/) et recopie les fichiers statiques   |
-| `npm run format` | Formate le code avec Prettier                                           |
+| Commande         | Description                                                           |
+| ---------------- | --------------------------------------------------------------------- |
+| `npm run dev`    | Compile le TypeScript en mode watch (recompilation automatique)       |
+| `npm run build`  | Compile le TypeScript pour la production                              |
+| `npm run start`  | Lance l'application                                                   |
+| `npm run clean`  | Nettoie le dossier de build (dist/) et recopie les fichiers statiques |
+| `npm run format` | Formate le code avec Prettier                                         |
 
 ## 🐳 Docker
 
