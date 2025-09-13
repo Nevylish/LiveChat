@@ -189,7 +189,7 @@ export default class LiveChatCommand extends Command {
             })();
 
             if (['jpg', 'jpeg', 'png'].includes(extension)) {
-                typeFichier = 'image';
+                typeFichier = 'Image';
             } else if (extension === 'gif') {
                 if (content.match(/^https?:\/\/media\.tenor\.com\//)) {
                     typeFichier = 'Image animée Tenor';
@@ -206,7 +206,7 @@ export default class LiveChatCommand extends Command {
                 .setThumbnail(content)
                 .setDescription(
                     `### LiveChat envoyé sur le stream de ${target}` +
-                    `\n\nType de fichier : **${typeFichier}**` +
+                    `\n\nType de fichier: **${typeFichier}${text ? ' + Texte' : ''}${fullscreen ? ' en plein écran' : ''}**` +
                     `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})` +
                     `\n\n[Page d'accueil](https://livechat.nevylish.fr)᲼•᲼[Patch notes](https://livechat.nevylish.fr/updates.html)᲼•᲼[Code source](https://github.com/Nevylish/LiveChat)` +
                     '\n-# © 2025 LiveChat — Tous droits réservés.'
