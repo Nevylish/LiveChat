@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction, ColorResolvable, EmbedBuilder } from 'discord.js';
 import Command from './Command';
 import DiscordClient from '../DiscordClient';
 import { Logger } from '../modules/Logger';
@@ -178,7 +178,43 @@ export default class LiveChatCommand extends Command {
                 text,
             });
 
-            await interaction.editReply(`LiveChat envoyé sur le stream de [${target}](https://twitch.tv/${target})`);
+            let typeFichier = 'Inconnu';
+            const extension = (() => {
+                try {
+                    const url = new URL(content);
+                    return url.pathname.split('.').pop()?.toLowerCase() || '';
+                } catch {
+                    return '';
+                }
+            })();
+
+            if (['jpg', 'jpeg', 'png'].includes(extension)) {
+                typeFichier = 'image';
+            } else if (extension === 'gif') {
+                if (content.match(/^https?:\/\/media\.tenor\.com\//)) {
+                    typeFichier = 'Image animée Tenor';
+                } else {
+                    typeFichier = 'Image animée';
+                }
+            } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
+                typeFichier = 'Vidéo';
+            } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
+                typeFichier = 'Audio';
+            }
+
+            const embed = new EmbedBuilder()
+                .setThumbnail(content)
+                .setDescription(
+                    `### LiveChat envoyé sur le stream de ${target}` +
+                    `\n\nType de fichier : **${typeFichier}**` +
+                    `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})` +
+                    `\n\n[Page d'accueil](https://livechat.nevylish.fr)᲼•᲼[Patch notes](https://livechat.nevylish.fr/updates.html)᲼•᲼[Code source](https://github.com/Nevylish/LiveChat)` +
+                    '\n-# © 2025 LiveChat — Tous droits réservés.'
+                )
+                .setColor(0x75FF7A)
+
+            await interaction.editReply({content: '', embeds: [embed]});
+
         } catch (error) {
             Logger.error('LiveChatCommand', `Erreur lors de l'envoi du LiveChat\n${error.message}`);
             await interaction.editReply("Une erreur est survenue lors de l'envoi du LiveChat");
