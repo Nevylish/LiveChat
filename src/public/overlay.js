@@ -112,7 +112,6 @@ function cleanupCurrentContent(callback) {
 
     if (currentContent) {
         currentContent.classList.add('fade-out');
-        // Faire disparaître le texte aussi
         const textElement = document.querySelector('.content-text');
         if (textElement) {
             textElement.classList.add('fade-out');
@@ -205,14 +204,12 @@ function displayContent(element, fullscreen, text) {
         elements.contentContainer.classList.remove('fullscreen');
     }
 
-    // Afficher le texte si fourni
     if (text) {
         createTextElement(text, fullscreen);
     }
 }
 
 function createTextElement(text, fullscreen) {
-    // Supprimer l'ancien texte s'il existe
     const existingText = document.querySelector('.content-text');
     if (existingText) {
         existingText.remove();
@@ -228,7 +225,6 @@ function createTextElement(text, fullscreen) {
 
     document.body.appendChild(textElement);
 
-    // Animation d'apparition
     void textElement.offsetWidth;
     textElement.classList.add('fade-in');
 }
@@ -241,7 +237,6 @@ function removeContent(element, callback) {
         currentContent = null;
     }
 
-    // Supprimer le texte s'il existe
     const textElement = document.querySelector('.content-text');
     if (textElement) {
         textElement.remove();
