@@ -19,6 +19,7 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommand
 import Command from './Command';
 import DiscordClient from '../DiscordClient';
 import { Logger } from '../modules/Logger';
+import fetch from 'node-fetch';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -37,7 +38,7 @@ export default class LiveChatCommand extends Command {
                 {
                     name: 'url',
                     type: ApplicationCommandOptionType.String,
-                    description: 'Lien du média a afficher. Format acceptés: mp4,webm,mkv,mov,mp3,wav,ogg.',
+                    description: 'Lien du média à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif,tenor.',
                     required: true,
                 },
                 {
@@ -72,13 +73,74 @@ export default class LiveChatCommand extends Command {
         }
     }
 
+    /**
+     * Récupère l'URL brute du GIF à partir d'un lien Tenor.
+     * @param {string} tenorUrl Lien Tenor
+     * @returns {Promise<string|null>} Lien brut
+     */
+    async getTenorDirectUrl(tenorUrl: string): Promise<string | null> {
+        try {
+            const regex = /tenor\.com\/(?:view|fr\/view)\/[a-zA-Z0-9\-]+-(\d+)/;
+            const match = tenorUrl.match(regex);
+            if (!match || !match[1]) return null;
+            const gifId = match[1];
+
+            const apiKey = process.env.TENOR_API_KEY;
+            const apiUrl = `https://tenor.googleapis.com/v2/posts?ids=${gifId}&key=${apiKey}`;
+
+            const response = await fetch(apiUrl);
+            if (!response.ok) return null;
+            const data = await response.json();
+
+            if (
+                typeof data === 'object' &&
+                data !== null &&
+                Array.isArray((data as any).results) &&
+                (data as any).results[0] &&
+                (data as any).results[0].media_formats &&
+                (data as any).results[0].media_formats.gif &&
+                (data as any).results[0].media_formats.gif.url
+            ) {
+                return (data as any).results[0].media_formats.gif.url;
+            }
+
+            // Fallback pour certains GIFs qui n'ont pas le format gif mais webm/mp4
+            if (
+                typeof data === 'object' &&
+                data !== null &&
+                Array.isArray((data as any).results) &&
+                (data as any).results[0] &&
+                (data as any).results[0].media_formats
+            ) {
+                const formats = (data as any).results[0].media_formats;
+                if (formats.mediumgif && formats.mediumgif.url) return formats.mediumgif.url;
+                if (formats.tinygif && formats.tinygif.url) return formats.tinygif.url;
+                if (formats.mp4 && formats.mp4.url) return formats.mp4.url;
+            }
+
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+
     async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
         const target = interaction.options.getString('cible') as string;
-        const content = interaction.options.getString('url');
+        let content = interaction.options.getString('url');
         const fullscreen = interaction.options.getBoolean('fullscreen') ?? false;
         const text = interaction.options.getString('texte') ?? null;
 
         await interaction.deferReply({ ephemeral: true });
+
+        if (content && content.match(/^https?:\/\/tenor\.com\/(fr\/)?view\//)) {
+            await interaction.editReply("Récupération du GIF depuis Tenor...");
+            const directUrl = await this.getTenorDirectUrl(content);
+            if (!directUrl) {
+                await interaction.editReply("Impossible de récupérer le GIF depuis Tenor. Vérifiez le lien.");
+                return;
+            }
+            content = directUrl;
+        }
 
         try {
             const url = new URL(content);
