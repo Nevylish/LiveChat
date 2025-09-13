@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'SuperTrend';
+    src: url('../fonts/SuperTrend.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -39,27 +46,34 @@ body {
     border-radius: 0;
 }
 
-.user-avatar {
+.user-info {
     position: fixed;
     bottom: 20px;
     left: 20px;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    border: 4px solid rgb(89, 255, 47);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
     z-index: 1001;
     display: none;
     opacity: 0;
     transition: opacity 0.1s ease;
 }
 
-.user-avatar.fade-in {
+.user-info.fade-in {
     opacity: 1;
 }
 
-.user-avatar.fade-out {
+.user-info.fade-out {
     opacity: 0;
+}
+
+.user-avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 4px solid rgb(89, 255, 47);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    flex-shrink: 0;
 }
 
 .user-avatar img {
@@ -69,13 +83,20 @@ body {
     object-fit: cover;
 }
 
+.user-username {
+    color: rgba(255, 255, 255, 1);
+    font-size: 28px;
+    font-weight: 200;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+    white-space: nowrap;
+    font-family: 'SuperTrend', sans-serif;
+}
+
 #content-container img,
 #content-container video {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     opacity: 0;
     transition: opacity 0.1s ease;
 }
@@ -108,6 +129,51 @@ body {
 
 .fade-out {
     animation: fadeOut 0.5s ease-out forwards;
+}
+
+.content-text {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 32px;
+    font-weight: 400;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 1);
+    white-space: normal;
+    font-family: 'Impact', sans-serif;
+    z-index: 1002;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    width: fit-content;
+    max-width: 60vw;
+    text-align: center;
+    letter-spacing: 0.5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.content-text.fade-in {
+    opacity: 1;
+}
+
+.content-text.fade-out {
+    opacity: 0;
+}
+
+.content-text.fullscreen {
+    bottom: 24px;
+    font-size: 36px;
+    max-width: 60vw;
+    letter-spacing: 0.8px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: fit-content;
 }
 
 @keyframes fadeIn {

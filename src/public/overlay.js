@@ -4,7 +4,7 @@ const SERVER_URL =
 const CONFIG = {
     RECONNECT_ATTEMPTS: 60 * 60 * 1000 /* 1 hour */,
     RECONNECT_DELAY: 30 * 1000 /* 30 seconds */,
-    DISPLAY_DURATION: 5 * 1000 /* 5 seconds */,
+    DISPLAY_DURATION: 7 * 1000 /* 7 seconds */,
     FADE_DURATION: 500 /* 500 milliseconds */,
     SUPPORTED_VIDEO_FORMATS: /\.(mp4|webm|mkv|mov)$/i,
     SUPPORTED_AUDIO_FORMATS: /\.(mp3|wav|ogg)$/i,
@@ -64,10 +64,10 @@ function handleConnectError(error) {
     updateConnectionStatus(false, 'Serveur injoignable');
 }
 
-function handleBroadcast({ content, from, fullscreen }) {
+function handleBroadcast({ content, from, fullscreen, text }) {
     console.log('Nouveau livechat reçu:', content, 'de:', from.username);
 
-    contentQueue.push({ content, from, fullscreen });
+    contentQueue.push({ content, from, fullscreen, text });
 
     if (!isProcessingQueue) {
         processNextContent();
@@ -77,28 +77,28 @@ function handleBroadcast({ content, from, fullscreen }) {
 function processNextContent() {
     if (contentQueue.length === 0) {
         isProcessingQueue = false;
-        const avatarElement = document.querySelector('.user-avatar');
-        if (avatarElement) {
-            avatarElement.classList.remove('fade-in');
-            avatarElement.classList.add('fade-out');
+        const userInfoElement = document.querySelector('.user-info');
+        if (userInfoElement) {
+            userInfoElement.classList.remove('fade-in');
+            userInfoElement.classList.add('fade-out');
             setTimeout(() => {
-                avatarElement.style.display = 'none';
-                avatarElement.innerHTML = '';
+                userInfoElement.style.display = 'none';
+                userInfoElement.innerHTML = '';
             }, CONFIG.FADE_DURATION);
         }
         return;
     }
 
     isProcessingQueue = true;
-    const { content, from, fullscreen } = contentQueue.shift();
+    const { content, from, fullscreen, text } = contentQueue.shift();
 
     setTimeout(() => {
-        handleAvatar(from, fullscreen);
+        handleUserInfos(from, fullscreen);
 
         cleanupCurrentContent(() => {
-            const element = createContentElement(content, from, fullscreen);
+            const element = createContentElement(content, from, fullscreen, text);
             if (element) {
-                displayContent(element, fullscreen);
+                displayContent(element, fullscreen, text);
             }
         });
     }, 100);
@@ -112,6 +112,11 @@ function cleanupCurrentContent(callback) {
 
     if (currentContent) {
         currentContent.classList.add('fade-out');
+        // Faire disparaître le texte aussi
+        const textElement = document.querySelector('.content-text');
+        if (textElement) {
+            textElement.classList.add('fade-out');
+        }
         setTimeout(() => {
             if (elements.contentContainer.contains(currentContent)) {
                 elements.contentContainer.removeChild(currentContent);
@@ -123,7 +128,7 @@ function cleanupCurrentContent(callback) {
     }
 }
 
-function createContentElement(content, from, fullscreen) {
+function createContentElement(content, from, fullscreen, text) {
     try {
         const url = new URL(content);
         const filename = url.pathname.split('/').pop() || '';
@@ -147,9 +152,13 @@ function createContentElement(content, from, fullscreen) {
             };
             element.addEventListener('ended', () => {
                 element.classList.add('fade-out');
-                const avatarElement = document.querySelector('.user-avatar');
-                if (avatarElement) {
-                    avatarElement.classList.add('fade-out');
+                const userInfoElement = document.querySelector('.user-info');
+                if (userInfoElement) {
+                    userInfoElement.classList.add('fade-out');
+                }
+                const textElement = document.querySelector('.content-text');
+                if (textElement) {
+                    textElement.classList.add('fade-out');
                 }
                 setTimeout(() => {
                     removeContent(element, () => {
@@ -163,9 +172,13 @@ function createContentElement(content, from, fullscreen) {
 
             currentTimeout = setTimeout(() => {
                 element.classList.add('fade-out');
-                const avatarElement = document.querySelector('.user-avatar');
-                if (avatarElement) {
-                    avatarElement.classList.add('fade-out');
+                const userInfoElement = document.querySelector('.user-info');
+                if (userInfoElement) {
+                    userInfoElement.classList.add('fade-out');
+                }
+                const textElement = document.querySelector('.content-text');
+                if (textElement) {
+                    textElement.classList.add('fade-out');
                 }
                 setTimeout(() => {
                     removeContent(element, () => {
@@ -182,7 +195,7 @@ function createContentElement(content, from, fullscreen) {
     }
 }
 
-function displayContent(element, fullscreen) {
+function displayContent(element, fullscreen, text) {
     elements.contentContainer.appendChild(element);
     currentContent = element;
     elements.contentContainer.style.display = 'block';
@@ -191,6 +204,33 @@ function displayContent(element, fullscreen) {
     } else {
         elements.contentContainer.classList.remove('fullscreen');
     }
+
+    // Afficher le texte si fourni
+    if (text) {
+        createTextElement(text, fullscreen);
+    }
+}
+
+function createTextElement(text, fullscreen) {
+    // Supprimer l'ancien texte s'il existe
+    const existingText = document.querySelector('.content-text');
+    if (existingText) {
+        existingText.remove();
+    }
+
+    const textElement = document.createElement('div');
+    textElement.className = 'content-text';
+    textElement.textContent = text;
+    
+    if (fullscreen) {
+        textElement.classList.add('fullscreen');
+    }
+
+    document.body.appendChild(textElement);
+
+    // Animation d'apparition
+    void textElement.offsetWidth;
+    textElement.classList.add('fade-in');
 }
 
 function removeContent(element, callback) {
@@ -201,28 +241,46 @@ function removeContent(element, callback) {
         currentContent = null;
     }
 
+    // Supprimer le texte s'il existe
+    const textElement = document.querySelector('.content-text');
+    if (textElement) {
+        textElement.remove();
+    }
+
     if (callback) callback();
 }
 
-function handleAvatar(from, fullscreen) {
-    let avatarElement = document.querySelector('.user-avatar');
-    if (!avatarElement) {
-        avatarElement = document.createElement('div');
-        avatarElement.className = 'user-avatar';
-        document.body.appendChild(avatarElement);
+function handleUserInfos(from) {
+    let userInfoElement = document.querySelector('.user-info');
+    if (!userInfoElement) {
+        userInfoElement = document.createElement('div');
+        userInfoElement.className = 'user-info';
+        document.body.appendChild(userInfoElement);
     }
 
-    avatarElement.innerHTML = '';
+    userInfoElement.innerHTML = '';
+
+    const avatarContainer = document.createElement('div');
+    avatarContainer.className = 'user-avatar';
+    
     const avatarImg = document.createElement('img');
     avatarImg.src = from.avatarURL;
-    avatarElement.appendChild(avatarImg);
-    avatarElement.style.display = fullscreen ? 'none' : 'block';
+    avatarContainer.appendChild(avatarImg);
+    
+    userInfoElement.appendChild(avatarContainer);
 
-    void avatarElement.offsetWidth;
+    const usernameDiv = document.createElement('div');
+    usernameDiv.className = 'user-username';
+    usernameDiv.textContent = from.username;
+    userInfoElement.appendChild(usernameDiv);
 
-    avatarElement.classList.remove('fade-in', 'fade-out');
+    userInfoElement.style.display = 'flex';
+
+    void userInfoElement.offsetWidth;
+
+    userInfoElement.classList.remove('fade-in', 'fade-out');
     setTimeout(() => {
-        avatarElement.classList.add('fade-in');
+        userInfoElement.classList.add('fade-in');
     }, 50);
 }
 

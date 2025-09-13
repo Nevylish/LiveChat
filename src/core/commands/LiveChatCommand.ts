@@ -46,6 +46,12 @@ export default class LiveChatCommand extends Command {
                     description: "Afficher le livechat sur tout l'écran du stream (16:9 horizontal)",
                     required: false,
                 },
+                {
+                    name: 'texte',
+                    type: ApplicationCommandOptionType.String,
+                    description: 'Texte à afficher en dessous du média.',
+                    required: false,
+                }
             ],
         });
     }
@@ -70,6 +76,7 @@ export default class LiveChatCommand extends Command {
         const target = interaction.options.getString('cible') as string;
         const content = interaction.options.getString('url');
         const fullscreen = interaction.options.getBoolean('fullscreen') ?? false;
+        const text = interaction.options.getString('texte') ?? null;
 
         await interaction.deferReply({ ephemeral: true });
 
@@ -106,6 +113,7 @@ export default class LiveChatCommand extends Command {
                 content,
                 from: interaction.user,
                 fullscreen,
+                text,
             });
 
             await interaction.editReply(`LiveChat envoyé sur le stream de [${target}](https://twitch.tv/${target})`);
