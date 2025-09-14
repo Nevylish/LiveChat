@@ -185,7 +185,7 @@ export default class LiveChatCommand extends Command {
                 return;
             }
             content = directUrl;
-        } else if (content && content.match(/^https?:\/\/(www\.)?(youtube\.com\/|youtu\.be\/)/)) {
+        }/* else if (content && content.match(/^https?:\/\/(www\.)?(youtube\.com\/|youtu\.be\/)/)) {
             await interaction.editReply('Récupération du lien direct depuis YouTube...');
             const directUrl = await this.getYoutubeDirectUrl(interaction, content);
             if (!directUrl) {
@@ -193,7 +193,7 @@ export default class LiveChatCommand extends Command {
                 return;
             }
             content = directUrl;
-        }
+        }*/
 
         try {
             const url = new URL(content);
@@ -212,9 +212,9 @@ export default class LiveChatCommand extends Command {
                 url.searchParams.has('expire');
             const isTenorDirect = content.match(/^https?:\/\/media\.tenor\.com\//);
 
-            if ((!extension || !supportedFormats.includes(extension)) && !isYouTubeDirect && !isTenorDirect) {
+            if ((!extension || !supportedFormats.includes(extension)) /*&& !isYouTubeDirect */ && !isTenorDirect) {
                 await interaction.editReply(
-                    `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\nLes liens Tenor & YouTube sont également acceptés.`,
+                    `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\nLes liens Tenor sont également acceptés.`,
                 );
                 return;
             }
