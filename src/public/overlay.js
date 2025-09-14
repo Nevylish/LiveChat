@@ -127,11 +127,18 @@ function cleanupCurrentContent(callback) {
     }
 }
 
-function createContentElement(content, from, fullscreen, text) {
+function createContentElement(content) {
     try {
         const url = new URL(content);
         const filename = url.pathname.split('/').pop() || '';
-        const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename);
+
+        const isYouTubeDirect =
+            url.hostname.includes('googlevideo.com') ||
+            url.hostname.includes('youtube.com') ||
+            url.searchParams.has('range') ||
+            url.searchParams.has('expire');
+
+        const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename) || isYouTubeDirect;
         const isAudio = CONFIG.SUPPORTED_AUDIO_FORMATS.test(filename);
 
         const element = document.createElement(isVideo ? 'video' : isAudio ? 'audio' : 'img');
@@ -218,7 +225,7 @@ function createTextElement(text, fullscreen) {
     const textElement = document.createElement('div');
     textElement.className = 'content-text';
     textElement.textContent = text;
-    
+
     if (fullscreen) {
         textElement.classList.add('fullscreen');
     }
@@ -257,11 +264,11 @@ function handleUserInfos(from) {
 
     const avatarContainer = document.createElement('div');
     avatarContainer.className = 'user-avatar';
-    
+
     const avatarImg = document.createElement('img');
     avatarImg.src = from.avatarURL;
     avatarContainer.appendChild(avatarImg);
-    
+
     userInfoElement.appendChild(avatarContainer);
 
     const usernameDiv = document.createElement('div');
