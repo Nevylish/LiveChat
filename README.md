@@ -114,7 +114,8 @@ LiveChat/
 ├── src/
 │   ├── core/                 # Cœur de l'application
 │   │   ├── commands/         # Commandes Discord
-│   │   ├── modules/          # Modules utilitaires
+│   │   ├── modules/          # Fichiers de modules
+│   │   ├── utils/            # Fichiers utilitaires
 │   │   ├── DiscordClient.ts  # Classe du bot Discord
 │   │   └── LiveChatServer.ts # Classe du serveur web et socket
 │   ├── public/               # Fichiers statiques
