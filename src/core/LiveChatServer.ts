@@ -87,6 +87,7 @@ export class LiveChatServer {
                     return;
                 }
                
+                // TODO: Retourne une erreur [object Object sur le serveur mais pas sur mon PC]
                 this.discordClient.guilds.fetch(data.guildId).then(r => {
                     const err: string = "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.";
                     if (r.id) {
