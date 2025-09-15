@@ -17,7 +17,7 @@
 
 import express = require('express');
 import path = require('path');
-import { Logger } from './modules/Logger';
+import { Logger } from './utils/Logger';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import DiscordClient from './DiscordClient';

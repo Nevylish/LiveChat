@@ -16,10 +16,10 @@
  */
 
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import { Handlers } from './modules/Handlers';
-import { Logger } from './modules/Logger';
+import { Logger } from './utils/Logger';
 import Command from './commands/Command';
 import { LiveChatServer } from './LiveChatServer';
+import { Handlers } from './utils/Handlers';
 
 export default class DiscordClient extends Client {
     public readonly commands: Collection<string, Command> = new Collection();

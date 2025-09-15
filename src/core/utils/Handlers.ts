@@ -19,7 +19,7 @@ import DiscordClient from '../DiscordClient';
 import Command from '../commands/Command';
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
-import { Logger } from './Logger';
+import { Logger } from '../utils/Logger';
 
 export namespace Handlers {
     export const setupEventsListeners = (client: DiscordClient) => {
