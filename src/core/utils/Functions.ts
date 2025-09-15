@@ -20,7 +20,7 @@ import { version } from '../../../package.json';
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
 export namespace Functions {
-    export const addCopyrightFooter = (embed: EmbedBuilder): void => {
+    const addCopyrightFooter = (embed: EmbedBuilder): void => {
         embed.setFooter({ text: `© 2025 LiveChat — Tous droits réservés. | Build v${version}` });
     };
 
