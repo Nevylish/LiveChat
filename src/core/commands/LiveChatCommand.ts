@@ -145,7 +145,7 @@ export default class LiveChatCommand extends Command {
                 text,
             });
 
-            let filetype = Functions.getFileExtension(url);
+            let filetype = Functions.getFileType(url);
 
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé sur le stream de ${target}` +
