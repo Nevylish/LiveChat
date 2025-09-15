@@ -58,7 +58,8 @@ Plusieurs streameurs peuvent utiliser le même serveur Discord, et les utilisate
 
 ### 📁 Formats de médias supportés
 
-LiveChat ne supporte que les liens directs vers des fichiers médias. Voici comment partager vos médias :
+LiveChat ne supporte que les liens directs vers des fichiers médias et les liens Tenor.
+Voici comment partager vos médias :
 
 1. Envoyez votre média dans un canal Discord (formats acceptés : .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg, .png, .gif)
 2. Faites un clic droit sur le fichier et sélectionnez "Copier le lien"
