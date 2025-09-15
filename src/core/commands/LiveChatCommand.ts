@@ -106,7 +106,7 @@ export default class LiveChatCommand extends Command {
         }
 
         if (Tenor.isShortenedUrl(url)) {
-            const directUrl = await Tenor.getDirectUrl(url);
+            const directUrl = await Tenor.fetchDirectUrl(url);
             if (!directUrl) {
                 const embed = Functions.buildEmbed(
                     'Impossible de récupérer le GIF depuis Tenor. Vérifiez le lien.',

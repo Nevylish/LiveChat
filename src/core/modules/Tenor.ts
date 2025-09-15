@@ -28,7 +28,7 @@ export namespace Tenor {
         return false;
     };
 
-    export const getDirectUrl = async (url: string): Promise<string | null> => {
+    export const fetchDirectUrl = async (url: string): Promise<string | null> => {
         try {
             const regex = /tenor\.com\/(?:view|fr\/view)\/[a-zA-Z0-9\-]+-(\d+)/;
             const match = url.match(regex);
