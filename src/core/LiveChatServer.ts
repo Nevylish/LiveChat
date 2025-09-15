@@ -107,7 +107,7 @@ export class LiveChatServer {
                     return;
                 }
 
-                // TODO: Retourne une erreur [object Object sur le serveur mais pas sur mon PC]
+                // TODO: Retourne une erreur [object Object] sur le serveur mais pas sur mon PC
                 this.discordClient.guilds
                     .fetch(data.guildId)
                     .then((r) => {
