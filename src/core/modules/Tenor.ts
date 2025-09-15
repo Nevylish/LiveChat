@@ -30,10 +30,9 @@ export namespace Tenor {
 
     export const fetchDirectUrl = async (url: string): Promise<string | null> => {
         try {
-            const regex = /tenor\.com\/(?:view|fr\/view)\/[a-zA-Z0-9\-]+-(\d+)/;
-            const match = url.match(regex);
-            if (!match || !match[1]) return null;
-            const gifId = match[1];
+            const parts = url.split('-');
+            const gifId = parts[parts.length - 1];
+            if (!gifId || isNaN(Number(gifId))) return null;
 
             const apiKey = process.env.TENOR_API_KEY;
             const apiUrl = `https://tenor.googleapis.com/v2/posts?ids=${gifId}&key=${apiKey}`;
