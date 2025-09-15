@@ -61,15 +61,46 @@ export class LiveChatServer {
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
             socket.on('register', (data: { username: string; guildId: string }) => {
-                if (typeof data.username !== 'string' || data.username.length > 50) {
+                if (data.username.length > 25 || data.username.length < 3) {
+                    socket.emit('updateConnectionStatus', false, "Le nom d'utilisateur est trop court ou trop long.", 300000)
                     socket.disconnect();
                     return;
                 }
 
-                if (typeof data.guildId !== 'string' || data.guildId.length > 20) {
+                const usernamePattern = /^[a-zA-Z0-9_\-]+$/;
+                if (!usernamePattern.test(data.username)) {
+                    socket.emit('updateConnectionStatus', false, "Le nom d'utilisateur contient des caractères non autorisés.", 300000)
                     socket.disconnect();
                     return;
                 }
+
+                if (data.guildId.length > 20 || data.guildId.length < 12) {
+                    socket.emit('updateConnectionStatus', false, "L'identifiant du serveur ne correspond à aucun serveur existant.", 300000)
+                    socket.disconnect();
+                    return;
+                }
+
+                const guildIdPattern = /^[0-9]+$/;
+                if (!guildIdPattern.test(data.guildId)) {
+                    socket.emit('updateConnectionStatus', false, "L'identifiant du serveur contient des caractères non autorisés.", 300000)
+                    socket.disconnect();
+                    return;
+                }
+               
+                this.discordClient.guilds.fetch(data.guildId).then(r => {
+                    const err: string = "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.";
+                    if (r.id) {
+                        "ok";
+                    } else {
+                        socket.emit('updateConnectionStatus', false, err, 300000)
+                        socket.disconnect();
+                        return;
+                    }
+                }).catch(err => {
+                    socket.emit('updateConnectionStatus', false, err, 300000)
+                    socket.disconnect();
+                    return;
+                });
 
                 this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
                 this.discordClient.updateActivity(this.connectedStreamers.size);

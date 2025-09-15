@@ -2,8 +2,8 @@ const SERVER_URL =
     window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://${window.location.hostname}`;
 
 const CONFIG = {
-    RECONNECT_ATTEMPTS: 60 * 60 * 1000 /* 1 hour */,
-    RECONNECT_DELAY: 30 * 1000 /* 30 seconds */,
+    RECONNECT_ATTEMPTS: 240 /* 240 * 4 = 1 hour ? */,
+    RECONNECT_DELAY: 15 * 1000 /* 15 seconds */,
     DISPLAY_DURATION: 7 * 1000 /* 7 seconds */,
     FADE_DURATION: 500 /* 500 milliseconds */,
     SUPPORTED_VIDEO_FORMATS: /\.(mp4|webm|mkv|mov)$/i,
@@ -34,6 +34,7 @@ function initializeSocket(serverUrl) {
     socket.on('disconnect', handleDisconnect);
     socket.on('connect_error', handleConnectError);
     socket.on('broadcast', handleBroadcast);
+    socket.on('updateConnectionStatus', updateConnectionStatus)
 }
 
 function handleConnect() {
@@ -43,12 +44,12 @@ function handleConnect() {
     const guildId = new URLSearchParams(window.location.search).get('guildId');
 
     if (!username) {
-        updateConnectionStatus(false, 'Erreur de configuration: ?username param missing');
+        updateConnectionStatus(false, "Le paramètre ?username est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.", 300000);
         return;
     }
 
     if (!guildId) {
-        updateConnectionStatus(false, 'Erreur de configuration: ?guildId param missing');
+        updateConnectionStatus(false, 'Le paramètre ?guildId est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.', 300000);
         return;
     }
 
@@ -291,7 +292,7 @@ function handleMediaError(error) {
     processNextContent();
 }
 
-function updateConnectionStatus(connected, message = '') {
+function updateConnectionStatus(connected, message = '', timeout = 5000) {
     if (statusTimeout) {
         clearTimeout(statusTimeout);
     }
@@ -317,7 +318,7 @@ function updateConnectionStatus(connected, message = '') {
         setTimeout(() => {
             elements.connectionStatus.style.display = 'none';
         }, 500);
-    }, 5000);
+    }, timeout);
 
     isDisconnected = !connected;
 }
