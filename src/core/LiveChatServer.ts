@@ -62,46 +62,70 @@ export class LiveChatServer {
         this.io.on('connection', (socket) => {
             socket.on('register', (data: { username: string; guildId: string }) => {
                 if (data.username.length > 25 || data.username.length < 3) {
-                    socket.emit('updateConnectionStatus', false, "Le nom d'utilisateur est trop court ou trop long.", 300000)
+                    socket.emit(
+                        'updateConnectionStatus',
+                        false,
+                        "Le nom d'utilisateur est trop court ou trop long.",
+                        300000,
+                    );
                     socket.disconnect();
                     return;
                 }
 
                 const usernamePattern = /^[a-zA-Z0-9_\-]+$/;
                 if (!usernamePattern.test(data.username)) {
-                    socket.emit('updateConnectionStatus', false, "Le nom d'utilisateur contient des caractères non autorisés.", 300000)
+                    socket.emit(
+                        'updateConnectionStatus',
+                        false,
+                        "Le nom d'utilisateur contient des caractères non autorisés.",
+                        300000,
+                    );
                     socket.disconnect();
                     return;
                 }
 
                 if (data.guildId.length > 20 || data.guildId.length < 12) {
-                    socket.emit('updateConnectionStatus', false, "L'identifiant du serveur ne correspond à aucun serveur existant.", 300000)
+                    socket.emit(
+                        'updateConnectionStatus',
+                        false,
+                        "L'identifiant du serveur ne correspond à aucun serveur existant.",
+                        300000,
+                    );
                     socket.disconnect();
                     return;
                 }
 
                 const guildIdPattern = /^[0-9]+$/;
                 if (!guildIdPattern.test(data.guildId)) {
-                    socket.emit('updateConnectionStatus', false, "L'identifiant du serveur contient des caractères non autorisés.", 300000)
+                    socket.emit(
+                        'updateConnectionStatus',
+                        false,
+                        "L'identifiant du serveur contient des caractères non autorisés.",
+                        300000,
+                    );
                     socket.disconnect();
                     return;
                 }
-               
+
                 // TODO: Retourne une erreur [object Object sur le serveur mais pas sur mon PC]
-                this.discordClient.guilds.fetch(data.guildId).then(r => {
-                    const err: string = "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.";
-                    if (r.id) {
-                        "ok";
-                    } else {
-                        socket.emit('updateConnectionStatus', false, err, 300000)
+                this.discordClient.guilds
+                    .fetch(data.guildId)
+                    .then((r) => {
+                        const err: string =
+                            "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.";
+                        if (r.id) {
+                            ('ok');
+                        } else {
+                            socket.emit('updateConnectionStatus', false, err, 300000);
+                            socket.disconnect();
+                            return;
+                        }
+                    })
+                    .catch((err) => {
+                        socket.emit('updateConnectionStatus', false, err, 300000);
                         socket.disconnect();
                         return;
-                    }
-                }).catch(err => {
-                    socket.emit('updateConnectionStatus', false, err, 300000)
-                    socket.disconnect();
-                    return;
-                });
+                    });
 
                 this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
                 this.discordClient.updateActivity(this.connectedStreamers.size);

@@ -34,7 +34,7 @@ function initializeSocket(serverUrl) {
     socket.on('disconnect', handleDisconnect);
     socket.on('connect_error', handleConnectError);
     socket.on('broadcast', handleBroadcast);
-    socket.on('updateConnectionStatus', updateConnectionStatus)
+    socket.on('updateConnectionStatus', updateConnectionStatus);
 }
 
 function handleConnect() {
@@ -44,12 +44,20 @@ function handleConnect() {
     const guildId = new URLSearchParams(window.location.search).get('guildId');
 
     if (!username) {
-        updateConnectionStatus(false, "Le paramètre ?username est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.", 300000);
+        updateConnectionStatus(
+            false,
+            'Le paramètre ?username est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
+            300000,
+        );
         return;
     }
 
     if (!guildId) {
-        updateConnectionStatus(false, 'Le paramètre ?guildId est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.', 300000);
+        updateConnectionStatus(
+            false,
+            'Le paramètre ?guildId est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
+            300000,
+        );
         return;
     }
 
