@@ -28,7 +28,7 @@ export namespace Tenor {
         return false;
     };
 
-    export const fetchDirectUrl = async (url: string): Promise<string | null> => {
+    export const fetchDirectUrl = async (url: string): Promise<string> => {
         try {
             const parts = url.split('-');
             const gifId = parts[parts.length - 1];
@@ -39,29 +39,27 @@ export namespace Tenor {
 
             const response = await fetch(apiUrl);
             if (!response.ok) return null;
-            const data = await response.json();
+            const data: any = await response.json();
 
             if (
-                typeof data === 'object' &&
-                data !== null &&
-                Array.isArray((data as any).results) &&
-                (data as any).results[0] &&
-                (data as any).results[0].media_formats &&
-                (data as any).results[0].media_formats.gif &&
-                (data as any).results[0].media_formats.gif.url
+                data &&
+                Array.isArray(data.results) &&
+                data.results[0] &&
+                data.results[0].media_formats &&
+                data.results[0].media_formats.gif &&
+                data.results[0].media_formats.gif.url
             ) {
-                return (data as any).results[0].media_formats.gif.url;
+                return data.results[0].media_formats.gif.url;
             }
 
             // Fallback pour certains GIFs qui n'ont pas le format gif mais webm/mp4
             if (
-                typeof data === 'object' &&
-                data !== null &&
-                Array.isArray((data as any).results) &&
-                (data as any).results[0] &&
-                (data as any).results[0].media_formats
+                data &&
+                Array.isArray(data.results) &&
+                data.results[0] &&
+                data.results[0].media_formats
             ) {
-                const formats = (data as any).results[0].media_formats;
+                const formats = data.results[0].media_formats;
                 if (formats.mediumgif && formats.mediumgif.url) return formats.mediumgif.url;
                 if (formats.tinygif && formats.tinygif.url) return formats.tinygif.url;
                 if (formats.mp4 && formats.mp4.url) return formats.mp4.url;
