@@ -138,7 +138,7 @@ body {
     right: 0;
     margin: 0 auto;
     color: rgba(255, 255, 255, 0.95);
-    font-size: 32px;
+    font-size: 38px;
     font-weight: 400;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 1);
     white-space: normal;
@@ -147,9 +147,8 @@ body {
     opacity: 0;
     transition: opacity 0.5s ease;
     width: fit-content;
-    max-width: 60vw;
+    max-width: 35vw;
     text-align: center;
-    letter-spacing: 0.5px;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -164,9 +163,7 @@ body {
 
 .content-text.fullscreen {
     bottom: 24px;
-    font-size: 36px;
-    max-width: 60vw;
-    letter-spacing: 0.8px;
+    max-width: 40vw;
     white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;

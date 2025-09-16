@@ -4,7 +4,7 @@ const SERVER_URL =
 const CONFIG = {
     RECONNECT_ATTEMPTS: 240 /* 240 * 4 = 1 hour ? */,
     RECONNECT_DELAY: 15 * 1000 /* 15 seconds */,
-    DISPLAY_DURATION: 7 * 1000 /* 7 seconds */,
+    DISPLAY_DURATION: 8 * 1000 /* 8 seconds */,
     FADE_DURATION: 500 /* 500 milliseconds */,
     SUPPORTED_VIDEO_FORMATS: /\.(mp4|webm|mkv|mov)$/i,
     SUPPORTED_AUDIO_FORMATS: /\.(mp3|wav|ogg)$/i,
@@ -105,7 +105,7 @@ function processNextContent() {
         handleUserInfos(from, fullscreen);
 
         cleanupCurrentContent(() => {
-            const element = createContentElement(content, from, fullscreen, text);
+            const element = createContentElement(content);
             if (element) {
                 displayContent(element, fullscreen, text);
             }
@@ -239,7 +239,7 @@ function createTextElement(text, fullscreen) {
         textElement.classList.add('fullscreen');
     }
 
-    document.body.appendChild(textElement);
+    elements.contentContainer.appendChild(textElement);
 
     void textElement.offsetWidth;
     textElement.classList.add('fade-in');
