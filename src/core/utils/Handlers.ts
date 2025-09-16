@@ -20,6 +20,7 @@ import Command from '../commands/Command';
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
 import { Logger } from '../utils/Logger';
+import { Functions } from './Functions';
 
 export namespace Handlers {
     export const setupEventsListeners = (client: DiscordClient) => {
@@ -78,16 +79,18 @@ export namespace Handlers {
         const cmd = client.commands.get(commandName);
 
         if (!cmd) {
-            return interaction.reply({ content: "Cette commande n'existe pas.", flags: [MessageFlags.Ephemeral] });
+            const embed = Functions.buildEmbed("Cette commande n'existe pas.", "Error")
+            return interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
         }
 
         try {
             await cmd.onExecute(interaction);
         } catch (err) {
+            const embed = Functions?.buildEmbed(err.message, "Error")
             if (interaction.deferred) {
-                await interaction.editReply({ content: err.message });
+                await interaction.editReply({ embeds: [embed] });
             } else {
-                await interaction.reply({ content: err.message, flags: [MessageFlags.Ephemeral] });
+                await interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
             }
 
             Logger.error('Handlers', err, {
