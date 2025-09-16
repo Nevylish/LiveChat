@@ -18,6 +18,7 @@
 import { Tenor } from '../modules/Tenor';
 import { version } from '../../../package.json';
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { Twitter } from '../modules/Twitter';
 
 export namespace Functions {
     const addCopyrightFooter = (embed: EmbedBuilder): void => {
@@ -67,17 +68,20 @@ export namespace Functions {
 
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase() || '';
 
+        // Manque Twitter mais c'est un peu de la merde cette fonction
         if (['jpg', 'jpeg', 'png'].includes(extension)) {
+            if (Twitter.validateDirectUrl(url)) return 'Image Twitter';
             filetype = 'Image';
         } else if (extension === 'gif') {
-            if (Tenor.validateDirectUrl(url)) {
-                filetype = 'Image animée Tenor';
-            } else {
-                filetype = 'Image animée';
-            }
+            if (Tenor.validateDirectUrl(url)) return 'Image animée Tenor';
+            if (Twitter.validateDirectUrl(url)) return 'Image animée Twitter';
+            filetype = 'Image animée Tenor';
         } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
+            if (Tenor.validateDirectUrl(url)) return 'Vidéo Tenor';
+            if (Twitter.validateDirectUrl(url)) return 'Vidéo Twitter';
             filetype = 'Vidéo';
         } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
+            if (Twitter.validateDirectUrl(url)) return 'Audio Twitter';
             filetype = 'Audio';
         }
         return filetype;

@@ -21,6 +21,7 @@ import DiscordClient from '../DiscordClient';
 import { Logger } from '../utils/Logger';
 import { Tenor } from '../modules/Tenor';
 import { Functions } from '../utils/Functions';
+import { Twitter } from '../modules/Twitter';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -105,6 +106,19 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
+        if (Twitter.isStatusUrl(url)) {
+            const directUrl = await Twitter.parseDirectUrl(url);
+            if (!directUrl) {
+                const embed = Functions.buildEmbed(
+                    "Impossible de récupérer le média de ce Tweet. Vérifiez le lien.",
+                    'Alert',
+                );
+                await interaction.editReply({ embeds: [embed] });
+                return;
+            }
+            url = directUrl;
+        }
+
         if (Tenor.isShortenedUrl(url)) {
             const directUrl = await Tenor.fetchDirectUrl(url);
             if (!directUrl) {
@@ -118,10 +132,14 @@ export default class LiveChatCommand extends Command {
             url = directUrl;
         }
 
-        const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
+        const extension = url.split('.').pop()?.toLowerCase();
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
-        if ((!extension || !supportedFormats.includes(extension)) && !Tenor.validateDirectUrl(url)) {
+        if (
+            (!extension || !supportedFormats.includes(extension)) && 
+            !Tenor.validateDirectUrl(url) && 
+            !Twitter.validateDirectUrl(url)
+        ) {
             const embed = Functions.buildEmbed(
                 `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\nLes liens Tenor sont également acceptés.`,
                 'Alert',
