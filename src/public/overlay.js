@@ -152,6 +152,8 @@ function createContentElement(content) {
 
         const element = document.createElement(isVideo ? 'video' : isAudio ? 'audio' : 'img');
         element.src = content;
+        element.classList.add('content');
+        element.style.opacity = "0";
 
         if (isVideo || isAudio) {
             element.controls = true;
@@ -215,8 +217,10 @@ function displayContent(element, fullscreen, text) {
     currentContent = element;
     elements.contentContainer.style.display = 'block';
     if (fullscreen) {
+        currentContent.classList.add('fullscreen');
         elements.contentContainer.classList.add('fullscreen');
     } else {
+        currentContent.classList.remove('fullscreen');
         elements.contentContainer.classList.remove('fullscreen');
     }
 
@@ -261,8 +265,9 @@ function removeContent(element, callback) {
     if (callback) callback();
 }
 
-function handleUserInfos(from) {
+function handleUserInfos(from, fullscreen) {
     let userInfoElement = document.querySelector('.user-info');
+
     if (!userInfoElement) {
         userInfoElement = document.createElement('div');
         userInfoElement.className = 'user-info';
@@ -282,15 +287,30 @@ function handleUserInfos(from) {
 
     const usernameDiv = document.createElement('div');
     usernameDiv.className = 'user-username';
-    usernameDiv.textContent = from.username;
+    // TODO: displayname est toujours null
+    usernameDiv.textContent = from.displayname ?? from.username;
     userInfoElement.appendChild(usernameDiv);
+    
+    elements.contentContainer.appendChild(userInfoElement);
 
     userInfoElement.style.display = 'flex';
 
     void userInfoElement.offsetWidth;
 
+    if (fullscreen) {
+        userInfoElement.classList.add('fullscreen');
+        avatarContainer.classList.add('fullscreen');
+        avatarImg.classList.add('fullscreen');
+    } else {
+        userInfoElement.classList.remove('fullscreen');
+        avatarContainer.classList.remove('fullscreen');
+        avatarImg.classList.remove('fullscreen');
+    }
+
+    avatarImg.classList.remove('fade-in', 'fade-out');
     userInfoElement.classList.remove('fade-in', 'fade-out');
     setTimeout(() => {
+        avatarImg.classList.add('fade-in');
         userInfoElement.classList.add('fade-in');
     }, 50);
 }
