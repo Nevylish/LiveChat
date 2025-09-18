@@ -160,8 +160,6 @@ export default class LiveChatCommand extends Command {
             
             if ("Audio".includes(filetype)) fullscreen = true;
 
-            console.log('displayname: ' + interaction.user.displayName + " username: " + interaction.user.username);
-
             this.client.livechat.io.to(streamerData.socketId).emit('broadcast', {
                 content: url,
                 from: interaction.user,
