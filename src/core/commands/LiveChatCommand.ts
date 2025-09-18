@@ -80,7 +80,7 @@ export default class LiveChatCommand extends Command {
         const target = interaction.options.getString('cible') as string;
         let url = interaction.options.getString('url') as string;
         const text = (interaction.options.getString('texte') as string) ?? null;
-        const fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
+        let fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
 
         await interaction.deferReply({ ephemeral: true });
 
@@ -156,6 +156,12 @@ export default class LiveChatCommand extends Command {
         }
 
         try {
+            let filetype = Functions.getFileType(url);
+            
+            if ("Audio".includes(filetype)) fullscreen = true;
+
+            console.log('displayname: ' + interaction.user.displayName + " username: " + interaction.user.username);
+
             this.client.livechat.io.to(streamerData.socketId).emit('broadcast', {
                 content: url,
                 from: interaction.user,
@@ -163,11 +169,9 @@ export default class LiveChatCommand extends Command {
                 text,
             });
 
-            let filetype = Functions.getFileType(url);
-
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé sur le stream de ${target}` +
-                    `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen ? ' en plein écran' : ''}**` +
+                    `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen && !"Audio".includes(filetype) ? ' en plein écran' : ''}**` +
                     `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
                 'Good',
             );
