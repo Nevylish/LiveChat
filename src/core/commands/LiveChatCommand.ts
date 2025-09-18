@@ -132,7 +132,7 @@ export default class LiveChatCommand extends Command {
             url = directUrl;
         }
 
-        const extension = url.split('.').pop()?.toLowerCase();
+        const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
         if (
