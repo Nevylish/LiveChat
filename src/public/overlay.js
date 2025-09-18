@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2025 LiveChat by Nevylish
+ */
+
 const SERVER_URL =
     window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://${window.location.hostname}`;
 
