@@ -56,7 +56,7 @@ export namespace Functions {
         return embed;
     };
 
-    export const getFileType = (url: string) => {
+    export const getFileType = (url: string): string => {
         let filetype = 'Inconnu';
         let parsedUrl: URL;
 
