@@ -27,6 +27,7 @@ let contentQueue = [];
 let isProcessingQueue = false;
 let statusTimeout = null;
 let isDisconnected = false;
+let splashScreenDisplayed = false;
 
 function initializeSocket(serverUrl) {
     socket = io(serverUrl, {
@@ -65,7 +66,7 @@ function handleConnect() {
         return;
     }
 
-    if (!noSplash) {
+    if (!noSplash && !splashScreenDisplayed) {
         displaySplashScreen();
     }
 
@@ -80,6 +81,7 @@ function displaySplashScreen() {
         splashContainer.appendChild(img);
         img.classList.remove('fade-in', 'fade-out');
         img.classList.add('fade-in');
+        splashScreenDisplayed = true;
 
         setTimeout(() => {
             img.classList.add('fade-out');
