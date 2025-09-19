@@ -19,6 +19,28 @@ body {
     font-family: Arial, sans-serif;
 }
 
+#splash-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 65vw;
+    max-height: 80vh;
+}
+
+#splash-container img {
+    max-width: 65vw;
+    max-height: 80vh;
+    min-width: 55vw;
+    z-index: 999;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
+    /* border: 4px solid rgb(255, 0, 0); */
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    object-fit: contain;
+}
+
 #content-container {
     position: fixed;
     top: 50%;
@@ -54,6 +76,7 @@ body {
     display: none;
 }
 
+/* TODO: Régler correctement les taills minimum */
 .content {
     width: fit-content;
     height: fit-content; 

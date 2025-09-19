@@ -16,6 +16,7 @@ const CONFIG = {
 
 const elements = {
     contentContainer: document.getElementById('content-container'),
+    splashContainer: document.getElementById('splash-container'),
     connectionStatus: document.getElementById('connection-status'),
 };
 
@@ -42,10 +43,9 @@ function initializeSocket(serverUrl) {
 }
 
 function handleConnect() {
-    updateConnectionStatus(true);
-
     const username = new URLSearchParams(window.location.search).get('username');
     const guildId = new URLSearchParams(window.location.search).get('guildId');
+    const noSplash = new URLSearchParams(window.location.search).get('noSplash');
 
     if (!username) {
         updateConnectionStatus(
@@ -65,16 +65,41 @@ function handleConnect() {
         return;
     }
 
+    if (!noSplash) {
+        displaySplashScreen();
+    }
+
     socket.emit('register', { username, guildId });
 }
 
+function displaySplashScreen() {
+    const splashContainer = elements.splashContainer;
+    if (splashContainer) {
+        const img = document.createElement('img');
+        img.src = '/assets/images/splash.png';
+        splashContainer.appendChild(img);
+        img.classList.remove('fade-in', 'fade-out');
+        img.classList.add('fade-in');
+
+        setTimeout(() => {
+            img.classList.add('fade-out');
+            img.classList.remove('fade-in');
+            setTimeout(() => {
+                if (img.parentNode) {
+                    img.parentNode.removeChild(img);
+                }
+            }, 200);
+        }, 12000);
+    }
+}
+
 function handleDisconnect() {
-    updateConnectionStatus(false);
+    updateConnectionStatus(false, 'Connexion au serveur perdue');
 }
 
 function handleConnectError(error) {
     console.error('Erreur de connexion\n', error);
-    updateConnectionStatus(false, 'Serveur injoignable');
+    updateConnectionStatus(false, 'Connexion au serveur impossible');
 }
 
 function handleBroadcast({ content, from, fullscreen, text }) {
@@ -337,7 +362,7 @@ function updateConnectionStatus(connected, message = '', timeout = 5000) {
     elements.connectionStatus.classList.remove('fade-out');
     elements.connectionStatus.className = connected ? 'connected' : 'disconnected';
     elements.connectionStatus.textContent = connected
-        ? 'Connecté au LiveChat'
+        ? `Connecté au LiveChat${message ? `${message}` : ''}`
         : `Déconnecté du LiveChat${message ? `: ${message}` : ''}`;
 
     void elements.connectionStatus.offsetWidth;
