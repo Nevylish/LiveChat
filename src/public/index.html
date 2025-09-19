@@ -107,6 +107,15 @@
                             oninput="validateGuildId(this)"
                         />
                     </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="disableSplash" />
+                            <span class="checkmark"></span>
+                            Désactiver l'écran de démarrage
+                        </label>
+                    </div>
+                    
                     <button class="btn" onclick="generateLink()">Générer mon lien d'overlay</button>
                     <div id="linkContainer" style="display: none">
                         <div class="code-block">
@@ -148,6 +157,7 @@
             function generateLink() {
                 const username = document.getElementById('username').value;
                 const guildId = document.getElementById('guildId').value;
+                const noSplash = document.getElementById('disableSplash').checked;
 
                 if (!username || !guildId) {
                     alert('Veuillez remplir tous les champs.');
@@ -159,7 +169,7 @@
                     return;
                 }*/
 
-                const link = `https://${window.location.host}/overlay.html?username=${username}&guildId=${guildId}`;
+                const link = `https://${window.location.host}/overlay.html?username=${username}&guildId=${guildId}${noSplash ? '&noSplash=true' : ''}`;
                 document.getElementById('generatedLink').textContent = link;
                 document.getElementById('linkContainer').style.display = 'block';
             }
