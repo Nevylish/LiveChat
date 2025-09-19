@@ -94,29 +94,37 @@ export class LiveChatServer {
                     return;
                 }
 
-                // TODO: Retourne une erreur [object Object] sur le serveur mais pas sur mon PC
                 this.discordClient.guilds
                     .fetch(data.guildId)
-                    .then((r) => {
-                        const err: string =
-                            "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.";
-                        if (r.id) {
-                            ('ok');
+                    .then((guild) => {
+                        if (guild) {
+                            this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
+                            this.discordClient.updateActivity(this.connectedStreamers.size);
+
+                            if (guild.name) socket.emit('updateConnectionStatus', true, ` pour le serveur Discord ${guild.name}`);
+                            else socket.emit('updateConnectionStatus', true);
+                            Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
                         } else {
-                            socket.emit('updateConnectionStatus', false, err, 300000);
+                            socket.emit(
+                                'updateConnectionStatus',
+                                false,
+                                "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
+                                30000
+                            );
                             socket.disconnect();
                             return;
                         }
                     })
-                    .catch((err) => {
-                        socket.emit('updateConnectionStatus', false, err, 300000);
+                    .catch(() => {
+                        socket.emit(
+                            'updateConnectionStatus',
+                            false,
+                            "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
+                            30000
+                        );
                         socket.disconnect();
                         return;
                     });
-
-                this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
-                this.discordClient.updateActivity(this.connectedStreamers.size);
-                Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
             });
 
             socket.on('disconnect', () => {
