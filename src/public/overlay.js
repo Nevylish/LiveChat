@@ -90,8 +90,8 @@ function displaySplashScreen() {
                 if (img.parentNode) {
                     img.parentNode.removeChild(img);
                 }
-            }, 200);
-        }, 12000);
+            }, 500);
+        }, 15000);
     }
 }
 
