@@ -77,7 +77,7 @@ function displaySplashScreen() {
     const splashContainer = elements.splashContainer;
     if (splashContainer) {
         const img = document.createElement('img');
-        img.src = '/assets/images/splash.png';
+        img.src = '/assets/images/splash.png?v=1.2.1';
         splashContainer.appendChild(img);
         img.classList.remove('fade-in', 'fade-out');
         img.classList.add('fade-in');

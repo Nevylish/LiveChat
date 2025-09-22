@@ -140,8 +140,30 @@ export class LiveChatServer {
         });
     }
 
+    // Pour le cache, c'est l'IA de Cursor qui a ajouté les headers, OBS est différent d'un navigateur classique 
+    // et j'ai un peu de mal à comprendre quoi faire pour assurer la mise à jour correcte des fichers d'Overlay
     private setupMiddlewares(): void {
-        this.app.use(express.static(path.join(__dirname, '..', '..', 'dist', 'public')));
+        this.app.use(
+            express.static(path.join(__dirname, '..', '..', 'dist', 'public'), {
+                etag: true,
+                lastModified: true,
+                cacheControl: true,
+                setHeaders: (res, filePath) => {
+                    const lower = filePath.toLowerCase();
+                    // Par défaut: forcer la revalidation (ETag/If-None-Match) pour OBS
+                    // Cela garantit une mise à jour immédiate en cas de changement
+                    // tout en limitant la bande passante via des réponses 304 si inchangé.
+                    let cacheControl = 'public, no-cache';
+
+                    // HTML doit toujours être revalidé
+                    if (lower.endsWith('.html')) {
+                        cacheControl = 'no-cache';
+                    }
+
+                    res.setHeader('Cache-Control', cacheControl);
+                },
+            }),
+        );
     }
 
     private setupRoutes(): void {
