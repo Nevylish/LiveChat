@@ -47,6 +47,8 @@ export default class LiveChatCommand extends Command {
         });
     }
 
+    everyone: string = '📌 Envoyer à tous les streameurs connectés';
+
     async onAutocomplete(interaction: AutocompleteInteraction): Promise<void> {
         const focusedOption = interaction.options.getFocused(true);
 
@@ -55,9 +57,19 @@ export default class LiveChatCommand extends Command {
                 .filter(([_, data]) => data.guildId === interaction.guildId)
                 .map(([streamer]) => streamer);
 
-            const filtered = streamers.filter((streamer) =>
+            let filtered = streamers.filter((streamer) =>
                 streamer.toLowerCase().includes(focusedOption.value.toLowerCase()),
             );
+
+            if (
+                streamers.length >= 2 &&
+                (focusedOption.value === '')
+            ) {
+                filtered = [
+                    this.everyone,
+                    ...filtered.filter((s) => s.toLowerCase() !== this.everyone.toLowerCase()),
+                ];
+            }
 
             await interaction.respond(filtered.map((streamer) => ({ name: streamer, value: streamer })));
         }
@@ -97,7 +109,7 @@ export default class LiveChatCommand extends Command {
             const directUrl = await Twitter.parseDirectUrl(url);
             if (!directUrl) {
                 const embed = Functions.buildEmbed(
-                    "Impossible de récupérer le média de ce Tweet. Vérifiez le lien.",
+                    'Impossible de récupérer le média de ce Tweet. Vérifiez le lien.',
                     'Alert',
                 );
                 await interaction.editReply({ embeds: [embed] });
@@ -123,8 +135,8 @@ export default class LiveChatCommand extends Command {
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
         if (
-            (!extension || !supportedFormats.includes(extension)) && 
-            !Tenor.validateDirectUrl(url) && 
+            (!extension || !supportedFormats.includes(extension)) &&
+            !Tenor.validateDirectUrl(url) &&
             !Twitter.validateDirectUrl(url)
         ) {
             const embed = Functions.buildEmbed(
@@ -135,6 +147,72 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
+        if (target === this.everyone) {
+            this.broadcastToStreamers(interaction, url, fullscreen, text);
+        } else {
+            this.broadcastToStreamer(interaction, target, url, fullscreen, text);
+        }
+    }
+
+    async broadcastToStreamers(
+        interaction: ChatInputCommandInteraction,
+        url: string,
+        fullscreen: boolean,
+        text: string,
+    ) {
+        const streamers = Array.from(this.client.livechat.connectedStreamers.entries()).filter(
+            ([streamer, data]) => data.guildId === interaction.guildId,
+        );
+
+        if (streamers.length === 0) {
+            const embed = Functions.buildEmbed("Aucun streameur n'est connecté sur ce serveur.", 'Alert');
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+
+        try {
+            let streamsList: string = '';
+            let filetype = Functions.getFileType(url);
+
+            if ('Audio'.includes(filetype)) fullscreen = true;
+
+            for (const streamer of streamers) {
+                this.client.livechat.io.to(streamer[1].socketId).emit('broadcast', {
+                    content: url,
+                    from: interaction.user,
+                    fullscreen,
+                    text,
+                });
+
+                streamsList = streamsList +
+                `\n➜ [**Appuyez ici pour rejoindre le stream de ${streamer[0]}**](https://twitch.tv/${streamer[0]})`;
+
+            }
+
+            const embed = Functions.buildEmbed(
+                `### LiveChat envoyé à tous les streameurs connectés` +
+                    `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen && !'Audio'.includes(filetype) ? ' en plein écran' : ''}**` +
+                    `\n${streamsList}`,
+                'Good',
+            );
+            await interaction.editReply({ embeds: [embed] });
+        } catch (err) {
+            Logger.error('LiveChatCommand', err.message);
+            const embed = Functions.buildEmbed(
+                `Une erreur est survenue lors de l'envoi du LiveChat.\n${err.message}`,
+                'Error',
+            );
+            await interaction.editReply({ embeds: [embed] });
+        }
+    }
+
+    async broadcastToStreamer(
+        interaction: ChatInputCommandInteraction,
+        target: string,
+        url: string,
+        fullscreen: boolean,
+        text: string,
+    ) {
         const streamerData = this.client.livechat.connectedStreamers.get(target);
         if (!streamerData || streamerData.guildId !== interaction.guildId) {
             const embed = Functions.buildEmbed(`${target} n'est pas connecté sur ce serveur.`, 'Alert');
@@ -144,8 +222,8 @@ export default class LiveChatCommand extends Command {
 
         try {
             let filetype = Functions.getFileType(url);
-            
-            if ("Audio".includes(filetype)) fullscreen = true;
+
+            if ('Audio'.includes(filetype)) fullscreen = true;
 
             this.client.livechat.io.to(streamerData.socketId).emit('broadcast', {
                 content: url,
@@ -156,7 +234,7 @@ export default class LiveChatCommand extends Command {
 
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé sur le stream de ${target}` +
-                    `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen && !"Audio".includes(filetype) ? ' en plein écran' : ''}**` +
+                    `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen && !'Audio'.includes(filetype) ? ' en plein écran' : ''}**` +
                     `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
                 'Good',
             );
