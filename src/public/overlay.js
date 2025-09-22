@@ -184,7 +184,7 @@ function createContentElement(content) {
         const element = document.createElement(isVideo ? 'video' : isAudio ? 'audio' : 'img');
         element.src = content;
         element.classList.add('content');
-        element.style.opacity = "0";
+        element.style.opacity = '0';
 
         if (isVideo || isAudio) {
             element.controls = true;
@@ -321,7 +321,7 @@ function handleUserInfos(from, fullscreen) {
     // TODO: displayname est toujours null
     usernameDiv.textContent = from.displayname ?? from.username;
     userInfoElement.appendChild(usernameDiv);
-    
+
     elements.contentContainer.appendChild(userInfoElement);
 
     userInfoElement.style.display = 'flex';

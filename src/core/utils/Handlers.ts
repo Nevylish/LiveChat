@@ -66,14 +66,14 @@ export namespace Handlers {
         const cmd = client.commands.get(commandName);
 
         if (!cmd) {
-            const embed = Functions.buildEmbed("Cette commande n'existe pas.", "Error")
+            const embed = Functions.buildEmbed("Cette commande n'existe pas.", 'Error');
             return interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
         }
 
         try {
             await cmd.onExecute(interaction);
         } catch (err) {
-            const embed = Functions?.buildEmbed(err.message, "Error")
+            const embed = Functions?.buildEmbed(err.message, 'Error');
             if (interaction.deferred) {
                 await interaction.editReply({ embeds: [embed] });
             } else {

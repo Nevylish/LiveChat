@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 
 export namespace Twitter {
     export const isStatusUrl = (url: string): boolean => {
@@ -12,12 +12,8 @@ export namespace Twitter {
             const response = await fetch(apiUrl);
             if (!response.ok) return null;
             const data: any = await response.json();
-            
-            if (
-                data && 
-                Array.isArray(data.tweet.media.all) && 
-                data.tweet.media.all[0].url
-            ) {
+
+            if (data && Array.isArray(data.tweet.media.all) && data.tweet.media.all[0].url) {
                 return data.tweet.media.all[0].url;
             }
 
@@ -25,7 +21,7 @@ export namespace Twitter {
         } catch {
             return null;
         }
-    }
+    };
 
     export const validateDirectUrl = (url: string): boolean => {
         if (url.includes('.twimg.com/')) return true;

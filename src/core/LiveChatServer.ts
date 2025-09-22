@@ -101,7 +101,8 @@ export class LiveChatServer {
                             this.connectedStreamers.set(data.username, { socketId: socket.id, guildId: data.guildId });
                             this.discordClient.updateActivity(this.connectedStreamers.size);
 
-                            if (guild.name) socket.emit('updateConnectionStatus', true, ` pour le serveur Discord: ${guild.name}`);
+                            if (guild.name)
+                                socket.emit('updateConnectionStatus', true, ` pour le serveur Discord: ${guild.name}`);
                             else socket.emit('updateConnectionStatus', true);
                             Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
                         } else {
@@ -109,7 +110,7 @@ export class LiveChatServer {
                                 'updateConnectionStatus',
                                 false,
                                 "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
-                                30000
+                                30000,
                             );
                             socket.disconnect();
                             return;
@@ -120,7 +121,7 @@ export class LiveChatServer {
                             'updateConnectionStatus',
                             false,
                             "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
-                            30000
+                            30000,
                         );
                         socket.disconnect();
                         return;

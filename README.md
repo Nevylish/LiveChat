@@ -13,7 +13,8 @@ Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.f
 ### Pour les streameurs
 
 1. **Ajoutez le bot & Récupérez le lien de votre Overlay**
-    -  Allez sur [https://livechat.nevylish.fr](https://livechat.nevylish.fr) pour les deux.
+
+    - Allez sur [https://livechat.nevylish.fr](https://livechat.nevylish.fr) pour les deux.
 
 2. **Configurez OBS Studio** :
 
@@ -44,6 +45,7 @@ Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.f
 LiveChat supporte les liens directs vers des médias ainsi que les liens Tenor et X (anciennement Twitter), l'ajout d'autres plateformes est prévu.
 
 Voici comment partager vos médias :
+
 1. Téléchargez votre média sur votre pc (notube.lol pour YouTube par exemple)
 2. Envoyez votre média dans un canal Discord (formats acceptés : .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg, .png, .gif)
 3. Faites un clic droit sur le fichier et sélectionnez "Copier le lien"
@@ -157,7 +159,7 @@ Ce projet est ouvert aux contributions !
 
 <div align="center">
 
-  <sub>Construit avec ❤️ par <a href="https://github.com/nevylish">Nevylish</a></sub>
+<sub>Construit avec ❤️ par <a href="https://github.com/nevylish">Nevylish</a></sub>
 
 ![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)
 ![Node.js](https://img.shields.io/badge/Node.js-18+-339933.svg?logo=nodedotjs)
