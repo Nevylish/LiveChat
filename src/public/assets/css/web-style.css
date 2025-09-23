@@ -59,6 +59,15 @@ body {
     background: var(--accent-color);
 }
 
+.youtube {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    display: block;
+    border: none;
+    border-radius: 5px;
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;

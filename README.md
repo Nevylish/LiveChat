@@ -4,7 +4,7 @@ LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une i
 
 Plusieurs streameurs peuvent utiliser le même serveur Discord, et les utilisateurs pourront choisir à quel streameur envoyer leur média.
 
-**Un tutoriel vidéo sera ajouté prochainement.**
+[Tutoriel vidéo: https://www.youtube.com/watch?v=C5Snzonuxx4](https://www.youtube.com/watch?v=C5Snzonuxx4)
 
 Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.fr/updates](https://livechat.nevylish.fr/updates.html)
 
