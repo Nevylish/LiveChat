@@ -72,22 +72,8 @@
                 <section class="section">
                     <h2>Configuration de l'overlay</h2>
                     <p id="paragraph">
-                        Ensuite, vous devrez rentrer les informations demandés ci-dessous puis cliquer sur le bouton <strong>Générer mon lien d'overlay</strong>.<br />
-                        Vous obtiendrez un lien que vous devrez ajouter sur OBS Studio.
+                        Pour obtenir votre lien, rentrez les informations demandées ci-dessous puis cliquez sur le bouton <strong>Générer mon lien d'overlay</strong>.
                         <br />
-                        <br />
-                        Pour cela, vous allez ajouter une source <strong>Navigateur</strong> sur l'une de vos scènes,
-                        puis vous insérez le lien, changez la résolution pour celle configurée dans les paramètres d'OBS</strong>,
-                         généralement 1920x1080, cochez <strong>Contrôler l'audio via OBS</strong>, puis
-                        <strong>placez là au-dessus de toutes les autres sources.</strong>
-                        <br />
-                        <br />
-                        Pour activer le son de LiveChat: Faites un clic droit sur le <strong>mélangeur audio</strong>, allez dans les <strong>Paramètres audio avancées</strong>, trouvez la source de LiveChat et dans la catégorie Monitoring Audio sélectionnez <strong>Monitoring et sortie</strong>.
-                        <br />
-                        Vous pourrez maintenant diminuer ou augmenter le volume de LiveChat.
-                        <br />
-                        <br />
-                        Vous pouvez désormais dupliquer la source sur l'ensemble des scènes que vous souhaitez.
                     </p>
                     <div class="form-group" id="first">
                         <label for="username">Nom d'utilisateur Twitch</label>
@@ -105,7 +91,7 @@
                             Identifiant du serveur
                             <span
                                 class="info-tooltip"
-                                title="1. Activez le mode développeur dans les paramètres Discord&#10;2. Faites un clic droit sur votre serveur&#10;3. Cliquez sur 'Copier l'identifiant'"
+                                title="1. Activez le mode développeur dans les paramètres Discord&#10;2. Faites un clic droit sur l'icône de votre serveur&#10;3. Cliquez sur 'Copier l'identifiant'"
                                 >?</span
                             >
                         </label>
@@ -134,6 +120,38 @@
                             <button class="copy-btn" onclick="copyLink()">Copier</button>
                         </div>
                     </div>
+                    <p class="paragraph">
+                        <br />
+                        Maintenant que vous avez votre lien, vous allez ajouter une source <strong>Navigateur</strong> sur l'une de vos scènes,
+                        puis vous l'insérez dans la case <strong>URL</strong>.
+                        <br/>
+                        <br/>
+                        Changez la <strong>largeur et la hauteur</strong> pour celle configurée dans les paramètres d'OBS</strong>, généralement 1920 de largeur et 1080 de hauteur.
+                         <br />
+                         <br/>Cochez <strong>Contrôler l'audio via OBS</strong>, cela est obligatoire pour les prochaines étapes.
+                         <br />
+                         <br />
+                         <strong>Dans la partie CSS personnalisé</strong>, copiez et ajoutez le texte ci-dessous, cela permet de masquer la page d'erreur de Cloudflare si LiveChat est hors-ligne.
+                         <div id="cssContainer">
+                            <div class="code-block">
+                                <span id="cssCode">
+                                    #cf-wrapper {
+                                        display: none
+                                    }</span>
+                                <button class="copy-btn" onclick="copyCssCode(this)">Copier</button>
+                            </div>
+                        </div>
+                        <br />
+                        Cliquez sur <strong>OK</strong> pour valider et placez la source au dessus de toutes les autres.
+                        <br />
+                        <br />
+                        Pour activer le son de LiveChat: Faites un clic droit sur le <strong>mélangeur audio</strong>, allez dans les <strong>Paramètres audio avancées</strong>, trouvez la source de LiveChat et dans la catégorie Monitoring Audio sélectionnez <strong>Monitoring et sortie</strong>.
+                        <br />
+                        Vous pourrez maintenant diminuer ou augmenter le volume de LiveChat.
+                        <br />
+                        <br />
+                        Vous pouvez désormais dupliquer la source sur l'ensemble des scènes que vous souhaitez.
+                    </p>
                 </section>
             </main>
 
@@ -192,7 +210,17 @@
                     btn.textContent = 'Copié !';
                     setTimeout(() => {
                         btn.textContent = 'Copier';
-                    }, 2000);
+                    }, 5555);
+                });
+            }
+
+            function copyCssCode(button) {
+                const cssCode = document.getElementById('cssCode').textContent;
+                navigator.clipboard.writeText(cssCode).then(() => {
+                    button.textContent = 'Copié !';
+                    setTimeout(() => {
+                        button.textContent = 'Copier';
+                    }, 5555);
                 });
             }
         </script>
