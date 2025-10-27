@@ -23,7 +23,7 @@ export namespace Functions {
             (color === 'Error'
                 ? "\n\n-# Contactez-moi à l'adresse bonjour@nevylish.fr ou sur le repo GitHub [Nevylish/LiveChat](https://github.com/Nevylish/LiveChat)."
                 : '') +
-            `\n\n[Installer LiveChat](https://livechat.nevylish.fr)᲼•᲼[Patch notes](https://livechat.nevylish.fr/updates.html)᲼•᲼[Code source](https://github.com/Nevylish/LiveChat)`;
+            `\n\n[Installer LiveChat](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[Patch notes](https://livechat.nevylish.fr/updates.html)\u2005\u2005•\u2005\u2005[Code source](https://github.com/Nevylish/LiveChat)`;
 
         switch (color) {
             case 'Error':
