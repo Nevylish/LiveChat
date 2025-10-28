@@ -12,9 +12,9 @@
 
 :root {
     --primary-color: #5865f2;
-    --secondary-color: #2c2f33;
+    --secondary-color: #303030;
     --text-color: #dfdfdf;
-    --background-color: #1e1f22;
+    --background-color: #141414;
     --accent-color: #7289da;
     --border-radius: 8px;
 }
@@ -89,7 +89,7 @@ body {
 }
 
 .section {
-    background: rgba(89, 92, 94, 0.13);
+    background: #222222;
     padding: 1.5rem;
     border-radius: var(--border-radius);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -136,14 +136,13 @@ body {
     gap: 0.5rem;
     color: var(--text-color);
     text-decoration: none;
-    margin-bottom: 2rem;
     opacity: 0.9;
     transition: opacity 0.3s ease;
-  }
+}
   
-  .back-button:hover {
-    opacity: 1;
-  }
+.back-button:hover {
+  opacity: 1;
+}
 
 #first {
     margin-bottom: 1rem;
@@ -212,7 +211,7 @@ body {
     color: var(--text-color);
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid var(--primary-color);
+    border: 0.15rem solid var(--primary-color);
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: border-color 0.2s ease;
@@ -220,7 +219,7 @@ body {
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--accent-color);
+    border-color: #9da4f7;
 }
 
 .checkbox-group {
@@ -283,7 +282,7 @@ body {
     background-color: var(--secondary-color);
     color: #e2e8f0;
     padding: 1rem;
-    border-radius: var(--border-radius);
+    border-radius: 6px;
     margin-top: 1rem;
     position: relative;
     font-size: 1rem;
@@ -294,7 +293,7 @@ body {
     top: 0.5rem;
     right: 0.5rem;
     padding: 0.25rem 0.5rem;
-    background-color: #4a5568;
+    background-color: #5c5c5c;
     color: white;
     border: none;
     border-radius: 4px;
@@ -304,7 +303,7 @@ body {
 }
 
 .copy-btn:hover {
-    background-color: #2d3748;
+    background-color: #7c7c7c;
 }
 
 .footer-links {
