@@ -10,12 +10,19 @@
     src: local('Brittany Signature'), url('../fonts/BrittanySignature-LjyZ.woff');
 }
 
+@font-face {
+    font-family: 'SuperTrend';
+    src: url('../fonts/SuperTrend.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+}
+
 :root {
-    --primary-color: #5865f2;
+    --primary-color: #4954d3;
     --secondary-color: #303030;
-    --text-color: #dfdfdf;
+    --text-color: #d4d4d4;
     --background-color: #141414;
-    --accent-color: #7289da;
+    --accent-color: #5479fd;
     --border-radius: 8px;
 }
 
@@ -84,14 +91,15 @@ body {
 
 .header h1 {
     font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    font-family: 'SuperTrend', sans-serif;
+    color: var(--accent-color);
 }
 
 .section {
     background: #222222;
     padding: 1.5rem;
     border-radius: var(--border-radius);
+    border: 0.11rem solid #444343;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 1.5rem;
 }
