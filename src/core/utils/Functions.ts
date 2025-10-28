@@ -9,7 +9,7 @@ import { Twitter } from '../modules/Twitter';
 
 export namespace Functions {
     const addCopyrightFooter = (embed: EmbedBuilder): void => {
-        embed.setFooter({ text: `© 2025 LiveChat — Tous droits réservés. | Build v${version}` });
+        embed.setFooter({ text: `© ${new Date().getFullYear()} Nevylish — LiveChat v${version}` });
     };
 
     export const buildEmbed = (

@@ -130,6 +130,21 @@ body {
     transform: translateY(-1px);
 }
 
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+  
+  .back-button:hover {
+    opacity: 1;
+  }
+
 #first {
     margin-bottom: 1rem;
 }
