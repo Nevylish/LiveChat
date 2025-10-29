@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /sitemap.xml
+
+# Sitemap location
+Sitemap: https://livechat.nevylish.fr/sitemap.xml
