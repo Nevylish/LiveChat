@@ -100,10 +100,17 @@ body {
     padding: 1.5rem;
     border-radius: var(--border-radius);
     border: 0.11rem solid #444343;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 25px 0 rgba(126, 126, 126, 0);
     margin-bottom: 1.5rem;
     position: relative;
     overflow: hidden;
+    transition: border 0.2s ease;
+    transition: box-shadow 0.2s ease;
+}
+
+.section:hover {
+    border: 0.11rem solid #686868;
+    box-shadow: 0 0 20px 0 rgba(126, 126, 126, 0.1);
 }
 
 .section::before {
