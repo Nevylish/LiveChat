@@ -12,7 +12,7 @@
         <meta name="keywords" content="OBS Studio, overlay, Discord bot, streaming, médias, viewers, live, cacabox" />
         <meta name="author" content="Nevylish" />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://livechat.nevylish.fr" />
+        <link rel="canonical" href="https://livechat.nevylish.fr/" />
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
@@ -33,7 +33,7 @@
             content="Affichez les médias partagés par vos amis directement dans votre stream avec LiveChat, l'overlay OBS Studio connecté à Discord."
         />
         <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-        
+
         <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="assets/ico/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="assets/ico/favicon-16x16.png" />
@@ -66,21 +66,20 @@
 
                 <section class="section" id="Installation">
                     <h2>1. Installation du bot Discord</h2>
-                    <p>
+                    <div>
                         Pour commencer, invitez le bot sur votre serveur <strong>privé</strong> Discord.
                         <br />
                         C'est grâce à lui que vous pourrez faire afficher du contenu sur votre overlay.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="padding-bottom: 1rem"></div>
                         Tapez <strong>/livechat</strong> dans un salon textuel pour afficher la commande.
-                        <br/>
+                        <br />
                         Nous reviendrons en profondeur sur son fonctionnement dans la troisième partie.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="padding-bottom: 1rem"></div>
                         <strong>
-                            Gardez à l'esprit que tous les membres présents sur le serveur pourront utiliser le
-                            LiveChat et faire apparaître n'importe quoi sur votre flux, n'invitez pas n'importe
-                            qui.
+                            Gardez à l'esprit que tous les membres présents sur le serveur pourront utiliser le LiveChat
+                            et faire apparaître n'importe quoi sur votre flux, n'invitez pas n'importe qui.
                         </strong>
-                    </p>
+                    </div>
                     <a
                         href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
                         class="btn"
@@ -139,29 +138,29 @@
                     </div>
 
                     <button class="btn" onclick="generateLink()">Générer mon lien d'overlay</button>
-                    <div id="linkContainer" style="display: none;">
+                    <div id="linkContainer" style="display: none">
                         <div class="code-block">
                             <span id="generatedLink"></span>
                             <button class="copy-btn" onclick="copyLink()">Copier</button>
                         </div>
                     </div>
-                    <div style="padding-bottom: 0.5rem;"></div>
-                    <div style="border-top: 1px solid #444343; margin: 1rem 0;"></div>
-                    <div style="padding-bottom: 0.3rem;"></div>
-                    <p class="paragraph">
+                    <div style="padding-bottom: 0.5rem"></div>
+                    <div style="border-top: 1px solid #444343; margin: 1rem 0"></div>
+                    <div style="padding-bottom: 0.3rem"></div>
+                    <div class="paragraph">
                         Maintenant que vous avez votre lien, vous allez ajouter une source
                         <strong>Navigateur</strong> sur l'une de vos scènes, puis vous l'insérez dans la case
                         <strong>URL</strong>.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="padding-bottom: 1rem"></div>
                         Changez la <strong>largeur et la hauteur</strong> pour celle configurée dans les paramètres
                         d'OBS, généralement 1920 de largeur et 1080 de hauteur.
-                        <div style="padding-bottom: 1rem;"></div>
-                        Cochez <strong>Contrôler l'audio via OBS</strong>, cela est obligatoire pour les
-                        prochaines étapes.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="padding-bottom: 1rem"></div>
+                        Cochez <strong>Contrôler l'audio via OBS</strong>, cela est obligatoire pour les prochaines
+                        étapes.
+                        <div style="padding-bottom: 1rem"></div>
                         <strong>Dans la partie CSS personnalisé</strong>, copiez et ajoutez le texte ci-dessous, cela
                         permet de masquer la page d'erreur de Cloudflare si LiveChat est hors-ligne.
-                    </p>
+                    </div>
 
                     <div id="cssContainer">
                         <div class="code-block">
@@ -170,58 +169,66 @@
                         </div>
                     </div>
 
-                    <p class="paragraph">
+                    <div class="paragraph">
                         <br />
                         Cliquez sur <strong>OK</strong> pour valider et placez la source au dessus de toutes les autres.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="padding-bottom: 1rem"></div>
                         Pour activer le son de LiveChat: Faites un clic droit sur le <strong>mélangeur audio</strong>,
                         allez dans les <strong>Paramètres audio avancées</strong>, trouvez la source de LiveChat et dans
                         la catégorie Monitoring Audio sélectionnez <strong>Monitoring et sortie</strong>.
-                        <div style="padding-bottom: 0.7rem;"></div>
+                        <div style="padding-bottom: 0.7rem"></div>
                         Vous pourrez maintenant diminuer ou augmenter le volume de LiveChat.
-                        <div style="padding-bottom: 0.7rem;"></div>
+                        <div style="padding-bottom: 0.7rem"></div>
                         Vous pouvez désormais dupliquer la source sur l'ensemble des scènes que vous souhaitez.
-                    </p>
+                    </div>
                 </section>
                 <section class="section" id="Utiliser">
                     <h2>3. Utiliser LiveChat</h2>
-                    <p class="paragraph">
+                    <div class="paragraph">
                         Utilisez la commande /livechat pour partager des médias, vous aurez plusieurs options à remplir:
-                        <div style="padding-bottom: 0.5rem;"></div>
-                        <ul style="margin-left: 2rem; margin-right: 2rem;">
+                        <div style="padding-bottom: 0.5rem"></div>
+                        <ul style="margin-left: 2rem; margin-right: 2rem">
                             <li>Cible: Séléctionnez le streameur dans la liste</li>
                             <li>URL: Lien brut/direct vers le fichier<sup>1</sup></li>
-                            <li>Texte: Permet d'ajouter du texte sur le bas du média avec la police d'écriture Impact (style Meme)</li>
+                            <li>
+                                Texte: Permet d'ajouter du texte sur le bas du média avec la police d'écriture Impact
+                                (style Meme)
+                            </li>
                             <li>Fullscreen: Affiche le média en plein écran</li>
                         </ul>
-                         <div style="border-top: 1px solid #444343; margin: 1rem 0;"></div>
-                         <h4><sup>1</sup> 📁 Formats de médias supportés:</h4>
-                        <div style="padding-bottom: 1rem;"></div>
-                        LiveChat supporte les liens directs vers des médias ainsi que les liens Tenor et X (anciennement Twitter), 
-                        l'ajout d'autres plateformes est prévu.
-                        <div style="padding-bottom: 1rem;"></div>
+                        <div style="border-top: 1px solid #444343; margin: 1rem 0"></div>
+                        <h4><sup>1</sup> 📁 Formats de médias supportés:</h4>
+                        <div style="padding-bottom: 1rem"></div>
+                        LiveChat supporte les liens directs vers des médias ainsi que les liens Tenor et X (anciennement
+                        Twitter), l'ajout d'autres plateformes est prévu.
+                        <div style="padding-bottom: 1rem"></div>
                         Voici comment obtenir un lien direct:
-                        <ul style="margin-left: 2rem; margin-right: 2rem;">
+                        <ul style="margin-left: 2rem; margin-right: 2rem">
                             <li>Téléchargez le média sur votre pc (notube.lol pour YouTube par exemple)</li>
-                            <li>Envoyez votre média dans un canal Discord, sur le serveur que vous avez créé pour LiveChat par exemple</li>
+                            <li>
+                                Envoyez votre média dans un canal Discord, sur le serveur que vous avez créé pour
+                                LiveChat par exemple
+                            </li>
                             <li>Faites un clic droit sur le fichier et sélectionnez "Copier le lien"</li>
                         </ul>
-                        <div style="padding-top: 0.7rem; padding-bottom: 0.7rem;">
-                            <a style="color: grey;">
-                                Formats de fichier pris en charge: .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg, .png, .gif
+                        <div style="padding-top: 0.7rem; padding-bottom: 0.7rem">
+                            <a style="color: grey">
+                                Formats de fichier pris en charge: .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg,
+                                .png, .gif
                             </a>
                         </div>
-                        ⚠️ Important: Les liens YouTube, TikTok ou autres plateformes de streaming non citées au dessus ne sont pas supportés. 
-                        Vous devez d'abord télécharger le média et pour obtenir un lien direct.
-                    </p>
+                        ⚠️ Important: Les liens YouTube, TikTok ou autres plateformes de streaming non citées au dessus
+                        ne sont pas supportés. Vous devez d'abord télécharger le média et pour obtenir un lien direct.
+                    </div>
                 </section>
 
                 <section class="section">
                     Félicitations, LiveChat est prêt!
-                    <div style="padding-bottom: 1rem;"></div>
-                    En cas de problème ou pour une demande, vous pouvez me contacter par mail à l'adresse <a class="socials" href="mailto:bonjour@nevylish.fr">bonjour@nevylish.fr</a>, 
-                    sur Twitter <a class="socials" href="https://x.com/nevylish">@Nevylish</a>
-                    ou ouvrir une issue sur GitHub <a class="socials" href="https://github.com/Nevylish/LiveChat">Nevylish/LiveChat</a>.
+                    <div style="padding-bottom: 1rem"></div>
+                    En cas de problème ou pour une demande, vous pouvez me contacter par mail à l'adresse
+                    <a class="socials" href="mailto:bonjour@nevylish.fr">bonjour@nevylish.fr</a>, sur Twitter
+                    <a class="socials" href="https://x.com/nevylish">@Nevylish</a> ou ouvrir une issue sur GitHub
+                    <a class="socials" href="https://github.com/Nevylish/LiveChat">Nevylish/LiveChat</a>.
                 </section>
             </main>
 

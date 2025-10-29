@@ -40,7 +40,6 @@ export class LiveChatServer {
         this.connectedStreamers = new Map<string, { socketId: string; guildId: string }>();
 
         this.setupMiddlewares();
-        this.setupRoutes();
         this.setupSocket();
         this.start();
     }
@@ -140,8 +139,6 @@ export class LiveChatServer {
         });
     }
 
-    // Pour le cache, c'est l'IA de Cursor qui a ajouté les headers, OBS est différent d'un navigateur classique
-    // et j'ai un peu de mal à comprendre quoi faire pour assurer la mise à jour correcte des fichers d'Overlay
     private setupMiddlewares(): void {
         this.app.use(
             express.static(path.join(__dirname, '..', '..', 'dist', 'public'), {
@@ -150,26 +147,20 @@ export class LiveChatServer {
                 cacheControl: true,
                 setHeaders: (res, filePath) => {
                     const lower = filePath.toLowerCase();
-                    // Par défaut: forcer la revalidation (ETag/If-None-Match) pour OBS
-                    // Cela garantit une mise à jour immédiate en cas de changement
-                    // tout en limitant la bande passante via des réponses 304 si inchangé.
-                    let cacheControl = 'public, no-cache';
 
-                    // HTML doit toujours être revalidé
+                    res.setHeader('X-Robots-Tag', 'index, follow');
+
                     if (lower.endsWith('.html')) {
-                        cacheControl = 'no-cache';
+                        res.setHeader('Cache-Control', 'no-cache');
+                        res.setHeader('X-Robots-Tag', 'index, follow');
+                    } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|mp4|webm)$/.test(lower)) {
+                        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+                    } else {
+                        res.setHeader('Cache-Control', 'public, no-cache');
                     }
-
-                    res.setHeader('Cache-Control', cacheControl);
                 },
             }),
         );
-    }
-
-    private setupRoutes(): void {
-        this.app.get('/', (req, res) => {
-            res.send('LiveChat est prêt');
-        });
     }
 
     private start(): void {
