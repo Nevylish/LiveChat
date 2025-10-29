@@ -109,7 +109,7 @@ body {
 }
 
 .section:hover {
-    border: 0.11rem solid #686868;
+    border: 0.11rem solid #535353;
     box-shadow: 0 0 20px 0 rgba(126, 126, 126, 0.1);
 }
 
