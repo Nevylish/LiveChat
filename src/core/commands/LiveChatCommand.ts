@@ -61,14 +61,8 @@ export default class LiveChatCommand extends Command {
                 streamer.toLowerCase().includes(focusedOption.value.toLowerCase()),
             );
 
-            if (
-                streamers.length >= 2 &&
-                (focusedOption.value === '')
-            ) {
-                filtered = [
-                    this.everyone,
-                    ...filtered.filter((s) => s.toLowerCase() !== this.everyone.toLowerCase()),
-                ];
+            if (streamers.length >= 2 && focusedOption.value === '') {
+                filtered = [this.everyone, ...filtered.filter((s) => s.toLowerCase() !== this.everyone.toLowerCase())];
             }
 
             await interaction.respond(filtered.map((streamer) => ({ name: streamer, value: streamer })));
@@ -184,9 +178,9 @@ export default class LiveChatCommand extends Command {
                     text,
                 });
 
-                streamsList = streamsList +
-                `\n➜ [**Appuyez ici pour rejoindre le stream de ${streamer[0]}**](https://twitch.tv/${streamer[0]})`;
-
+                streamsList =
+                    streamsList +
+                    `\n➜ [**Appuyez ici pour rejoindre le stream de ${streamer[0]}**](https://twitch.tv/${streamer[0]})`;
             }
 
             const embed = Functions.buildEmbed(

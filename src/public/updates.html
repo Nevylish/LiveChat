@@ -3,13 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="assets/css/web-style.css" rel="stylesheet" />
+        <link href="assets/css/web-style.css?v=1.2.2" rel="stylesheet" />
         <title>LiveChat - Patch notes</title>
         <meta
             name="description"
-            content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord."
+            content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord. Inspiré par la Cacabox."
         />
-        <meta name="keywords" content="OBS Studio, overlay, Discord bot, streaming, médias, viewers, live" />
+        <meta name="keywords" content="OBS Studio, overlay, Discord bot, streaming, médias, viewers, live, cacabox" />
         <meta name="author" content="Nevylish" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://livechat.nevylish.fr" />
@@ -22,7 +22,7 @@
             property="og:description"
             content="Affichez les médias partagés par vos amis directement dans votre stream avec LiveChat, l'overlay OBS Studio connecté à Discord."
         />
-        <meta property="og:image" content="https://livechat.nevylish.fr/assets/images/og-image.png" />
+        <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
 
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image" />
@@ -32,25 +32,35 @@
             property="twitter:description"
             content="Affichez les médias partagés par vos amis directement dans votre stream avec LiveChat, l'overlay OBS Studio connecté à Discord."
         />
-        <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/images/og-image.png" />
+        <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
+        
+        <!-- Favicons -->
+        <link rel="icon" type="image/x-icon" href="assets/ico/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/ico/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/ico/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/ico/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="assets/ico/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="assets/ico/android-chrome-512x512.png" />
+        <link rel="manifest" href="assets/ico/site.webmanifest" />
+        
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     </head>
     <body>
         <div class="container">
-    
             <header class="header">
                 <h1>LiVECHAT - PATCH NOTES</h1>
-                <a class='back-button' href='/'>
-                    <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil
-                  </a>
+                <a class="back-button" href="/"> <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil </a>
             </header>
 
             <main>
                 <section class="section">
                     <h2>V1.2 | Mise à jour du 18 Septembre 2025</h2>
                     <p>➜ L'overlay a été redesigné :</p>
-                    <ul style="margin-left: 2vw; margin-bottom: 7px;">
-                        <li>Ajout d'un écran de démarrage pour par exemple afficher la liste des mises à jour. Il reste affiché 15 secondes.</li>
+                    <ul style="margin-left: 2vw; margin-bottom: 7px">
+                        <li>
+                            Ajout d'un écran de démarrage pour par exemple afficher la liste des mises à jour. Il reste
+                            affiché 15 secondes.
+                        </li>
                         <li>Désormais le nom d'utilisateur s'affiche sur la bordure en haut à gauche du média.</li>
                         <li>(sauf en plein écran où il reste en bas à gauche de l'écran)</li>
                         <li>Ajout de bordures noires sur les lettres du nom d'utilisateur.</li>
@@ -59,28 +69,45 @@
                         <li>Les contenus Vidéos/Images ont désormais une taille minimum.</li>
                         <li>La pastille de connexion en bas à droite affiché désormais le nom du serveur Discord.</li>
                     </ul>
-                    <p>➜ Si plusieurs streameurs sont connectés sur le même serveur, une option "Envoyer à tous les streameurs connectés" devient disponible.</p>
+                    <p>
+                        ➜ Si plusieurs streameurs sont connectés sur le même serveur, une option "Envoyer à tous les
+                        streameurs connectés" devient disponible.
+                    </p>
                     <p>➜ Correction de l'animation de fade-in lors de l'affichage des médias.</p>
-                    <p>➜ Correction de la taille du container principal, il s'adapte maintenant au média, permettant l'ajout des ombres/bordures etc.</p>
+                    <p>
+                        ➜ Correction de la taille du container principal, il s'adapte maintenant au média, permettant
+                        l'ajout des ombres/bordures etc.
+                    </p>
                     <p>➜ Correction de la commande /livechat qui empêchait l'envoi de certains médias légitimes.</p>
-                    <p>➜ Tentative de correction de la mise en cache des fichiers statiques (cause des bugs sur l'overlay).</p>
+                    <p>
+                        ➜ Tentative de correction de la mise en cache des fichiers statiques (cause des bugs sur
+                        l'overlay).
+                    </p>
                     <p>➜ Refonte majeure du code source partie Overlay.</p>
                     <br />
                     <h2>V1.1 | Mise à jour du 14 Septembre 2025</h2>
-                    <p>➜ Prise en charge des liens raccourcis Tenor, il est désormais possible de copier le lien d'un gif Tenor directement depuis Discord.</p>
+                    <p>
+                        ➜ Prise en charge des liens raccourcis Tenor, il est désormais possible de copier le lien d'un
+                        gif Tenor directement depuis Discord.
+                    </p>
                     <p>➜ Prise en charge des liens Twitter, cela affichera le premier média du Tweet.</p>
                     <p>➜ Les images (png, gif, etc) restent affichées 8 secondes au lieu de 5 secondes.</p>
-                    <p>➜ Ajout d'une option 'text' dans la commande Discord qui affichera du texte par dessus le média envoyé, avec la police d'écriture Impact (police par défaut des memes).</p>
-                    <p>➜ Le nom d'utilisateur de la personne qui envoie le LiveChat s'affiche désormais à côté de la photo de profil, en bas à droite.</p>
+                    <p>
+                        ➜ Ajout d'une option 'text' dans la commande Discord qui affichera du texte par dessus le média
+                        envoyé, avec la police d'écriture Impact (police par défaut des memes).
+                    </p>
+                    <p>
+                        ➜ Le nom d'utilisateur de la personne qui envoie le LiveChat s'affiche désormais à côté de la
+                        photo de profil, en bas à droite.
+                    </p>
                     <p>➜ Les embeds affichés sur Discord ont été repensés.</p>
                     <p>➜ Amélioration de la pertinence des erreurs affichées sur l'overlay.</p>
                     <p>➜ Refonte majeure du code source partie Discord.</p>
                     <br />
                     <h2>V1.0 | Première version du 12 Juin 2025</h2>
-                    <p>
-                        ➜ Première publication de LiveChat.
-                    </p>
+                    <p>➜ Première publication de LiveChat.</p>
                 </section>
+            </main>
 
             <footer>
                 <div class="footer-links">

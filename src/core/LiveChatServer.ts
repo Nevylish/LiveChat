@@ -140,7 +140,7 @@ export class LiveChatServer {
         });
     }
 
-    // Pour le cache, c'est l'IA de Cursor qui a ajouté les headers, OBS est différent d'un navigateur classique 
+    // Pour le cache, c'est l'IA de Cursor qui a ajouté les headers, OBS est différent d'un navigateur classique
     // et j'ai un peu de mal à comprendre quoi faire pour assurer la mise à jour correcte des fichers d'Overlay
     private setupMiddlewares(): void {
         this.app.use(
