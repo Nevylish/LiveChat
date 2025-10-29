@@ -159,12 +159,11 @@ Ce projet est ouvert aux contributions !
 
 <div align="center">
 
-
-
 <sub>Construit avec ❤️ par <a href="https://github.com/nevylish">Nevylish</a> & inspiré par la <a href="https://x.com/cacaboxtv">Cacabox</a></sub>
 
 ![Node.js](https://img.shields.io/badge/Node.js--339933.svg?logo=nodedotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript--3178C6.svg?logo=typescript)
 
 <sub>© Nevylish — LiveChat. Tous droits réservés.</sub>
+
 </div>
