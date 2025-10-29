@@ -435,7 +435,7 @@ body {
     color: #adb3fa;
 }
 
-@media (max-width: 1355px) {
+@media (max-width: 1500px) {
     .copyright {
         position: static;
         text-align: center;
