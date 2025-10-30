@@ -8,6 +8,11 @@ Plusieurs streameurs peuvent utiliser le même serveur Discord, et les utilisate
 
 Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.fr/updates](https://livechat.nevylish.fr/updates.html)
 
+## 🎬 Démonstration
+
+https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
+
+
 ## 🚀 Utilisation
 
 ### Pour les streameurs
