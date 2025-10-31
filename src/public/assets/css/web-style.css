@@ -428,7 +428,9 @@ h2.collapsible {
     max-height: 0;
     margin-top: 0;
     padding-top: 0;
-    transition: max-height 0.28s ease, padding-top 0.28s ease;
+    transition:
+        max-height 0.28s ease,
+        padding-top 0.28s ease;
 }
 
 .collapsible-content.open {
@@ -445,7 +447,9 @@ h2.collapsible {
     white-space: nowrap;
     pointer-events: none;
     opacity: 1;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
 .collapsible-hint.hidden {
@@ -548,11 +552,17 @@ h2.collapsible {
 }
 
 @media (max-width: 640px) {
-    h2.collapsible .collapsible-hint { padding-left: 8rem; }
+    h2.collapsible .collapsible-hint {
+        padding-left: 8rem;
+    }
 }
 @media (max-width: 410px) {
-    h2.collapsible .collapsible-hint { font-size: 0.7rem; }
+    h2.collapsible .collapsible-hint {
+        font-size: 0.7rem;
+    }
 }
 @media (max-width: 370px) {
-    h2.collapsible .collapsible-hint { display: none }
+    h2.collapsible .collapsible-hint {
+        display: none;
+    }
 }

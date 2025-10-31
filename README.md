@@ -12,7 +12,6 @@ Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.f
 
 https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 
-
 ## 🚀 Utilisation
 
 ### Pour les streameurs
