@@ -9,7 +9,7 @@
             name="description"
             content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord. Inspiré par la Cacabox."
         />
-        <meta name="keywords" content="OBS Studio, overlay, Discord bot, streaming, médias, viewers, live, cacabox" />
+        <meta name="keywords" content="OBS Studio, obs, streamlabs, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch" />
         <meta name="author" content="Nevylish" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://livechat.nevylish.fr/" />
@@ -42,26 +42,49 @@
         <link rel="icon" type="image/png" sizes="192x192" href="assets/ico/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="assets/ico/android-chrome-512x512.png" />
         <link rel="manifest" href="assets/ico/site.webmanifest" />
+        <style>
+
+        </style>
     </head>
     <body>
         <div class="container">
             <header class="header">
-                <h1>LiVECHAT</h1>
+                <h1 class="title">LiVECHAT</h1>
+                <a class="description">LiveChat est un bot Discord et un overlay OBS Studio inspiré par la Cacabox 
+                    qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct depuis une simple 
+                    commande Discord.</a>
             </header>
-
             <main>
-                <section class="section" id="Tutoriel">
-                    <h2>Tutoriel vidéo</h2>
-                    <iframe
-                        class="youtube"
-                        src="https://www.youtube-nocookie.com/embed/C5Snzonuxx4?si=niXZ_B_4A9yNc4Mi"
-                        title="YouTube video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen
-                    >
-                    </iframe>
+                <section class="section collapsible-section" id="Demonstration">
+                    <h2 id="demoToggle" class="collapsible">Démonstration<span class="collapsible-hint">Cliquez pour afficher</span><span class="arrow" aria-hidden="true">▼</span></h2>
+                    <div id="demoContent" class="collapsible-content">
+                        <iframe
+                            class="youtube"
+                            src="https://www.youtube-nocookie.com/embed/50IjxVbd9Ew?si=A0ATDY6D1S81893L"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                        >
+                        </iframe>
+                    </div>
+                </section>
+
+                <section class="section collapsible-section" id="Tutoriel">
+                    <h2 id="tutorialToggle" class="collapsible">Tutoriel vidéo<span class="collapsible-hint">Cliquez pour afficher</span><span class="arrow" aria-hidden="true">▼</span></h2>
+                    <div id="tutorialContent" class="collapsible-content">
+                        <iframe
+                            class="youtube"
+                            src="https://www.youtube-nocookie.com/embed/C5Snzonuxx4?si=niXZ_B_4A9yNc4Mi"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                        >
+                        </iframe>
+                    </div>
                 </section>
 
                 <section class="section" id="Installation">
@@ -300,6 +323,46 @@
                     }, 5555);
                 });
             }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                function initCollapsible(sectionId, toggleId, contentId) {
+                    const toggle = document.getElementById(toggleId);
+                    const content = document.getElementById(contentId);
+                    const section = document.getElementById(sectionId);
+                    const hint = toggle ? toggle.querySelector('.collapsible-hint') : null;
+                    const arrow = toggle ? toggle.querySelector('.arrow') : null;
+                    if (!toggle || !content || !section) return;
+
+                    toggle.setAttribute('role', 'button');
+                    toggle.setAttribute('tabindex', '0');
+
+                    const toggleOpen = () => {
+                        const willOpen = !content.classList.contains('open');
+                        content.classList.toggle('open', willOpen);
+                        section.classList.toggle('open', willOpen);
+                        toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                        if (arrow) arrow.classList.toggle('open', willOpen);
+                        if (hint) hint.classList.toggle('hidden', willOpen);
+                    };
+
+                    toggle.addEventListener('click', toggleOpen);
+                    toggle.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleOpen();
+                        }
+                    });
+
+                    toggle.setAttribute('aria-expanded', 'false');
+                    content.classList.remove('open');
+                    section.classList.remove('open');
+                    if (hint) hint.classList.remove('hidden');
+                    if (arrow) arrow.classList.remove('open');
+                }
+
+                initCollapsible('Demonstration', 'demoToggle', 'demoContent');
+                initCollapsible('Tutoriel', 'tutorialToggle', 'tutorialContent');
+            });
         </script>
     </body>
 </html>
