@@ -1,12 +1,17 @@
 ## 📝 À propos
 
-LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct depuis une simple commande Discord.
+LiveChat est un bot Discord et un overlay OBS Studio inspiré par la Cacabox qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct depuis une simple commande Discord.
 
 Plusieurs streameurs peuvent utiliser le même serveur Discord, et les utilisateurs pourront choisir à quel streameur envoyer leur média.
 
 [Tutoriel vidéo: https://www.youtube.com/watch?v=C5Snzonuxx4](https://www.youtube.com/watch?v=C5Snzonuxx4)
 
 Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.fr/updates](https://livechat.nevylish.fr/updates.html)
+
+## 🎬 Démonstration
+
+https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
+
 
 ## 🚀 Utilisation
 
