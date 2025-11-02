@@ -53,18 +53,21 @@
             <header class="header">
                 <img src="assets/images/livechat_transparent.png" alt="LiveChat" class="logo" />
                 <a class="description"
-                    >LiveChat est un bot Discord et un overlay OBS Studio inspiré par la Cacabox qui permet d'afficher
-                    une image, une vidéo ou jouer un son sur un flux en direct depuis une simple commande Discord.</a
+                    >LiveChat est un bot Discord et un overlay OBS Studio/Streamlabs inspiré par la Cacabox qui permet
+                    d'afficher une image, une vidéo ou jouer un son sur un flux en direct depuis une simple commande
+                    Discord.</a
                 >
             </header>
 
             <main>
-                <section class="section collapsible-section" id="Demonstration">
-                    <h2 id="demoToggle" class="collapsible">
-                        Démonstration<span class="collapsible-hint">Cliquez pour afficher</span
-                        ><span class="arrow" aria-hidden="true">▼</span>
-                    </h2>
-                    <div id="demoContent" class="collapsible-content">
+                <section class="section" id="Demonstration">
+                    <h2>Démonstration</h2>
+                    <div style="margin-top: -0.3rem">
+                        La vidéo a été enregistrée directement avec OBS Studio et la source LiveChat en tête de liste,
+                        ça donne un aperçu du côté spectateur. Attention, le son peut surprendre à 30 secondes.
+                        <div style="padding-bottom: 1rem"></div>
+                    </div>
+                    <div>
                         <iframe
                             class="youtube"
                             src="https://www.youtube-nocookie.com/embed/50IjxVbd9Ew?si=A0ATDY6D1S81893L"
@@ -84,6 +87,11 @@
                         ><span class="arrow" aria-hidden="true">▼</span>
                     </h2>
                     <div id="tutorialContent" class="collapsible-content">
+                        <p>
+                            Si vous êtes à l'aise avec la lecture, cette vidéo donne les mêmes explications que le texte
+                            ci-dessous.
+                        </p>
+                        <div style="padding-bottom: 1rem"></div>
                         <iframe
                             class="youtube"
                             src="https://www.youtube-nocookie.com/embed/C5Snzonuxx4?si=niXZ_B_4A9yNc4Mi"
@@ -102,6 +110,8 @@
                     <div>
                         Pour commencer, invitez le bot sur votre serveur <strong>privé</strong> Discord.
                         <br />
+                        Vous pouvez en créer un pour cette utilisation uniquement.
+                        <div style="padding-bottom: 1rem"></div>
                         C'est grâce à lui que vous pourrez faire afficher du contenu sur votre overlay.
                         <div style="padding-bottom: 1rem"></div>
                         Tapez <strong>/livechat</strong> dans un salon textuel pour afficher la commande.
@@ -124,12 +134,13 @@
 
                 <section class="section" id="Configuration">
                     <h2>2. Configuration de l'overlay</h2>
-                    <p id="paragraph">
+                    <p>
                         Pour obtenir votre lien, rentrez les informations demandées ci-dessous puis cliquez sur le
                         bouton
                         <strong>Générer mon lien d'overlay</strong>.
                     </p>
-                    <div class="form-group" id="first">
+                    <div style="padding-bottom: 1rem"></div>
+                    <div class="form-group">
                         <label for="username">Nom d'utilisateur Twitch</label>
                         <input
                             type="text"
@@ -141,6 +152,7 @@
                             oninput="validateUsername(this)"
                         />
                     </div>
+                    <div style="padding-bottom: 1rem"></div>
                     <div class="form-group">
                         <label for="guildId">
                             Identifiant du serveur
@@ -180,7 +192,7 @@
                     <div style="padding-bottom: 0.5rem"></div>
                     <div style="border-top: 1px solid #444343; margin: 1rem 0"></div>
                     <div style="padding-bottom: 0.3rem"></div>
-                    <div class="paragraph">
+                    <div>
                         Maintenant que vous avez votre lien, vous allez ajouter une source
                         <strong>Navigateur</strong> sur l'une de vos scènes, puis vous l'insérez dans la case
                         <strong>URL</strong>.
@@ -202,7 +214,7 @@
                         </div>
                     </div>
 
-                    <div class="paragraph">
+                    <div>
                         <br />
                         Cliquez sur <strong>OK</strong> pour valider et placez la source au dessus de toutes les autres.
                         <div style="padding-bottom: 1rem"></div>
@@ -217,7 +229,7 @@
                 </section>
                 <section class="section" id="Utiliser">
                     <h2>3. Utiliser LiveChat</h2>
-                    <div class="paragraph">
+                    <div>
                         Utilisez la commande /livechat pour partager des médias, vous aurez plusieurs options à remplir:
                         <div style="padding-bottom: 0.5rem"></div>
                         <ul style="margin-left: 2rem; margin-right: 2rem">
@@ -370,7 +382,6 @@
                     if (arrow) arrow.classList.remove('open');
                 }
 
-                initCollapsible('Demonstration', 'demoToggle', 'demoContent');
                 initCollapsible('Tutoriel', 'tutorialToggle', 'tutorialContent');
             });
         </script>

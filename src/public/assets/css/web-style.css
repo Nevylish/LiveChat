@@ -249,14 +249,6 @@ body {
     transform: translateY(-1px);
 }
 
-#paragraph {
-    margin-bottom: 1.25rem;
-}
-
-#first {
-    margin-bottom: 1rem;
-}
-
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
