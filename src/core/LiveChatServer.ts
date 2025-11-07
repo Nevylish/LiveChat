@@ -161,6 +161,16 @@ export class LiveChatServer {
                 },
             }),
         );
+
+        this.app.get('*', (req, res) => {
+            const hasFileExtension = /\.\w+$/.test(req.path);
+            
+            if (!hasFileExtension) {
+                res.sendFile(path.join(__dirname, '..', '..', 'dist', 'public', 'index.html'));
+            } else {
+                res.status(404).send('Fichier non trouvé');
+            }
+        });
     }
 
     private start(): void {
