@@ -77,7 +77,7 @@ function displaySplashScreen() {
     const splashContainer = elements.splashContainer;
     if (splashContainer) {
         const img = document.createElement('img');
-        img.src = '/assets/images/splash.png?v=1.2.1';
+        img.src = '/assets/images/splash.png?v=2025-11-07.5';
         splashContainer.appendChild(img);
         img.classList.remove('fade-in', 'fade-out');
         img.classList.add('fade-in');
@@ -91,7 +91,7 @@ function displaySplashScreen() {
                     img.parentNode.removeChild(img);
                 }
             }, 500);
-        }, 15000);
+        }, 5000);
     }
 }
 
