@@ -5,16 +5,29 @@
 
   <url>
     <loc>https://livechat.nevylish.fr/</loc>
-    <lastmod>2025-10-29</lastmod>
+    <lastmod>2025-11-15</lastmod>
     <changefreq>never</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://livechat.nevylish.fr/updates.html</loc>
-    <lastmod>2025-10-29</lastmod>
+    <lastmod>2025-11-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
+  <url>
+    <loc>https://livechat.nevylish.fr/terms.html</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+    <url>
+    <loc>https://livechat.nevylish.fr/privacy.html</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+    </url>
 </urlset>
