@@ -72,7 +72,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(120px) brightness(0.3) saturate(170%) contrast(95%) hue-rotate(25deg);
+    filter: blur(120px) brightness(0.3) saturate(170%) hue-rotate(25deg);
     z-index: 0;
 }
 
