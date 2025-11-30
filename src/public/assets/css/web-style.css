@@ -219,7 +219,7 @@ body {
         opacity: 1;
     }
     100% {
-        left: 100%;
+        left: 200%; /* TODO: 200% pour éviter la zone incliquable invisible mais pas la meilleure solution j'imagine */
         opacity: 0;
     }
 }
