@@ -68,11 +68,11 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../images/background.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(120px) brightness(0.3) saturate(170%) hue-rotate(25deg);
+    background-color: #0a0a0a;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(73, 84, 211, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(84, 121, 253, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 15% 30%, rgba(73, 84, 211, 0.08) 0%, transparent 50%);
     z-index: 0;
 }
 
@@ -100,7 +100,7 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     flex: 1;
     display: flex;
@@ -118,7 +118,7 @@ body {
 }
 
 .logo {
-    width: 20%;
+    width: 15%;
     height: auto;
     display: block;
     margin-left: auto;
@@ -148,11 +148,13 @@ body {
 }
 
 .section {
-    background: #35353552;
+    background: rgba(30, 30, 35, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 1.5rem;
     border-radius: var(--border-radius);
-    border: 0.11rem solid #4443438e;
-    box-shadow: 0 0 25px 0 rgba(126, 126, 126, 0);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
     margin-bottom: 1.5rem;
     position: relative;
     overflow: hidden;
@@ -163,9 +165,9 @@ body {
 }
 
 .section:hover {
-    background: #4e4e4e52;
-    border: 0.11rem solid #5a5a5a;
-    box-shadow: 0 0 20px 0 rgba(146, 146, 146, 0.1);
+    background: rgba(40, 40, 45, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px -2px rgba(0, 0, 0, 0.3);
 }
 
 .section::before {
@@ -575,10 +577,7 @@ h2.collapsible {
 }
 
 @media (max-width: 640px) {
-    .background-blur {
-        background-image: url('https://nevylish.fr/assets/images/background.jpg');
-        filter: blur(140px) brightness(0.25) saturate(180%) hue-rotate(300deg);
-    }
+
 
     h2.collapsible .collapsible-hint {
         padding-left: 8rem;
