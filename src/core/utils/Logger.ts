@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
- */
-
 export namespace Logger {
     export enum LogLevel {
         DEBUG,

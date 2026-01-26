@@ -1,17 +1,23 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
- */
-
-import { Tenor } from '../modules/Tenor';
-import { version } from '../../../package.json';
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { version } from '../../../package.json';
+import { Tenor } from '../modules/Tenor';
 import { Twitter } from '../modules/Twitter';
 
 export namespace Functions {
+    /**
+     * Ajoute le footer avec le copyright et la version.
+     * @param embed EmbedBuilder
+     */
     const addCopyrightFooter = (embed: EmbedBuilder): void => {
         embed.setFooter({ text: `© ${new Date().getFullYear()} Nevylish — LiveChat v${version}` });
     };
 
+    /**
+     * Créer un embed déjà préparé avec le footer et les couleurs.
+     * @param description Description de l'embed.
+     * @param color Couleur de l'embed.
+     * @returns EmbedBuilder
+     */
     export const buildEmbed = (
         description: string,
         color: 'Error' | 'Alert' | 'Good' | ColorResolvable,
@@ -43,6 +49,11 @@ export namespace Functions {
         return embed;
     };
 
+    /**
+     * Retourne le type de fichier explicitement depuis une URL.
+     * @param url URL du fichier.
+     * @returns Type de fichier.
+     */
     export const getFileType = (url: string): string => {
         let filetype = 'Inconnu';
         let parsedUrl: URL;

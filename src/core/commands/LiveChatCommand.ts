@@ -1,14 +1,25 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
+/**
+ * Commande slash /livechat
+ *
+ * Elle est l'unique commande utilisable et permet d'envoyer un média sur une page internet, généralement une source Navigateur OBS.
+ *
+ * On y choisit la cible (généralement un·e streameur·euse), gérée par l'autocomplétion.
+ * On y rentre ensuite une URL brute¹ vers un média (qui termine par une extension de fichier), celle-ci sera affichée sur le flux.
+ *
+ * ¹Exception pour les liens Tenor et Twitter, LiveChat prend en charge les URLs raccourcies de ces plateformes. J'espère en ajouter d'autres à l'avenir.
+ *
+ * Puis on a des options supplémentaires:
+ * - Texte: Ajoute du texte par dessus le média, centré en bas type Meme avec la police Impact.
+ * - Fullscreen: Affiche le média en plein écran, utilisé en général avec des médias à fond transparent pour modifier le décors.
  */
 
 import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
-import Command from './Command';
 import DiscordClient from '../DiscordClient';
-import { Logger } from '../utils/Logger';
 import { Tenor } from '../modules/Tenor';
-import { Functions } from '../utils/Functions';
 import { Twitter } from '../modules/Twitter';
+import { Functions } from '../utils/Functions';
+import { Logger } from '../utils/Logger';
+import Command from './Command';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -141,6 +152,8 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
+        // C'était pas forcément nécéssaire de séparer les deux fonctions, mais je trouve ça plus simple.
+        // Et puis ça marche sans avoir trop de lignes dupliquées.
         if (target === this.everyone) {
             this.broadcastToStreamers(interaction, url, fullscreen, text);
         } else {

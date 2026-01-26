@@ -1,12 +1,8 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
- */
-
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import { Logger } from './utils/Logger';
 import Command from './commands/Command';
 import { LiveChatServer } from './LiveChatServer';
 import { Handlers } from './utils/Handlers';
+import { Logger } from './utils/Logger';
 
 export default class DiscordClient extends Client {
     public readonly commands: Collection<string, Command> = new Collection();
@@ -31,6 +27,10 @@ export default class DiscordClient extends Client {
         this.start(token);
     }
 
+    /**
+     * Met à jour l'activité du bot (par défaut: /livechat - livechat.nevylish.fr).
+     * @param connectedStreamersSize Nombre de streameurs connectés.
+     */
     public updateActivity(connectedStreamersSize?: number): void {
         this.user?.setActivity(
             connectedStreamersSize

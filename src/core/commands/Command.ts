@@ -1,5 +1,6 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
+/**
+ * Classe de base pour les commandes slash Discord.
+ * Elle permet de définir les infos de la commande et de gérer son exécution.
  */
 
 import { ApplicationCommandData, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';

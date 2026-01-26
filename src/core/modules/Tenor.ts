@@ -1,5 +1,9 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
+/**
+ * Ce fichier permet la prise en charge des liens raccoucis Tenor.
+ *
+ * Tenor est une plateforme de partage de GIFs, elle est intégrée à Discord et c'est pour cela que je l'ai ajoutée.
+ * Cela permet de gagner du temps, on peut rechercher sur Discord et simplement copier/coller le lien raccourci.
+ * De plus Tenor ne permet pas de récupérer le lien direct facilement, donc j'utilise leur API pour le récupérer.
  */
 
 export namespace Tenor {

@@ -1,15 +1,14 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
- */
-
+import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import Command from '../commands/Command';
-import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import LiveChatCommand from '../commands/LiveChatCommand';
 import { Logger } from '../utils/Logger';
 import { Functions } from './Functions';
 
 export namespace Handlers {
+    /**
+     * Démarrer le gestion des événements et afficher l'activité.
+     */
     export const setupEventsListeners = (client: DiscordClient) => {
         client.on(Events.ClientReady, async () => {
             client.updateActivity();
@@ -28,6 +27,9 @@ export namespace Handlers {
         Logger.success('Handlers', 'Events listeners loaded');
     };
 
+    /**
+     * Déployer les commandes slash.
+     */
     export const setupCommands = async (client: DiscordClient) => {
         const commands: Command[] = [new LiveChatCommand(client)];
 
@@ -45,6 +47,9 @@ export namespace Handlers {
         Logger.success('Handlers', `Slash commands registered. (${commandsData.length} commands)`);
     };
 
+    /**
+     * Gestion des auto-complétions des commandes slash.
+     */
     const AutoCompleteHandler = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
         const { user, commandName } = interaction;
         const cmd = client.commands.get(commandName);
@@ -61,6 +66,9 @@ export namespace Handlers {
         }
     };
 
+    /**
+     * Gestion des interactions des commandes slash.
+     */
     const InteractionCommandHandler = async (client: DiscordClient, interaction: ChatInputCommandInteraction) => {
         const { user, commandName } = interaction;
         const cmd = client.commands.get(commandName);
