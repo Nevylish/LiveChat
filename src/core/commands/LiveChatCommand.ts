@@ -13,7 +13,12 @@
  * - Fullscreen: Affiche le média en plein écran, utilisé en général avec des médias à fond transparent pour modifier le décors.
  */
 
-import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    Attachment,
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+} from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Tenor } from '../modules/Tenor';
 import { Twitter } from '../modules/Twitter';
@@ -40,7 +45,14 @@ export default class LiveChatCommand extends Command {
                     type: ApplicationCommandOptionType.String,
                     description:
                         'Lien du média à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif,tenor.',
-                    required: true,
+                    required: false,
+                },
+                {
+                    name: 'fichier',
+                    type: ApplicationCommandOptionType.Attachment,
+                    description:
+                        'Fichier à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif,tenor.',
+                    required: false,
                 },
                 {
                     name: 'texte',
@@ -60,6 +72,7 @@ export default class LiveChatCommand extends Command {
 
     everyone: string = '📌 Envoyer à tous les streameurs connectés';
 
+    // Le bout de code magique pour automatiquement créer la liste des streameurs connectés sur le serveur
     async onAutocomplete(interaction: AutocompleteInteraction): Promise<void> {
         const focusedOption = interaction.options.getFocused(true);
 
@@ -83,12 +96,28 @@ export default class LiveChatCommand extends Command {
     async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
         const target = interaction.options.getString('cible') as string;
         let url = interaction.options.getString('url') as string;
+        let file = interaction.options.getAttachment('fichier') as Attachment;
         const text = (interaction.options.getString('texte') as string) ?? null;
         let fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
 
         await interaction.deferReply({ ephemeral: true });
 
         let parsedUrl: URL;
+
+        // On renvoie une erreur s'il n'y a ni lien, ni fichier
+        if (!url && !file) {
+            const embed = Functions.buildEmbed('Vous devez fournir un lien ou un fichier.', 'Alert');
+            embed.setImage(
+                'https://cdn.discordapp.com/attachments/1465389192384217118/1465389287825604658/livechat.gif?ex=6978ed9f&is=69779c1f&hm=f6648976eaf58ae153da91c2aabb5d7d8ac33842185bedaca7289f367534f639&',
+            );
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+
+        // Si c'est un fichier, on prend directement son url (merci le cdn discord) et on remplace l'ancienne URl si il y en a une
+        if (file) {
+            url = file.url;
+        }
 
         try {
             parsedUrl = new URL(url);
@@ -101,6 +130,7 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
+        // On vérifie que ça renvoie bien une page internet
         if (!['https:', 'http:'].includes(parsedUrl.protocol)) {
             const embed = Functions.buildEmbed(
                 "L'URL est invalide, seuls les liens commençant par http:// ou https:// sont acceptés.",
@@ -139,13 +169,14 @@ export default class LiveChatCommand extends Command {
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
+        // Vérification des extensions de fichiers
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Tenor.validateDirectUrl(url) &&
             !Twitter.validateDirectUrl(url)
         ) {
             const embed = Functions.buildEmbed(
-                `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\nLes liens Tenor sont également acceptés.`,
+                `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\n\nLes liens Tenor et Twitter sont également acceptés.`,
                 'Alert',
             );
             await interaction.editReply({ embeds: [embed] });
@@ -202,6 +233,7 @@ export default class LiveChatCommand extends Command {
                     `\n${streamsList}`,
                 'Good',
             );
+            embed.setImage(url);
             await interaction.editReply({ embeds: [embed] });
         } catch (err) {
             Logger.error('LiveChatCommand', err.message);
@@ -245,6 +277,7 @@ export default class LiveChatCommand extends Command {
                     `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
                 'Good',
             );
+            embed.setImage(url);
             await interaction.editReply({ embeds: [embed] });
         } catch (err) {
             Logger.error('LiveChatCommand', err.message);
