@@ -1,13 +1,9 @@
-/*
- * Copyright (C) 2025 LiveChat by Nevylish
- */
-
 import express = require('express');
 import path = require('path');
-import { Logger } from './utils/Logger';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import DiscordClient from './DiscordClient';
+import { Logger } from './utils/Logger';
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -44,55 +40,69 @@ export class LiveChatServer {
         this.start();
     }
 
+    /**
+     * Envoie un message d'erreur au client et arrête la connexion.
+     * @param socket Socket
+     * @param message Message d'erreur affiché sur OBS.
+     */
+    private emitError(socket: Socket, message: string): void {
+        socket.emit('updateConnectionStatus', false, message, 300000);
+        socket.disconnect();
+    }
+
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
             socket.on('register', (data: { username: string; guildId: string }) => {
-                if (data.username.length > 25 || data.username.length < 3) {
-                    socket.emit(
-                        'updateConnectionStatus',
-                        false,
-                        "Le nom d'utilisateur est trop court ou trop long.",
-                        300000,
+                // Longueur du nom d'utilisateur autorisée par Twitch
+                // https://discuss.dev.twitch.com/t/max-length-for-user-names-and-display-names/21315
+                if (data.username.length > 25 || data.username.length < 4) {
+                    this.emitError(
+                        socket,
+                        data.username.length > 25
+                            ? "Le nom d'utilisateur est trop long. Max: 25 caractères."
+                            : "Le nom d'utilisateur est trop court. Min: 4 caractères.",
                     );
-                    socket.disconnect();
                     return;
                 }
 
+                // Caractères autorisés par Twitch (todo: améliorer le regex)
                 const usernamePattern = /^[a-zA-Z0-9_\-]+$/;
                 if (!usernamePattern.test(data.username)) {
-                    socket.emit(
-                        'updateConnectionStatus',
-                        false,
-                        "Le nom d'utilisateur contient des caractères non autorisés.",
-                        300000,
+                    this.emitError(
+                        socket,
+                        "Le nom d'utilisateur contient des caractères non autorisés. Lettres, chiffres et underscores sont autorisés.",
                     );
-                    socket.disconnect();
                     return;
                 }
 
-                if (data.guildId.length > 20 || data.guildId.length < 12) {
-                    socket.emit(
-                        'updateConnectionStatus',
-                        false,
-                        "L'identifiant du serveur ne correspond à aucun serveur existant.",
-                        300000,
+                // Longueur de l'id du serveur Discord
+                // https://www.reddit.com/r/discordapp/comments/1fv8pen/how_long_are_discord_guild_ids/
+                if (data.guildId.length < 17 || data.guildId.length > 21) {
+                    this.emitError(
+                        socket,
+                        data.guildId.length < 17
+                            ? "L'identifiant du serveur Discord est trop court. Min: 17 caractères."
+                            : "L'identifiant du serveur Discord est trop long. Max: 21 caractères.",
                     );
-                    socket.disconnect();
                     return;
                 }
 
+                // On autorise seulement les chiffres pour l'id du serveur Discord
                 const guildIdPattern = /^[0-9]+$/;
                 if (!guildIdPattern.test(data.guildId)) {
-                    socket.emit(
-                        'updateConnectionStatus',
-                        false,
-                        "L'identifiant du serveur contient des caractères non autorisés.",
-                        300000,
-                    );
-                    socket.disconnect();
+                    this.emitError(socket, "L'identifiant du serveur Discord contient des caractères non autorisés.");
                     return;
                 }
 
+                const handleBotMissingFromGuild = () => {
+                    this.emitError(
+                        socket,
+                        "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
+                    );
+                };
+
+                // Si le bot Discord n'est pas présent dans le serveur inscrit on déconnecte.
+                // Si c'est bon, on l'ajoute à la liste des streamers connectés.
                 this.discordClient.guilds
                     .fetch(data.guildId)
                     .then((guild) => {
@@ -105,24 +115,12 @@ export class LiveChatServer {
                             else socket.emit('updateConnectionStatus', true);
                             Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
                         } else {
-                            socket.emit(
-                                'updateConnectionStatus',
-                                false,
-                                "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
-                                30000,
-                            );
-                            socket.disconnect();
+                            handleBotMissingFromGuild();
                             return;
                         }
                     })
                     .catch(() => {
-                        socket.emit(
-                            'updateConnectionStatus',
-                            false,
-                            "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
-                            30000,
-                        );
-                        socket.disconnect();
+                        handleBotMissingFromGuild();
                         return;
                     });
             });
@@ -141,6 +139,9 @@ export class LiveChatServer {
 
     private setupMiddlewares(): void {
         this.app.use(
+            // La fonction setupMiddlewares() a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
+            // Finalement, j'utilise du versionning de fichier dans le HTML (?v=00-00-0000.0) et c'est tout autant efficace.
+            // Je laisse ce truc là parce que honnêtement je ne connais pas le comportement d'OBS, et ça fonctionne très bien avec ça.
             express.static(path.join(__dirname, '..', '..', 'dist', 'public'), {
                 etag: true,
                 lastModified: true,
@@ -164,7 +165,7 @@ export class LiveChatServer {
 
         this.app.get('*', (req, res) => {
             const hasFileExtension = /\.\w+$/.test(req.path);
-            
+
             if (!hasFileExtension) {
                 res.sendFile(path.join(__dirname, '..', '..', 'dist', 'public', 'index.html'));
             } else {
