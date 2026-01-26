@@ -364,8 +364,8 @@ function updateConnectionStatus(connected, message = '', timeout = 5000) {
     elements.connectionStatus.classList.remove('fade-out');
     elements.connectionStatus.className = connected ? 'connected' : 'disconnected';
     elements.connectionStatus.textContent = connected
-        ? `Connecté au LiveChat${message ? `${message}` : ''}`
-        : `Déconnecté du LiveChat${message ? `: ${message}` : ''}`;
+        ? `Connecté à LiveChat${message ? `${message}` : ''}`
+        : `Déconnecté de LiveChat${message ? `: ${message}` : ''}`;
 
     void elements.connectionStatus.offsetWidth;
 
