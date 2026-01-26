@@ -234,6 +234,91 @@ export class LiveChatServer {
             }
         });
 
+        this.app.get('/api/youtube', apiLimiter, async (req, res) => {
+            const videoUrl = req.query.url as string;
+            const token = req.query.token as string;
+            const expires = req.query.expires as string;
+            const range = req.headers.range;
+
+            if (!videoUrl || !token || !expires) {
+                return res.status(400).send('Missing video URL, token or expires');
+            }
+
+            const now = Math.floor(Date.now() / 1000);
+            if (now > parseInt(expires)) {
+                return res.status(403).send('Lien expiré');
+            }
+
+            const secret = process.env.SECRET_API;
+            const expectedToken = crypto
+                .createHmac('sha256', secret)
+                .update(videoUrl + expires)
+                .digest('hex');
+
+            if (token !== expectedToken) {
+                return res.status(403).send('Token invalide');
+            }
+
+            try {
+                const url = new URL(videoUrl);
+                const allowedDomains = ['googlevideo.com'];
+                const isAllowed = allowedDomains.some((domain) => url.hostname.endsWith(domain));
+
+                if (!isAllowed) {
+                    return res.status(403).send('URL non autorisée');
+                }
+            } catch (err) {
+                return res.status(400).send('URL malformée');
+            }
+
+            try {
+                const headers: Record<string, string> = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                    Referer: 'https://www.youtube.com/',
+                    Accept: '*/*',
+                    'Accept-Encoding': 'identity',
+                    Connection: 'close',
+                };
+
+                if (range) {
+                    headers['Range'] = range;
+                } else {
+                    headers['Range'] = 'bytes=0-';
+                }
+
+                const youtubeRes = await fetch(videoUrl, {
+                    headers,
+                    redirect: 'follow',
+                });
+
+                if (!youtubeRes.ok || !youtubeRes.body) {
+                    return res.status(502).send(`YouTube fetch failed: ${youtubeRes.status}`);
+                }
+
+                res.status(206);
+
+                const passthroughHeaders = ['content-type', 'content-length', 'content-range', 'accept-ranges'];
+
+                for (const h of passthroughHeaders) {
+                    const v = youtubeRes.headers.get(h);
+                    if (v) res.setHeader(h, v);
+                }
+
+                res.setHeader('Accept-Ranges', 'bytes');
+                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Connection', 'close');
+
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Expose-Headers', '*');
+
+                const nodeStream = Readable.fromWeb(youtubeRes.body as any);
+                nodeStream.pipe(res);
+            } catch (err) {
+                console.error('Proxy error:', err);
+                res.status(500).send('Proxy error');
+            }
+        });
+
         this.app.use(
             // La fonction setupMiddlewares() a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
             // Finalement, j'utilise du versionning de fichier dans le HTML (?v=00-00-0000.0) et c'est tout autant efficace.

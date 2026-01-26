@@ -3,6 +3,7 @@ import { version } from '../../../package.json';
 import { Tenor } from '../modules/Tenor';
 import { TikTok } from '../modules/Tiktok';
 import { Twitter } from '../modules/Twitter';
+import { YouTube } from '../modules/YouTube';
 
 export namespace Functions {
     /**
@@ -83,6 +84,8 @@ export namespace Functions {
             filetype = 'Audio';
         } else if (TikTok.validateDirectUrl(url)) {
             return 'Vidéo TikTok';
+        } else if (YouTube.validateDirectUrl(url)) {
+            return 'Vidéo YouTube';
         }
         return filetype;
     };
