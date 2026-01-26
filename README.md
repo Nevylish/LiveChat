@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 1. Rejoignez le serveur Discord du streameur
 2. Utilisez la commande `/livechat` pour partager des médias
     - Sélectionnez le pseudo du streameur à qui vous voulez envoyer le média
-    - Ajoutez l'URL du média
+    - Ajoutez l'URL du média ou glissez le fichier directement (sélectionnez Fichier pour glisser un média depuis votre PC ou URL pour coller un lien)
     - Des options de commandes facultatives sont disponibles, `fullscreen` affiche le média en plein écran sur le stream, `texte` permet d'ajouter du texte par dessus en bas du média avec la police d'écriture Impact (style Meme)
 3. Vos médias s'afficheront instantanément dans le stream du streameur sélectionné
 
