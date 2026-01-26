@@ -21,6 +21,7 @@ import {
 } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Tenor } from '../modules/Tenor';
+import { TikTok } from '../modules/Tiktok';
 import { Twitter } from '../modules/Twitter';
 import { Functions } from '../utils/Functions';
 import { Logger } from '../utils/Logger';
@@ -140,6 +141,19 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
+        if (TikTok.isTikTokUrl(url)) {
+            const directUrl = await TikTok.fetchDirectUrl(url);
+            if (!directUrl) {
+                const embed = Functions.buildEmbed(
+                    'Impossible de récupérer la vidéo depuis TikTok. Vérifiez le lien.',
+                    'Alert',
+                );
+                await interaction.editReply({ embeds: [embed] });
+                return;
+            }
+            url = directUrl;
+        }
+
         if (Twitter.isStatusUrl(url)) {
             const directUrl = await Twitter.parseDirectUrl(url);
             if (!directUrl) {
@@ -173,7 +187,8 @@ export default class LiveChatCommand extends Command {
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Tenor.validateDirectUrl(url) &&
-            !Twitter.validateDirectUrl(url)
+            !Twitter.validateDirectUrl(url) &&
+            !TikTok.validateDirectUrl(url)
         ) {
             const embed = Functions.buildEmbed(
                 `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\n\nLes liens Tenor et Twitter sont également acceptés.`,

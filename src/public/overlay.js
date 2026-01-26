@@ -178,7 +178,12 @@ function createContentElement(content) {
             url.searchParams.has('range') ||
             url.searchParams.has('expire');
 
-        const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename) || isYouTubeDirect;
+        const isTikTokDirect =
+            url.hostname.includes('tiktokcdn.com') ||
+            url.hostname.includes('byteoversea.com') ||
+            url.searchParams.get('mime_type') === 'video_mp4';
+
+        const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename) || isYouTubeDirect || isTikTokDirect;
         const isAudio = CONFIG.SUPPORTED_AUDIO_FORMATS.test(filename);
 
         const element = document.createElement(isVideo ? 'video' : isAudio ? 'audio' : 'img');

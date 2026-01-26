@@ -42,7 +42,7 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 
 ### 📁 Formats de médias supportés
 
-LiveChat supporte les liens directs vers des médias ainsi que les liens Tenor et X (anciennement Twitter), l'ajout d'autres plateformes est prévu.
+LiveChat supporte les liens directs vers des médias ainsi que les liens Tiktok, Tenor et X (anciennement Twitter), l'ajout d'autres plateformes est prévu.
 
 Voici comment partager vos médias :
 
@@ -51,9 +51,10 @@ Voici comment partager vos médias :
 3. Faites un clic droit sur le fichier et sélectionnez "Copier le lien"
 4. Utilisez ce lien dans la commande `/livechat`
 
-> ⚠️ **Important** : Les liens YouTube, TikTok, ou autres plateformes de streaming ne sont pas supportés. Vous devez d'abord télécharger le média et l'envoyer sur Discord.
+> ⚠️ **Important** : Les liens YouTube, ou autres plateformes de streaming ne sont pas supportés. Vous devez d'abord télécharger le média et l'envoyer sur Discord.
 
 > Pour X/Twitter: Seul le premier média du Tweet est récupéré.
+> Pour Tiktok: Seul les vidéos sont récupérées, les carousels ne sont pas supportés.
 
 ## 💻 Pour les développeurs
 

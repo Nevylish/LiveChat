@@ -1,6 +1,7 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import { Tenor } from '../modules/Tenor';
+import { TikTok } from '../modules/Tiktok';
 import { Twitter } from '../modules/Twitter';
 
 export namespace Functions {
@@ -80,6 +81,8 @@ export namespace Functions {
         } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
             if (Twitter.validateDirectUrl(url)) return 'Audio Twitter';
             filetype = 'Audio';
+        } else if (TikTok.validateDirectUrl(url)) {
+            return 'Vidéo TikTok';
         }
         return filetype;
     };
