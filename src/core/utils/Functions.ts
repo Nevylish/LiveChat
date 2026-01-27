@@ -1,3 +1,8 @@
+/*
+    Ce fichier permet de centraliser des fonctions qui sont utilisées à plusieurs endroits dans le projet.
+    On évite de dupliquer inutilement des lignes.
+*/
+
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import { Tenor } from '../modules/Tenor';
