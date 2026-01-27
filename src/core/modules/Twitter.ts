@@ -12,8 +12,7 @@ import fetch from 'node-fetch';
 
 export namespace Twitter {
     export const isStatusUrl = (url: string): boolean => {
-        if (url.match(/^https?:\/\/(www\.)?x\.com\/[^\/]+\/status\/\d+/)) return true;
-        return false;
+        return !!url.match(/^https?:\/\/(www\.)?x\.com\/[^\/]+\/status\/\d+/);
     };
 
     export const parseDirectUrl = async (url: string): Promise<string | null> => {
@@ -34,8 +33,6 @@ export namespace Twitter {
     };
 
     export const validateDirectUrl = (url: string): boolean => {
-        if (url.includes('.twimg.com/')) return true;
-
-        return false;
+        return url.includes('.twimg.com/');
     };
 }

@@ -8,15 +8,7 @@
 
 export namespace Tenor {
     export const isShortenedUrl = (url: string): boolean => {
-        if (url.match(/^https?:\/\/tenor\.com\/(fr\/)?view\//)) return true;
-
-        return false;
-    };
-
-    export const validateDirectUrl = (url: string): boolean => {
-        if (url.match(/^https?:\/\/media\.tenor\.com\//)) return true;
-
-        return false;
+        return !!url.match(/^https?:\/\/tenor\.com\/(fr\/)?view\//);
     };
 
     export const fetchDirectUrl = async (url: string): Promise<string> => {
@@ -55,5 +47,9 @@ export namespace Tenor {
         } catch (e) {
             return null;
         }
+    };
+
+    export const validateDirectUrl = (url: string): boolean => {
+        return !!url.match(/^https?:\/\/media\.tenor\.com\//);
     };
 }
