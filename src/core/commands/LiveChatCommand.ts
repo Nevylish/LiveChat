@@ -142,18 +142,21 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        if (YouTube.isYouTubeUrl(url)) {
-            const directUrl = await YouTube.getYoutubeDirectUrl(interaction, url);
-            if (!directUrl) {
-                const embed = Functions.buildEmbed(
-                    'Impossible de récupérer la vidéo depuis YouTube. Vérifiez le lien.',
-                    'Alert',
-                );
-                await interaction.editReply({ embeds: [embed] });
-                return;
-            }
-            url = directUrl;
-        }
+        // On désactive YouTube pour le moment. Déjà parce qu'avec l'IP du serveur les requêtes sont bloquées par Google.
+        // Puis aussi parce que le module utilisé @distube/ytdl-core peut faire planter le bot.
+
+        // if (YouTube.isYouTubeUrl(url)) {
+        //     const directUrl = await YouTube.getYoutubeDirectUrl(interaction, url);
+        //     if (!directUrl) {
+        //         const embed = Functions.buildEmbed(
+        //             'Impossible de récupérer la vidéo depuis YouTube. Vérifiez le lien.',
+        //             'Alert',
+        //         );
+        //         await interaction.editReply({ embeds: [embed] });
+        //         return;
+        //     }
+        //     url = directUrl;
+        // }
 
         if (TikTok.isTikTokUrl(url)) {
             const directUrl = await TikTok.fetchDirectUrl(url);
