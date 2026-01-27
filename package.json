@@ -1,7 +1,7 @@
 {
     "name": "livechat",
     "description": "Un overlay OBS qui permet à vos amis d'afficher des médias sur votre stream",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "homepage": "https://livechat.nevylish.fr/",
     "author": {
         "name": "Nevylish",

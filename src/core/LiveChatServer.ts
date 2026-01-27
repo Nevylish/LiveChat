@@ -1,12 +1,16 @@
+/*
+    Ce fichier est l'un des poumons du projet. C'est ici qu'est géré la communication entre mon serveur et votre OBS Studio.
+*/
+
 import express = require('express');
 import path = require('path');
 import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import { Readable } from 'stream';
 import DiscordClient from './DiscordClient';
+import { TikTok } from './modules/Tiktok';
+import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
-import crypto = require('crypto');
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -23,7 +27,7 @@ export class LiveChatServer {
     private httpServer;
 
     constructor(discordClient: DiscordClient) {
-        this.port = Number(process.env.LIVECHAT_PORT);
+        this.port = Number(Constants.getPort());
         this.discordClient = discordClient;
 
         this.app = express();
@@ -143,181 +147,15 @@ export class LiveChatServer {
     private setupMiddlewares(): void {
         const apiLimiter = rateLimit({
             windowMs: 1 * 60 * 1000,
-            max: 50,
-            message: { error: 'Trop de requêtes vers cet endpoint. Veuillez réessayer plus tard.' },
+            max: 100,
+            message: { error: 'Trop de requêtes.' },
             standardHeaders: true,
             legacyHeaders: false,
         });
 
-        this.app.get('/api/tiktok', apiLimiter, async (req, res) => {
-            const videoUrl = req.query.url as string;
-            const token = req.query.token as string;
-            const expires = req.query.expires as string;
-            const range = req.headers.range;
+        this.app.get('/api/tiktok', apiLimiter, TikTok.handleProxy);
 
-            if (!videoUrl || !token || !expires) {
-                return res.status(400).send('Missing video URL, token or expires');
-            }
-
-            const now = Math.floor(Date.now() / 1000);
-            if (now > parseInt(expires)) {
-                return res.status(403).send('Lien expiré');
-            }
-
-            const secret = process.env.SECRET_API;
-            const expectedToken = crypto
-                .createHmac('sha256', secret)
-                .update(videoUrl + expires)
-                .digest('hex');
-
-            if (token !== expectedToken) {
-                return res.status(403).send('Token invalide');
-            }
-
-            try {
-                const url = new URL(videoUrl);
-                const allowedDomains = ['tiktokcdn.com', 'byteoversea.com'];
-                const isAllowed = allowedDomains.some((domain) => url.hostname.endsWith(domain));
-
-                if (!isAllowed) {
-                    return res.status(403).send('URL non autorisée');
-                }
-            } catch (err) {
-                return res.status(400).send('URL malformée');
-            }
-
-            try {
-                const headers: Record<string, string> = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-                    Referer: 'https://www.tiktok.com/',
-                    Accept: '*/*',
-                    'Accept-Encoding': 'identity',
-                    Connection: 'close',
-                };
-
-                if (range) {
-                    headers['Range'] = range;
-                } else {
-                    headers['Range'] = 'bytes=0-';
-                }
-
-                const tiktokRes = await fetch(videoUrl, {
-                    headers,
-                    redirect: 'follow',
-                });
-
-                if (!tiktokRes.ok || !tiktokRes.body) {
-                    return res.status(502).send(`TikTok fetch failed: ${tiktokRes.status}`);
-                }
-
-                res.status(206);
-
-                const passthroughHeaders = ['content-type', 'content-length', 'content-range', 'accept-ranges'];
-
-                for (const h of passthroughHeaders) {
-                    const v = tiktokRes.headers.get(h);
-                    if (v) res.setHeader(h, v);
-                }
-
-                res.setHeader('Accept-Ranges', 'bytes');
-                res.setHeader('Cache-Control', 'no-cache');
-                res.setHeader('Connection', 'close');
-
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Expose-Headers', '*');
-
-                const nodeStream = Readable.fromWeb(tiktokRes.body as any);
-                nodeStream.pipe(res);
-            } catch (err) {
-                console.error('Proxy error:', err);
-                res.status(500).send('Proxy error');
-            }
-        });
-
-        this.app.get('/api/youtube', apiLimiter, async (req, res) => {
-            const videoUrl = req.query.url as string;
-            const token = req.query.token as string;
-            const expires = req.query.expires as string;
-            const range = req.headers.range;
-
-            if (!videoUrl || !token || !expires) {
-                return res.status(400).send('Missing video URL, token or expires');
-            }
-
-            const now = Math.floor(Date.now() / 1000);
-            if (now > parseInt(expires)) {
-                return res.status(403).send('Lien expiré');
-            }
-
-            const secret = process.env.SECRET_API;
-            const expectedToken = crypto
-                .createHmac('sha256', secret)
-                .update(videoUrl + expires)
-                .digest('hex');
-
-            if (token !== expectedToken) {
-                return res.status(403).send('Token invalide');
-            }
-
-            try {
-                const url = new URL(videoUrl);
-                const allowedDomains = ['googlevideo.com'];
-                const isAllowed = allowedDomains.some((domain) => url.hostname.endsWith(domain));
-
-                if (!isAllowed) {
-                    return res.status(403).send('URL non autorisée');
-                }
-            } catch (err) {
-                return res.status(400).send('URL malformée');
-            }
-
-            try {
-                const headers: Record<string, string> = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-                    Referer: 'https://www.youtube.com/',
-                    Accept: '*/*',
-                    'Accept-Encoding': 'identity',
-                    Connection: 'close',
-                };
-
-                if (range) {
-                    headers['Range'] = range;
-                } else {
-                    headers['Range'] = 'bytes=0-';
-                }
-
-                const youtubeRes = await fetch(videoUrl, {
-                    headers,
-                    redirect: 'follow',
-                });
-
-                if (!youtubeRes.ok || !youtubeRes.body) {
-                    return res.status(502).send(`YouTube fetch failed: ${youtubeRes.status}`);
-                }
-
-                res.status(206);
-
-                const passthroughHeaders = ['content-type', 'content-length', 'content-range', 'accept-ranges'];
-
-                for (const h of passthroughHeaders) {
-                    const v = youtubeRes.headers.get(h);
-                    if (v) res.setHeader(h, v);
-                }
-
-                res.setHeader('Accept-Ranges', 'bytes');
-                res.setHeader('Cache-Control', 'no-cache');
-                res.setHeader('Connection', 'close');
-
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Expose-Headers', '*');
-
-                const nodeStream = Readable.fromWeb(youtubeRes.body as any);
-                nodeStream.pipe(res);
-            } catch (err) {
-                console.error('Proxy error:', err);
-                res.status(500).send('Proxy error');
-            }
-        });
+        // this.app.get('/api/youtube', apiLimiter, YouTube.handleProxy);
 
         this.app.use(
             // La fonction setupMiddlewares() a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.

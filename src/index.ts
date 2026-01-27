@@ -1,3 +1,9 @@
+/*
+    Ce fichier est le fichier de lancement, il défini où se trouvent les variables d'environnement, là où sont stockées les informations importantes et secrètes.
+    Il vérifie aussi que toutes les variables sont présentes et lance le bot Discord qui initialisera tout le reste.
+    S'il manque le Token (le mot de passe du bot Discord), inutile d'aller plus loin.
+*/
+
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import DiscordClient from './core/DiscordClient';
@@ -6,7 +12,7 @@ import { Logger } from './core/utils/Logger';
 dotenv.config({ path: resolve(__dirname, '../.env') });
 
 // Vérification des variables d'environnement
-const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'SECRET_API'];
+const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'SECRET_API', 'DOMAIN'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
