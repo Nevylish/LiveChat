@@ -1,3 +1,7 @@
+/*
+    Ce fichier permet de rendre mon terminal plus agréable. Le terminal me sert à comprendre ce qu'il se passe en temps réel.
+*/
+
 export namespace Logger {
     export enum LogLevel {
         DEBUG,

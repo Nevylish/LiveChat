@@ -1,3 +1,7 @@
+/*
+    Ce fichier gère le déploiement et l'écoute des commandes slash.
+*/
+
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import Command from '../commands/Command';

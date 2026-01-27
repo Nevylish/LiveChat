@@ -1,3 +1,8 @@
+/*
+    Ce fichier est l'un des poumons du projet
+    C'est ici qu'on initialise tout le projet. Le bot Discord se connecte, déploie les commandes, puis lance le serveur web.
+*/
+
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
 import Command from './commands/Command';
 import { LiveChatServer } from './LiveChatServer';
