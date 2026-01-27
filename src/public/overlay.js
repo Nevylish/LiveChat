@@ -172,8 +172,8 @@ function createContentElement(content) {
         const url = new URL(content);
         const filename = url.pathname.split('/').pop() || '';
 
-        const isTikTokProxied = url.hostname.includes('livechat.nevylish.fr') && url.pathname.includes('tiktok');
-        const isYouTubeProxied = url.hostname.includes('livechat.nevylish.fr') && url.pathname.includes('youtube');
+        const isTikTokProxied = url.hostname.includes(window.location.hostname) && url.pathname.includes('tiktok');
+        const isYouTubeProxied = url.hostname.includes(window.location.hostname) && url.pathname.includes('youtube');
 
         const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename) || isTikTokProxied || isYouTubeProxied;
         const isAudio = CONFIG.SUPPORTED_AUDIO_FORMATS.test(filename);
