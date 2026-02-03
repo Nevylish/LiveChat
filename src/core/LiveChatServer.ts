@@ -158,7 +158,7 @@ export class LiveChatServer {
         // this.app.get('/api/youtube', apiLimiter, YouTube.handleProxy);
 
         this.app.use(
-            // La fonction setupMiddlewares() a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
+            // La partie ci-dessous a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
             // Finalement, j'utilise du versionning de fichier dans le HTML (?v=00-00-0000.0) et c'est tout autant efficace.
             // Je laisse ce truc là parce que honnêtement je ne connais pas le comportement d'OBS, et ça fonctionne très bien avec ça.
             express.static(path.join(__dirname, '..', '..', 'dist', 'public'), {
