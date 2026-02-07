@@ -31,6 +31,8 @@ export class LiveChatServer {
         this.discordClient = discordClient;
 
         this.app = express();
+        this.app.set('trust proxy', 1);
+
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
             cors: {
