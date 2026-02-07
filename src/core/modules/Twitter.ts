@@ -9,13 +9,14 @@
  */
 
 import fetch from 'node-fetch';
+import { ProxyService } from './_ProxyService';
 
 export namespace Twitter {
     export const isStatusUrl = (url: string): boolean => {
         return !!url.match(/^https?:\/\/(www\.)?x\.com\/[^\/]+\/status\/\d+/);
     };
 
-    export const parseDirectUrl = async (url: string): Promise<string | null> => {
+    export const getProxyUrl = async (url: string): Promise<string | null> => {
         try {
             const apiUrl = url.replace('https://x.com/', 'https://api.fxtwitter.com/');
             const response = await fetch(apiUrl);
@@ -23,16 +24,12 @@ export namespace Twitter {
             const data: any = await response.json();
 
             if (data && Array.isArray(data.tweet.media.all) && data.tweet.media.all[0].url) {
-                return data.tweet.media.all[0].url;
+                return ProxyService.useProxy(data.tweet.media.all[0].url, 'twitter');
             }
 
             return null;
         } catch {
             return null;
         }
-    };
-
-    export const validateDirectUrl = (url: string): boolean => {
-        return url.includes('.twimg.com/');
     };
 }

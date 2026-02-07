@@ -5,10 +5,8 @@
 
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
+import { ProxyService } from '../modules/_ProxyService';
 import { Tenor } from '../modules/Tenor';
-import { TikTok } from '../modules/Tiktok';
-import { Twitter } from '../modules/Twitter';
-import { YouTube } from '../modules/YouTube';
 
 export namespace Functions {
     /**
@@ -36,7 +34,7 @@ export namespace Functions {
             (color === 'Error'
                 ? "\n\n-# Contactez-moi à l'adresse bonjour@nevylish.fr ou sur le repo GitHub [Nevylish/LiveChat](https://github.com/Nevylish/LiveChat)."
                 : '') +
-            `\n\n[**Installer LiveChat**](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[**Patch notes**](https://livechat.nevylish.fr/updates.html)\u2005\u2005•\u2005\u2005[**Code source**](https://github.com/Nevylish/LiveChat)`;
+            `\n\n[**Installer LiveChat**](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[**Voir les mises à jour**](https://livechat.nevylish.fr/updates.html)`;
 
         switch (color) {
             case 'Error':
@@ -61,37 +59,53 @@ export namespace Functions {
      * @param url URL du fichier.
      * @returns Type de fichier.
      */
-    export const getFileType = (url: string): string => {
-        let filetype = 'Inconnu';
+    export const getFileType = (url: string): { display: string; param: string } => {
+        let display = 'Inconnu';
+        let param = 'null';
         let parsedUrl: URL;
 
         try {
             parsedUrl = new URL(url);
         } catch (e) {
-            return filetype;
+            return null;
         }
 
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase() || '';
 
         if (['jpg', 'jpeg', 'png'].includes(extension)) {
-            if (Twitter.validateDirectUrl(url)) return 'Image Twitter';
-            filetype = 'Image';
+            display = 'Image';
+            param = 'image';
         } else if (extension === 'gif') {
-            if (Tenor.validateDirectUrl(url)) return 'Image animée Tenor';
-            if (Twitter.validateDirectUrl(url)) return 'Image animée Twitter';
-            filetype = 'Image animée';
+            display = 'Image animée';
+            if (Tenor.validateDirectUrl(url)) display = 'Image animée Tenor';
+            param = 'image';
         } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
-            if (Tenor.validateDirectUrl(url)) return 'Vidéo Tenor';
-            if (Twitter.validateDirectUrl(url)) return 'Vidéo Twitter';
-            filetype = 'Vidéo';
+            display = 'Vidéo';
+            param = 'video';
         } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
-            if (Twitter.validateDirectUrl(url)) return 'Audio Twitter';
-            filetype = 'Audio';
-        } else if (TikTok.validateDirectUrl(url)) {
-            return 'Vidéo TikTok';
-        } else if (YouTube.validateDirectUrl(url)) {
-            return 'Vidéo YouTube';
+            display = 'Audio';
+            param = 'audio';
+        } else if (ProxyService.isValidUrl(url)) {
+            switch (parsedUrl.searchParams.get('type')) {
+                case 'image':
+                    display = 'Image';
+                    if (parsedUrl.searchParams.get('source') === 'twitter') display = 'Image Twitter';
+                    param = 'image';
+                    break;
+                case 'video':
+                    display = 'Vidéo';
+                    if (parsedUrl.searchParams.get('source') === 'twitter') display = 'Vidéo Twitter';
+                    if (parsedUrl.searchParams.get('source') === 'tiktok') display = 'Vidéo TikTok';
+                    param = 'video';
+                    break;
+                case 'audio':
+                    display = 'Audio';
+                    param = 'audio';
+                    break;
+                default:
+                    break;
+            }
         }
-        return filetype;
+        return { display: display, param: param };
     };
 }

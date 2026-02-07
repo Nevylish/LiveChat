@@ -18,12 +18,14 @@ import {
     Attachment,
     AutocompleteInteraction,
     ChatInputCommandInteraction,
+    MessageFlags,
 } from 'discord.js';
 import DiscordClient from '../DiscordClient';
+import { ProxyService } from '../modules/_ProxyService';
+import { Discord } from '../modules/Discord';
 import { Tenor } from '../modules/Tenor';
 import { TikTok } from '../modules/Tiktok';
 import { Twitter } from '../modules/Twitter';
-import { YouTube } from '../modules/YouTube';
 import { Functions } from '../utils/Functions';
 import { Logger } from '../utils/Logger';
 import Command from './Command';
@@ -102,9 +104,10 @@ export default class LiveChatCommand extends Command {
         const text = (interaction.options.getString('texte') as string) ?? null;
         let fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         let parsedUrl: URL;
+        let bypassProxy = false;
 
         // On renvoie une erreur s'il n'y a ni lien, ni fichier
         if (!url && !file) {
@@ -142,25 +145,9 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // On désactive YouTube pour le moment. Déjà parce qu'avec l'IP du serveur les requêtes sont bloquées par Google.
-        // Puis aussi parce que le module utilisé @distube/ytdl-core peut faire planter le bot.
-
-        // if (YouTube.isYouTubeUrl(url)) {
-        //     const directUrl = await YouTube.getYoutubeDirectUrl(interaction, url);
-        //     if (!directUrl) {
-        //         const embed = Functions.buildEmbed(
-        //             'Impossible de récupérer la vidéo depuis YouTube. Vérifiez le lien.',
-        //             'Alert',
-        //         );
-        //         await interaction.editReply({ embeds: [embed] });
-        //         return;
-        //     }
-        //     url = directUrl;
-        // }
-
         if (TikTok.isTikTokUrl(url)) {
-            const directUrl = await TikTok.fetchDirectUrl(url);
-            if (!directUrl) {
+            const proxyUrl = await TikTok.getProxyUrl(url);
+            if (!proxyUrl) {
                 const embed = Functions.buildEmbed(
                     'Impossible de récupérer la vidéo depuis TikTok. Vérifiez le lien.',
                     'Alert',
@@ -168,12 +155,12 @@ export default class LiveChatCommand extends Command {
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
-            url = directUrl;
+            url = proxyUrl;
         }
 
         if (Twitter.isStatusUrl(url)) {
-            const directUrl = await Twitter.parseDirectUrl(url);
-            if (!directUrl) {
+            const proxyUrl = await Twitter.getProxyUrl(url);
+            if (!proxyUrl) {
                 const embed = Functions.buildEmbed(
                     'Impossible de récupérer le média de ce Tweet. Vérifiez le lien.',
                     'Alert',
@@ -181,7 +168,7 @@ export default class LiveChatCommand extends Command {
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
-            url = directUrl;
+            url = proxyUrl;
         }
 
         if (Tenor.isShortenedUrl(url)) {
@@ -195,6 +182,7 @@ export default class LiveChatCommand extends Command {
                 return;
             }
             url = directUrl;
+            bypassProxy = true;
         }
 
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
@@ -204,9 +192,7 @@ export default class LiveChatCommand extends Command {
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Tenor.validateDirectUrl(url) &&
-            !Twitter.validateDirectUrl(url) &&
-            !TikTok.validateDirectUrl(url) &&
-            !YouTube.validateDirectUrl(url)
+            !ProxyService.isValidUrl(url)
         ) {
             const embed = Functions.buildEmbed(
                 `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\n\nLes liens Tenor et Twitter sont également acceptés.`,
@@ -216,8 +202,14 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // C'était pas forcément nécéssaire de séparer les deux fonctions, mais je trouve ça plus simple.
-        // Et puis ça marche sans avoir trop de lignes dupliquées.
+        // Si le lien est safe et fonctionnel, on n'utilise pas le proxy pour économiser des ressources
+        // Comme pour Discord par exemple qui laisse son CDN très permissif
+        if (Discord.isDiscordUrl(url)) bypassProxy = true;
+
+        if (!bypassProxy && !ProxyService.isValidUrl(url)) {
+            url = ProxyService.useProxy(url);
+        }
+
         if (target === this.everyone) {
             this.broadcastToStreamers(interaction, url, fullscreen, text);
         } else {
@@ -243,7 +235,7 @@ export default class LiveChatCommand extends Command {
 
         try {
             let streamsList: string = '';
-            let filetype = Functions.getFileType(url);
+            let filetype = Functions.getFileType(url).display;
 
             if ('Audio'.includes(filetype)) fullscreen = true;
 
@@ -293,7 +285,7 @@ export default class LiveChatCommand extends Command {
         }
 
         try {
-            let filetype = Functions.getFileType(url);
+            let filetype = Functions.getFileType(url).display;
 
             if ('Audio'.includes(filetype)) fullscreen = true;
 
@@ -310,7 +302,7 @@ export default class LiveChatCommand extends Command {
                     `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
                 'Good',
             );
-            embed.setImage(url);
+
             await interaction.editReply({ embeds: [embed] });
         } catch (err) {
             Logger.error('LiveChatCommand', err.message);

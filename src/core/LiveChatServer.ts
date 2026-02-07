@@ -8,7 +8,7 @@ import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import DiscordClient from './DiscordClient';
-import { TikTok } from './modules/Tiktok';
+import { ProxyService } from './modules/_ProxyService';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 
@@ -34,7 +34,7 @@ export class LiveChatServer {
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
             cors: {
-                origin: '*',
+                origin: Constants.getPath(),
                 methods: ['GET', 'POST'],
                 credentials: true,
             },
@@ -145,17 +145,15 @@ export class LiveChatServer {
     }
 
     private setupMiddlewares(): void {
-        const apiLimiter = rateLimit({
+        const limiter = rateLimit({
             windowMs: 1 * 60 * 1000,
-            max: 100,
+            max: 1000,
             message: { error: 'Trop de requêtes.' },
             standardHeaders: true,
             legacyHeaders: false,
         });
 
-        this.app.get('/api/tiktok', apiLimiter, TikTok.handleProxy);
-
-        // this.app.get('/api/youtube', apiLimiter, YouTube.handleProxy);
+        this.app.get('/api/proxy', limiter, ProxyService.handle);
 
         this.app.use(
             // La partie ci-dessous a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
