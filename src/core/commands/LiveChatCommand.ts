@@ -258,7 +258,7 @@ export default class LiveChatCommand extends Command {
                     `\n${streamsList}`,
                 'Good',
             );
-            embed.setImage(url);
+
             await interaction.editReply({ embeds: [embed] });
         } catch (err) {
             Logger.error('LiveChatCommand', err.message);
