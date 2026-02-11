@@ -157,36 +157,49 @@ export class LiveChatServer {
 
         this.app.get('/api/proxy', limiter, ProxyService.handle);
 
-        this.app.use(
-            // La partie ci-dessous a été faite par Cursor Claude. Le but était de régler des soucis liés à la mise en cache.
-            // Finalement, j'utilise du versionning de fichier dans le HTML (?v=00-00-0000.0) et c'est tout autant efficace.
-            // Je laisse ce truc là parce que honnêtement je ne connais pas le comportement d'OBS, et ça fonctionne très bien avec ça.
-            express.static(path.join(__dirname, '..', '..', 'dist', 'public'), {
-                etag: true,
-                lastModified: true,
-                cacheControl: true,
-                setHeaders: (res, filePath) => {
-                    const lower = filePath.toLowerCase();
+        const staticOptions = {
+            etag: true,
+            lastModified: true,
+            cacheControl: true,
+            setHeaders: (res: express.Response, filePath: string) => {
+                const lower = filePath.toLowerCase();
 
+                res.setHeader('X-Robots-Tag', 'index, follow');
+
+                if (lower.endsWith('.html')) {
+                    res.setHeader('Cache-Control', 'no-cache');
                     res.setHeader('X-Robots-Tag', 'index, follow');
+                } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|mp4|webm)$/.test(lower)) {
+                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+                } else {
+                    res.setHeader('Cache-Control', 'public, no-cache');
+                }
+            },
+        };
 
-                    if (lower.endsWith('.html')) {
-                        res.setHeader('Cache-Control', 'no-cache');
-                        res.setHeader('X-Robots-Tag', 'index, follow');
-                    } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|mp4|webm)$/.test(lower)) {
-                        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-                    } else {
-                        res.setHeader('Cache-Control', 'public, no-cache');
-                    }
-                },
-            }),
+        // Redirection pour la compatibilité avec les anciens liens d'overlay
+        this.app.get('/overlay.html', (req, res) => {
+            const query = req.url.split('?')[1];
+            res.redirect(301, `/overlay/overlay.html${query ? '?' + query : ''}`);
+        });
+
+        this.app.use(
+            '/overlay',
+            express.static(path.join(__dirname, '..', '..', 'dist', 'public', 'overlay'), staticOptions),
         );
+
+        this.app.use(
+            '/assets',
+            express.static(path.join(__dirname, '..', '..', 'dist', 'public', 'assets'), staticOptions),
+        );
+
+        this.app.use('/', express.static(path.join(__dirname, '..', '..', 'dist', 'public', 'web'), staticOptions));
 
         this.app.get('*', (req, res) => {
             const hasFileExtension = /\.\w+$/.test(req.path);
 
             if (!hasFileExtension) {
-                res.sendFile(path.join(__dirname, '..', '..', 'dist', 'public', 'index.html'));
+                res.sendFile(path.join(__dirname, '..', '..', 'dist', 'public', 'web', 'index.html'));
             } else {
                 res.status(404).send('Fichier non trouvé');
             }

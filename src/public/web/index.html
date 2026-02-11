@@ -357,7 +357,7 @@
                     return;
                 }*/
 
-                const link = `https://${window.location.host}/overlay.html?username=${username}&guildId=${guildId}${noSplash ? '&noSplash=true' : ''}`;
+                const link = `https://${window.location.host}/overlay/overlay.html?username=${username}&guildId=${guildId}${noSplash ? '&noSplash=true' : ''}`;
                 document.getElementById('generatedLink').textContent = link;
                 document.getElementById('linkContainer').style.display = 'block';
             }
