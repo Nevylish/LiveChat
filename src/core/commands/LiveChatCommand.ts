@@ -248,8 +248,7 @@ export default class LiveChatCommand extends Command {
                 });
 
                 streamsList =
-                    streamsList +
-                    `\n➜ [**Appuyez ici pour rejoindre le stream de ${streamer[0]}**](https://twitch.tv/${streamer[0]})`;
+                    streamsList + `\n➜ [**Rejoindre le stream de ${streamer[0]}**](https://twitch.tv/${streamer[0]})`;
             }
 
             const embed = Functions.buildEmbed(
@@ -299,7 +298,7 @@ export default class LiveChatCommand extends Command {
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé sur le stream de ${target}` +
                     `\n\nType de fichier: **${filetype}${text ? ' + Texte' : ''}${fullscreen && !'Audio'.includes(filetype) ? ' en plein écran' : ''}**` +
-                    `\n\n➜ [**Appuyez ici pour rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
+                    `\n\n➜ [**Rejoindre le stream de ${target}**](https://twitch.tv/${target})`,
                 'Good',
             );
 
