@@ -41,6 +41,8 @@ function initializeSocket(serverUrl) {
     socket.on('connect_error', handleConnectError);
     socket.on('broadcast', handleBroadcast);
     socket.on('updateConnectionStatus', updateConnectionStatus);
+    socket.on('skip', handleSkip);
+    socket.on('clear', handleClear);
 }
 
 function handleConnect() {
@@ -112,6 +114,20 @@ function handleBroadcast({ content, from, fullscreen, text }) {
     if (!isProcessingQueue) {
         processNextContent();
     }
+}
+
+function handleSkip() {
+    cleanupCurrentContent(() => {
+        processNextContent();
+    });
+}
+
+function handleClear() {
+    contentQueue = [];
+
+    cleanupCurrentContent(() => {
+        processNextContent();
+    });
 }
 
 function processNextContent() {
