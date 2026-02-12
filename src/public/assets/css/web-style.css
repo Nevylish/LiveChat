@@ -1328,8 +1328,39 @@ input[type="checkbox"] {
   min-height: 400px;
 }
 
+.finish-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 2rem 0 0 0;
+  gap: 2rem;
+}
+
 .contact-info {
-  margin: 2rem 0;
+  flex: 1;
+}
+
+.buymeacoffee {
+  flex-shrink: 0;
+  text-align: left;
+}
+
+.buymeacoffee p {
+  margin-bottom: 0.5rem;
+}
+
+/* Stack on mobile */
+@media (max-width: 768px) {
+  .finish-container {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .buymeacoffee {
+    text-align: left;
+    width: 100%;
+  }
 }
 
 .social-link {
