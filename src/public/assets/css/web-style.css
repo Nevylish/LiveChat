@@ -1191,18 +1191,19 @@ input[type='checkbox'] {
     position: absolute;
     left: 0;
     top: 0;
-    width: 24px;
-    height: 24px;
-    background: rgba(124, 58, 237, 0.2);
-    color: var(--primary);
-    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    background: rgba(221, 224, 230, 0.3);
+    color: #f3f3f3;
+    border-radius: 999%;
     text-align: center;
-    font-size: 0.85rem;
-    line-height: 24px;
+    font-size: 1.1rem;
+    line-height: 26px;
     font-weight: bold;
 }
 
 .usage-list li {
+    color: var(--text-secondary);
     list-style-type: none;
     margin-bottom: 0.8rem;
     padding-left: 1rem;
@@ -1286,9 +1287,7 @@ input[type='checkbox'] {
 
 .btn-next-step,
 .btn-prev-step {
-    background: transparent;
-    color: var(--primary);
-    border: 1px solid var(--primary);
+    color: #fff;
     padding: 0.8rem 1.5rem;
     border-radius: 50px;
     cursor: pointer;
@@ -1297,19 +1296,20 @@ input[type='checkbox'] {
 }
 
 .btn-prev-step {
-    border-color: var(--glass-border);
-    color: var(--text-secondary);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-next-step {
+    background-color: #7c3aed;
 }
 
 .btn-next-step:hover {
-    background: var(--primary);
-    color: #fff;
+    background-color: #a77bd8;
 }
 
 .btn-prev-step:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--text-main);
-    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .center-content {
