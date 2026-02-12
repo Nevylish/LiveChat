@@ -55,6 +55,8 @@ Actuellement les plateformes supportées sont :
 
 - Tiktok
 - X (anciennement Twitter)
+- Discord (si vous ou quelqu'un d'autre envoyez un média dans un salon textuel,  
+  vous pouvez juste faire clic-droit > Copier le lien puis l'utiliser dans la commande `/livechat`)
 - Giphy (en gros le truc de gifs intégré à Discord)
 - Tenor (l'ancien truc de gifs intégré à Discord)
 
