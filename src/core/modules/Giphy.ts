@@ -2,6 +2,8 @@
  * Ce fichier permet la prise en charge des liens Giphy.
  */
 
+import { Logger } from '../utils/Logger';
+
 export namespace Giphy {
     export const isShortenedUrl = (url: string): boolean => {
         return !!url.match(/^(https?:\/\/)?(www\.)?(giphy\.com\/gifs\/|gph\.is\/)/);
@@ -35,7 +37,8 @@ export namespace Giphy {
             }
 
             return null;
-        } catch (e) {
+        } catch (err) {
+            Logger.error('Giphy.ts (fetchDirectUrl)', err);
             return null;
         }
     };

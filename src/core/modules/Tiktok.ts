@@ -3,6 +3,7 @@
  */
 
 import fetch from 'node-fetch';
+import { Logger } from '../utils/Logger';
 import { ProxyService } from './_ProxyService';
 
 export namespace TikTok {
@@ -24,7 +25,8 @@ export namespace TikTok {
             }
 
             return null;
-        } catch {
+        } catch (err) {
+            Logger.error('Tiktok.ts (getProxyUrl)', err);
             return null;
         }
     };

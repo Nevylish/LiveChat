@@ -6,6 +6,8 @@
  * De plus Tenor ne permet pas de récupérer le lien direct facilement, donc j'utilise leur API pour le récupérer.
  */
 
+import { Logger } from '../utils/Logger';
+
 export namespace Tenor {
     export const isShortenedUrl = (url: string): boolean => {
         return !!url.match(/^https?:\/\/tenor\.com\/(fr\/)?view\//);
@@ -43,7 +45,8 @@ export namespace Tenor {
             }
 
             return null;
-        } catch (e) {
+        } catch (err) {
+            Logger.error('Tenor.ts (fetchDirectUrl)', err);
             return null;
         }
     };
