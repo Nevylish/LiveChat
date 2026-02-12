@@ -1,7 +1,7 @@
 /**
  * Commande slash /livechat
  *
- * Elle est l'unique commande utilisable et permet d'envoyer un média sur une page internet, généralement une source Navigateur OBS.
+ * Elle permet d'envoyer un média sur une page internet, généralement une source Navigateur OBS.
  *
  * On y choisit la cible (généralement un·e streameur·euse), gérée par l'autocomplétion.
  * On y rentre ensuite une URL brute¹ vers un média (qui termine par une extension de fichier), celle-ci sera affichée sur le flux.
