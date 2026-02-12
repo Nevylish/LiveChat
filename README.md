@@ -88,7 +88,6 @@ npm install
 ```env
 LIVECHAT_PORT=port_du_serveur_web
 TOKEN=token_de_votre_bot_discord
-SECRET_API=secret_api_livechat
 TENOR_API_KEY=clé_api_tenor
 GIPHY_API_KEY=clé_api_giphy
 ```
