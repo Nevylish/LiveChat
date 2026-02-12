@@ -24,11 +24,6 @@ export namespace Giphy {
             if (!gifId) return null;
 
             const apiKey = process.env.GIPHY_API_KEY;
-            if (!apiKey) {
-                console.warn('GIPHY_API_KEY is not set');
-                return null;
-            }
-
             const apiUrl = `https://api.giphy.com/v1/gifs/${gifId}?api_key=${apiKey}`;
 
             const response = await fetch(apiUrl);
