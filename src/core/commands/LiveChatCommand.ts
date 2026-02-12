@@ -6,7 +6,7 @@
  * On y choisit la cible (généralement un·e streameur·euse), gérée par l'autocomplétion.
  * On y rentre ensuite une URL brute¹ vers un média (qui termine par une extension de fichier), celle-ci sera affichée sur le flux.
  *
- * ¹Exception pour les liens Tenor et Twitter, LiveChat prend en charge les URLs raccourcies de ces plateformes. J'espère en ajouter d'autres à l'avenir.
+ * ¹Exception pour les liens Tenor, Giphy et Twitter, LiveChat prend en charge les URLs raccourcies de ces plateformes. J'espère en ajouter d'autres à l'avenir.
  *
  * Puis on a des options supplémentaires:
  * - Texte: Ajoute du texte par dessus le média, centré en bas type Meme avec la police Impact.
@@ -23,6 +23,7 @@ import {
 import DiscordClient from '../DiscordClient';
 import { ProxyService } from '../modules/_ProxyService';
 import { Discord } from '../modules/Discord';
+import { Giphy } from '../modules/Giphy';
 import { Tenor } from '../modules/Tenor';
 import { TikTok } from '../modules/Tiktok';
 import { Twitter } from '../modules/Twitter';
@@ -48,14 +49,13 @@ export default class LiveChatCommand extends Command {
                     name: 'url',
                     type: ApplicationCommandOptionType.String,
                     description:
-                        'Lien du média à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif,tenor.',
+                        'Lien du média à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif.',
                     required: false,
                 },
                 {
                     name: 'fichier',
                     type: ApplicationCommandOptionType.Attachment,
-                    description:
-                        'Fichier à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif,tenor.',
+                    description: 'Fichier à afficher. Formats acceptés: mp4,webm,mkv,mov,mp3,wav,ogg,jpg,jpeg,png,gif.',
                     required: false,
                 },
                 {
@@ -185,6 +185,20 @@ export default class LiveChatCommand extends Command {
             bypassProxy = true;
         }
 
+        if (Giphy.isShortenedUrl(url)) {
+            const directUrl = await Giphy.fetchDirectUrl(url);
+            if (!directUrl) {
+                const embed = Functions.buildEmbed(
+                    'Impossible de récupérer le GIF depuis Giphy. Vérifiez le lien.',
+                    'Alert',
+                );
+                await interaction.editReply({ embeds: [embed] });
+                return;
+            }
+            url = directUrl;
+            bypassProxy = true;
+        }
+
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
@@ -192,10 +206,11 @@ export default class LiveChatCommand extends Command {
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Tenor.validateDirectUrl(url) &&
+            !Giphy.validateDirectUrl(url) &&
             !ProxyService.isValidUrl(url)
         ) {
             const embed = Functions.buildEmbed(
-                `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\n\nLes liens Tenor et Twitter sont également acceptés.`,
+                `Format de fichier non supporté. Formats acceptés: ${supportedFormats.join(', ')}.\n\nLes liens Tiktok, Twitter, Tenor, Giphy et Discord sont également acceptés.`,
                 'Alert',
             );
             await interaction.editReply({ embeds: [embed] });

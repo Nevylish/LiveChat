@@ -6,6 +6,7 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import { ProxyService } from '../modules/_ProxyService';
+import { Giphy } from '../modules/Giphy';
 import { Tenor } from '../modules/Tenor';
 
 export namespace Functions {
@@ -78,9 +79,12 @@ export namespace Functions {
         } else if (extension === 'gif') {
             display = 'Image animée';
             if (Tenor.validateDirectUrl(url)) display = 'Image animée Tenor';
+            if (Giphy.validateDirectUrl(url)) display = 'Image animée Giphy';
             param = 'image';
         } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
             display = 'Vidéo';
+            if (Tenor.validateDirectUrl(url)) display = 'Image animée Tenor';
+            if (Giphy.validateDirectUrl(url)) display = 'Image animée Giphy';
             param = 'video';
         } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
             display = 'Audio';
