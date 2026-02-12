@@ -12,7 +12,7 @@ import { Logger } from './core/utils/Logger';
 dotenv.config({ path: resolve(__dirname, '../.env') });
 
 // Vérification des variables d'environnement
-const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'SECRET_API', 'DOMAIN'];
+const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'GIPHY_API_KEY', 'SECRET_API', 'DOMAIN'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {

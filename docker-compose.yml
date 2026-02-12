@@ -12,6 +12,9 @@ services:
             - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
             - TENOR_API_KEY=${TENOR_API_KEY}
+            - GIPHY_API_KEY=${GIPHY_API_KEY}
+            - SECRET_API=${SECRET_API}
+            - DOMAIN=${DOMAIN}
         ports:
             - '5000:5000'
         volumes:
