@@ -3,52 +3,41 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/assets/css/web-style.css?v=2025-12-27.0" rel="stylesheet" />
-        <title>LiveChat - Overlay OBS Studio</title>
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "LiveChat - Overlay OBS Studio",
-                "alternateName": "LiveChat - Nevylish",
-                "url": "https://livechat.nevylish.fr/"
-            }
-        </script>
+        <link href="/assets/css/web-style.css?v=2026-02-12.1" rel="stylesheet" />
+        <link href="/assets/css/loader.css" rel="stylesheet" />
+        <title>LiveChat - Nevylish</title>
         <meta
             name="description"
-            content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord. Inspiré par la Cacabox."
+            content="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
         />
         <meta
             name="keywords"
-            content="OBS Studio, obs, streamlabs, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch"
+            content="OBS Studio, obs, streamlabs, xsplit, prism live, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch"
         />
         <meta name="author" content="Nevylish" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://livechat.nevylish.fr/" />
-        <meta name="application-name" content="LiveChat - Overlay OBS" />
+        <meta name="application-name" content="LiveChat - Overlay pour streameurs" />
 
-        <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://livechat.nevylish.fr/" />
-        <meta property="og:title" content="LiveChat - Overlay OBS Studio" />
+        <meta property="og:title" content="LiveChat - Overlay pour streameurs" />
         <meta
             property="og:description"
-            content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord. Inspiré par la Cacabox."
+            content="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
         />
         <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-        <meta property="og:site_name" content="LiveChat - Overlay OBS" />
+        <meta property="og:site_name" content="LiveChat - Overlay pour streameurs" />
 
-        <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://livechat.nevylish.fr/" />
-        <meta property="twitter:title" content="LiveChat - Overlay OBS Studio" />
+        <meta property="twitter:title" content="LiveChat - Overlay pour streameurs" />
         <meta
             property="twitter:description"
-            content="LiveChat est un bot Discord et un overlay OBS Studio qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, par exemple, depuis une simple commande Discord. Inspiré par la Cacabox."
+            content="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
         />
         <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
 
-        <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="/assets/ico/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png" />
@@ -58,369 +47,187 @@
         <link rel="manifest" href="/assets/ico/site.webmanifest" />
     </head>
     <body>
-        <div class="container">
-            <header class="header">
-                <img src="/assets/images/livechat_transparent.png" alt="LiveChat - Overlay OBS Studio" class="logo" />
-                <p class="description">
-                    LiveChat est un bot Discord et un overlay OBS Studio/Streamlabs inspiré par la Cacabox qui permet
-                    d'afficher une image, une vidéo ou jouer un son sur un flux en direct depuis une simple commande
-                    Discord.
-                </p>
-            </header>
+        <div class="bg-layer"></div>
 
-            <main>
-                <section class="section" id="Demonstration">
-                    <h2>Démonstration</h2>
-                    <div style="margin-top: -0.3rem">
-                        La vidéo a été enregistrée directement avec OBS Studio et la source LiveChat en tête de liste,
-                        ça donne un aperçu du côté spectateur. Attention, le son peut surprendre à 30 secondes.
-                        <div style="padding-bottom: 1rem"></div>
-                    </div>
-                    <div>
-                        <iframe
-                            class="youtube"
-                            src="https://www.youtube-nocookie.com/embed/50IjxVbd9Ew?si=A0ATDY6D1S81893L"
-                            title="YouTube video player"
-                            frameborder="0"
-                            allow="
-                                accelerometer;
-                                autoplay;
-                                clipboard-write;
-                                encrypted-media;
-                                gyroscope;
-                                picture-in-picture;
-                                web-share;
-                            "
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                        >
-                        </iframe>
-                    </div>
-                </section>
-
-                <!-- <section class="section collapsible-section" id="Tutoriel">
-                    <h2 id="tutorialToggle" class="collapsible">
-                        Tutoriel vidéo<span class="collapsible-hint">Cliquez pour afficher</span
-                        ><span class="arrow" aria-hidden="true">▼</span>
-                    </h2>
-                    <div id="tutorialContent" class="collapsible-content">
-                        <p>
-                            Si vous êtes à l'aise avec la lecture, cette vidéo donne les mêmes explications que le texte
-                            ci-dessous.
-                        </p>
-                        <div style="padding-bottom: 1rem"></div>
-                        <iframe
-                            class="youtube"
-                            src="https://www.youtube-nocookie.com/embed/C5Snzonuxx4?si=niXZ_B_4A9yNc4Mi"
-                            title="YouTube video player"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                        >
-                        </iframe>
-                    </div>
-                </section> -->
-
-                <section class="section" id="Installation">
-                    <h2>1. Installation du bot Discord</h2>
-                    <div>
-                        Pour commencer, invitez le bot sur votre serveur <strong>privé</strong> Discord.
-                        <br />
-                        Vous pouvez en créer un pour cette utilisation uniquement.
-                        <div style="padding-bottom: 1rem"></div>
-                        C'est grâce à lui que vous pourrez faire afficher du contenu sur votre overlay.
-                        <div style="padding-bottom: 1rem"></div>
-                        Tapez <strong>/livechat</strong> dans un salon textuel pour afficher la commande.
-                        <br />
-                        Nous reviendrons en profondeur sur son fonctionnement dans la troisième partie.
-                        <div style="padding-bottom: 1rem"></div>
-                        <strong>
-                            Gardez à l'esprit que tous les membres présents sur le serveur pourront utiliser le LiveChat
-                            et faire apparaître n'importe quoi sur votre flux, n'invitez pas n'importe qui.
-                        </strong>
-                    </div>
-                    <a
-                        href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
-                        class="btn"
-                        style="margin-top: 1rem"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >Ajouter le bot</a
-                    >
-                </section>
-
-                <section class="section" id="Configuration">
-                    <h2>2. Configuration de l'overlay</h2>
-                    <p>
-                        Pour obtenir votre lien, rentrez les informations demandées ci-dessous puis cliquez sur le
-                        bouton
-                        <strong>Générer mon lien d'overlay</strong>.
-                    </p>
-                    <div style="padding-bottom: 1rem"></div>
-                    <div class="form-group">
-                        <label for="username">Nom d'utilisateur Twitch</label>
-                        <input
-                            type="text"
-                            id="username"
-                            placeholder="terracid"
-                            pattern="[a-z0-9_]"
-                            title="Le nom d'utilisateur doit commencer par une lettre ou un chiffre, 
-                            suivi de 3 à 24 caractères (lettres, chiffres ou underscore)"
-                            oninput="validateUsername(this)"
-                        />
-                    </div>
-                    <div style="padding-bottom: 1rem"></div>
-                    <div class="form-group">
-                        <label for="guildId">
-                            Identifiant du serveur
-                            <span
-                                class="info-tooltip"
-                                title="1. Activez le mode développeur dans les paramètres Discord&#10;
-                                2. Faites un clic droit sur l'icône de votre serveur&#10;
-                                3. Cliquez sur 'Copier l'identifiant'"
-                                >?</span
-                            >
-                        </label>
-                        <input
-                            type="text"
-                            id="guildId"
-                            placeholder="012345678987654321"
-                            pattern="[0-9]+"
-                            title="L'identifiant du serveur doit contenir uniquement des chiffres"
-                            oninput="validateGuildId(this)"
-                        />
-                    </div>
-
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="disableSplash" />
-                            <span class="checkmark"></span>
-                            Désactiver l'écran de démarrage
-                        </label>
-                    </div>
-
-                    <button class="btn" onclick="generateLink()">Générer mon lien d'overlay</button>
-                    <div id="linkContainer" style="display: none">
-                        <div class="code-block">
-                            <span id="generatedLink"></span>
-                            <button class="copy-btn" onclick="copyLink()">Copier</button>
-                        </div>
-                    </div>
-                    <div style="padding-bottom: 0.5rem"></div>
-                    <div style="border-top: 1px solid #444343; margin: 1rem 0"></div>
-                    <div style="padding-bottom: 0.3rem"></div>
-                    <div>
-                        Maintenant que vous avez votre lien, vous allez ajouter une source
-                        <strong>Navigateur</strong> sur l'une de vos scènes, puis vous l'insérez dans la case
-                        <strong>URL</strong>.
-                        <div style="padding-bottom: 1rem"></div>
-                        Changez la <strong>largeur et la hauteur</strong> pour celle configurée dans les paramètres
-                        d'OBS, généralement 1920 de largeur et 1080 de hauteur.
-                        <div style="padding-bottom: 1rem"></div>
-                        Cochez <strong>Contrôler l'audio via OBS</strong>, cela est obligatoire pour les prochaines
-                        étapes.
-                        <div style="padding-bottom: 1rem"></div>
-                        <strong>Dans la partie CSS personnalisé</strong>, copiez et ajoutez le texte ci-dessous, cela
-                        permet de masquer la page d'erreur de Cloudflare si LiveChat est hors-ligne.
-                    </div>
-
-                    <div id="cssContainer">
-                        <div class="code-block">
-                            <span id="cssCode">#cf-wrapper { display: none; }</span>
-                            <button class="copy-btn" onclick="copyCssCode(this)">Copier</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <br />
-                        Cliquez sur <strong>OK</strong> pour valider et placez la source au dessus de toutes les autres.
-                        <div style="padding-bottom: 1rem"></div>
-                        Pour activer le son de LiveChat: Faites un clic droit sur le <strong>mélangeur audio</strong>,
-                        allez dans les <strong>Paramètres audio avancées</strong>, trouvez la source de LiveChat et dans
-                        la catégorie Monitoring Audio sélectionnez <strong>Monitoring et sortie</strong>.
-                        <div style="padding-bottom: 0.7rem"></div>
-                        Vous pourrez maintenant diminuer ou augmenter le volume de LiveChat.
-                        <div style="padding-bottom: 0.7rem"></div>
-                        Vous pouvez désormais dupliquer la source sur l'ensemble des scènes que vous souhaitez.
-                    </div>
-                </section>
-                <section class="section" id="Utiliser">
-                    <h2>3. Utiliser LiveChat</h2>
-                    <div>
-                        Utilisez la commande /livechat pour partager des médias, vous aurez plusieurs options à remplir:
-                        <div style="padding-bottom: 0.5rem"></div>
-                        <ul style="margin-left: 2rem; margin-right: 2rem">
-                            <li>Cible: Séléctionnez le streameur dans la liste</li>
-                            <li>URL: Lien brut/direct vers le fichier<sup>1</sup></li>
-                            <li>
-                                Fichier: À utiliser à la place de URL si vous avez le média enregistré sur votre PC,
-                                vous pouvez le séléctionner sans avoir besoin de l'upload à l'avance sur Discord
-                            </li>
-                            <li>
-                                Texte: Permet d'ajouter du texte sur le bas du média avec la police d'écriture Impact
-                                (style Meme) (optionnel)
-                            </li>
-                            <li>Fullscreen: Affiche le média en plein écran (optionnel)</li>
-                        </ul>
-                        <div style="border-top: 1px solid #444343; margin: 1rem 0"></div>
-                        <h4><sup>1</sup> 📁 Formats de médias supportés:</h4>
-                        <div style="padding-bottom: 1rem"></div>
-                        LiveChat supporte les liens directs vers des médias ainsi que les liens Tiktok, Tenor et X
-                        (anciennement Twitter), l'ajout d'autres plateformes est prévu.
-                        <div style="padding-bottom: 1rem"></div>
-                        Voici comment obtenir un lien direct:
-                        <ul style="margin-left: 2rem; margin-right: 2rem">
-                            <li>Téléchargez le média sur votre pc (notube.lol pour YouTube par exemple)</li>
-                            <li>
-                                Envoyez votre média dans un canal Discord, sur le serveur que vous avez créé pour
-                                LiveChat par exemple
-                            </li>
-                            <li>Faites un clic droit sur le fichier et sélectionnez "Copier le lien"</li>
-                        </ul>
-                        <div style="padding-top: 0.7rem; padding-bottom: 0.7rem">
-                            <span style="color: rgb(148, 148, 148)">
-                                Formats de fichier pris en charge: .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg,
-                                .png, .gif
-                            </span>
-                        </div>
-                        ⚠️ Important: Les liens YouTube ou autres plateformes de streaming non citées au dessus ne sont
-                        pas supportés. Vous devez d'abord télécharger le média et pour obtenir un lien direct.
-                    </div>
-                </section>
-
-                <section class="section">
-                    Félicitations, LiveChat est prêt!
-                    <div style="padding-bottom: 1rem"></div>
-                    En cas de problème ou pour une demande, vous pouvez me contacter par mail à l'adresse
-                    <a class="socials" href="mailto:bonjour@nevylish.fr">bonjour@nevylish.fr</a>, sur Twitter
-                    <a class="socials" href="https://x.com/nevylish" target="_blank" rel="noopener noreferrer"
-                        >@Nevylish</a
-                    >
-                    ou ouvrir une issue sur GitHub
-                    <a
-                        class="socials"
-                        href="https://github.com/Nevylish/LiveChat"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >Nevylish/LiveChat</a
-                    >.
-                </section>
-            </main>
-
-            <footer>
-                <div class="footer-links">
-                    <a href="/updates.html">Patch Notes</a>
-                    <span class="separator">|</span>
-                    <a href="/terms.html">Conditions d’utilisation</a>
-                    <span class="separator">|</span>
-                    <a href="/privacy.html">Politique de confidentialité</a>
-                    <span class="separator">|</span>
-                    <a href="https://github.com/nevylish/livechat" target="_blank" rel="noopener noreferrer"
-                        >Code Source</a
-                    >
-                </div>
-                <div class="footer-watermark">Nevylish</div>
-                <div class="copyright" id="copyright"></div>
-            </footer>
+        <!-- Loader -->
+        <div id="loader">
+            <div class="loader-circle"></div>
         </div>
 
-        <script>
-            document.getElementById('copyright').textContent =
-                `© ${new Date().getFullYear()} Nevylish — LiveChat. Tous droits réservés.`;
-        </script>
-        <script>
-            function validateUsername(input) {
-                input.value = input.value.replace(/[^a-zA-Z0-9_]/g, '');
-                input.value = input.value.toLowerCase();
-                if (input.value.startsWith('_')) {
-                    input.value = input.value.substring(1);
-                }
-            }
+        <div id="cookie-banner" class="cookie-container">
+            <div class="cookie-content">
+                <p>Ce site utilise des cookies pour améliorer votre expérience.</p>
+                <p class="cookie-description">
+                    Nous utilisons uniquement Google Analytics pour mesurer les performances du site web sur les
+                    différents appareils.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="cookie-accept">Accepter</button>
+                <button id="reject-cookies" class="cookie-reject">Refuser</button>
+            </div>
+        </div>
 
-            function validateGuildId(input) {
-                input.value = input.value.replace(/[^0-9]/g, '');
-            }
+        <header>
+            <div class="container nav-content">
+                <a href="#" class="logo">
+                    <img src="/assets/images/livechat_transparent.png" alt="Logo de LiveChat" />
+                    LiveChat
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="config.html">Configuration</a></li>
+                        <!-- <li><a href="usage.html">Utilisation</a></li> -->
+                        <li><a href="updates.html">Patch Notes</a></li>
+                        <li>
+                            <a href="https://nevylish.fr/" target="_blank">nevylish.fr</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
 
-            function generateLink() {
-                const username = document.getElementById('username').value;
-                const guildId = document.getElementById('guildId').value;
-                const noSplash = document.getElementById('disableSplash').checked;
+        <main>
+            <section class="hero">
+                <div class="container hero-container">
+                    <div class="hero-content">
+                        <h1>Laissez vos amis<br />animer vos streams</h1>
+                        <p>
+                            Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.<br />
+                            Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas?
+                        </p>
+                        <div class="hero-btns">
+                            <a href="config.html" class="btn btn-config">Configurez votre overlay</a>
+                            <a
+                                href="https://www.youtube.com/watch?v=50IjxVbd9Ew"
+                                target="_blank"
+                                class="btn btn-secondary"
+                                >Démonstration vidéo</a
+                            >
+                        </div>
+                    </div>
+                    <div class="hero-demo">
+                        <img
+                            src="/assets/images/livechat_preview.png"
+                            alt="Prévisualisation de l'overlay"
+                            class="preview-image"
+                        />
+                    </div>
+                </div>
+            </section>
 
-                if (!username || !guildId) {
-                    alert('Veuillez remplir tous les champs.');
-                    return;
-                }
+            <div class="scroll-indicator">
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M7 13l5 5 5-5" />
+                </svg>
+            </div>
 
-                /*if (guildId.length !== 18) {
-                    alert("L'identifiant du serveur n'est pas valide.");
-                    return;
-                }*/
+            <section class="features">
+                <div class="container">
+                    <div class="feature-block">
+                        <div class="feature-text">
+                            <h2>Prise en charge de plusieurs plateformes</h2>
+                            <p>
+                                Partager des TikToks, des Tweets et plus encore en envoyant simplement un lien sans
+                                devoir<br />
+                                télécharger l'image ou la vidéo.<br /><br />Actuellement pris en charge:
+                                <strong>Tiktok</strong>, <strong>Giphy</strong>, <strong>Tenor</strong> &
+                                <strong>X</strong>.<br />Ou uploadez vos propres fichiers.<br />Prévu pour bientôt:
+                                YouTube.
+                            </p>
+                        </div>
+                        <div class="feature-visual">
+                            <img
+                                src="/assets/images/card_tiktok.png"
+                                alt="Prise en charge de plusieurs plateformes"
+                                class="feature-img"
+                            />
+                        </div>
+                    </div>
 
-                const link = `https://${window.location.host}/overlay/overlay.html?username=${username}&guildId=${guildId}${noSplash ? '&noSplash=true' : ''}`;
-                document.getElementById('generatedLink').textContent = link;
-                document.getElementById('linkContainer').style.display = 'block';
-            }
+                    <div class="feature-block reversed">
+                        <div class="feature-text">
+                            <h2>Streamez à plusieurs</h2>
+                            <p>
+                                Invitez vos amis à installer LiveChat en configurant le même serveur Discord que vous et
+                                streamez ensemble !
+                            </p>
+                        </div>
+                        <div class="feature-visual">
+                            <img
+                                src="/assets/images/card_streamtogether.png"
+                                alt="Streamez à plusieurs"
+                                class="feature-img"
+                            />
+                        </div>
+                    </div>
 
-            function copyLink() {
-                const link = document.getElementById('generatedLink').textContent;
-                navigator.clipboard.writeText(link).then(() => {
-                    const btn = document.querySelector('.copy-btn');
-                    btn.textContent = 'Copié !';
-                    setTimeout(() => {
-                        btn.textContent = 'Copier';
-                    }, 5555);
-                });
-            }
+                    <div class="feature-block">
+                        <div class="feature-text">
+                            <h2>Compatible avec toutes les applications de streaming</h2>
+                            <p>
+                                LiveChat est compatible avec
+                                <strong><a class="text-link" href="https://obsproject.com/">OBS Studio</a></strong
+                                >, <strong><a class="text-link" href="https://streamlabs.com/">Streamlabs</a></strong
+                                >,
+                                <strong><a class="text-link" href="https://prismlive.com/en_us">PRISM Live</a></strong>
+                                et tous les autres logiciels ou applications sur lesquels vous pouvez ajouter une source
+                                Navigateur Web.
+                            </p>
+                        </div>
+                        <div class="feature-visual">
+                            <img
+                                src="/assets/images/card_platforms.png"
+                                alt="Compatible avec toutes les applications de streaming"
+                                class="feature-img"
+                            />
+                        </div>
+                    </div>
 
-            function copyCssCode(button) {
-                const cssCode = document.getElementById('cssCode').textContent;
-                navigator.clipboard.writeText(cssCode).then(() => {
-                    button.textContent = 'Copié !';
-                    setTimeout(() => {
-                        button.textContent = 'Copier';
-                    }, 5555);
-                });
-            }
+                    <div class="feature-text">
+                        <h2>En route vers le succès 🏆</h2>
+                        <p>
+                            LiveChat est une fonctionnalitée rendue populaire par le groupe de streameurs Cacabox (<a
+                                class="text-link"
+                                href="https://x.com/cacaboxtv"
+                                >@cacaboxtv</a
+                            >
+                            sur X).<br />En ayant accès aux mêmes technologies qu'eux, vous pouvez agrandir votre
+                            audience à partir de contenus courts verticaux qui peut-être deviendront viraux.
+                        </p>
+                    </div>
+                </div>
 
-            document.addEventListener('DOMContentLoaded', function () {
-                function initCollapsible(sectionId, toggleId, contentId) {
-                    const toggle = document.getElementById(toggleId);
-                    const content = document.getElementById(contentId);
-                    const section = document.getElementById(sectionId);
-                    const hint = toggle ? toggle.querySelector('.collapsible-hint') : null;
-                    const arrow = toggle ? toggle.querySelector('.arrow') : null;
-                    if (!toggle || !content || !section) return;
+                <div class="center-btn">
+                    <a href="config.html" class="btn btn-config">Passez à la configuration de votre overlay</a>
+                </div>
+            </section>
+        </main>
 
-                    toggle.setAttribute('role', 'button');
-                    toggle.setAttribute('tabindex', '0');
-
-                    const toggleOpen = () => {
-                        const willOpen = !content.classList.contains('open');
-                        content.classList.toggle('open', willOpen);
-                        section.classList.toggle('open', willOpen);
-                        toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-                        if (arrow) arrow.classList.toggle('open', willOpen);
-                        if (hint) hint.classList.toggle('hidden', willOpen);
-                    };
-
-                    toggle.addEventListener('click', toggleOpen);
-                    toggle.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            toggleOpen();
-                        }
-                    });
-
-                    toggle.setAttribute('aria-expanded', 'false');
-                    content.classList.remove('open');
-                    section.classList.remove('open');
-                    if (hint) hint.classList.remove('hidden');
-                    if (arrow) arrow.classList.remove('open');
-                }
-
-                // initCollapsible('Tutoriel', 'tutorialToggle', 'tutorialContent');
-            });
-        </script>
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="https://github.com/Nevylish/LiveChat" target="_blank">Code source</a>
+                </div>
+                <p class="copyright" id="copyright"></p>
+            </div>
+        </footer>
+        <script src="/assets/javascript/web-script.js?v=2026-02-12.1"></script>
     </body>
 </html>

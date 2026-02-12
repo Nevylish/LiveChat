@@ -3,21 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/assets/css/web-style.css?v=2025-12-27.0" rel="stylesheet" />
-        <title>LiveChat - Patch notes</title>
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "LiveChat - Patch notes",
-                "alternateName": "LiveChat - Nevylish",
-                "url": "https://livechat.nevylish.fr/updates.html"
-            }
-        </script>
-        <meta
-            name="description"
-            content="Consultez les dernières mises à jour et actualités de LiveChat, le meilleur overlay OBS Studio/Streamlabs inspiré par la Cacabox."
-        />
+        <title>Patch Notes - LiveChat</title>
+        <meta name="description" content="Découvrez les dernières mises à jour et nouveautés de LiveChat." />
         <meta
             name="keywords"
             content="OBS Studio, obs, streamlabs, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch"
@@ -25,28 +12,10 @@
         <meta name="author" content="Nevylish" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://livechat.nevylish.fr/updates.html" />
+        <meta name="application-name" content="Patch Notes - LiveChat" />
+        <link href="/assets/css/web-style.css?v=2026-02-12.1" rel="stylesheet" />
+        <link href="/assets/css/loader.css" rel="stylesheet" />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://livechat.nevylish.fr/updates.html" />
-        <meta property="og:title" content="LiveChat - Patch notes" />
-        <meta
-            property="og:description"
-            content="Consultez les dernières mises à jour et actualités de LiveChat, le meilleur overlay OBS Studio/Streamlabs inspiré par la Cacabox."
-        />
-        <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://livechat.nevylish.fr/updates.html" />
-        <meta property="twitter:title" content="LiveChat - Patch notes" />
-        <meta
-            property="twitter:description"
-            content="Consultez les dernières mises à jour et actualités de LiveChat, le meilleur overlay OBS Studio/Streamlabs inspiré par la Cacabox."
-        />
-        <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-
-        <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="/assets/ico/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png" />
@@ -54,132 +23,214 @@
         <link rel="icon" type="image/png" sizes="192x192" href="/assets/ico/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/assets/ico/android-chrome-512x512.png" />
         <link rel="manifest" href="/assets/ico/site.webmanifest" />
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     </head>
     <body>
-        <div class="container">
-            <header class="header" style="text-align: center">
-                <h1 class="title">LiVECHAT - PATCH NOTES</h1>
-                <a class="back-button" href="/"> <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil </a>
-            </header>
-
-            <main>
-                <section class="section">
-                    <h2>V1.4 | Mise à jour du 7 Février 2026</h2>
-                    <p>
-                        - Ajout d'un système de proxy. Il permet la lecture de médias de manière plus sécurisée et avec
-                        moins de bugs
-                    </p>
-                    <ul style="margin-left: 2vw; margin-bottom: 7px">
-                        <li>Les images et vidéos X/Twitter et TikTok refonctionnent maintenant correctement.</li>
-                        <li>
-                            Le proxy évite les fuites d'adresses IP. Le serveur LiveChat devient un intermédiaire entre
-                            votre OBS Studio et le serveur qui héberge le média.
-                        </li>
-                    </ul>
-                    <p>
-                        LiveChat devrait être dans sa version la plus stable depuis sa création. En cas de bug, envoyez
-                        un mail à l'adresse bonjour@nevylish.fr ou sur X @Nevylish.
-                    </p>
-                    <p>
-                        Une refonte des pages internet liées à LiveChat est prévue pour les prochains jours. Notamment
-                        cette page de Patch Notes peu lisible.
-                    </p>
-                    <br />
-                    <h2>V1.3 | Mise à jour du 26 Janvier 2026</h2>
-                    <p>- Modifications sur la commande /livechat:</p>
-                    <ul style="margin-left: 2vw; margin-bottom: 7px">
-                        <li>
-                            La commande /livechat accepte directement les fichiers. Plus besoin de l'envoyer dans un
-                            canal Discord puis copier le lien. Il est toujours possible d'utiliser l'option 'URL' pour
-                            envoyer un lien comme avant.
-                        </li>
-                    </ul>
-                    <p>
-                        - LiveChat prend désormais en charge les vidéos Tiktok. Plus besoin de les télécharger, mettez
-                        simplement le lien de la vidéo dans l'option URL de la commande /livechat.
-                    </p>
-                    <p>- Les erreurs de mauvaises configuration du lien sur OBS sont maintenant plus explicites.</p>
-                    <br />
-                    <h2>V1.2 | Mise à jour du 18 Septembre 2025</h2>
-                    <p>- L'overlay a été redesigné :</p>
-                    <ul style="margin-left: 2vw; margin-bottom: 7px">
-                        <li>
-                            Ajout d'un écran de démarrage pour par exemple afficher la liste des mises à jour. Il reste
-                            affiché 15 secondes.
-                        </li>
-                        <li>Désormais le nom d'utilisateur s'affiche sur la bordure en haut à gauche du média.</li>
-                        <li>(sauf en plein écran où il reste en bas à gauche de l'écran)</li>
-                        <li>Ajout de bordures noires sur les lettres du nom d'utilisateur.</li>
-                        <li>Ajout d'une légère ombre autour du média pour le séparer de l'arrière plan.</li>
-                        <li>Les bordures des médias ont été arrondies.</li>
-                        <li>Les contenus Vidéos/Images ont désormais une taille minimum.</li>
-                        <li>La pastille de connexion en bas à droite affiché désormais le nom du serveur Discord.</li>
-                    </ul>
-                    <p>
-                        - Si plusieurs streameurs sont connectés sur le même serveur, une option "Envoyer à tous les
-                        streameurs connectés" devient disponible.
-                    </p>
-                    <p>- Correction de l'animation de fade-in lors de l'affichage des médias.</p>
-                    <p>
-                        - Correction de la taille du container principal, il s'adapte maintenant au média, permettant
-                        l'ajout des ombres/bordures etc.
-                    </p>
-                    <p>- Correction de la commande /livechat qui empêchait l'envoi de certains médias légitimes.</p>
-                    <p>
-                        - Tentative de correction de la mise en cache des fichiers statiques (cause des bugs sur
-                        l'overlay).
-                    </p>
-                    <p>- Refonte majeure du code source partie Overlay.</p>
-                    <br />
-                    <h2>V1.1 | Mise à jour du 14 Septembre 2025</h2>
-                    <p>
-                        - Prise en charge des liens raccourcis Tenor, il est désormais possible de copier le lien d'un
-                        gif Tenor directement depuis Discord.
-                    </p>
-                    <p>- Prise en charge des liens Twitter, cela affichera le premier média du Tweet.</p>
-                    <p>- Les images (png, gif, etc) restent affichées 8 secondes au lieu de 5 secondes.</p>
-                    <p>
-                        - Ajout d'une option 'text' dans la commande Discord qui affichera du texte par dessus le média
-                        envoyé, avec la police d'écriture Impact (police par défaut des memes).
-                    </p>
-                    <p>
-                        - Le nom d'utilisateur de la personne qui envoie le LiveChat s'affiche désormais à côté de la
-                        photo de profil, en bas à droite.
-                    </p>
-                    <p>- Les embeds affichés sur Discord ont été repensés.</p>
-                    <p>- Amélioration de la pertinence des erreurs affichées sur l'overlay.</p>
-                    <p>- Refonte majeure du code source partie Discord.</p>
-                    <br />
-                    <h2>V1.0 | Première version du 12 Juin 2025</h2>
-                    <p>- Première publication de LiveChat.</p>
-                </section>
-            </main>
-
-            <footer>
-                <div class="footer-links">
-                    <a href="/updates.html">Patch Notes</a>
-                    <span class="separator">|</span>
-                    <a href="/terms.html">Conditions d’utilisation</a>
-                    <span class="separator">|</span>
-                    <a href="/privacy.html">Politique de confidentialité</a>
-                    <span class="separator">|</span>
-                    <a href="https://github.com/nevylish/livechat">Code Source</a>
-                </div>
-                <div class="footer-watermark">Nevylish</div>
-                <div class="copyright" id="copyright"></div>
-            </footer>
+        <div class="bg-layer"></div>
+        <!-- Loader -->
+        <div id="loader">
+            <div class="loader-circle"></div>
         </div>
 
-        <style>
-            p {
-                margin-bottom: 5px;
-            }
-        </style>
-        <script>
-            document.getElementById('copyright').textContent =
-                `© ${new Date().getFullYear()} Nevylish — LiveChat. Tous droits réservés.`;
-        </script>
+        <div id="cookie-banner" class="cookie-container">
+            <div class="cookie-content">
+                <p>Ce site utilise des cookies pour améliorer votre expérience.</p>
+                <p class="cookie-description">
+                    Nous utilisons uniquement Google Analytics pour mesurer les performances du site web sur les
+                    différents appareils.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="cookie-accept">Accepter</button>
+                <button id="reject-cookies" class="cookie-reject">Refuser</button>
+            </div>
+        </div>
+
+        <header>
+            <div class="container nav-content">
+                <a href="index.html" class="logo">
+                    <img src="/assets/images/livechat_transparent.png" alt="LiveChat Logo" />
+                    LiveChat <span class="logo-subtitle">- Patch Notes</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="config.html">Configuration</a></li>
+                        <li>
+                            <a href="updates.html" style="color: #fff" class="active">Patch Notes</a>
+                        </li>
+                        <li>
+                            <a href="https://nevylish.fr/" target="_blank">nevylish.fr</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main class="page-content">
+            <div class="container">
+                <div class="patch-notes-container">
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.5</span>
+                            <time class="patch-date">12 Février 2026</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Refonte graphique & Giphy</h2>
+                            <div class="patch-section">
+                                <ul class="patch-list">
+                                    <li><strong>Interface :</strong> Refonte complète des pages internet.</li>
+                                    <li>
+                                        <strong>Giphy :</strong> Prise en charge de Giphy suite au remplacement de
+                                        Tenor.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.4</span>
+                            <time class="patch-date">7 Février 2026</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Proxy de Sécurité & Stabilité</h2>
+                            <div class="patch-section">
+                                <ul class="patch-list">
+                                    <li>
+                                        <strong>Serveur :</strong> Lecture de médias plus sécurisée et sans bugs. Le
+                                        serveur devient un intermédiaire pour éviter les fuites d'IP et maximiser la
+                                        compatibilité des vidéos.
+                                    </li>
+                                    <li>
+                                        <strong>Serveur :</strong> Correction des images et vidéos X/Twitter et TikTok
+                                        grâce au proxy.
+                                    </li>
+                                    <li>
+                                        <em>Refonte des pages internet prévue prochainement.</em>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.3</span>
+                            <time class="patch-date">26 Janvier 2026</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Améliorations de la commande Discord</h2>
+                            <div class="patch-section">
+                                <ul class="patch-list">
+                                    <li>
+                                        <strong>Discord :</strong> La commande /livechat accepte désormais les fichiers
+                                        (plus besoin de copier le lien).
+                                    </li>
+                                    <li>
+                                        <strong>TikTok :</strong> Prise en charge des liens TikTok directement dans
+                                        l'option URL.
+                                    </li>
+                                    <li>
+                                        <strong>Overlay :</strong> Messages d'erreurs de configuration de l'overlay plus
+                                        explicites.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.2</span>
+                            <time class="patch-date">18 Septembre 2025</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Redesign de l'Overlay</h2>
+                            <div class="patch-section">
+                                <ul class="patch-list">
+                                    <li>
+                                        <strong>Overlay :</strong> Nouvel écran de démarrage (5s) et arrondis sur les
+                                        médias.
+                                    </li>
+                                    <li>
+                                        <strong>Overlay :</strong> Affichage du nom d'utilisateur avec bordures noires
+                                        pour une meilleure lisibilité.
+                                    </li>
+                                    <li>
+                                        <strong>Discord :</strong> Option pour envoyer à tous les streameurs connectés
+                                        du serveur Discord.
+                                    </li>
+                                    <li>
+                                        <strong>Overlay :</strong> Animation fade-in, taille du container et mise en
+                                        cache des fichiers.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.1</span>
+                            <time class="patch-date">14 Septembre 2025</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Support Tenor & Text Overlay</h2>
+                            <div class="patch-section">
+                                <ul class="patch-list">
+                                    <li>
+                                        <strong>Tenor & Twitter :</strong> Support des liens GIF Tenor et des médias
+                                        Twitter.
+                                    </li>
+                                    <li>
+                                        <strong>Overlay :</strong> Option 'text' avec police Impact par-dessus les
+                                        médias.
+                                    </li>
+                                    <li><strong>Overlay :</strong> Durée d'affichage portée à 8s pour les images.</li>
+                                    <li><strong>Discord :</strong> Refonte des embeds.</li>
+                                    <li>Amélioration de la pertinence des erreurs affichées sur l'overlay.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="patch-note">
+                        <div class="patch-meta">
+                            <span class="patch-version">v1.0</span>
+                            <time class="patch-date">12 Juin 2025</time>
+                        </div>
+                        <div class="patch-content">
+                            <h2 class="patch-title">Première publication de LiveChat.</h2>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="page-actions">
+                    <a href="index.html" class="btn btn-home">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                        </svg>
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="https://github.com/Nevylish/LiveChat" target="_blank">Code source</a>
+                </div>
+                <p class="copyright" id="copyright"></p>
+            </div>
+        </footer>
+        <script src="/assets/javascript/web-script.js?v=2026-02-12.1"></script>
     </body>
 </html>

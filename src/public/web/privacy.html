@@ -3,18 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/assets/css/web-style.css?v=2025-12-27.0" rel="stylesheet" />
-        <title>LiveChat - Politique de confidentialité</title>
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "LiveChat - Politique de confidentialité",
-                "alternateName": "LiveChat - Nevylish",
-                "url": "https://livechat.nevylish.fr/privacy.html"
-            }
-        </script>
-        <meta name="description" content="LiveChat - Politique de confidentialité" />
+        <title>Politique de confidentialité - LiveChat</title>
+        <meta name="description" content="Politique de confidentialité de LiveChat." />
+        <link href="/assets/css/web-style.css?v=2026-02-12.1" rel="stylesheet" />
+        <link href="/assets/css/loader.css" rel="stylesheet" />
         <meta
             name="keywords"
             content="OBS Studio, obs, streamlabs, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch"
@@ -23,21 +15,6 @@
         <meta name="robots" content="noindex, nofollow" />
         <link rel="canonical" href="https://livechat.nevylish.fr/privacy.html" />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://livechat.nevylish.fr/privacy.html" />
-        <meta property="og:title" content="LiveChat - Politique de confidentialité" />
-        <meta property="og:description" content="LiveChat - Politique de confidentialité" />
-        <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://livechat.nevylish.fr/privacy.html" />
-        <meta property="twitter:title" content="LiveChat - Politique de confidentialité" />
-        <meta property="twitter:description" content="LiveChat - Politique de confidentialité" />
-        <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-
-        <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="/assets/ico/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png" />
@@ -45,94 +22,173 @@
         <link rel="icon" type="image/png" sizes="192x192" href="/assets/ico/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/assets/ico/android-chrome-512x512.png" />
         <link rel="manifest" href="/assets/ico/site.webmanifest" />
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     </head>
     <body>
-        <div class="container">
-            <header class="header" style="text-align: center">
-                <h1 class="title">LiVECHAT - Politique de confidentialité</h1>
-                <a class="back-button" href="/"> <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil </a>
-            </header>
+        <div class="bg-layer"></div>
+        <!-- Loader -->
+        <div id="loader">
+            <div class="loader-circle"></div>
+        </div>
 
-            <main>
-                <section class="section">
+        <div id="cookie-banner" class="cookie-container">
+            <div class="cookie-content">
+                <p>Ce site utilise des cookies pour améliorer votre expérience.</p>
+                <p class="cookie-description">
+                    Nous utilisons uniquement Google Analytics pour mesurer les performances du site web sur les
+                    différents appareils.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="cookie-accept">Accepter</button>
+                <button id="reject-cookies" class="cookie-reject">Refuser</button>
+            </div>
+        </div>
+
+        <header>
+            <div class="container nav-content">
+                <a href="index.html" class="logo">
+                    <img src="/assets/images/livechat_transparent.png" alt="LiveChat Logo" />
+                    LiveChat
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="config.html">Configuration</a></li>
+                        <li><a href="updates.html">Patch Notes</a></li>
+                        <li>
+                            <a href="https://nevylish.fr/" target="_blank">nevylish.fr</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main class="page-content container">
+            <div class="legal-header">
+                <div class="main-card-content">
+                    <h2>Politique de confidentialité</h2>
                     <p>
-                        Nous accordons une grande importance à la protection de vos données. Voici comment LiveChat gère
-                        vos informations :
+                        Nous accordons une grande importance à la protection de vos données, en utilisant LiveChat, vous
+                        acceptez cette politique de confidentialité.
                     </p>
-                    <br />
+                </div>
+                <p class="update-date">Dernière mise à jour: 11 février 2026</p>
+            </div>
+
+            <div class="legal-grid">
+                <div class="legal-card">
                     <h2>1. Données collectées</h2>
                     <p>
-                        LiveChat ne collecte aucune donnée personnelle, aucun message d’utilisateur ni aucune
-                        information de serveur. Le bot traite uniquement les commandes en temps réel sans stockage.
+                        Le bot LiveChat ne collecte aucune donnée personnelle, aucun message d’utilisateur ni aucune
+                        information de serveur. Le bot traite uniquement les commandes en temps réel sans stockage.<br /><br />
+                        Cependant, ce site web utilise Google Analytics pour collecter des données anonymes de
+                        navigation (pages visitées, temps passé, type d'appareil) afin de mesurer les performances.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>2. Utilisation des données</h2>
                     <p>
-                        Puisqu’aucune donnée n’est collectée, aucune information n’est utilisée à des fins d’analyse, de
-                        marketing ou partagée avec des tiers.
+                        Les données relatives au bot ne sont pas stockées. Les données de navigation du site web
+                        collectées par Google Analytics sont utilisées uniquement à des fins statistiques pour améliorer
+                        l'expérience utilisateur et la performance du site.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>3. Cookies et technologies similaires</h2>
                     <p>
-                        Le site web de LiveChat n’utilise pas de cookies ou de technologies similaires pour suivre les
-                        utilisateurs ou collecter des informations.
+                        Ce site utilise des cookies liés à Google Analytics. Vous avez le choix d'accepter ou de refuser
+                        ces cookies via la bannière qui s'affiche lors de votre première visite. Votre consentement est
+                        sauvegardé pour une durée limitée mais peut être révoqué à tout moment en effaçant les données
+                        de votre navigateur.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>4. Données de tiers</h2>
                     <p>
                         LiveChat fonctionne via Discord et est soumis à la politique de confidentialité de Discord
                         concernant les données des serveurs et des utilisateurs. Nous vous invitons à consulter la
                         politique de confidentialité de Discord pour plus d’informations.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>5. Sécurité</h2>
                     <p>
                         Bien qu’aucune donnée ne soit stockée, nous appliquons des pratiques de sécurité appropriées
                         pour protéger l’intégrité du bot.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>6. Droits des utilisateurs</h2>
                     <p>
                         Puisque nous ne collectons aucune donnée, il n’y a aucune donnée à consulter, modifier ou
-                        supprimer. Cependant, vous pouvez retirer LiveChat de votre serveur Discord à tout moment.
+                        supprimer. Cependant, vous pouvez retirer LiveChat de votre serveur Discord et de votre client
+                        OBS Studio à tout moment.
                     </p>
-                    <br />
-                    <h2>7. Modifications de la politique</h2>
+                </div>
+
+                <div class="legal-card">
+                    <h2>7. Hébergement</h2>
+                    <p>
+                        Le bot Discord et le site internet de LiveChat sont hébergés en France chez OVH SAS dont le
+                        siège social est situé à: 2 rue Kellermann - 59100 Roubaix - France.
+                    </p>
+                </div>
+
+                <div class="legal-card">
+                    <h2>8. Éditeur</h2>
+                    <p>
+                        Le bot Discord et le site internet de LiveChat sont édités par Nevylish EI (statut Entrepreneur
+                        Individuel). Le numéro SIRET est disponible sur demande et l'éditeur est joignable à l'adresse
+                        e-mail suivante : bonjour@nevylish.fr.
+                    </p>
+                </div>
+                <div class="legal-card">
+                    <h2>9. Modifications de la politique</h2>
                     <p>
                         Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les
                         modifications seront publiées sur ce site web et il est de votre responsabilité de consulter
                         régulièrement cette politique.
                     </p>
-                    <br />
-                    <p>
-                        En utilisant LiveChat, vous acceptez cette politique de confidentialité qui reflète notre
-                        engagement à respecter votre vie privée.
-                    </p>
-                    <br />
-                    <p>Dernière mise à jour : 29 novembre 2024</p>
-                </section>
-            </main>
-
-            <footer>
-                <div class="footer-links">
-                    <a href="/updates.html">Patch Notes</a>
-                    <span class="separator">|</span>
-                    <a href="/terms.html">Conditions d’utilisation</a>
-                    <span class="separator">|</span>
-                    <a href="/privacy.html">Politique de confidentialité</a>
-                    <span class="separator">|</span>
-                    <a href="https://github.com/nevylish/livechat">Code Source</a>
                 </div>
-                <div class="footer-watermark">Nevylish</div>
-                <div class="copyright" id="copyright"></div>
-            </footer>
-        </div>
+            </div>
 
-        <script>
-            document.getElementById('copyright').textContent =
-                `© ${new Date().getFullYear()} Nevylish — LiveChat. Tous droits réservés.`;
-        </script>
+            <div class="legal-actions">
+                <a href="terms.html" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"
+                        />
+                    </svg>
+                    Voir les conditions d'utilisation
+                </a>
+                <a href="index.html" class="btn btn-home">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                    </svg>
+                    Retour à l'accueil
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="https://github.com/Nevylish/LiveChat" target="_blank">Code Source</a>
+                </div>
+                <p class="copyright" id="copyright"></p>
+            </div>
+        </footer>
+        <script src="/assets/javascript/web-script.js?v=2026-02-12.1"></script>
     </body>
 </html>

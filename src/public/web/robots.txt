@@ -1,6 +1,5 @@
 User-agent: *
-Allow: /
-Allow: /sitemap.xml
+Disallow: /privacy.html
+Disallow: /terms.html
 
-# Sitemap location
 Sitemap: https://livechat.nevylish.fr/sitemap.xml

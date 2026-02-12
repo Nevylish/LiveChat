@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/assets/css/web-style.css?v=2026-02-12.1" rel="stylesheet" />
+        <link href="/assets/css/loader.css" rel="stylesheet" />
+        <title>Configuration - LiveChat</title>
+        <meta name="description" content="Configurez votre overlay LiveChat pour OBS Studio et Streamlabs." />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://livechat.nevylish.fr/config.html" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://livechat.nevylish.fr/config.html" />
+        <meta property="og:title" content="Configuration - LiveChat" />
+        <meta property="og:description" content="Configurez votre overlay LiveChat pour OBS Studio et Streamlabs." />
+        <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
+
+        <link rel="icon" type="image/x-icon" href="/assets/ico/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/apple-touch-icon.png" />
+    </head>
+    <body>
+        <div class="bg-layer"></div>
+        <!-- Loader -->
+        <div id="loader">
+            <div class="loader-circle"></div>
+        </div>
+
+        <div id="cookie-banner" class="cookie-container">
+            <div class="cookie-content">
+                <p>Ce site utilise des cookies pour améliorer votre expérience.</p>
+                <p class="cookie-description">
+                    Nous utilisons uniquement Google Analytics pour mesurer les performances du site web sur les
+                    différents appareils.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="cookie-accept">Accepter</button>
+                <button id="reject-cookies" class="cookie-reject">Refuser</button>
+            </div>
+        </div>
+
+        <header>
+            <div class="container nav-content">
+                <a href="index.html" class="logo">
+                    <img src="/assets/images/livechat_transparent.png" alt="LiveChat Logo" />
+                    LiveChat <span class="logo-subtitle">- Configuration</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="config.html" style="color: #fff">Configuration</a></li>
+                        <li><a href="updates.html">Patch Notes</a></li>
+                        <li>
+                            <a href="https://nevylish.fr/" target="_blank">nevylish.fr</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <div class="page-content page-content-ffne config-page">
+                <div class="container container-ffne container-expanded config-container">
+                    <div class="config-layout">
+                        <aside class="config-sidebar">
+                            <div class="sidebar-header" id="sidebarToggle">
+                                <span>Étapes</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <nav class="sidebar-nav" id="sidebarNav">
+                                <ul>
+                                    <li class="nav-item active" data-target="step-install">
+                                        <span class="step-number">1</span> Bot Discord
+                                    </li>
+                                    <li class="nav-item" data-target="step-config">
+                                        <span class="step-number">2</span> Configuration
+                                    </li>
+                                    <li class="nav-item" data-target="step-obs">
+                                        <span class="step-number">3</span> Installation
+                                    </li>
+                                    <li class="nav-item" data-target="step-usage">
+                                        <span class="step-number">4</span> Utilisation
+                                    </li>
+                                    <li class="nav-item" data-target="step-finish">
+                                        <span class="step-number">5</span> C'est bon !
+                                    </li>
+                                </ul>
+                            </nav>
+                        </aside>
+
+                        <section class="config-content">
+                            <div id="step-install" class="config-section active">
+                                <div class="section-card">
+                                    <h2>Installation du bot Discord</h2>
+                                    <p>
+                                        Pour commencer, invitez le bot sur votre serveur
+                                        <strong>privé</strong> Discord. Vous pouvez en créer un dédié à cette
+                                        utilisation.
+                                    </p>
+                                    <p>
+                                        C'est grâce à lui que vous pourrez faire afficher du contenu sur votre overlay.
+                                    </p>
+                                    <p>
+                                        Tapez <strong>/livechat</strong> dans un salon textuel pour afficher la
+                                        commande.<br />Nous reviendrons en profondeur sur son fonctionnement dans la
+                                        quatrième partie.
+                                    </p>
+                                    <div class="warning-box">
+                                        <p>
+                                            Gardez à l'esprit que tous les membres présents sur le serveur pourront
+                                            utiliser le LiveChat et faire apparaître du contenu sur votre flux.
+                                            N'invitez pas n'importe qui.
+                                        </p>
+                                    </div>
+                                    <div style="margin-top: 2rem">
+                                        <a
+                                            href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
+                                            class="btn btn-config"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Installer le bot
+                                        </a>
+                                    </div>
+
+                                    <div class="mobile-next-container">
+                                        <a class="btn-next-step" onclick="switchStep('step-config')"> Suivant </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="step-config" class="config-section">
+                                <div class="section-card">
+                                    <h2>Configuration</h2>
+                                    <p>
+                                        Remplissez les informations ci-dessous pour générer votre lien d'overlay unique.
+                                    </p>
+
+                                    <div class="form-group">
+                                        <label for="username">Nom d'utilisateur Twitch</label>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            placeholder="terracid"
+                                            oninput="validateUsername(this)"
+                                        />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="guildId">
+                                            Identifiant du serveur Discord
+                                            <span
+                                                class="info-tooltip"
+                                                title="Mode développeur Discord requis > Clic droit sur le serveur > Copier l'identifiant"
+                                                >?</span
+                                            >
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="guildId"
+                                            placeholder="1433585274507628556"
+                                            pattern="[0-9]+"
+                                            oninput="validateGuildId(this)"
+                                        />
+                                    </div>
+
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="disableSplash" />
+                                            Désactiver l'écran de démarrage (splash screen)
+                                        </label>
+                                    </div>
+
+                                    <a
+                                        class="btn btn-config"
+                                        onclick="generateLink()"
+                                        style="margin-top: 1rem; cursor: pointer"
+                                    >
+                                        Générer mon lien
+                                    </a>
+
+                                    <div id="linkContainer" class="generated-result">
+                                        <label>Votre lien d'overlay :</label>
+                                        <div class="code-block">
+                                            <span id="generatedLink"></span>
+                                            <button class="copy-btn" onclick="copyLink()">Copier</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mobile-next-container nav-buttons">
+                                        <a class="btn-prev-step" onclick="switchStep('step-install')"> Précédent </a>
+                                        <a class="btn-next-step" onclick="switchStep('step-obs')"> Suivant </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="step-obs" class="config-section">
+                                <div class="section-card">
+                                    <h2>Installation de l'overlay</h2>
+                                    <p>
+                                        Suivez ces étapes pour ajouter l'overlay à OBS Studio ou Streamlabs.
+                                        <br />
+                                        <i>
+                                            Pour les autres logiciels référez-vous à leur documentation pour ajouter une
+                                            source Navigateur.
+                                        </i>
+                                    </p>
+                                    <ol class="steps-list">
+                                        <li>Ajoutez une source <strong>Navigateur</strong></li>
+                                        <li>
+                                            Collez le lien généré précédemment dans
+                                            <strong>URL</strong>
+                                        </li>
+                                        <li>Réglez la taille sur <strong>1920x1080</strong></li>
+                                        <li>Cochez <strong>Contrôler l'audio via OBS</strong></li>
+                                        <li>Cliquez sur <strong>OK</strong> et placez la source au-dessus</li>
+                                        <li>
+                                            Dans le mélangeur audio: clic droit >
+                                            <strong>Propriétés audio avancées</strong> > LiveChat >
+                                            <strong>Monitoring et sortie</strong>
+                                        </li>
+                                    </ol>
+
+                                    <div class="optional-box">
+                                        <strong>CSS Personnalisé (Optionnel)</strong>
+                                        <p>
+                                            Pour masquer la page d'erreur Cloudflare dans le cas où LiveChat serait
+                                            hors-ligne:
+                                        </p>
+                                        <div class="code-block">
+                                            <span id="cssCode">#cf-wrapper { display: none; }</span>
+                                            <button class="copy-btn" onclick="copyCssCode(this)">Copier</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mobile-next-container nav-buttons">
+                                        <a class="btn-prev-step" onclick="switchStep('step-config')"> Précédent </a>
+                                        <a class="btn-next-step" onclick="switchStep('step-usage')"> Suivant </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="step-usage" class="config-section">
+                                <div class="section-card">
+                                    <h2>Utiliser LiveChat</h2>
+                                    <p>
+                                        Utilisez la commande <code>/livechat</code> sur Discord pour partager des
+                                        médias.
+                                    </p>
+                                    <ul class="usage-list" style="margin-bottom: 1rem">
+                                        <li><strong>Cible :</strong> Sélectionnez le streamer</li>
+                                        <li><strong>URL :</strong> Lien direct ou Tenor, TikTok, X, Discord</li>
+                                        <li><strong>Fichier :</strong> Upload direct depuis votre PC</li>
+                                        <li><strong>Texte :</strong> Ajoute un texte style Meme</li>
+                                        <li><strong>Fullscreen :</strong> Affiche le média en plein écran</li>
+                                    </ul>
+
+                                    <p>
+                                        Formats de fichier pris en charge: .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg,
+                                        .jpg, .png, .gif
+                                    </p>
+
+                                    <div class="warning-box">
+                                        Important: Les liens YouTube ou autres plateformes de streaming non cités ne
+                                        sont pas supportés directement. Téléchargez le média d'abord.
+                                    </div>
+
+                                    <div class="mobile-next-container nav-buttons">
+                                        <a class="btn-prev-step" onclick="switchStep('step-obs')"> Précédent </a>
+                                        <a class="btn-next-step" onclick="switchStep('step-finish')"> Suivant </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="step-finish" class="config-section">
+                                <div class="section-card">
+                                    <h2>C'est bon !</h2>
+                                    <p>Félicitations, LiveChat est prêt.</p>
+
+                                    <div class="contact-info">
+                                        <p>
+                                            En cas de problème ou pour une demande, vous pouvez me contacter par mail,
+                                            sur Twitter ou ouvrir une issue sur GitHub.
+                                        </p>
+                                        <a class="social-link" href="mailto:bonjour@nevylish.fr" target="_blank"
+                                            >bonjour@nevylish.fr</a
+                                        >
+                                        <a class="social-link" href="https://twitter.com/Nevylish" target="_blank"
+                                            >Twitter/@Nevylish</a
+                                        >
+                                        <a
+                                            class="social-link"
+                                            href="https://github.com/Nevylish/LiveChat"
+                                            target="_blank"
+                                            >GitHub/Nevylish/LiveChat</a
+                                        >
+                                    </div>
+
+                                    <div class="mobile-next-container nav-buttons" style="width: 100%">
+                                        <a class="btn-prev-step" onclick="switchStep('step-usage')"> Précédent </a>
+                                        <a href="index.html" class="btn btn-home"> Retour à l'accueil </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="https://github.com/Nevylish/LiveChat" target="_blank">Code source</a>
+                </div>
+                <p class="copyright" id="copyright"></p>
+            </div>
+        </footer>
+
+        <script src="/assets/javascript/web-script.js?v=2026-02-12.1"></script>
+        <script>
+            function validateUsername(input) {
+                input.value = input.value.replace(/[^a-zA-Z0-9_]/g, '');
+                input.value = input.value.toLowerCase();
+                if (input.value.startsWith('_')) {
+                    input.value = input.value.substring(1);
+                }
+            }
+
+            function validateGuildId(input) {
+                input.value = input.value.replace(/[^0-9]/g, '');
+            }
+
+            function generateLink() {
+                const username = document.getElementById('username').value;
+                const guildId = document.getElementById('guildId').value;
+                const noSplash = document.getElementById('disableSplash').checked;
+
+                if (!username || !guildId) {
+                    alert('Veuillez remplir tous les champs.');
+                    return;
+                }
+
+                if (username.length < 4 || username.length > 25) {
+                    alert("Le nom d'utilisateur doit contenir entre 4 et 25 caractères.");
+                    return;
+                }
+
+                if (guildId.length < 17 || guildId.length > 21) {
+                    alert("L'ID du serveur doit contenir entre 17 et 21 caractères.");
+                    return;
+                }
+
+                const link = `https://${window.location.host}/overlay/overlay.html?username=${username}&guildId=${guildId}${noSplash ? '&noSplash=true' : ''}`;
+                document.getElementById('generatedLink').textContent = link;
+                document.getElementById('linkContainer').style.display = 'block';
+                document.getElementById('linkContainer').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function copyLink() {
+                const link = document.getElementById('generatedLink').textContent;
+                navigator.clipboard.writeText(link).then(() => {
+                    const btn = document.querySelector('#linkContainer .copy-btn');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copié !';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+
+            function copyCssCode(button) {
+                const cssCode = document.getElementById('cssCode').textContent;
+                navigator.clipboard.writeText(cssCode).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copié !';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const navItems = document.querySelectorAll('.nav-item');
+                const sections = document.querySelectorAll('.config-section');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebarNav = document.getElementById('sidebarNav');
+
+                sidebarToggle.addEventListener('click', () => {
+                    sidebarNav.classList.toggle('active');
+                    sidebarToggle.classList.toggle('active');
+                });
+
+                navItems.forEach((item) => {
+                    item.addEventListener('click', () => {
+                        const targetId = item.getAttribute('data-target');
+                        switchStep(targetId);
+
+                        if (window.innerWidth <= 768) {
+                            sidebarNav.classList.remove('active');
+                            sidebarToggle.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            function switchStep(targetId) {
+                const navItems = document.querySelectorAll('.nav-item');
+                const sections = document.querySelectorAll('.config-section');
+
+                navItems.forEach((nav) => {
+                    nav.classList.remove('active');
+                    if (nav.getAttribute('data-target') === targetId) {
+                        nav.classList.add('active');
+                    }
+                });
+
+                sections.forEach((section) => {
+                    section.classList.remove('active');
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                    }
+                });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        </script>
+    </body>
+</html>

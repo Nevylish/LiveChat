@@ -3,18 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/assets/css/web-style.css?v=2025-12-27.0" rel="stylesheet" />
-        <title>LiveChat - Conditions d’utilisation</title>
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "LiveChat - Conditions d’utilisation",
-                "alternateName": "LiveChat - Nevylish",
-                "url": "https://livechat.nevylish.fr/terms.html"
-            }
-        </script>
-        <meta name="description" content="LiveChat - Conditions d’utilisation" />
+        <title>Conditions d'utilisation - LiveChat</title>
+        <meta name="description" content="Conditions d'utilisation de l'overlay LiveChat." />
         <meta
             name="keywords"
             content="OBS Studio, obs, streamlabs, overlay, Discord bot, streaming, médias, viewers, live, cacabox, terracid, potatoz, grimkujow, theorus, botkz, hugod, twitch"
@@ -23,21 +13,9 @@
         <meta name="robots" content="noindex, nofollow" />
         <link rel="canonical" href="https://livechat.nevylish.fr/terms.html" />
 
-        <!-- Open Graph / Facebook -->
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://livechat.nevylish.fr/terms.html" />
-        <meta property="og:title" content="LiveChat - Conditions d’utilisation" />
-        <meta property="og:description" content="LiveChat - Conditions d’utilisation" />
-        <meta property="og:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
+        <link href="/assets/css/web-style.css?v=2026-02-12.1" rel="stylesheet" />
+        <link href="/assets/css/loader.css" rel="stylesheet" />
 
-        <!-- Twitter -->
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://livechat.nevylish.fr/terms.html" />
-        <meta property="twitter:title" content="LiveChat - Conditions d’utilisation" />
-        <meta property="twitter:description" content="LiveChat - Conditions d’utilisation" />
-        <meta property="twitter:image" content="https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png" />
-
-        <!-- Favicons -->
         <link rel="icon" type="image/x-icon" href="/assets/ico/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon-32x32.png" />
@@ -45,94 +23,154 @@
         <link rel="icon" type="image/png" sizes="192x192" href="/assets/ico/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/assets/ico/android-chrome-512x512.png" />
         <link rel="manifest" href="/assets/ico/site.webmanifest" />
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     </head>
     <body>
-        <div class="container">
-            <header class="header" style="text-align: center">
-                <h1 class="title">LiVECHAT - Conditions d’utilisation</h1>
-                <a class="back-button" href="/"> <i class="fas fa-arrow-left"></i> Retourner à la page d'accueil </a>
-            </header>
+        <div class="bg-layer"></div>
+        <!-- Loader -->
+        <div id="loader">
+            <div class="loader-circle"></div>
+        </div>
 
-            <main>
-                <section class="section">
+        <div id="cookie-banner" class="cookie-container">
+            <div class="cookie-content">
+                <p>Ce site utilise des cookies pour améliorer votre expérience.</p>
+                <p class="cookie-description">
+                    Nous utilisons uniquement Google Analytics pour mesurer les performances du site web sur les
+                    différents appareils.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="accept-cookies" class="cookie-accept">Accepter</button>
+                <button id="reject-cookies" class="cookie-reject">Refuser</button>
+            </div>
+        </div>
+
+        <header>
+            <div class="container nav-content">
+                <a href="index.html" class="logo">
+                    <img src="/assets/images/livechat_transparent.png" alt="LiveChat Logo" />
+                    LiveChat
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="config.html">Configuration</a></li>
+                        <li><a href="updates.html">Patch Notes</a></li>
+                        <li>
+                            <a href="https://nevylish.fr/" target="_blank">nevylish.fr</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main class="page-content container">
+            <div class="legal-header">
+                <div class="main-card-content">
+                    <h2>Conditions d'utilisation</h2>
+                    <p>
+                        En utilisant LiveChat, vous reconnaissez avoir lu, compris et accepté les conditions
+                        d’utilisation ci-dessous.
+                    </p>
+                </div>
+                <p class="update-date">Dernière mise à jour: 11 février 2026</p>
+            </div>
+            <div class="legal-grid">
+                <div class="legal-card">
                     <h2>1. Utilisation appropriée</h2>
                     <p>
                         Vous vous engagez à utiliser LiveChat de manière appropriée et en conformité avec les règles et
                         politiques de Discord. Vous vous engagez à ne pas utiliser le bot pour diffuser du contenu
                         offensant, illégal, discriminatoire, pornographique, violent ou autrement inapproprié.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>2. Confidentialité</h2>
                     <p>
-                        LiveChat ne collecte aucune donnée personnelle, utilisateur, message ou de serveur. Vous
-                        reconnaissez et acceptez que le bot ne stocke aucune information utilisateur et ne suit pas
-                        l’activité des utilisateurs.
+                        Le bot LiveChat ne collecte aucune donnée personnelle, utilisateur, message ou de serveur.
+                        Toutefois, l'utilisation de ce site web est soumise à la collecte de données anonymes via Google
+                        Analytics, conformément à notre Politique de Confidentialité.
                     </p>
-                    <br />
-                    <h2>3. Responsabilité de l’utilisateur</h2>
+                </div>
+
+                <div class="legal-card">
+                    <h2>3. Responsabilité</h2>
                     <p>
                         Vous êtes responsable de votre utilisation de LiveChat. Vous acceptez de ne pas utiliser le bot
                         de manière abusive, de ne pas perturber son bon fonctionnement, ni de nuire à d’autres
                         utilisateurs ou à des tiers.
                     </p>
-                    <br />
+                </div>
+
+                <div class="legal-card">
                     <h2>4. Absence de garantie</h2>
                     <p>
                         LiveChat est fourni « tel quel », sans aucune garantie, explicite ou implicite. Nous ne
                         garantissons pas que le bot sera exempt d’erreurs, de bugs, d’interruptions ou de pertes de
                         données.
                     </p>
-                    <br />
-                    <h2>5. Limitation de responsabilité</h2>
-                    <p>
-                        En aucun cas, nous ne serons responsables de tout dommage direct, indirect, spécial, accessoire,
-                        consécutif ou autre résultant de l’utilisation ou de l’impossibilité d’utiliser LiveChat.
-                    </p>
-                    <br />
-                    <h2>6. Modifications des conditions d’utilisation</h2>
+                </div>
+
+                <div class="legal-card">
+                    <h2>5. Modifications</h2>
                     <p>
                         Nous nous réservons le droit de modifier ces conditions d’utilisation à tout moment. Les
                         modifications seront publiées sur le site web ou dans les informations du bot, et il est de
-                        votre responsabilité de consulter régulièrement les conditions d’utilisation pour être informé
-                        des éventuels changements.
+                        votre responsabilité de consulter régulièrement les conditions d’utilisation.
                     </p>
-                    <br />
-                    <h2>7. Propriété intellectuelle</h2>
-                    <p>
-                        LiveChat et tout son contenu, y compris les noms, logos, marques, images, textes et autres
-                        éléments, sont la propriété intellectuelle de leurs propriétaires respectifs. Vous n’êtes pas
-                        autorisé à utiliser, copier, reproduire, distribuer ou créer des œuvres dérivées du bot ou de
-                        son contenu sans autorisation écrite préalable.
-                    </p>
-                    <p>
-                        En utilisant LiveChat, vous reconnaissez avoir lu, compris et accepté les conditions
-                        d’utilisation ci-dessus.
-                    </p>
-                    <br />
-                    <p>Dernière mise à jour : 29 novembre 2024</p>
-                </section>
-            </main>
-
-            <footer>
-                <div class="footer-links">
-                    <a href="/updates.html">Patch Notes</a>
-                    <span class="separator">|</span>
-                    <a href="/terms.html">Conditions d’utilisation</a>
-                    <span class="separator">|</span>
-                    <a href="/privacy.html">Politique de confidentialité</a>
-                    <span class="separator">|</span>
-                    <a href="https://github.com/nevylish/livechat">Code Source</a>
                 </div>
-                <div class="footer-watermark">Nevylish</div>
-                <div class="copyright" id="copyright"></div>
-            </footer>
-        </div>
 
-        <script>
-            document.getElementById('copyright').textContent =
-                `© ${new Date().getFullYear()} Nevylish — LiveChat. Tous droits réservés.`;
-        </script>
+                <div class="legal-card">
+                    <h2>6. Propriété intellectuelle</h2>
+                    <p>
+                        LiveChat et tout son contenu (noms, logos, marques, etc.) sont la propriété intellectuelle de
+                        leurs propriétaires respectifs. Vous n’êtes pas autorisé à utiliser, copier ou reproduire le bot
+                        ou son contenu sans autorisation.
+                    </p>
+                </div>
+
+                <div class="legal-card">
+                    <h2>7. Contact</h2>
+                    <p>
+                        Pour toute question concernant ces conditions d'utilisation, vous pouvez nous contacter à
+                        l'adresse suivante: bonjour@nevylish.fr.
+                    </p>
+                </div>
+            </div>
+
+            <div class="legal-actions">
+                <a href="privacy.html" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"
+                        />
+                    </svg>
+                    Voir la politique de confidentialité
+                </a>
+                <a href="index.html" class="btn btn-home">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                    </svg>
+                    Retour à l'accueil
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <div class="container footer-content">
+                <div class="footer-links">
+                    <a href="privacy.html">Politique de confidentialité</a>
+                    <a href="terms.html">Conditions d'utilisation</a>
+                    <a href="https://github.com/Nevylish/LiveChat" target="_blank">Code Source</a>
+                </div>
+                <p class="copyright" id="copyright"></p>
+            </div>
+        </footer>
+        <script src="/assets/javascript/web-script.js?v=2026-02-12.1"></script>
     </body>
 </html>
