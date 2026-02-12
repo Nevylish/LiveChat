@@ -15,9 +15,11 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 ### Pour les streameurs
 
 1. **Ajoutez le bot & Récupérez le lien de votre Overlay**
+
     - Allez sur [https://livechat.nevylish.fr](https://livechat.nevylish.fr) pour les deux.
 
 2. **Configurez OBS Studio/Streamlabs** :
+
     - Ajoutez une nouvelle source de type "Navigateur"
     - Dans le champ URL, votre lien d'Overlay
     - Dans le champ largeur entrez `1920` et hauteur `1080`
@@ -42,7 +44,7 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 
 ### 📁 Formats de médias supportés
 
-LiveChat supporte les liens directs vers des médias ainsi que les liens Tiktok, Tenor et X (anciennement Twitter), l'ajout d'autres plateformes est prévu.
+LiveChat supporte les liens directs vers des médias ainsi que les liens Tiktok, Tenor, Giphy et X (anciennement Twitter), l'ajout d'autres plateformes est prévu.
 
 Voici comment partager vos médias :
 
@@ -51,7 +53,7 @@ Voici comment partager vos médias :
 3. Faites un clic droit sur le fichier et sélectionnez "Copier le lien"
 4. Utilisez ce lien dans la commande `/livechat`
 
-> ⚠️ **Important** : Les liens YouTube, ou autres plateformes de streaming ne sont pas supportés. Vous devez d'abord télécharger le média et l'envoyer sur Discord.
+> ⚠️ **Important** : Les liens YouTube, ou autres plateformes de streaming ne sont pas supportés. Vous devrez d'abord télécharger le média et l'envoyer sur Discord.
 
 > Pour X/Twitter: Seul le premier média du Tweet est récupéré.
 > Pour Tiktok: Seul les vidéos sont récupérées, les carousels ne sont pas supportés.
@@ -86,7 +88,9 @@ npm install
 ```env
 LIVECHAT_PORT=port_du_serveur_web
 TOKEN=token_de_votre_bot_discord
+SECRET_API=secret_api_livechat
 TENOR_API_KEY=clé_api_tenor
+GIPHY_API_KEY=clé_api_giphy
 ```
 
 4. **Lancer l'application**
@@ -148,23 +152,12 @@ cp .env.example .env
 docker-compose up -d
 ```
 
-## 🤝 Contribution
-
-Ce projet est ouvert aux contributions !
-
-## 📞 Contact
-
-- **Email** : bonjour@nevylish.fr
-
 ---
 
 <div align="center">
 
-<sub>Construit avec ❤️ par <a href="https://github.com/nevylish">Nevylish</a> & inspiré par la <a href="https://x.com/cacaboxtv">Cacabox</a></sub>
-
-![Node.js](https://img.shields.io/badge/Node.js--339933.svg?logo=nodedotjs)
-![TypeScript](https://img.shields.io/badge/TypeScript--3178C6.svg?logo=typescript)
-
 <sub>© Nevylish — LiveChat. Tous droits réservés.</sub>
+<br />
+<sub>Non affilié à Twitch, Cacabox ou toute autre marque, plateforme ou personne tierce.</sub>
 
 </div>

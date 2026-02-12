@@ -12,11 +12,18 @@ import { Constants } from '../utils/Constants';
 import { Functions } from '../utils/Functions';
 import crypto = require('crypto');
 
-export class ProxyService {
-    static useProxy(url: string, source: string = 'Unknown', forceFileType: string = 'false'): string {
-        if (this.isValidUrl(url)) return url;
+export namespace ProxyService {
+    let secret: string;
 
-        const secret = process.env.SECRET_API;
+    export const generateRandomSecretAndStore = (): boolean => {
+        if (secret) return false;
+        secret = crypto.randomBytes(64).toString('hex');
+        return true;
+    };
+
+    export const useProxy = (url: string, source: string = 'Unknown', forceFileType: string = 'false'): string => {
+        if (isValidUrl(url)) return url;
+
         const expires = Math.floor(Date.now() / 1000) + 3600;
 
         const token = crypto
@@ -33,9 +40,9 @@ export class ProxyService {
         }
 
         return `${Constants.getApiPath()}/proxy?url=${encodeURIComponent(url)}&token=${token}&expires=${expires}&type=${fileType}&source=${source}`;
-    }
+    };
 
-    static isValidUrl(url: string): boolean {
+    export const isValidUrl = (url: string): boolean => {
         return (
             url.includes(Constants.getApiPath()) &&
             url.includes('token=') &&
@@ -43,9 +50,9 @@ export class ProxyService {
             url.includes('type=') &&
             url.includes('source=')
         );
-    }
+    };
 
-    static async handle(req: Request, res: Response) {
+    export const handle = async (req: Request, res: Response) => {
         const targetUrl = req.query.url as string;
         const token = req.query.token as string;
         const expires = req.query.expires as string;
@@ -60,7 +67,6 @@ export class ProxyService {
             return res.status(403).send('Lien expiré');
         }
 
-        const secret = process.env.SECRET_API;
         const expectedToken = crypto
             .createHmac('sha256', secret)
             .update(targetUrl + expires)
@@ -122,5 +128,5 @@ export class ProxyService {
             console.error('Proxy error:', err);
             if (!res.headersSent) res.status(500).send('Erreur interne du proxy');
         }
-    }
+    };
 }

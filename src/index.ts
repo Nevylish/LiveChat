@@ -7,16 +7,19 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import DiscordClient from './core/DiscordClient';
+import { ProxyService } from './core/modules/_ProxyService';
 import { Logger } from './core/utils/Logger';
 
 dotenv.config({ path: resolve(__dirname, '../.env') });
 
-const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'GIPHY_API_KEY', 'SECRET_API', 'DOMAIN'];
+const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'GIPHY_API_KEY', 'DOMAIN'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
     Logger.error('Index', `Missing environment variables: ${missingVars.join(', ')}`);
     process.exit(1);
 }
+
+ProxyService.generateRandomSecretAndStore();
 
 new DiscordClient();

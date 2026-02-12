@@ -61,7 +61,6 @@
 //             }
 
 //             const videoUrl = format.url;
-//             const secret = process.env.SECRET_API!;
 //             const expires = Math.floor(Date.now() / 1000) + 3600;
 
 //             const token = crypto
