@@ -32,10 +32,6 @@ export default class DiscordClient extends Client {
         this.start(token);
     }
 
-    /**
-     * Met à jour l'activité du bot (par défaut: /livechat - livechat.nevylish.fr).
-     * @param connectedStreamersSize Nombre de streameurs connectés.
-     */
     public updateActivity(connectedStreamersSize?: number): void {
         this.user?.setActivity(
             connectedStreamersSize

@@ -35,7 +35,6 @@ export namespace Tenor {
                 return data.results[0].media_formats.gif.url;
             }
 
-            // Fallback pour certains GIFs qui n'ont pas le format gif mais webm/mp4
             if (data && Array.isArray(data.results) && data.results[0] && data.results[0].media_formats) {
                 const formats = data.results[0].media_formats;
                 if (formats.mediumgif && formats.mediumgif.url) return formats.mediumgif.url;

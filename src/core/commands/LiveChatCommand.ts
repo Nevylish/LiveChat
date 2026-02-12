@@ -76,7 +76,6 @@ export default class LiveChatCommand extends Command {
 
     everyone: string = '📌 Envoyer à tous les streameurs connectés';
 
-    // Le bout de code magique pour automatiquement créer la liste des streameurs connectés sur le serveur
     async onAutocomplete(interaction: AutocompleteInteraction): Promise<void> {
         const focusedOption = interaction.options.getFocused(true);
 
@@ -109,7 +108,6 @@ export default class LiveChatCommand extends Command {
         let parsedUrl: URL;
         let bypassProxy = false;
 
-        // On renvoie une erreur s'il n'y a ni lien, ni fichier
         if (!url && !file) {
             const embed = Functions.buildEmbed('Vous devez fournir un lien ou un fichier.', 'Alert');
             embed.setImage(
@@ -119,7 +117,6 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // Si c'est un fichier, on prend directement son url (merci le cdn discord) et on remplace l'ancienne URl si il y en a une
         if (file) {
             url = file.url;
         }
@@ -135,7 +132,6 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // On vérifie que ça renvoie bien une page internet
         if (!['https:', 'http:'].includes(parsedUrl.protocol)) {
             const embed = Functions.buildEmbed(
                 "L'URL est invalide, seuls les liens commençant par http:// ou https:// sont acceptés.",
@@ -202,7 +198,6 @@ export default class LiveChatCommand extends Command {
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
         const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif'];
 
-        // Vérification des extensions de fichiers
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Tenor.validateDirectUrl(url) &&
@@ -217,8 +212,6 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        // Si le lien est safe et fonctionnel, on n'utilise pas le proxy pour économiser des ressources
-        // Comme pour Discord par exemple qui laisse son CDN très permissif
         if (Discord.isDiscordUrl(url)) bypassProxy = true;
 
         if (!bypassProxy && !ProxyService.isValidUrl(url)) {

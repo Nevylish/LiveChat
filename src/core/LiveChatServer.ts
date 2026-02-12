@@ -1,5 +1,5 @@
 /*
-    Ce fichier est l'un des poumons du projet. C'est ici qu'est géré la communication entre mon serveur et votre OBS Studio.
+    Ce fichier est l'un des poumons du projet. C'est ici qu'est géré la communication entre mon serveur et votre overlay.
 */
 
 import express = require('express');
@@ -49,11 +49,6 @@ export class LiveChatServer {
         this.start();
     }
 
-    /**
-     * Envoie un message d'erreur au client et arrête la connexion.
-     * @param socket Socket
-     * @param message Message d'erreur affiché sur OBS.
-     */
     private emitError(socket: Socket, message: string): void {
         socket.emit('updateConnectionStatus', false, message, 300000);
         socket.disconnect();
@@ -96,7 +91,6 @@ export class LiveChatServer {
                     return;
                 }
 
-                // On autorise seulement les chiffres pour l'id du serveur Discord
                 const guildIdPattern = /^[0-9]+$/;
                 if (!guildIdPattern.test(data.guildId)) {
                     this.emitError(socket, "L'identifiant du serveur Discord contient des caractères non autorisés.");
@@ -110,8 +104,6 @@ export class LiveChatServer {
                     );
                 };
 
-                // Si le bot Discord n'est pas présent dans le serveur inscrit on déconnecte.
-                // Si c'est bon, on l'ajoute à la liste des streamers connectés.
                 this.discordClient.guilds
                     .fetch(data.guildId)
                     .then((guild) => {
@@ -177,7 +169,7 @@ export class LiveChatServer {
             },
         };
 
-        // Redirection pour la compatibilité avec les anciens liens d'overlay
+        // Redirection pour la compatibilité avec les anciens liens d'overlay (/overlay.html -> /overlay/overlay.html)
         this.app.get('/overlay.html', (req, res) => {
             const query = req.url.split('?')[1];
             res.redirect(301, `/overlay/overlay.html${query ? '?' + query : ''}`);
