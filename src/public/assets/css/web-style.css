@@ -1203,6 +1203,7 @@ input[type='checkbox'] {
 }
 
 .usage-list li {
+    list-style-type: none;
     margin-bottom: 0.8rem;
     padding-left: 1rem;
     border-left: 2px solid var(--glass-border);
