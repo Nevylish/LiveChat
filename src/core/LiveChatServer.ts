@@ -52,7 +52,7 @@ export class LiveChatServer {
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
             socket.on('register', (data: { username: string; guildId: string }) => {
-                if (this.getConnectedStreamersByGuildSize(data.guildId) >= 25) {
+                if (this.getConnectedStreamersByGuildSize(data.guildId) >= 24) {
                     this.emitError(socket, 'Le nombre maximum de streamers est atteint sur ce serveur Discord.');
                     return;
                 }
