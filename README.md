@@ -6,6 +6,8 @@ Plusieurs streameurs peuvent utiliser le même serveur Discord et les utilisateu
 
 Vous pouvez suivre les mises à jour du projet ici: [https://livechat.nevylish.fr/updates](https://livechat.nevylish.fr/updates.html)
 
+Le code source n'est pas la version complète de LiveChat, j'en reparle plus bas.
+
 ## 🎬 Démonstration
 
 https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
@@ -74,98 +76,17 @@ Il existe deux autres commandes sur le bot Discord.
 - /skip: Pour passer à la vidéo suivante
 - /clear: Pour stopper la vidéo actuelle et vider la file d'attente
 
-## 💻 Pour les développeurs
+## Informations supplémentaires
 
-### Prérequis
+Le code de ce repo n'est pas celui hébergé et proposé au public.
 
-- Node.js 18 ou supérieur
-- npm ou pnpm
-- Serveur Discord
-- OBS Studio, Streamlabs ou un autre logiciel qui possède un navigateur
+Pour éviter le vol et la réappropriation du projet j'ai préféré ne laisser que la partie basique du projet.
+Les fonctionnalités qui font de cette version la plus complète resteront propriétaires.
 
-### Installation
+La version privée est mise à jour régulièrement pour la sécurité et reste respectueuse de la vie privée.
+Pour les développeurs qui voudraient contribuer au projet, vous pouvez me contacter via Twitter @Nevylish ou directement sur ce repo.
 
-1. **Cloner le repository**
-
-```bash
-git clone https://github.com/nevylish/LiveChat.git
-cd LiveChat
-```
-
-2. **Installer les dépendances**
-
-```bash
-npm install
-```
-
-3. **Configurer l'environnement**
-   Créez un fichier `.env` à la racine du projet :
-
-```env
-LIVECHAT_PORT=port_du_serveur_web
-TOKEN=token_de_votre_bot_discord
-TENOR_API_KEY=clé_api_tenor
-GIPHY_API_KEY=clé_api_giphy
-```
-
-4. **Lancer l'application**
-
-```bash
-npm run dev
-#et
-npm run start
-```
-
-### Architecture du projet
-
-```
-LiveChat/
-├── src/
-│   ├── core/                 # Cœur de l'application
-│   │   ├── commands/         # Commandes Discord
-│   │   ├── modules/          # Fichiers de modules
-│   │   ├── utils/            # Fichiers utilitaires
-│   │   ├── DiscordClient.ts  # Classe du bot Discord
-│   │   └── LiveChatServer.ts # Classe du serveur web et socket
-│   ├── public/               # Fichiers statiques
-│   └── index.ts              # Point d'entrée
-├── dist/                   # Fichiers compilés
-├── .env                    # Variables d'environnement
-├── .prettierrc             # Configuration du formatage
-├── docker-compose.yml      # Configuration Docker
-├── Dockerfile              # Configuration de l'image Docker
-├── package.json            # Dépendances et scripts
-└── tsconfig.json           # Configuration TypeScript
-```
-
-### Scripts disponibles
-
-| Commande         | Description                                                           |
-| ---------------- | --------------------------------------------------------------------- |
-| `npm run dev`    | Compile le TypeScript en mode watch (recompilation automatique)       |
-| `npm run build`  | Compile le TypeScript pour la production                              |
-| `npm run start`  | Lance l'application                                                   |
-| `npm run clean`  | Nettoie le dossier de build (dist/) et recopie les fichiers statiques |
-| `npm run format` | Formate le code avec Prettier                                         |
-
-## 🐳 Docker
-
-### Déploiement rapide
-
-Le projet peut être déployé facilement avec Docker Compose.
-
-```bash
-# Cloner le repository
-git clone https://github.com/nevylish/LiveChat.git
-cd LiveChat
-
-# Configurer les variables d'environnement
-cp .env.example .env
-# Éditez .env avec vos paramètres
-
-# Lancer avec Docker Compose
-docker-compose up -d
-```
+Si vous êtes une personnalité publique ou que vous avez un gros projet et souhaitez une version hébergé séparément sur des serveurs plus puissants et plus discrets, vous pouvez me contacter via Twitter @Nevylish ou par mail à l'adresse bonjour@nevylish.fr.
 
 ---
 
