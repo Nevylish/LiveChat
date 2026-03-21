@@ -1,0 +1,38 @@
+{
+    "name": "livechat",
+    "description": "Un overlay OBS qui permet à vos amis d'afficher des médias sur votre stream",
+    "version": "1.5.3",
+    "license": "GPL-3.0-only",
+    "homepage": "https://livechat.nevylish.fr/",
+    "author": {
+        "name": "Nevylish",
+        "email": "bonjour@nevylish.fr",
+        "url": "https://nevylish.fr/"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "dev": "tsc -w",
+        "clean": "rm -rf dist && cp src/public dist",
+        "format": "prettier --write ."
+    },
+    "dependencies": {
+        "@distube/ytdl-core": "^4.16.12",
+        "discord.js": "^14.25.1",
+        "dotenv": "^17.3.1",
+        "express": "^5.2.1",
+        "express-rate-limit": "^8.2.1",
+        "get-video-duration": "^5.0.0",
+        "moment": "^2.30.1",
+        "node-fetch": "^3.3.2",
+        "socket.io": "^4.8.3",
+        "socket.io-client": "^4.8.3"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^25.2.3",
+        "prettier": "^3.8.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    }
+}

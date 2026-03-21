@@ -1,0 +1,2 @@
+allowBuilds:
+  '@ffprobe-installer/darwin-arm64': true
