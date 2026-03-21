@@ -12,7 +12,7 @@ import DiscordClient from './DiscordClient';
 import { ProxyService } from './modules/_ProxyService';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
-import { URLValidations } from './utils/URLValidations';
+import { Validations } from './utils/Validations';
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -62,14 +62,14 @@ export class LiveChatServer extends EventEmitter {
         this.io.on('connection', (socket) => {
             socket.on('register', (data: { username: string; guildId: string }) => {
                 // Validation du nom d'utilisateur
-                const usernameValidation = URLValidations.validateUsername(data.username);
+                const usernameValidation = Validations.validateUsername(data.username);
                 if (!usernameValidation.valid) {
                     this.emitError(socket, usernameValidation.error!);
                     return;
                 }
 
                 // Validation de l'identifiant du serveur Discord
-                const guildIdValidation = URLValidations.validateGuildId(data.guildId);
+                const guildIdValidation = Validations.validateGuildId(data.guildId);
                 if (!guildIdValidation.valid) {
                     this.emitError(socket, guildIdValidation.error!);
                     return;

@@ -1,4 +1,4 @@
-export namespace URLValidations {
+export namespace Validations {
     // Longueur du nom d'utilisateur autorisée par Twitch
     // https://discuss.dev.twitch.com/t/max-length-for-user-names-and-display-names/21315
     const MIN_USERNAME_LENGTH = 4;
