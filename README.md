@@ -12,9 +12,11 @@ Pour commencer à utiliser LiveChat, rendez-vous sur https://livechat.nevylish.f
 
 Suivez les étapes et à la fin LiveChat sera prêt et vous saurez comment l'utiliser.
 
+Un tutoriel vidéo sera disponible prochainement.
+
 ### Fonctionnalités
 
-- Streamez à plusieurs: Configurez LiveChat sur le même serveur Discord et partagez vous des médias à plusieurs et à tous en même temps grâce à l'option "📌 Envoyer à tous les streameurs connectés" lors du choix de la cible avec la commande /livechat.
+- Streamez à plusieurs: Configurez LiveChat sur le même serveur Discord et partagez des médias à plusieurs et à tous en même temps grâce à l'option "📌 Envoyer à tous les streameurs connectés" lors du choix de la cible avec la commande /livechat.
 
 - Partagez des Tiktoks, des Tweets: LiveChat prend en charge les URL Tiktok, Twitter, Tenor et Giphy, partagez des médias avec simplicité. Vous pouvez aussi partager des fichiers que vous avez téléchargé sur votre ordinateur.
 
