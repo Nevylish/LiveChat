@@ -107,10 +107,10 @@ function handleConnectError(error) {
     updateConnectionStatus(false, 'Connexion au serveur impossible');
 }
 
-function handleBroadcast({ content, from, fullscreen, text, interactionId }) {
+function handleBroadcast({ content, from, fullscreen, anonymous, text, interactionId }) {
     console.log('Nouveau livechat reçu:', content, 'de:', from.username, 'interactionId:', interactionId);
 
-    contentQueue.push({ content, from, fullscreen, text, interactionId });
+    contentQueue.push({ content, from, fullscreen, anonymous, text, interactionId });
 
     if (!isProcessingQueue) {
         processNextContent();
@@ -169,12 +169,12 @@ function processNextContent() {
     }
 
     isProcessingQueue = true;
-    const { content, from, fullscreen, text, interactionId } = contentQueue.shift();
+    const { content, from, fullscreen, anonymous, text, interactionId } = contentQueue.shift();
 
     currentInteractionId = interactionId;
 
     setTimeout(() => {
-        handleUserInfos(from, fullscreen);
+        if (!anonymous) handleUserInfos(from, fullscreen);
         socket.emit('started', interactionId);
 
         cleanupCurrentContent(() => {

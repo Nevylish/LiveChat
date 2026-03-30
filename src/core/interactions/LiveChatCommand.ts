@@ -73,6 +73,12 @@ export default class LiveChatCommand extends Command {
                     description: "Afficher le livechat sur tout l'écran du stream (16:9 horizontal)",
                     required: false,
                 },
+                {
+                    name: 'anonyme',
+                    type: ApplicationCommandOptionType.Boolean,
+                    description: 'Masquer votre pseudo et votre photo de profil sur le LiveChat.',
+                    required: false,
+                },
             ],
         });
     }
@@ -93,6 +99,7 @@ export default class LiveChatCommand extends Command {
         let file = interaction.options.getAttachment('fichier') as Attachment;
         const text = (interaction.options.getString('texte') as string) ?? null;
         let fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
+        const anonymous = (interaction.options.getBoolean('anonyme') as boolean) ?? false;
 
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
@@ -180,11 +187,11 @@ export default class LiveChatCommand extends Command {
         }
 
         if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
-            this.broadcastToEveryone(interaction, url, fullscreen, text);
+            this.broadcastToEveryone(interaction, url, fullscreen, anonymous, text);
             return;
         }
 
-        this.broadcastToTarget(interaction, target, url, fullscreen, text);
+        this.broadcastToTarget(interaction, target, url, fullscreen, anonymous, text);
     }
 
     private async resolvePlatformUrl(url: string): Promise<{ url: string; bypassProxy: boolean; error?: string }> {
@@ -241,6 +248,7 @@ export default class LiveChatCommand extends Command {
         interaction: ChatInputCommandInteraction,
         url: string,
         fullscreen: boolean,
+        anonymous: boolean,
         text: string,
     ) {
         const streamers = this.client.livechat.getConnectedStreamersByGuild(interaction.guildId);
@@ -256,7 +264,7 @@ export default class LiveChatCommand extends Command {
             const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
 
             const streamsList = TargetsManager.buildStreamersList(streamers);
-            const fileTypeDescription = this.buildFileTypeDescription(filetype, text, adjustedFullscreen);
+            const fileTypeDescription = this.buildFileTypeDescription(filetype, text, fullscreen, anonymous);
 
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé à tous les streameurs connectés` +
@@ -278,6 +286,7 @@ export default class LiveChatCommand extends Command {
                 content: url,
                 from: interaction.user,
                 fullscreen: adjustedFullscreen,
+                anonymous,
                 text,
                 interactionId: interaction.id,
             });
@@ -296,6 +305,7 @@ export default class LiveChatCommand extends Command {
         target: string,
         url: string,
         fullscreen: boolean,
+        anonymous: boolean,
         text: string,
     ) {
         const streamer = this.client.livechat.getStreamerData(target, interaction.guildId);
@@ -311,7 +321,7 @@ export default class LiveChatCommand extends Command {
             const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
 
             const streamsList = TargetsManager.buildStreamersList([streamer]);
-            const fileTypeDescription = this.buildFileTypeDescription(filetype, text, adjustedFullscreen);
+            const fileTypeDescription = this.buildFileTypeDescription(filetype, text, fullscreen, anonymous);
 
             const embed = Functions.buildEmbed(
                 `### LiveChat envoyé sur le stream de ${target}` +
@@ -326,6 +336,7 @@ export default class LiveChatCommand extends Command {
                 content: url,
                 from: interaction.user,
                 fullscreen: adjustedFullscreen,
+                anonymous,
                 text,
                 interactionId: interaction.id,
             });
@@ -343,10 +354,12 @@ export default class LiveChatCommand extends Command {
         filetype: { display: string; param: string },
         text: string | null,
         fullscreen: boolean,
+        anonymous: boolean,
     ): string {
         let description = filetype.display;
         if (text) description += ' + Texte';
         if (fullscreen && filetype.param !== 'audio') description += ' en plein écran';
+        if (anonymous) description += ' anonyme';
         return description;
     }
 }
