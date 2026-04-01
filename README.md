@@ -20,11 +20,11 @@ Et bien plus encore, installez-le et jouez avec pour le découvrir !
 
 ## 🚀 Installation & Utilisation
 
-Aucune installation complexe n'est requise pour l'utiliser.
+L'installation est simple, prenez le temps de tout lire et ça marchera du premier coup.
 
-1. Rendez-vous sur notre site : **[https://livechat.nevylish.fr/](https://livechat.nevylish.fr/)**
+1. Rendez-vous sur le site : **[https://livechat.nevylish.fr/](https://livechat.nevylish.fr/)**
 2. Cliquez sur **"Configurez votre overlay"**.
-3. Suivez les étapes simples pour ajouter le bot à votre serveur Discord et obtenir votre lien d'overlay OBS.
+3. Suivez les étapes pour ajouter le bot à votre serveur Discord, obtenir votre lien d'overlay et le configurer.
 
 _(Un tutoriel vidéo complet sera disponible prochainement)._
 
