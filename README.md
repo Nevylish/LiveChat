@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/public/assets/images/livechat_transparent.png" alt="LiveChat Logo" width="128" />
+  <img src="src/public/assets/images/livechat_ul_transparent.png" alt="LiveChat Logo" width="128" />
 </p>
 
 #
