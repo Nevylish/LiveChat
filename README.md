@@ -1,4 +1,9 @@
-# 🔴 LiveChat
+<p align="center">
+  <img src="src/public/assets/images/livechat_transparent.png" alt="LiveChat Logo" width="64" />
+  <br />
+</p>
+
+# <p align="center">LiveChat</p>
 
 **LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams intéractifs.
 
