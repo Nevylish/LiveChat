@@ -2,8 +2,6 @@
   <img src="src/public/assets/images/livechat_transparent.png" alt="LiveChat Logo" width="128" />
 </p>
 
-# <p align="center">LiveChat</p>
-
 **LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams intéractifs.
 
 Il s'agit d'un **bot Discord couplé à un overlay de stream** qui permet à vos amis et vos modérateurs d'afficher instantanément des images, de lancer des vidéos ou de jouer des sons directement sur votre live, via une simple commande Discord (`/livechat`).
