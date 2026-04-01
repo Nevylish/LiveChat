@@ -112,7 +112,7 @@ docker-compose up -d
 
 Ce projet est ouvert aux contributions. Ouvrez une issue pour qu'on en discute !
 
----
+#
 
 <div align="center">
 
