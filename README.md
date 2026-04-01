@@ -48,7 +48,7 @@ Vous souhaitez héberger votre propre instance de LiveChat, modifier le code ou 
 1. **Cloner le dépôt** :
 
 ```bash
-git clone [https://github.com/nevylish/LiveChat.git](https://github.com/nevylish/LiveChat.git)
+git clone https://github.com/nevylish/LiveChat.git
 cd LiveChat
 ```
 
