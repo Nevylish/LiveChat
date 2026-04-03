@@ -6,7 +6,7 @@ export default class SubscriptionCommand extends Command {
     constructor(client: DiscordClient) {
         super(client, {
             name: 'abonnement',
-            description: "Découvrez l' abonnement pour LiveChat.",
+            description: "Découvrez l'abonnement pour LiveChat.",
             dmPermission: false,
         });
     }
