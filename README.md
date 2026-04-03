@@ -1,5 +1,7 @@
 <p align="center">
   <img src="src/public/assets/images/livechat_ul_transparent.png" alt="LiveChat Logo" width="128" />
+  <br />
+  <a href="https://livechat.nevylish.fr">livechat.nevylish.fr</a>
 </p>
 
 **LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams intéractifs.
@@ -22,7 +24,7 @@ Et bien plus encore, installez-le et jouez avec pour le découvrir !
 
 ## 🚀 Installation & Utilisation
 
-L'installation est simple, prenez le temps de tout lire et ça marchera du premier coup.
+L'installation est simple, prenez le temps de tout lire et ça marchera du premier coup (promis).
 
 1. Rendez-vous sur le site : **[https://livechat.nevylish.fr/](https://livechat.nevylish.fr/)**
 2. Cliquez sur **"Configurez votre overlay"**.
