@@ -1,7 +1,7 @@
 <p align="center">
   <img src="src/public/assets/images/livechat_ul_transparent.png" alt="LiveChat Logo" width="128" />
   <br />
-  <a href="https://livechat.nevylish.fr" style="font-weight: bold; text-decoration: none;">https://livechat.nevylish.fr</a>
+  <a href="https://livechat.nevylish.fr" target="_blank" style="font-weight: bold; text-decoration: none;">https://livechat.nevylish.fr</a>
 </p>
 
 **LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams intéractifs.
