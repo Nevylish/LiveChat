@@ -34,7 +34,6 @@ export namespace YouTube {
             const directUrl = info.url;
 
             if (directUrl) {
-                console.log(directUrl);
                 return ProxyService.useProxy(directUrl, 'youtube', 'video');
             }
 
