@@ -6,8 +6,7 @@ import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFl
 import DiscordClient from '../DiscordClient';
 import Command from '../interactions/classes/Command';
 import LiveChatCommand from '../interactions/LiveChatCommand';
-import SkipCommand from '../interactions/SkipCommand';
-import StopAndClearCommand from '../interactions/StopAndClearCommand';
+import PlatformsCommand from '../interactions/PlatformsCommand';
 import SubscriptionCommand from '../interactions/SubscriptionCommand';
 import { Logger } from '../utils/Logger';
 import { Functions } from './Functions';
@@ -34,9 +33,8 @@ export namespace Handlers {
     export const setupCommands = async (client: DiscordClient) => {
         const commands: Command[] = [
             new LiveChatCommand(client),
-            new SkipCommand(client),
-            new StopAndClearCommand(client),
             new SubscriptionCommand(client),
+            new PlatformsCommand(client),
         ];
 
         commands.forEach((command) => {

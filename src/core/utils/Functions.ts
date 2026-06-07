@@ -13,7 +13,7 @@ import { Tenor } from '../modules/Tenor';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
-        embed.setFooter({ text: `LiveChat v${version}` });
+        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 07/06/2026` });
     };
 
     export const buildEmbed = (
@@ -27,7 +27,7 @@ export namespace Functions {
             (color === 'Error'
                 ? "\n\n- Contactez-moi à l'adresse bonjour@nevylish.fr ou sur [Twitter @Nevylish](https://x.com/Nevylish)."
                 : '') +
-            `\n\n[**Installer LiveChat**](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[**Voir les mises à jour**](https://livechat.nevylish.fr/updates.html)`;
+            `\n\n[**Installer LiveChat**](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[**Voir les patch notes**](https://livechat.nevylish.fr/updates.html)`;
 
         switch (color) {
             case 'Error':
@@ -155,5 +155,9 @@ export namespace Functions {
         }
 
         return `${res}${seconds < 10 ? '0' : ''}${seconds}s`;
+    };
+
+    export const formatBulletList = (items: string[]): string => {
+        return items.map((item) => `- ${item}`).join('\n');
     };
 }

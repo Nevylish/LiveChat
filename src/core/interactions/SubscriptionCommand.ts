@@ -6,7 +6,7 @@ export default class SubscriptionCommand extends Command {
     constructor(client: DiscordClient) {
         super(client, {
             name: 'abonnement',
-            description: "Découvrez l'abonnement pour LiveChat.",
+            description: 'Découvrez LiveChat Plus et soutenez le projet.',
             dmPermission: false,
         });
     }
@@ -46,10 +46,18 @@ export default class SubscriptionCommand extends Command {
             ])
             .setColor('Blurple');
 
-        const plusComponents = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        const plusComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID),
         );
 
-        await interaction.editReply({ embeds: [embed, plusEmbed], components: [plusComponents] });
+        const starComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setEmoji('⭐')
+                .setLabel('Laisser une étoile sur GitHub')
+                .setStyle(ButtonStyle.Link)
+                .setURL('https://github.com/Nevylish/LiveChat'),
+        );
+
+        await interaction.editReply({ embeds: [embed, plusEmbed], components: [plusComponent, starComponent] });
     }
 }
