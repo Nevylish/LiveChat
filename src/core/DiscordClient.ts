@@ -52,7 +52,7 @@ export default class DiscordClient extends Client {
     public updateActivity(size?: number): void {
         this.user?.setActivity(
             size
-                ? `/livechat | ${size.toString() ?? '0'} streameur${size > 1 ? 's' : ''} utilise${size > 1 ? 'nt' : ''} LiveChat en ce moment.`
+                ? `/livechat | ${size.toString() ?? '0'} ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
                 : '/livechat | livechat.nevylish.fr',
             { type: 3 },
         );
