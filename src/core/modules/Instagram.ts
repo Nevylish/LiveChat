@@ -4,6 +4,7 @@
 
 import { youtubeDl as youtubedl } from 'youtube-dl-exec';
 import { Logger } from '../utils/Logger';
+import { ProxyService } from './_ProxyService';
 
 export namespace Instagram {
     export const isInstagramUrl = (url: string): boolean => {
@@ -33,8 +34,11 @@ export namespace Instagram {
             const directUrl = info.url;
 
             if (directUrl) {
-                return directUrl;
-                // return ProxyService.useProxy(directUrl, 'instagram', 'video');
+                if (validateDirectUrl(directUrl)) {
+                    return directUrl;
+                }
+
+                return ProxyService.useProxy(directUrl, 'instagram', 'video');
             }
 
             return null;
