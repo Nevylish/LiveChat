@@ -7,7 +7,7 @@ import { Logger } from '../utils/Logger';
 const defaultSkipButtonTime: number = 15;
 const defaultImageDuration: number = 8;
 
-export const buildSkipButton = async (
+export const setupSkipButton = async (
     client: DiscordClient,
     interaction: ChatInputCommandInteraction,
     embed: EmbedBuilder,
@@ -60,7 +60,7 @@ export const buildSkipButton = async (
 
         startTime = Date.now();
         skipButton.setDisabled(false);
-        skipButton.setLabel(`Passer le LiveChat (${Functions.msToFormattedString(duration)})`);
+        skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(duration)})`);
         interaction.editReply({ embeds: [embed], components: [row] }).catch(() => cleanup());
 
         refreshInterval = setInterval(() => {
@@ -78,7 +78,7 @@ export const buildSkipButton = async (
             }
 
             if (!isSkipped) {
-                skipButton.setLabel(`Passer le LiveChat (${Functions.msToFormattedString(remaining)})`);
+                skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(remaining)})`);
                 interaction.editReply({ embeds: [embed], components: [row] }).catch(() => cleanup());
             }
         }, 1000);

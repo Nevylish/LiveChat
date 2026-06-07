@@ -13,7 +13,7 @@ import { Logger } from '../utils/Logger';
 import { Functions } from './Functions';
 
 export namespace Handlers {
-    export const setupEventsListeners = (client: DiscordClient) => {
+    export const setupEventListeners = (client: DiscordClient) => {
         client.on(Events.ClientReady, async () => {
             client.updateActivity();
         });
@@ -23,8 +23,8 @@ export namespace Handlers {
             async (interaction: ChatInputCommandInteraction | AutocompleteInteraction) => {
                 if (!interaction || interaction.user.bot) return;
 
-                if (interaction.isCommand()) await InteractionCommandHandler(client, interaction);
-                else if (interaction.isAutocomplete()) await AutoCompleteHandler(client, interaction);
+                if (interaction.isCommand()) await handleCommand(client, interaction);
+                else if (interaction.isAutocomplete()) await handleAutocomplete(client, interaction);
             },
         );
 
@@ -53,7 +53,7 @@ export namespace Handlers {
         Logger.success('Handlers', `Slash commands registered. (${commandsData.length} commands)`);
     };
 
-    const AutoCompleteHandler = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
+    const handleAutocomplete = async (client: DiscordClient, interaction: AutocompleteInteraction) => {
         const { user, commandName } = interaction;
         const cmd = client.commands.get(commandName);
         if (!cmd || !cmd.onAutocomplete) return;
@@ -69,7 +69,7 @@ export namespace Handlers {
         }
     };
 
-    const InteractionCommandHandler = async (client: DiscordClient, interaction: ChatInputCommandInteraction) => {
+    const handleCommand = async (client: DiscordClient, interaction: ChatInputCommandInteraction) => {
         const { user, commandName } = interaction;
         const cmd = client.commands.get(commandName);
 

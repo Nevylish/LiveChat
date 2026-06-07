@@ -40,7 +40,7 @@ export class LiveChatServer extends EventEmitter {
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
             cors: {
-                origin: Constants.getPath(),
+                origin: Constants.getBaseUrl(),
                 methods: ['GET', 'POST'],
                 credentials: true,
             },
@@ -96,7 +96,7 @@ export class LiveChatServer extends EventEmitter {
                                 return;
                             }
 
-                            const streamersConnectedLength = this.getConnectedStreamersByGuildSize(data.guildId);
+                            const streamersConnectedLength = this.getConnectedStreamersCountByGuild(data.guildId);
 
                             if (streamersConnectedLength >= 20) {
                                 this.emitError(
@@ -116,7 +116,7 @@ export class LiveChatServer extends EventEmitter {
                             }
 
                             this.addStreamer(socket.id, data.username, data.guildId);
-                            this.discordClient.updateActivity(this.getConnectedStreamersSize());
+                            this.discordClient.updateActivity(this.getConnectedStreamersCount());
 
                             if (guild.name) {
                                 socket.emit('updateConnectionStatus', true, ` pour le serveur Discord: ${guild.name}`);
@@ -139,7 +139,7 @@ export class LiveChatServer extends EventEmitter {
                 for (const [_, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.removeStreamer(data.username, data.guildId);
-                        this.discordClient.updateActivity(this.getConnectedStreamersSize());
+                        this.discordClient.updateActivity(this.getConnectedStreamersCount());
                         Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`);
                     }
                 }
@@ -245,11 +245,11 @@ export class LiveChatServer extends EventEmitter {
         return Array.from(this.connectedStreamers.values()).filter((streamer) => streamer.guildId === guildId);
     }
 
-    getConnectedStreamersSize(): number {
+    getConnectedStreamersCount(): number {
         return this.connectedStreamers.size;
     }
 
-    getConnectedStreamersByGuildSize(guildId: string): number {
+    getConnectedStreamersCountByGuild(guildId: string): number {
         return this.getConnectedStreamersByGuild(guildId).length;
     }
 }

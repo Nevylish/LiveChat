@@ -1,31 +1,14 @@
-/**
- * Types pour les réponses API
- */
-
-export interface TikTokApiResponse {
+interface GiphyApiResponse {
     data?: {
-        play?: string;
-    };
-}
-
-export interface TwitterApiResponse {
-    tweet?: {
-        media?: {
-            all?: Array<{
+        images?: {
+            original?: {
                 url?: string;
-            }>;
-        };
-        quote?: {
-            media?: {
-                all?: Array<{
-                    url?: string;
-                }>;
             };
         };
     };
 }
 
-export interface TenorApiResponse {
+interface TenorApiResponse {
     results?: Array<{
         media_formats?: {
             gif?: {
@@ -44,12 +27,27 @@ export interface TenorApiResponse {
     }>;
 }
 
-export interface GiphyApiResponse {
+interface TikTokApiResponse {
     data?: {
-        images?: {
-            original?: {
+        play?: string;
+    };
+}
+
+interface TwitterApiResponse {
+    tweet?: {
+        media?: {
+            all?: Array<{
                 url?: string;
+            }>;
+        };
+        quote?: {
+            media?: {
+                all?: Array<{
+                    url?: string;
+                }>;
             };
         };
     };
 }
+
+export { GiphyApiResponse, TenorApiResponse, TikTokApiResponse, TwitterApiResponse };

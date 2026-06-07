@@ -23,14 +23,14 @@ import {
 import DiscordClient from '../DiscordClient';
 import { Discord } from '../modules/Discord';
 import { Giphy } from '../modules/Giphy';
+import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
-import { TikTok } from '../modules/Tiktok';
-import { Twitter } from '../modules/Twitter';
 import { ProxyService } from '../modules/_ProxyService';
+import { Router } from '../modules/_Router';
 import { Functions } from '../utils/Functions';
 import { Logger } from '../utils/Logger';
 import { TargetsManager } from '../utils/Targets';
-import { buildSkipButton } from './SkipButton';
+import { setupSkipButton } from './SkipButton';
 import Command from './classes/Command';
 
 export default class LiveChatCommand extends Command {
@@ -137,7 +137,7 @@ export default class LiveChatCommand extends Command {
             return;
         }
 
-        const platformResult = await this.resolvePlatformUrl(url);
+        const platformResult = await Router.route(url);
         if (platformResult.error) {
             const embed = Functions.buildEmbed(platformResult.error, 'Alert');
             await interaction.editReply({ embeds: [embed] });
@@ -145,10 +145,7 @@ export default class LiveChatCommand extends Command {
         }
 
         url = platformResult.url;
-
-        if (platformResult.bypassProxy) {
-            bypassProxy = true;
-        }
+        bypassProxy = platformResult.bypassProxy;
 
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
         const supportedFormats = [
@@ -169,8 +166,9 @@ export default class LiveChatCommand extends Command {
         if (
             (!extension || !supportedFormats.includes(extension)) &&
             !Discord.isDiscordUrl(url) &&
-            !Tenor.validateDirectUrl(url) &&
             !Giphy.validateDirectUrl(url) &&
+            !Instagram.validateDirectUrl(url) &&
+            !Tenor.validateDirectUrl(url) &&
             !ProxyService.isProxyUrl(url)
         ) {
             const embed = Functions.buildEmbed(
@@ -194,56 +192,6 @@ export default class LiveChatCommand extends Command {
         this.broadcastToTarget(interaction, target, url, fullscreen, anonymous, text);
     }
 
-    private async resolvePlatformUrl(url: string): Promise<{ url: string; bypassProxy: boolean; error?: string }> {
-        if (Discord.isDiscordUrl(url)) return { url, bypassProxy: true };
-
-        if (TikTok.isTikTokUrl(url)) {
-            const proxyUrl = await TikTok.getProxyUrl(url);
-            if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
-
-            return {
-                url,
-                bypassProxy: false,
-                error: 'Impossible de récupérer la vidéo depuis TikTok. Vérifiez le lien.',
-            };
-        }
-
-        if (Twitter.isStatusUrl(url)) {
-            const proxyUrl = await Twitter.getProxyUrl(url);
-            if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
-
-            return {
-                url,
-                bypassProxy: false,
-                error: 'Impossible de récupérer le média de ce Tweet. Vérifiez le lien.',
-            };
-        }
-
-        if (Tenor.isShortenedUrl(url)) {
-            const directUrl = await Tenor.fetchDirectUrl(url);
-            if (directUrl) return { url: directUrl, bypassProxy: true };
-
-            return {
-                url,
-                bypassProxy: false,
-                error: 'Impossible de récupérer le GIF depuis Tenor. Vérifiez le lien.',
-            };
-        }
-
-        if (Giphy.isShortenedUrl(url)) {
-            const directUrl = await Giphy.fetchDirectUrl(url);
-            if (directUrl) return { url: directUrl, bypassProxy: true };
-
-            return {
-                url,
-                bypassProxy: false,
-                error: 'Impossible de récupérer le GIF depuis Giphy. Vérifiez le lien.',
-            };
-        }
-
-        return { url, bypassProxy: false };
-    }
-
     private async broadcastToEveryone(
         interaction: ChatInputCommandInteraction,
         url: string,
@@ -253,14 +201,14 @@ export default class LiveChatCommand extends Command {
     ) {
         const streamers = this.client.livechat.getConnectedStreamersByGuild(interaction.guildId);
 
-        const noStreamersEmbed = TargetsManager.checkNoStreamersConnected(streamers);
-        if (noStreamersEmbed) {
-            await interaction.editReply({ embeds: [noStreamersEmbed] });
+        if (!streamers.length) {
+            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
             return;
         }
 
         try {
-            const filetype = Functions.getFileType(url);
+            const filetype = Functions.getMediaType(url);
             const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
 
             const streamsList = TargetsManager.buildStreamersList(streamers);
@@ -273,7 +221,7 @@ export default class LiveChatCommand extends Command {
                 'Good',
             );
 
-            await buildSkipButton(
+            await setupSkipButton(
                 this.client,
                 interaction,
                 embed,
@@ -308,19 +256,19 @@ export default class LiveChatCommand extends Command {
         anonymous: boolean,
         text: string,
     ) {
-        const streamer = this.client.livechat.getStreamerData(target, interaction.guildId);
+        const streamerData = this.client.livechat.getStreamerData(target, interaction.guildId);
 
-        const notConnectedEmbed = TargetsManager.checkStreamerNotConnected(target, streamer);
-        if (notConnectedEmbed) {
-            await interaction.editReply({ embeds: [notConnectedEmbed] });
+        if (!streamerData) {
+            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
             return;
         }
 
         try {
-            const filetype = Functions.getFileType(url);
+            const filetype = Functions.getMediaType(url);
             const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
 
-            const streamsList = TargetsManager.buildStreamersList([streamer]);
+            const streamsList = TargetsManager.buildStreamersList([streamerData]);
             const fileTypeDescription = this.buildFileTypeDescription(filetype, text, fullscreen, anonymous);
 
             const embed = Functions.buildEmbed(
@@ -330,9 +278,9 @@ export default class LiveChatCommand extends Command {
                 'Good',
             );
 
-            await buildSkipButton(this.client, interaction, embed, filetype.param, url, [streamer.socketId]);
+            await setupSkipButton(this.client, interaction, embed, filetype.param, url, [streamerData.socketId]);
 
-            this.client.livechat.io.to(streamer.socketId).emit('broadcast', {
+            this.client.livechat.io.to(streamerData.socketId).emit('broadcast', {
                 content: url,
                 from: interaction.user,
                 fullscreen: adjustedFullscreen,

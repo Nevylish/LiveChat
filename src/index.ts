@@ -19,7 +19,6 @@ const requiredEnvVars = [
     'GIPHY_API_KEY',
     'DOMAIN',
     'SKU_PLUS_ID',
-    'SKU_PRO_ID',
 ];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 

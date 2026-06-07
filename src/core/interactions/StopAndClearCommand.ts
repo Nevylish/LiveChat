@@ -54,9 +54,9 @@ export default class StopAndClearCommand extends Command {
     private async broadcastToEveryone(interaction: ChatInputCommandInteraction): Promise<void> {
         const streamers = this.client.livechat.getConnectedStreamersByGuild(interaction.guildId);
 
-        const noStreamersEmbed = TargetsManager.checkNoStreamersConnected(streamers);
-        if (noStreamersEmbed) {
-            await interaction.editReply({ embeds: [noStreamersEmbed] });
+        if (!streamers.length) {
+            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
             return;
         }
 
@@ -80,9 +80,9 @@ export default class StopAndClearCommand extends Command {
     private async broadcastToTarget(interaction: ChatInputCommandInteraction, target: string): Promise<void> {
         const streamerData = this.client.livechat.getStreamerData(target, interaction.guildId);
 
-        const notConnectedEmbed = TargetsManager.checkStreamerNotConnected(target, streamerData);
-        if (notConnectedEmbed) {
-            await interaction.editReply({ embeds: [notConnectedEmbed] });
+        if (!streamerData) {
+            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
             return;
         }
 

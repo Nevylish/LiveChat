@@ -1,6 +1,5 @@
-import { AutocompleteInteraction, EmbedBuilder } from 'discord.js';
+import { AutocompleteInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
-import { Functions } from './Functions';
 
 export namespace TargetsManager {
     export const EVERYONE_OPTION_LABEL = '📌 Envoyer à tous les streameurs connectés';
@@ -33,22 +32,5 @@ export namespace TargetsManager {
         return streamers
             .map((s) => `➜ [**Rejoindre le stream de ${s.username}**](https://twitch.tv/${s.username})`)
             .join('\n');
-    };
-
-    export const checkNoStreamersConnected = (streamers: Array<{ username: string }>): EmbedBuilder | null => {
-        if (streamers.length === 0) {
-            return Functions.buildEmbed("Aucun streameur n'est connecté sur ce serveur.", 'Alert');
-        }
-        return null;
-    };
-
-    export const checkStreamerNotConnected = (
-        target: string,
-        streamerData: { username: string; socketId: string; guildId: string } | undefined,
-    ): EmbedBuilder | null => {
-        if (!streamerData) {
-            return Functions.buildEmbed(`${target} n'est pas connecté sur ce serveur.`, 'Alert');
-        }
-        return null;
     };
 }

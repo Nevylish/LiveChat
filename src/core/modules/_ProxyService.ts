@@ -35,7 +35,7 @@ export namespace ProxyService {
         let fileType;
 
         if (forceFileType === 'false') {
-            fileType = Functions.getFileType(url).param;
+            fileType = Functions.getMediaType(url).param;
         } else {
             fileType = forceFileType;
         }

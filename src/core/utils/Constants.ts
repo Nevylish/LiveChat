@@ -7,10 +7,10 @@ export namespace Constants {
 
     export const getPort = (): string => process.env.LIVECHAT_PORT || '3000';
 
-    export const getPath = (): string => {
+    export const getBaseUrl = (): string => {
         if (getHostname().includes('localhost')) return `http://${getHostname()}:${getPort()}`;
         return `https://${getHostname()}`;
     };
 
-    export const getApiPath = (): string => `${getPath()}/api`;
+    export const getApiPath = (): string => `${getBaseUrl()}/api`;
 }

@@ -6,9 +6,10 @@
 import { ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import DiscordClient from '../DiscordClient';
-import { Giphy } from '../modules/Giphy';
-import { Tenor } from '../modules/Tenor';
 import { ProxyService } from '../modules/_ProxyService';
+import { Giphy } from '../modules/Giphy';
+import { Instagram } from '../modules/Instagram';
+import { Tenor } from '../modules/Tenor';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
@@ -56,7 +57,24 @@ export namespace Functions {
         return null;
     };
 
-    export const getFileType = (url: string): { display: string; param: string } => {
+    /* Utilisé uniquement si c'est une URL du proxy */
+    export const getSourceDisplayName = (name: string | null): string | null => {
+        if (!name) return null;
+        switch (name) {
+            case 'instagram':
+                return 'Instagram';
+            case 'tiktok':
+                return 'TikTok';
+            case 'twitter':
+                return 'Twitter';
+            case 'youtube':
+                return 'YouTube';
+            default:
+                return null;
+        }
+    };
+
+    export const getMediaType = (url: string): { display: string; param: string } => {
         let display = 'Inconnu';
         let param = 'null';
         let parsedUrl: URL;
@@ -74,13 +92,9 @@ export namespace Functions {
             param = 'image';
         } else if (extension === 'gif') {
             display = 'Image animée';
-            if (Tenor.validateDirectUrl(url)) display = 'Image animée Tenor';
-            if (Giphy.validateDirectUrl(url)) display = 'Image animée Giphy';
             param = 'image';
         } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
             display = 'Vidéo';
-            if (Tenor.validateDirectUrl(url)) display = 'Image animée Tenor';
-            if (Giphy.validateDirectUrl(url)) display = 'Image animée Giphy';
             param = 'video';
         } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
             display = 'Audio';
@@ -89,13 +103,10 @@ export namespace Functions {
             switch (parsedUrl.searchParams.get('type')) {
                 case 'image':
                     display = 'Image';
-                    if (parsedUrl.searchParams.get('source') === 'twitter') display = 'Image Twitter';
                     param = 'image';
                     break;
                 case 'video':
                     display = 'Vidéo';
-                    if (parsedUrl.searchParams.get('source') === 'twitter') display = 'Vidéo Twitter';
-                    if (parsedUrl.searchParams.get('source') === 'tiktok') display = 'Vidéo TikTok';
                     param = 'video';
                     break;
                 case 'audio':
@@ -106,10 +117,22 @@ export namespace Functions {
                     break;
             }
         }
+
+        let sourceDisplayName = getSourceDisplayName(parsedUrl.searchParams.get('source'));
+        if (!sourceDisplayName) {
+            if (Instagram.validateDirectUrl(url)) sourceDisplayName = 'Instagram';
+            else if (Tenor.validateDirectUrl(url)) sourceDisplayName = 'Tenor';
+            else if (Giphy.validateDirectUrl(url)) sourceDisplayName = 'Giphy';
+        }
+
+        if (sourceDisplayName) {
+            display += ` ${sourceDisplayName}`;
+        }
+
         return { display: display, param: param };
     };
 
-    export const msToFormattedString = (ms: number) => {
+    export const formatDurationMs = (ms: number) => {
         const seconds = Math.floor((ms / 1000) % 60);
         const minutes = Math.floor((ms / (1000 * 60)) % 60);
         const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);

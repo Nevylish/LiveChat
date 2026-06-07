@@ -74,7 +74,6 @@ TOKEN=token_de_votre_bot_discord
 TENOR_API_KEY=clé_api_tenor
 GIPHY_API_KEY=clé_api_giphy
 SKU_PLUS_ID=facultatif
-SKU_PRO_ID=facultatif
 ```
 
 4. **Lancer l'application**

@@ -34,11 +34,10 @@ export default class DiscordClient extends Client {
 
     public async hasGuildPremiumSubscription(guildId: string): Promise<Boolean> {
         const SKU_PLUS = process.env.SKU_PLUS_ID;
-        const SKU_PRO = process.env.SKU_PRO_ID;
 
         const entitlements = await this.application.entitlements.fetch({
             guild: guildId,
-            skus: [SKU_PLUS, SKU_PRO],
+            skus: [SKU_PLUS],
             excludeDeleted: true,
             excludeEnded: true,
         });
@@ -66,7 +65,7 @@ export default class DiscordClient extends Client {
 
             this.livechat = new LiveChatServer(this);
 
-            Handlers.setupEventsListeners(this);
+            Handlers.setupEventListeners(this);
             await Handlers.setupCommands(this);
 
             Logger.success('Client', `Successfully connected to Discord !`);
