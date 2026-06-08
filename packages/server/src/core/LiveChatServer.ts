@@ -162,6 +162,13 @@ export class LiveChatServer extends EventEmitter {
 
         this.app.get('/api/proxy', limiter, ProxyService.handle);
 
+        this.app.get('/api/stats', limiter, (_, res) => {
+            res.json({
+                streamers: this.getConnectedStreamersCount(),
+                servers: this.discordClient.guilds.cache.size,
+            });
+        });
+
         const staticOptions = {
             etag: true,
             lastModified: true,

@@ -10,7 +10,7 @@ const sections = [
     {
         title: '2. Confidentialité',
         content:
-            "Le bot LiveChat ne collecte aucune donnée personnelle, utilisateur, message ou de serveur. Toutefois, l'utilisation de ce site web est soumise à la collecte de données anonymes via Google Analytics, conformément à notre Politique de Confidentialité.",
+            "Le bot LiveChat et le site web ne collectent aucune donnée personnelle, d'utilisateur, de message ou de serveur.",
     },
     {
         title: '3. Responsabilité',
@@ -52,7 +52,7 @@ export default function Terms() {
                         d'utilisation ci-dessous.
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 11 février 2026
+                        Dernière mise à jour : 8 juin 2026
                     </p>
                 </div>
 

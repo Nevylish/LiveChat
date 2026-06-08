@@ -1,7 +1,33 @@
+import { ChevronDown, Server, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
+const faqs = [
+    {
+        question: "Est-ce que c'est complètement gratuit ?",
+        answer: "Oui, LiveChat est totalement gratuit et open-source. Vous pouvez depuis Discord souscrire à un abonnement Plus, mais il ne débloque pas de fonctionnalités importante, seulement des slots additionnels (c'est surtout pour soutenir le projet).",
+    },
+    {
+        question: 'Est-ce sécurisé ?',
+        answer: 'Complètement, le code est libre et tout le monde peut le regarder, le système est prévu pour maîtriser les risques, notamment grâce au fait de créer un serveur Discord uniquement pour ça. De plus, vos informations personnelles sont protégées grâce à notre système de proxy, il est impossible de récupérer votre adresse IP par exemple.',
+    },
+    {
+        question: 'Est-ce autorisé par Twitch ?',
+        answer: "Sur Twitch et toutes les autres plateformes vous êtes libre de mettre ce que vous voulez à condition que ça respecte les conditions d'utilisations de la plateforme (pas de violence, nudité ou contenu protégé par des droits d'auteurs), nous vous invitons à donner l'accès à votre LiveChat seulement aux personnes de confiance, nous déclinons toute responsabilité en cas de sanction.",
+    },
+];
+
 export default function Home() {
+    const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(null);
+
+    useEffect(() => {
+        fetch('/api/stats')
+            .then((res) => res.json())
+            .then((data) => setStats(data))
+            .catch(() => {});
+    }, []);
+
     return (
         <div className="dark min-h-screen text-foreground">
             <div className="bg-layer" />
@@ -37,6 +63,47 @@ export default function Home() {
                                 >
                                     Démonstration vidéo
                                 </a>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="mt-10 flex flex-col gap-6 max-md:items-center sm:flex-row sm:flex-wrap sm:gap-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
+                                        <Users className="h-4 w-4 text-foreground/80" />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg font-bold leading-none tracking-tight">
+                                                {stats !== null ? stats.streamers : '...'}
+                                            </span>
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                                                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+                                            </span>
+                                        </div>
+                                        <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            {stats !== null && stats.streamers <= 1
+                                                ? 'Streameur·euse en direct'
+                                                : 'Streameurs·euses en direct'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="hidden h-8 w-px bg-border sm:block"></div>
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
+                                        <Server className="h-4 w-4 text-foreground/80" />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-lg font-bold leading-none tracking-tight">
+                                            {stats !== null ? stats.servers : '...'}
+                                        </span>
+                                        <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                            {stats !== null && stats.servers <= 1
+                                                ? 'Serveur Discord'
+                                                : 'Serveurs Discord'}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="max-md:flex max-md:justify-center">
@@ -162,6 +229,26 @@ export default function Home() {
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
                                 />
+                            </div>
+                        </div>
+
+                        {/* FAQ */}
+                        <div className="mx-auto w-full max-w-2xl">
+                            <div className="text-center">
+                                <h2 className="text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
+                            </div>
+                            <div className="mt-10 divide-y divide-border border-y border-border">
+                                {faqs.map((faq, i) => (
+                                    <details key={i} className="group py-5 [&_summary::-webkit-details-marker]:hidden">
+                                        <summary className="flex cursor-pointer items-center justify-between gap-4 text-base font-semibold outline-none transition-colors hover:text-muted-foreground">
+                                            {faq.question}
+                                            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                        </summary>
+                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                                            {faq.answer}
+                                        </p>
+                                    </details>
+                                ))}
                             </div>
                         </div>
 

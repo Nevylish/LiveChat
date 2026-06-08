@@ -11,6 +11,7 @@
         "url": "https://nevylish.fr/"
     },
     "scripts": {
+        "clean:modules": "node -e \"const fs=require('fs'); ['node_modules', 'packages/server/node_modules', 'packages/web/node_modules', 'packages/overlay/node_modules'].forEach(p => fs.rmSync(p, {recursive:true,force:true}))\"",
         "build": "pnpm --filter @livechat/server build && pnpm --filter @livechat/web build",
         "build:server": "pnpm --filter @livechat/server build",
         "build:web": "pnpm --filter @livechat/web build",
