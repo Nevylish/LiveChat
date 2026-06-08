@@ -5,17 +5,17 @@ const sections = [
     {
         title: '1. Données collectées',
         content:
-            "Le bot LiveChat ne collecte aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur. Le bot traite uniquement les commandes en temps réel sans stockage.\n\nCependant, ce site web utilise Google Analytics pour collecter des données anonymes de navigation (pages visitées, temps passé, type d'appareil) afin de mesurer les performances.",
+            "Le bot LiveChat et le site web ne collectent aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur. Le bot traite uniquement les commandes en temps réel sans stockage, et aucune donnée de navigation n'est enregistrée.",
     },
     {
         title: '2. Utilisation des données',
         content:
-            "Les données relatives au bot ne sont pas stockées. Les données de navigation du site web collectées par Google Analytics sont utilisées uniquement à des fins statistiques pour améliorer l'expérience utilisateur et la performance du site.",
+            'Les données relatives au bot et au site web ne sont ni stockées, ni revendues. Nous respectons votre vie privée dans sa totalité.',
     },
     {
         title: '3. Cookies et technologies similaires',
         content:
-            "Ce site utilise des cookies liés à Google Analytics. Vous avez le choix d'accepter ou de refuser ces cookies via la bannière qui s'affiche lors de votre première visite. Votre consentement est sauvegardé pour une durée limitée mais peut être révoqué à tout moment en effaçant les données de votre navigateur.",
+            "Ce site n'utilise aucun cookie de suivi publicitaire ou analytique. Votre navigation est totalement libre et sans pistage.",
     },
     {
         title: '4. Données de tiers',
@@ -40,7 +40,7 @@ const sections = [
     {
         title: '8. Éditeur',
         content:
-            "Le bot Discord et le site internet de LiveChat sont édités sous le nom commercial STRASS CHAT MIAOU. Conformément à la loi, les coordonnées personnelles de l'éditeur ont été transmises à l'hébergeur du site. L'éditeur est joignable à l'adresse e-mail suivante : bonjour@nevylish.fr.",
+            "Le site internet et le bot Discord LiveChat sont édités par Yanïs Faria Pereira, entrepreneur individuel exerçant sous le nom commercial « STRASS CHAT MIAOU », immatriculé sous le numéro SIRET 99933061600023, dont le siège est situé au 173 rue de Courcelles, 75017 Paris, France. L'éditeur peut être contacté à l'adresse suivante : bonjour@nevylish.fr.",
     },
     {
         title: '9. Modifications de la politique',
@@ -62,7 +62,7 @@ export default function Privacy() {
                         acceptez cette politique de confidentialité.
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 11 février 2026
+                        Dernière mise à jour : 8 juin 2026
                     </p>
                 </div>
 
