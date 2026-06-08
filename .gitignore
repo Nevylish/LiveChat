@@ -1,8 +1,12 @@
 dist
-pnpm-lock.yaml
-.env
 node_modules
+.env
 .idea
 .vscode
 .DS_Store
+pnpm-lock.yaml
 package-lock.json
+
+# Vite
+packages/web/dist
+packages/web/.vite

@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="src/public/assets/images/livechat_ul_transparent.png" alt="LiveChat Logo" width="128" />
+  <img src="shared/assets/images/livechat_ul_transparent.png" alt="LiveChat" width="128" />
   <br />
-  <a href="https://livechat.nevylish.fr" target="_blank" style="font-weight: bold; text-decoration: none;">https://livechat.nevylish.fr</a>
+  <a href="https://livechat.nevylish.fr">https://livechat.nevylish.fr</a>
 </p>
 
-**LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams intéractifs.
+**LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams interactifs.
 
-Il s'agit d'un **bot Discord couplé à un overlay de stream** qui permet à vos amis et vos modérateurs d'afficher instantanément des images, de lancer des vidéos ou de jouer des sons directement sur votre live, via une simple commande Discord (`/livechat`).
+Il s'agit d'un **bot Discord couplé à un overlay de stream** qui permet à vos amis et vos modérateurs d'afficher des images, de lancer des vidéos ou de jouer des sons directement sur votre live, via une simple commande Discord (`/livechat`).
 
 ## 🎬 Démonstration
 
@@ -14,58 +14,39 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 
 ## ✨ Fonctionnalités
 
-- 🔗 **Partage facile :** Prends en charge nativement les liens **Discord**, **TikTok**, **Twitter**, **Tenor**, et **Giphy**. Vous pouvez également partager des fichiers directement depuis votre ordinateur. _L'ajout d'autres plateformes comme YouTube sont prévues._
-- 👥 **Mode Stream Together (Multi-streameurs) :** Vous streamez à plusieurs sur le même serveur Discord ? Utilisez l'option `📌 Envoyer à tous les streameurs connectés` pour qu'une vidéo s'affiche sur les streams de tous vos amis en même temps !
-- 📝 **Générateur de mèmes :** Superposez du texte sur les médias envoyés avec la police Impact pour créer des mèmes en direct grâce à l'option `texte` de la commande `/livechat` !
-- 🔒 **Sécurisé :** LiveChat vous protège contre les fuites d'adresse IP grâce à son système de proxy intégré.
-- 🌐 **Universel :** Fonctionne avec toutes les plateformes de streaming (Twitch, YouTube, Kick, TikTok, etc.) et n'importe quel logiciel de streaming supportant les sources navigateur (OBS Studio, Streamlabs Desktop, PRISM Live, etc.).
+- 🔗 **Partage facile** — Prend en charge nativement **Discord**, **TikTok**, **YouTube**, **Instagram Reels**, **Twitter/X**, **Tenor** et **Giphy**. Upload de fichiers également supporté.
+- 👥 **Multi-streameurs** — Envoyez un média à tous les streameurs connectés du même serveur Discord en un clic.
+- 📝 **Texte superposé** — Ajoutez du texte style mème (police Impact) par-dessus les médias envoyés.
+- 🔒 **Proxy intégré** — Protège l'adresse IP des streameurs en servant les médias via le serveur.
+- 🌐 **Universel** — Compatible avec OBS Studio, Streamlabs, PRISM Live et tout logiciel supportant les sources navigateur.
 
-Et bien plus encore, installez-le et jouez avec pour le découvrir !
+## 🚀 Utilisation
 
-## 🚀 Installation & Utilisation
-
-L'installation est simple, prenez le temps de tout lire et ça marchera du premier coup (promis).
-
-1. Rendez-vous sur le site : **[https://livechat.nevylish.fr/](https://livechat.nevylish.fr/)**
-2. Cliquez sur **"Configurez votre overlay"**.
-3. Suivez les étapes pour ajouter le bot à votre serveur Discord, obtenir votre lien d'overlay et le configurer.
-
-_(Un tutoriel vidéo complet sera disponible prochainement)._
+1. Rendez-vous sur **[livechat.nevylish.fr](https://livechat.nevylish.fr/)**
+2. Suivez les étapes de configuration pour ajouter le bot, générer votre lien d'overlay et le configurer dans OBS.
 
 ---
 
-## 💻 Pour les développeurs
+## 💻 Self-hosting
 
-Vous souhaitez héberger votre propre instance de LiveChat, modifier le code ou contribuer au projet ? Voici la marche à suivre.
+### Prérequis
 
-### 🛠️ Prérequis
+- [Node.js](https://nodejs.org/) ≥ 18
+- [pnpm](https://pnpm.io/) ≥ 9
+- Un [bot Discord](https://discord.com/developers/applications) avec son token
+- Clés API [Tenor](https://developers.google.com/tenor) et [Giphy](https://developers.giphy.com/)
 
-- **Node.js** (version 18 ou supérieure)
-- **npm** ou **pnpm**
-- Un serveur Discord avec un bot prêt
-- Un logiciel de streaming avec support de navigateur (OBS Studio, Streamlabs, etc.) ou un navigateur Chromium
-
----
-
-### 📦 Installation
-
-1. **Cloner le dépôt** :
+### Installation
 
 ```bash
-git clone https://github.com/nevylish/LiveChat.git
+git clone https://github.com/Nevylish/LiveChat.git
 cd LiveChat
-```
-
-2. **Installer les dépendances** :
-
-```bash
-npm install
-#ou
 pnpm install
 ```
 
-3. **Configurer l'environnement** :
-   Créez un fichier `.env` à la racine du projet :
+### Configuration
+
+Créez un fichier `.env` à la racine (voir `.env.example`) :
 
 ```env
 DOMAIN=localhost
@@ -76,42 +57,68 @@ GIPHY_API_KEY=clé_api_giphy
 SKU_PLUS_ID=facultatif
 ```
 
-4. **Lancer l'application**
+### Lancement
 
 ```bash
-npm run dev
-#et
-npm run start
+# Build complet (serveur + site)
+pnpm build
+
+# Lancer le serveur
+pnpm start
 ```
 
-### Scripts disponibles
-
-| Commande         | Description                                                           |
-| ---------------- | --------------------------------------------------------------------- |
-| `npm run dev`    | Compile le TypeScript en mode watch (recompilation automatique)       |
-| `npm run build`  | Compile le TypeScript pour la production                              |
-| `npm run start`  | Lance l'application                                                   |
-| `npm run clean`  | Nettoie le dossier de build (dist/) et recopie les fichiers statiques |
-| `npm run format` | Formate le code avec Prettier                                         |
-
-## 🐳 Déploiement rapide avec Docker Compose
+### Développement
 
 ```bash
-# Cloner le repository
-git clone https://github.com/nevylish/LiveChat.git
-cd LiveChat
+# Compiler le serveur en mode watch
+pnpm dev:server
 
-# Configurer les variables d'environnement
+# Lancer le site en mode dev (Vite)
+pnpm dev:web
+```
+
+### Scripts
+
+| Commande           | Description                                  |
+| ------------------ | -------------------------------------------- |
+| `pnpm build`       | Build le serveur et le site web              |
+| `pnpm build:server`| Build le serveur uniquement                  |
+| `pnpm build:web`   | Build le site web uniquement                 |
+| `pnpm dev:server`  | Compile le serveur en mode watch             |
+| `pnpm dev:web`     | Lance le site en mode dev (Vite HMR)         |
+| `pnpm start`       | Lance le serveur de production               |
+| `pnpm clean`       | Supprime les dossiers de build               |
+| `pnpm format`      | Formate le code avec Prettier                |
+
+### Docker
+
+```bash
+git clone https://github.com/Nevylish/LiveChat.git
+cd LiveChat
 cp .env.example .env
 # Éditez .env avec vos paramètres
-
-# Lancer avec Docker Compose
 docker-compose up -d
 ```
 
-## ✨ Contributions
+## 📁 Structure
 
-Ce projet est ouvert aux contributions. Ouvrez une issue pour qu'on en discute !
+```
+LiveChat/
+├── packages/
+│   ├── server/       # Bot Discord + serveur Express + Socket.IO
+│   ├── web/          # Site web (React + Vite + Tailwind)
+│   └── overlay/      # Overlay OBS (HTML/CSS/JS)
+├── shared/assets/    # Assets partagés (images, fonts, icônes)
+└── .env              # Variables d'environnement
+```
+
+## 🤝 Contributions
+
+Ce projet est ouvert aux contributions. Ouvrez une issue pour en discuter.
+
+## 📄 Licence
+
+[GPL-3.0](LICENSE)
 
 #
 
