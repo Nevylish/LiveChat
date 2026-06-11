@@ -5,6 +5,7 @@ import { ProxyService } from '../modules/_ProxyService';
 import { Giphy } from '../modules/Giphy';
 import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
+import { Constants } from './Constants';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
@@ -22,7 +23,7 @@ export namespace Functions {
             (color === 'Error'
                 ? "\n\n- Contactez-moi à l'adresse bonjour@nevylish.fr ou sur [Twitter @Nevylish](https://x.com/Nevylish)."
                 : '') +
-            `\n\n[**Installer LiveChat**](https://livechat.nevylish.fr)\u2005\u2005•\u2005\u2005[**Voir les patch notes**](https://livechat.nevylish.fr/updates.html)`;
+            `\n\n[**Installer LiveChat**](${Constants.getBaseUrl()})\u2005\u2005•\u2005\u2005[**Voir les patch notes**](${Constants.getUrl('updates')})`;
 
         switch (color) {
             case 'Error':

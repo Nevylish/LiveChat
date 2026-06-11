@@ -9,4 +9,18 @@ export namespace Constants {
     };
 
     export const getApiPath = (): string => `${getBaseUrl()}/api`;
+
+    export const ROUTES = {
+        home: '/',
+        configuration: 'config',
+        updates: 'updates',
+        privacy: 'privacy',
+        terms: 'terms',
+    };
+
+    export type ConstantRoutes = keyof typeof ROUTES;
+
+    export const getUrl = (route: ConstantRoutes): string => {
+        return `${getBaseUrl()}/${ROUTES[route]}`;
+    };
 }

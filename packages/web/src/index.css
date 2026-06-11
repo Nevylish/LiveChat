@@ -82,6 +82,12 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Disabled for now */
+/* .unselectable {
+    -webkit-user-select: none;
+    user-select: none;
+} */
+
 .dark {
     --background: #0f0e17;
     --foreground: #fffffe;
@@ -144,7 +150,7 @@
 
 ::selection {
     color: white;
-    background: #5479fd;
+    background: #d45bc0;
 }
 
 ::-moz-selection {

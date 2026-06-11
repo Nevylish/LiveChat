@@ -53,7 +53,7 @@ export default function Updates() {
                             {patchNotes.map((note) => (
                                 <article
                                     key={note.version}
-                                    className="rounded-xl border border-border bg-white/[0.02] p-5 sm:p-6"
+                                    className="rounded-xl border border-border bg-white/2 p-5 sm:p-6"
                                 >
                                     <div className="flex items-center gap-3">
                                         <span className="rounded-md bg-white/10 px-2.5 py-1 text-xs font-bold">

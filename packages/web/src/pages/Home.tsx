@@ -5,8 +5,8 @@ import Header from '../components/Header';
 
 const faqs = [
     {
-        question: "Est-ce que c'est complètement gratuit ?",
-        answer: "Oui, LiveChat est totalement gratuit et open-source. Vous pouvez depuis Discord souscrire à un abonnement Plus, mais il ne débloque pas de fonctionnalités importante, seulement des slots additionnels (c'est surtout pour soutenir le projet).",
+        question: 'Est-ce gratuit ?',
+        answer: "Oui, LiveChat est totalement gratuit et open-source. Vous pouvez depuis Discord souscrire à un abonnement Plus, mais il ne débloque pas de fonctionnalités supplémentaires, seulement des slots additionnels (c'est surtout pour soutenir le projet).",
     },
     {
         question: 'Est-ce sécurisé ?',
@@ -45,10 +45,10 @@ export default function Home() {
                             </h1>
                             <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
                                 Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.
-                                <br className="hidden sm:block" />
-                                Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas?
+                                {/* <br className="hidden sm:block" />
+                                Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas? */}
                             </p>
-                            <div className="mt-8 flex flex-wrap gap-3 max-md:justify-center">
+                            <div className="unselectable mt-8 flex flex-wrap gap-3 max-md:justify-center">
                                 <a
                                     href="/config"
                                     className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
@@ -240,7 +240,7 @@ export default function Home() {
                             <div className="mt-10 divide-y divide-border border-y border-border">
                                 {faqs.map((faq, i) => (
                                     <details key={i} className="group py-5 [&_summary::-webkit-details-marker]:hidden">
-                                        <summary className="flex cursor-pointer items-center justify-between gap-4 text-base font-semibold outline-none transition-colors hover:text-muted-foreground">
+                                        <summary className="unselectable flex cursor-pointer items-center justify-between gap-4 text-base font-semibold outline-none transition-colors hover:text-muted-foreground">
                                             {faq.question}
                                             <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
                                         </summary>
@@ -269,7 +269,7 @@ export default function Home() {
                             <div className="mt-8">
                                 <a
                                     href="/config"
-                                    className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                    className="unselectable rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
                                 >
                                     Passer à la configuration de votre overlay
                                 </a>

@@ -1,14 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface HeaderProps {
     subtitle?: string;
 }
 
-const NAV_LINKS = [
+const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
     { href: '/config', label: 'Configuration' },
     { href: '/updates', label: 'Patch Notes' },
-    { href: 'https://nevylish.fr/', label: 'nevylish.fr', external: true },
 ];
 
 export default function Header({ subtitle }: HeaderProps) {
@@ -88,7 +87,7 @@ export default function Header({ subtitle }: HeaderProps) {
 
             {/* Burger button — fixed, au-dessus de tout, y compris l'overlay */}
             <button
-                className="fixed right-4 top-3.5 z-[60] flex h-10 w-10 items-center justify-center rounded-lg sm:right-5 md:hidden"
+                className="fixed right-4 top-3.5 z-60 flex h-10 w-10 items-center justify-center rounded-lg sm:right-5 md:hidden"
                 onClick={toggleMenu}
                 aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
                 aria-expanded={menuOpen}
@@ -106,7 +105,7 @@ export default function Header({ subtitle }: HeaderProps) {
                     />
                     <span
                         className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                            menuOpen ? '-translate-y-[8px] -rotate-45' : ''
+                            menuOpen ? 'translate-y-[8px] -rotate-45' : ''
                         }`}
                     />
                 </div>

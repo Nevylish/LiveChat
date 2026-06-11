@@ -103,7 +103,7 @@ export default function Config() {
                                                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
                                                     isActive
                                                         ? 'bg-white/[0.07] font-semibold text-foreground'
-                                                        : 'text-muted-foreground hover:bg-white/[0.04] hover:text-foreground'
+                                                        : 'text-muted-foreground hover:bg-white/4 hover:text-foreground'
                                                 }`}
                                             >
                                                 <span
@@ -162,7 +162,7 @@ export default function Config() {
                                         Installer le bot
                                     </a>
                                 </div>
-                                <div className="mt-6 flex justify-end">
+                                <div className="unselectable mt-6 flex justify-end">
                                     <button onClick={() => goToStep('step-config')} className="config-nav-btn">
                                         Suivant →
                                     </button>
@@ -229,7 +229,7 @@ export default function Config() {
                                 </button>
 
                                 {generatedLink && (
-                                    <div className="mt-6 rounded-lg border border-border bg-white/[0.03] p-4">
+                                    <div className="mt-6 rounded-lg border border-border bg-white/3 p-4">
                                         <label className="mb-2 block text-sm font-medium">Votre lien d'overlay :</label>
                                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                                             <code className="flex-1 break-all rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
@@ -246,7 +246,7 @@ export default function Config() {
                                     </div>
                                 )}
 
-                                <div className="mt-6 flex justify-between">
+                                <div className="unselectable mt-6 flex justify-between">
                                     <button onClick={() => goToStep('step-install')} className="config-nav-btn">
                                         ← Précédent
                                     </button>
@@ -304,7 +304,7 @@ export default function Config() {
                                     ))}
                                 </ol>
 
-                                <div className="mt-6 rounded-lg border border-border bg-white/[0.03] p-4">
+                                <div className="mt-6 rounded-lg border border-border bg-white/3 p-4">
                                     <p className="text-sm font-semibold">CSS Personnalisé (Optionnel)</p>
                                     <p className="mt-1 text-sm text-muted-foreground">
                                         Pour masquer la page d'erreur Cloudflare si LiveChat est hors-ligne :
@@ -325,7 +325,7 @@ export default function Config() {
                                     </div>
                                 </div>
 
-                                <div className="mt-6 flex justify-between">
+                                <div className="unselectable mt-6 flex justify-between">
                                     <button onClick={() => goToStep('step-config')} className="config-nav-btn">
                                         ← Précédent
                                     </button>
@@ -424,7 +424,7 @@ export default function Config() {
                                     : Stopper le média actuel et vider la file d'attente
                                 </p>
 
-                                <div className="mt-6 flex justify-between">
+                                <div className="unselectable mt-6 flex justify-between">
                                     <button onClick={() => goToStep('step-obs')} className="config-nav-btn">
                                         ← Précédent
                                     </button>
@@ -471,7 +471,7 @@ export default function Config() {
                                         ))}
                                     </div>
                                 </div>
-                                <div className="mt-6 flex items-center justify-between">
+                                <div className="unselectable mt-6 flex items-center justify-between">
                                     <button onClick={() => goToStep('step-usage')} className="config-nav-btn">
                                         ← Précédent
                                     </button>

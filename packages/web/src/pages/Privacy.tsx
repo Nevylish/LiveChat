@@ -68,7 +68,7 @@ export default function Privacy() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     {sections.map((section) => (
-                        <div key={section.title} className="rounded-xl border border-border bg-white/[0.02] p-5 sm:p-6">
+                        <div key={section.title} className="rounded-xl border border-border bg-white/2 p-5 sm:p-6">
                             <h2 className="text-base font-semibold sm:text-lg">{section.title}</h2>
                             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                                 {section.content}
