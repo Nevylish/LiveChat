@@ -40,7 +40,7 @@ const sections = [
     {
         title: '8. Éditeur',
         content:
-            "Le site internet et le bot Discord LiveChat sont édités par Yanïs Faria Pereira, entrepreneur individuel exerçant sous le nom commercial « STRASS CHAT MIAOU », immatriculé sous le numéro SIRET 99933061600023, dont le siège est situé au 173 rue de Courcelles, 75017 Paris, France. L'éditeur peut être contacté à l'adresse suivante : bonjour@nevylish.fr.",
+            'Le site internet et le bot Discord LiveChat sont édités par EI STRASS CHAT MIAOU, entreprise individuelle immatriculée sous le numéro SIRET 99933061600023, dont le siège est situé au 173 rue de Courcelles, 75017 Paris, France. (contact: bonjour@nevylish.fr).',
     },
     {
         title: '9. Modifications de la politique',
