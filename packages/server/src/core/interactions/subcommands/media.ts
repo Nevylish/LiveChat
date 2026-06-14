@@ -136,7 +136,7 @@ const broadcastToEveryone = async (
             streamers.map((s) => s.socketId),
         );
 
-        client.livechat.io.to(streamers.map((s) => s.socketId)).emit('broadcast', {
+        client.livechat.io.to(interaction.guildId).emit('broadcast', {
             content: url,
             from: interaction.user,
             fullscreen: adjustedFullscreen,

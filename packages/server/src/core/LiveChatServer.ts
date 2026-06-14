@@ -123,6 +123,7 @@ export class LiveChatServer extends EventEmitter {
                             }
 
                             this.addStreamer(socket.id, data.username, data.guildId);
+                            socket.join(data.guildId);
                             this.discordClient.updateActivity(this.getConnectedStreamersCount());
 
                             if (guild.name) {

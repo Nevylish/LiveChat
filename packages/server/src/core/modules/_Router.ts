@@ -38,7 +38,7 @@ export namespace Router {
             // if (proxyUrl) return { url: proxyUrl, bypassProxy: true };
 
             return {
-                error: "Les liens Instagram sont temporairement désactivés.\nL'adresse IP de LiveChat se fait bloquer.",
+                error: "Les liens Instagram sont temporairement désactivés.\nL'adresse IP du serveur de LiveChat est automatiquement bloquée pour spam.",
             };
         }
 
@@ -68,7 +68,7 @@ export namespace Router {
             // if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
 
             return {
-                error: "Les liens YouTube sont temporairement désactivés.\nL'adresse IP de LiveChat se fait bloquer.",
+                error: "Les liens YouTube sont temporairement désactivés.\nL'adresse IP du serveur de LiveChat est automatiquement bloquée pour spam.",
             };
         }
 

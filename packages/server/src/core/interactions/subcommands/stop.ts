@@ -27,7 +27,7 @@ const stopEveryone = async (client: DiscordClient, interaction: ChatInputCommand
     }
 
     try {
-        client.livechat.io.to(streamers.map((s) => s.socketId)).emit('clear');
+        client.livechat.io.to(interaction.guildId).emit('clear');
 
         const streamsList = TargetsManager.buildStreamersList(streamers);
         const embed = Functions.buildEmbed(

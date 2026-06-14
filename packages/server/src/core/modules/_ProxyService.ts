@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import * as http from 'http';
+import * as https from 'https';
 import fetch from 'node-fetch';
 import { Constants } from '../utils/Constants';
 import { Functions } from '../utils/Functions';
@@ -7,6 +9,9 @@ import crypto = require('crypto');
 
 export namespace ProxyService {
     let secret: string;
+
+    const httpAgent = new http.Agent({ keepAlive: true, keepAliveMsecs: 10000 });
+    const httpsAgent = new https.Agent({ keepAlive: true, keepAliveMsecs: 10000 });
 
     const FETCH_TIMEOUT_MS = 30_000;
     const MAX_BODY_SIZE = 650 * 1024 * 1024;
@@ -100,6 +105,7 @@ export namespace ProxyService {
                 headers,
                 redirect: 'follow',
                 signal: abortController.signal as any,
+                agent: urlObj.protocol === 'http:' ? httpAgent : httpsAgent,
             });
 
             clearTimeout(fetchTimeout);
