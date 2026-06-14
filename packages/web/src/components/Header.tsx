@@ -7,6 +7,7 @@ interface HeaderProps {
 
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
     { href: '/config', label: 'Configuration' },
+    { href: '/usage', label: 'Utilisation' },
     { href: '/updates', label: 'Patch Notes' },
 ];
 

@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Updates from './pages/Updates';
+import Usage from './pages/Usage';
 
 function App() {
     return (
@@ -11,6 +12,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/config" element={<Config />} />
             <Route path="/config.html" element={<Config />} />
+            <Route path="/usage" element={<Usage />} />
+            <Route path="/usage.html" element={<Usage />} />
             <Route path="/updates" element={<Updates />} />
             <Route path="/updates.html" element={<Updates />} />
             <Route path="/privacy" element={<Privacy />} />
