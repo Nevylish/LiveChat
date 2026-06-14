@@ -21,11 +21,9 @@ export namespace YouTube {
             const info: any = output;
 
             if (info.duration && info.duration > 600) {
-                Logger.error('YouTube.ts', '(getProxyUrl)', `La vidéo est trop longue.`);
+                Logger.debug('YouTube', `The video is too long: ${info.duration}s`, { url });
                 return null;
             }
-
-
 
             const directUrl = info.url;
 
@@ -33,10 +31,10 @@ export namespace YouTube {
                 return ProxyService.useProxy(directUrl, 'youtube', 'video');
             }
 
-            Logger.warn('YouTube', 'Aucune URL directe trouvée', { url });
+            Logger.warn('YouTube', 'No direct URL found', { url });
             return null;
         } catch (err) {
-            Logger.error('YouTube.ts', '(getProxyUrl)', err);
+            Logger.error('YouTube', 'Error while fetching media', { url, error: err });
             return null;
         }
     };

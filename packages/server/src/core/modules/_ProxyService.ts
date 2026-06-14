@@ -52,14 +52,14 @@ export namespace ProxyService {
         const range = req.headers.range;
 
         if (!targetUrl || !token || !expires) {
-            Logger.warn('ProxyService', 'Paramètres manquants dans la requête proxy');
-            return res.status(403).send('Paramètres manquants');
+            Logger.warn('ProxyService', 'Missing parameters', { url: targetUrl, token, expires });
+            return res.status(403).send('Missing parameters');
         }
 
         const now = Math.floor(Date.now() / 1000);
         if (now > parseInt(expires)) {
-            Logger.warn('ProxyService', 'Lien proxy expiré', { url: targetUrl });
-            return res.status(403).send('Lien expiré');
+            Logger.warn('ProxyService', 'Expired link', { url: targetUrl });
+            return res.status(403).send('Expired link');
         }
 
         const expectedToken = crypto
@@ -68,15 +68,15 @@ export namespace ProxyService {
             .digest('hex');
 
         if (token !== expectedToken) {
-            Logger.warn('ProxyService', 'Signature proxy invalide', { url: targetUrl });
-            return res.status(403).send('Signature invalide');
+            Logger.warn('ProxyService', 'Invalid signature', { url: targetUrl });
+            return res.status(403).send('Invalid signature');
         }
 
         try {
             const urlObj = new URL(targetUrl);
             if (!['http:', 'https:'].includes(urlObj.protocol)) {
-                Logger.warn('ProxyService', 'Protocole invalide', { url: targetUrl });
-                return res.status(400).send('Protocole invalide');
+                Logger.warn('ProxyService', 'Invalid protocol', { url: targetUrl });
+                return res.status(400).send('Invalid protocol');
             }
 
             const headers: Record<string, string> = {
@@ -94,8 +94,10 @@ export namespace ProxyService {
             });
 
             if (!response.ok) {
-                Logger.warn('ProxyService', `Erreur upstream: ${response.status} ${response.statusText}`, { url: targetUrl });
-                return res.status(502).send(`Erreur proxy: ${response.statusText}`);
+                Logger.warn('ProxyService', `Upstream error (502): ${response.status} ${response.statusText}`, {
+                    url: targetUrl,
+                });
+                return res.status(502).send(`Upstream error`);
             }
 
             res.status(response.status);
@@ -123,8 +125,8 @@ export namespace ProxyService {
                 res.end();
             }
         } catch (err) {
-            Logger.error('ProxyService', '(handle)', err);
-            if (!res.headersSent) res.status(500).send('Erreur interne du proxy');
+            Logger.error('ProxyService', 'Error while proxying (500)', err);
+            if (!res.headersSent) res.status(500).send('Internal Server Error');
         }
     };
 }

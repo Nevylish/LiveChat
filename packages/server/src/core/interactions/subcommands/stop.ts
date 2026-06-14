@@ -37,7 +37,12 @@ const stopEveryone = async (client: DiscordClient, interaction: ChatInputCommand
 
         await interaction.editReply({ embeds: [embed] });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('StopCommand', `Error while stopping LiveChat for everyone`, {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(`${err.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });
     }
@@ -67,7 +72,12 @@ const stopTarget = async (
 
         await interaction.editReply({ embeds: [embed] });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('StopCommand', `Error while stopping LiveChat for ${target}`, {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(`${err.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });
     }

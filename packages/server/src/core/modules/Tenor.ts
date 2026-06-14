@@ -17,7 +17,10 @@ export namespace Tenor {
             const apiUrl = `https://tenor.googleapis.com/v2/posts?ids=${gifId}&key=${apiKey}`;
 
             const response = await fetch(apiUrl);
-            if (!response.ok) return null;
+            if (!response.ok) {
+                Logger.error('Tenor', `API Error: ${response.status}`, { url });
+                return null;
+            }
             const data = (await response.json()) as TenorApiResponse;
 
             const firstResult = data?.results?.[0];
@@ -33,7 +36,7 @@ export namespace Tenor {
 
             return null;
         } catch (err) {
-            Logger.error('Tenor.ts', '(fetchDirectUrl)', err);
+            Logger.error('Tenor', 'Error while fetching media', { url, error: err });
             return null;
         }
     };

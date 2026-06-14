@@ -37,7 +37,12 @@ const skipEveryone = async (client: DiscordClient, interaction: ChatInputCommand
 
         await interaction.editReply({ embeds: [embed] });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('SkipCommand', `Error while skipping to next LiveChat for everyone`, {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(`${err.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });
     }
@@ -67,7 +72,12 @@ const skipTarget = async (
 
         await interaction.editReply({ embeds: [embed] });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('SkipCommand', `Error while skipping to next LiveChat for ${target}`, {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(`${err.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });
     }

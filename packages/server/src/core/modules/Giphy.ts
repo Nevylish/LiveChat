@@ -35,8 +35,11 @@ export namespace Giphy {
             }
 
             return null;
-        } catch (err) {
-            Logger.error('Giphy.ts', '(fetchDirectUrl)', err);
+        } catch (err: any) {
+            Logger.error('Giphy', 'Error while fetching media', {
+                url,
+                error: err,
+            });
             return null;
         }
     };

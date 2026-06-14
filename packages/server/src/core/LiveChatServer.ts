@@ -130,7 +130,7 @@ export class LiveChatServer extends EventEmitter {
                             } else {
                                 socket.emit('updateConnectionStatus', true);
                             }
-                            Logger.success('LiveChatServer', `${data.username} connecté à LiveChat`, {
+                            Logger.success('LiveChatServer', `${data.username} connected to LiveChat`, {
                                 username: data.username,
                                 guildId: data.guildId,
                                 guild: guild.name ?? data.guildId,
@@ -170,7 +170,7 @@ export class LiveChatServer extends EventEmitter {
         const limiter = rateLimit({
             windowMs: 1 * 60 * 1000,
             max: 1000,
-            message: { error: 'Trop de requêtes.' },
+            message: { error: 'Too many requests.' },
             standardHeaders: true,
             legacyHeaders: false,
         });
@@ -225,7 +225,7 @@ export class LiveChatServer extends EventEmitter {
             if (!hasFileExtension) {
                 res.sendFile(path.join(projectRoot, 'packages', 'web', 'dist', 'index.html'));
             } else {
-                res.status(404).send('Fichier non trouvé');
+                res.status(404).send('File not found');
             }
         });
     }

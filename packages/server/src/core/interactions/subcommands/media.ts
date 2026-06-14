@@ -145,13 +145,18 @@ const broadcastToEveryone = async (
             interactionId: interaction.id,
         });
 
-        Logger.success('LiveChat', `Média envoyé à ${streamers.length} streameur(s)`, {
-            de: interaction.user.tag,
+        Logger.success('LiveChatCommand', `Sent to ${streamers.length} client(s)`, {
+            from: interaction.user.tag,
             type: filetype.display,
             guild: interaction.guildId,
         });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat to everyone', {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(
             `Une erreur est survenue lors de l'envoi du LiveChat.\n${err.message}`,
             'Error',
@@ -202,13 +207,18 @@ const broadcastToTarget = async (
             interactionId: interaction.id,
         });
 
-        Logger.success('LiveChat', `Média envoyé à ${target}`, {
+        Logger.success('LiveChatCommand', `Sent to ${target}`, {
             from: interaction.user.tag,
             type: filetype.display,
             guildId: interaction.guildId,
         });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', err.message);
+        Logger.error('LiveChatCommand', `Error while broadcasting LiveChat to ${target}`, {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            error: err,
+        });
         const embed = Functions.buildEmbed(
             `Une erreur est survenue lors de l'envoi du LiveChat.\n${err.message}`,
             'Error',

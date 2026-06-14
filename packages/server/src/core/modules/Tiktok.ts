@@ -13,7 +13,7 @@ export namespace TikTok {
             const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`;
             const response = await fetch(apiUrl);
             if (!response.ok) {
-                Logger.warn('TikTok', `Erreur API: ${response.status}`, { url });
+                Logger.error('TikTok', `API Error: ${response.status}`, { url });
                 return null;
             }
 
@@ -24,10 +24,10 @@ export namespace TikTok {
                 return ProxyService.useProxy(videoUrl, 'tiktok', 'video');
             }
 
-            Logger.warn('TikTok', 'Aucune URL de lecture trouvée', { url });
+            Logger.warn('TikTok', 'No video URL found', { url });
             return null;
         } catch (err) {
-            Logger.error('TikTok', '(getProxyUrl)', err);
+            Logger.error('TikTok', 'Error while fetching media', { url, error: err });
             return null;
         }
     };

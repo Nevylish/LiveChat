@@ -9,19 +9,6 @@ export namespace Logger {
         ERROR,
     }
 
-    export const COLORS = {
-        RESET: '\x1b[0m',
-        REVERSE: '\x1b[7m',
-        UNDERSCORE: '\x1b[4m',
-        BRIGHT: '\x1b[1m',
-        GREY: '\x1b[90m',
-        RED: '\x1b[31m',
-        YELLOW: '\x1b[33m',
-        GREEN: '\x1b[32m',
-        CYAN: '\x1b[36m',
-        MAGENTA: '\x1b[35m',
-    };
-
     // ── Webhook ──────────────────────────────────────────
 
     interface WebhookMessage {
@@ -59,10 +46,30 @@ export namespace Logger {
 
     // ── Formatting ───────────────────────────────────────
 
+    export const COLORS = {
+        RESET: '\x1b[0m',
+        REVERSE: '\x1b[7m',
+        UNDERSCORE: '\x1b[4m',
+        BRIGHT: '\x1b[1m',
+        GREY: '\x1b[90m',
+        RED: '\x1b[31m',
+        YELLOW: '\x1b[33m',
+        GREEN: '\x1b[32m',
+        CYAN: '\x1b[36m',
+        MAGENTA: '\x1b[35m',
+    };
+
+    const getTimestamp = (timestamp: Date = new Date()): string => {
+        return timestamp.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+    };
+
     const formatMessage = (level: LogLevel, message: string): string => {
-        const timestamp = new Date().toLocaleTimeString();
         const levelColor = getLevelColor(level);
-        return `${levelColor}[${timestamp}]${COLORS.RESET}${level === LogLevel.ERROR ? COLORS.RED : ''} • ${level === LogLevel.ERROR ? '' : COLORS.CYAN}${message}${COLORS.RESET} →`;
+        return `${levelColor}[${getTimestamp()}]${COLORS.RESET}${level === LogLevel.ERROR ? COLORS.RED : ''} • ${level === LogLevel.ERROR ? '' : COLORS.CYAN}${message}${COLORS.RESET} →`;
     };
 
     const getLevelColor = (level: LogLevel): string => {
@@ -93,6 +100,20 @@ export namespace Logger {
             case LogLevel.ERROR:
                 return '🔴';
         }
+    };
+
+    const formatWebhookMessage = (msg: WebhookMessage): string => {
+        const emoji = getLevelEmoji(msg.level);
+        let line = `[${getTimestamp(msg.timestamp)}] \ ${emoji} • **${msg.source} →** ${msg.message}`;
+
+        if (msg.context && Object.keys(msg.context).length > 0) {
+            const ctx = Object.entries(msg.context)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(' • ');
+            line += `\n\> ${ctx}`;
+        }
+
+        return line;
     };
 
     // ── Webhook internals ────────────────────────────────
@@ -130,25 +151,6 @@ export namespace Logger {
         while (webhookBuffer.length > MAX_BUFFER_SIZE) {
             webhookBuffer.shift();
         }
-    };
-
-    const formatWebhookMessage = (msg: WebhookMessage): string => {
-        const emoji = getLevelEmoji(msg.level);
-        const time = msg.timestamp.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
-        let line = `\`${time}\` ${emoji} • **${msg.source}** → ${msg.message}`;
-
-        if (msg.context && Object.keys(msg.context).length > 0) {
-            const ctx = Object.entries(msg.context)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(' • ');
-            line += `\n\> ${ctx}`;
-        }
-
-        return line;
     };
 
     const flushWebhook = async (): Promise<void> => {

@@ -15,8 +15,12 @@ export interface RouteResult {
 
 export namespace Router {
     const routeError = (message: string, url: string): RouteResult => {
-        Logger.warn('Router', message, { url });
+        Logger.debug('Router', message, { url });
         return { error: message };
+    };
+
+    const routeGenericMediaError = (name: string, url: string): RouteResult => {
+        return routeError(`Impossible de récupérer le média depuis ${name}. Vérifiez le lien.`, url);
     };
 
     export const route = async (url: string): Promise<RouteResult> => {
@@ -26,42 +30,42 @@ export namespace Router {
             const directUrl = await Giphy.fetchDirectUrl(url);
             if (directUrl) return { url: directUrl, bypassProxy: true };
 
-            return routeError('Impossible de récupérer le GIF depuis Giphy. Vérifiez le lien.', url);
+            return routeGenericMediaError('Giphy', url);
         }
 
         if (Instagram.isInstagramUrl(url)) {
             const proxyUrl = await Instagram.getProxyUrl(url);
             if (proxyUrl) return { url: proxyUrl, bypassProxy: true };
 
-            return routeError('Impossible de récupérer la vidéo depuis Instagram. Vérifiez le lien.', url);
+            return routeGenericMediaError('Instagram', url);
         }
 
         if (Tenor.isShortenedUrl(url)) {
             const directUrl = await Tenor.fetchDirectUrl(url);
             if (directUrl) return { url: directUrl, bypassProxy: true };
 
-            return routeError('Impossible de récupérer le GIF depuis Tenor. Vérifiez le lien.', url);
+            return routeGenericMediaError('Tenor', url);
         }
 
         if (TikTok.isTikTokUrl(url)) {
             const proxyUrl = await TikTok.getProxyUrl(url);
             if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
 
-            return routeError('Impossible de récupérer la vidéo depuis TikTok. Vérifiez le lien.', url);
+            return routeGenericMediaError('TikTok', url);
         }
 
         if (Twitter.isStatusUrl(url)) {
             const proxyUrl = await Twitter.getProxyUrl(url);
             if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
 
-            return routeError('Impossible de récupérer le média de ce Tweet. Vérifiez le lien.', url);
+            return routeGenericMediaError('Twitter', url);
         }
 
         if (YouTube.isYouTubeUrl(url)) {
             const proxyUrl = await YouTube.getProxyUrl(url);
             if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
 
-            return routeError('Impossible de récupérer la vidéo depuis YouTube. Vérifiez le lien.', url);
+            return routeGenericMediaError('YouTube', url);
         }
 
         return { url, bypassProxy: false };

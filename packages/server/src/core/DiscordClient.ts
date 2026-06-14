@@ -44,7 +44,10 @@ export default class DiscordClient extends Client {
 
             return false;
         } catch (err) {
-            Logger.error('Client', "Erreur lors de la vérification de l'abonnement premium", { guildId, err });
+            Logger.error('Client', 'Error while checking premium subscription', {
+                guildId: guildId,
+                error: err.message,
+            });
             return false;
         }
     }
