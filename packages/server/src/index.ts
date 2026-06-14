@@ -12,7 +12,15 @@ import { Logger } from './core/utils/Logger';
 
 dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
-const requiredEnvVars = ['LIVECHAT_PORT', 'TOKEN', 'TENOR_API_KEY', 'GIPHY_API_KEY', 'DOMAIN', 'SKU_PLUS_ID'];
+const requiredEnvVars = [
+    'LIVECHAT_PORT',
+    'TOKEN',
+    'DISCORD_WEBHOOK_LOGS',
+    'TENOR_API_KEY',
+    'GIPHY_API_KEY',
+    'DOMAIN',
+    'SKU_PLUS_ID',
+];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
@@ -21,5 +29,7 @@ if (missingVars.length > 0) {
 }
 
 ProxyService.generateRandomSecretAndStore();
+
+Logger.init({ webhookUrl: process.env.DISCORD_WEBHOOK_LOGS });
 
 new DiscordClient();

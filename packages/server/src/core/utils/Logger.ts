@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 export namespace Logger {
     export enum LogLevel {
         DEBUG,
@@ -20,6 +22,43 @@ export namespace Logger {
         MAGENTA: '\x1b[35m',
     };
 
+    // ── Webhook ──────────────────────────────────────────
+
+    interface WebhookMessage {
+        level: LogLevel;
+        source: string;
+        message: string;
+        context?: Record<string, any>;
+        timestamp: Date;
+    }
+
+    let webhookUrl: string | null = null;
+    const webhookBuffer: WebhookMessage[] = [];
+    let isFlushing = false;
+
+    const FLUSH_INTERVAL = 5_000;
+    const MAX_BUFFER_SIZE = 100;
+    const WEBHOOK_MIN_LEVEL = LogLevel.SUCCESS;
+
+    export const init = (options?: { webhookUrl?: string }): void => {
+        if (options?.webhookUrl) {
+            webhookUrl = options.webhookUrl;
+            const timer = setInterval(() => void flushWebhook(), FLUSH_INTERVAL);
+            timer.unref();
+
+            const graceful = async () => {
+                await flushWebhook();
+                process.exit(0);
+            };
+            process.on('SIGINT', graceful);
+            process.on('SIGTERM', graceful);
+
+            debug('Logger', 'Webhook Discord enabled');
+        }
+    };
+
+    // ── Formatting ───────────────────────────────────────
+
     const formatMessage = (level: LogLevel, message: string): string => {
         const timestamp = new Date().toLocaleTimeString();
         const levelColor = getLevelColor(level);
@@ -41,6 +80,102 @@ export namespace Logger {
         }
     };
 
+    const getLevelEmoji = (level: LogLevel): string => {
+        switch (level) {
+            case LogLevel.DEBUG:
+                return '⚪';
+            case LogLevel.INFO:
+                return '🔵';
+            case LogLevel.SUCCESS:
+                return '🟢';
+            case LogLevel.WARN:
+                return '🟡';
+            case LogLevel.ERROR:
+                return '🔴';
+        }
+    };
+
+    // ── Webhook internals ────────────────────────────────
+
+    const parseArgs = (args: any[]): { message: string; context?: Record<string, any> } => {
+        const parts: string[] = [];
+        let context: Record<string, any> | undefined;
+
+        for (const arg of args) {
+            if (arg instanceof Error) {
+                parts.push(arg.message);
+            } else if (typeof arg === 'object' && arg !== null) {
+                context = { ...context, ...arg };
+            } else if (arg !== undefined && arg !== null) {
+                parts.push(String(arg));
+            }
+        }
+
+        return { message: parts.join(' '), context };
+    };
+
+    const queueWebhook = (level: LogLevel, source: string, args: any[]): void => {
+        if (!webhookUrl || level < WEBHOOK_MIN_LEVEL) return;
+
+        const { message, context } = parseArgs(args);
+
+        webhookBuffer.push({
+            level,
+            source,
+            message: message || '(aucun message)',
+            context,
+            timestamp: new Date(),
+        });
+
+        while (webhookBuffer.length > MAX_BUFFER_SIZE) {
+            webhookBuffer.shift();
+        }
+    };
+
+    const formatWebhookMessage = (msg: WebhookMessage): string => {
+        const emoji = getLevelEmoji(msg.level);
+        const time = msg.timestamp.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+        let line = `\`${time}\` ${emoji} • **${msg.source}** → ${msg.message}`;
+
+        if (msg.context && Object.keys(msg.context).length > 0) {
+            const ctx = Object.entries(msg.context)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(' • ');
+            line += `\n\> ${ctx}`;
+        }
+
+        return line;
+    };
+
+    const flushWebhook = async (): Promise<void> => {
+        if (!webhookUrl || webhookBuffer.length === 0 || isFlushing) return;
+        isFlushing = true;
+
+        try {
+            const messages = webhookBuffer.splice(0, 10);
+            const content = messages.map(formatWebhookMessage).join('\n');
+
+            const response = await fetch(webhookUrl!, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: content.substring(0, 2000) }),
+            });
+
+            if (response.status === 429) {
+                webhookBuffer.unshift(...messages);
+            }
+        } catch {
+        } finally {
+            isFlushing = false;
+        }
+    };
+
+    // ── Log level ────────────────────────────────────────
+
     let minLogLevel: LogLevel = LogLevel.INFO;
 
     export const setMinLogLevel = (level: LogLevel): void => {
@@ -52,33 +187,40 @@ export namespace Logger {
         return level >= minLogLevel;
     };
 
+    // ── Public methods ───────────────────────────────────
+
     export const log = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.INFO)) {
             console.log(formatMessage(LogLevel.INFO, message), ...optionalParams);
         }
+        queueWebhook(LogLevel.INFO, message, optionalParams);
     };
 
     export const error = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.ERROR)) {
-            console.log(formatMessage(LogLevel.ERROR, message), ...optionalParams);
+            console.error(formatMessage(LogLevel.ERROR, message), ...optionalParams);
         }
+        queueWebhook(LogLevel.ERROR, message, optionalParams);
     };
 
     export const warn = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.WARN)) {
-            console.log(formatMessage(LogLevel.WARN, message), ...optionalParams);
+            console.warn(formatMessage(LogLevel.WARN, message), ...optionalParams);
         }
+        queueWebhook(LogLevel.WARN, message, optionalParams);
     };
 
     export const success = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.SUCCESS)) {
             console.log(formatMessage(LogLevel.SUCCESS, message), ...optionalParams);
         }
+        queueWebhook(LogLevel.SUCCESS, message, optionalParams);
     };
 
     export const debug = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.DEBUG)) {
             console.log(formatMessage(LogLevel.DEBUG, message), ...optionalParams);
         }
+        queueWebhook(LogLevel.DEBUG, message, optionalParams);
     };
 }

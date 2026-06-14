@@ -15,7 +15,10 @@ export namespace Twitter {
                 .replace('https://twitter.com/', 'https://api.fxtwitter.com/');
 
             const response = await fetch(apiUrl);
-            if (!response.ok) return null;
+            if (!response.ok) {
+                Logger.warn('Twitter', `Erreur API: ${response.status}`, { url });
+                return null;
+            }
             const data = (await response.json()) as TwitterApiResponse;
 
             if (data?.tweet?.media?.all?.[0]?.url) {
@@ -26,9 +29,10 @@ export namespace Twitter {
                 return ProxyService.useProxy(data.tweet.quote.media.all[0].url, 'twitter');
             }
 
+            Logger.warn('Twitter', 'Aucun média trouvé dans le tweet', { url });
             return null;
         } catch (err) {
-            Logger.error('Twitter.ts', '(getProxyUrl)', err);
+            Logger.error('Twitter', '(getProxyUrl)', err);
             return null;
         }
     };

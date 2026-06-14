@@ -23,7 +23,7 @@ export namespace Instagram {
             const info: any = output;
 
             if (info.duration && info.duration > 600) {
-                Logger.error('Instagram.ts', '(getProxyUrl)', `La vidéo est trop longue.`);
+                Logger.error('Instagram', '(getProxyUrl)', `La vidéo est trop longue.`);
                 return null;
             }
 
@@ -37,9 +37,10 @@ export namespace Instagram {
                 return ProxyService.useProxy(directUrl, 'instagram', 'video');
             }
 
+            Logger.warn('Instagram', 'Aucune URL directe trouvée', { url });
             return null;
         } catch (err) {
-            Logger.error('Instagram.ts', '(getProxyUrl)', err);
+            Logger.error('Instagram', '(getProxyUrl)', err);
             return null;
         }
     };

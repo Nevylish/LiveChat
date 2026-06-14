@@ -49,7 +49,8 @@ export class LiveChatServer extends EventEmitter {
         this.start();
     }
 
-    private emitError(socket: Socket, message: string): void {
+    private emitError(socket: Socket, message: string, context?: Record<string, any>): void {
+        Logger.warn('LiveChatServer', message, context ?? {});
         socket.emit('updateConnectionStatus', false, message, 300000);
         socket.disconnect();
     }
@@ -60,14 +61,20 @@ export class LiveChatServer extends EventEmitter {
                 // Validation du nom d'utilisateur
                 const usernameValidation = Validations.validateUsername(data.username);
                 if (!usernameValidation.valid) {
-                    this.emitError(socket, usernameValidation.error!);
+                    this.emitError(socket, usernameValidation.error!, {
+                        username: data.username,
+                        guildId: data.guildId,
+                    });
                     return;
                 }
 
                 // Validation de l'identifiant du serveur Discord
                 const guildIdValidation = Validations.validateGuildId(data.guildId);
                 if (!guildIdValidation.valid) {
-                    this.emitError(socket, guildIdValidation.error!);
+                    this.emitError(socket, guildIdValidation.error!, {
+                        username: data.username,
+                        guildId: data.guildId,
+                    });
                     return;
                 }
 
@@ -75,6 +82,7 @@ export class LiveChatServer extends EventEmitter {
                     this.emitError(
                         socket,
                         "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
+                        { username: data.username, guildId: data.guildId },
                     );
                 };
 
@@ -88,6 +96,7 @@ export class LiveChatServer extends EventEmitter {
                                     guild.name
                                         ? `Le nom d'utilisateur ${data.username} est déjà utilisé sur le serveur Discord: ${guild.name}`
                                         : `Le nom d'utilisateur ${data.username} est déjà utilisé sur le serveur Discord.`,
+                                    { username: data.username, guildId: data.guildId },
                                 );
                                 return;
                             }
@@ -98,6 +107,7 @@ export class LiveChatServer extends EventEmitter {
                                 this.emitError(
                                     socket,
                                     'Le nombre maximum de streameurs est atteint sur ce serveur Discord.',
+                                    { username: data.username, guildId: data.guildId, slots: streamersConnectedLength },
                                 );
                                 return;
                             }
@@ -107,6 +117,7 @@ export class LiveChatServer extends EventEmitter {
                                 this.emitError(
                                     socket,
                                     "Le nombre maximum de streameurs est atteint pour l'abonnement Gratuit.",
+                                    { username: data.username, guildId: data.guildId, slots: streamersConnectedLength },
                                 );
                                 return;
                             }
@@ -119,7 +130,11 @@ export class LiveChatServer extends EventEmitter {
                             } else {
                                 socket.emit('updateConnectionStatus', true);
                             }
-                            Logger.log('LiveChatServer', `${data.username} is now connected to LiveChat`);
+                            Logger.success('LiveChatServer', `${data.username} connecté à LiveChat`, {
+                                username: data.username,
+                                guildId: data.guildId,
+                                guild: guild.name ?? data.guildId,
+                            });
                         } else {
                             handleBotMissingFromGuild();
                             return;

@@ -144,6 +144,12 @@ const broadcastToEveryone = async (
             text,
             interactionId: interaction.id,
         });
+
+        Logger.success('LiveChat', `Média envoyé à ${streamers.length} streameur(s)`, {
+            de: interaction.user.tag,
+            type: filetype.display,
+            guild: interaction.guildId,
+        });
     } catch (err: any) {
         Logger.error('LiveChatCommand', err.message);
         const embed = Functions.buildEmbed(
@@ -194,6 +200,12 @@ const broadcastToTarget = async (
             anonymous,
             text,
             interactionId: interaction.id,
+        });
+
+        Logger.success('LiveChat', `Média envoyé à ${target}`, {
+            from: interaction.user.tag,
+            type: filetype.display,
+            guildId: interaction.guildId,
         });
     } catch (err: any) {
         Logger.error('LiveChatCommand', err.message);

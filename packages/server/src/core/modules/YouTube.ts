@@ -25,7 +25,7 @@ export namespace YouTube {
                 return null;
             }
 
-            console.log(info);
+
 
             const directUrl = info.url;
 
@@ -33,6 +33,7 @@ export namespace YouTube {
                 return ProxyService.useProxy(directUrl, 'youtube', 'video');
             }
 
+            Logger.warn('YouTube', 'Aucune URL directe trouvée', { url });
             return null;
         } catch (err) {
             Logger.error('YouTube.ts', '(getProxyUrl)', err);

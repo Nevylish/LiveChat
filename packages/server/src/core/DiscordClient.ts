@@ -28,27 +28,33 @@ export default class DiscordClient extends Client {
     }
 
     public async hasGuildPremiumSubscription(guildId: string): Promise<Boolean> {
-        const SKU_PLUS = process.env.SKU_PLUS_ID;
+        try {
+            const SKU_PLUS = process.env.SKU_PLUS_ID;
 
-        const entitlements = await this.application.entitlements.fetch({
-            guild: guildId,
-            skus: [SKU_PLUS],
-            excludeDeleted: true,
-            excludeEnded: true,
-        });
+            const entitlements = await this.application.entitlements.fetch({
+                guild: guildId,
+                skus: [SKU_PLUS],
+                excludeDeleted: true,
+                excludeEnded: true,
+            });
 
-        if (entitlements) {
-            return true;
+            if (entitlements) {
+                return true;
+            }
+
+            return false;
+        } catch (err) {
+            Logger.error('Client', "Erreur lors de la vérification de l'abonnement premium", { guildId, err });
+            return false;
         }
-
-        return false;
     }
 
     public updateActivity(size?: number): void {
+        const domain = process.env.DOMAIN;
         this.user?.setActivity(
             size
                 ? `/livechat | ${size.toString() ?? '0'} ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
-                : '/livechat | livechat.nevylish.fr',
+                : `/livechat | ${domain}`,
             { type: 3 },
         );
     }

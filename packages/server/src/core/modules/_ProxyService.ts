@@ -52,11 +52,13 @@ export namespace ProxyService {
         const range = req.headers.range;
 
         if (!targetUrl || !token || !expires) {
+            Logger.warn('ProxyService', 'Paramètres manquants dans la requête proxy');
             return res.status(403).send('Paramètres manquants');
         }
 
         const now = Math.floor(Date.now() / 1000);
         if (now > parseInt(expires)) {
+            Logger.warn('ProxyService', 'Lien proxy expiré', { url: targetUrl });
             return res.status(403).send('Lien expiré');
         }
 
@@ -66,12 +68,14 @@ export namespace ProxyService {
             .digest('hex');
 
         if (token !== expectedToken) {
+            Logger.warn('ProxyService', 'Signature proxy invalide', { url: targetUrl });
             return res.status(403).send('Signature invalide');
         }
 
         try {
             const urlObj = new URL(targetUrl);
             if (!['http:', 'https:'].includes(urlObj.protocol)) {
+                Logger.warn('ProxyService', 'Protocole invalide', { url: targetUrl });
                 return res.status(400).send('Protocole invalide');
             }
 
@@ -90,6 +94,7 @@ export namespace ProxyService {
             });
 
             if (!response.ok) {
+                Logger.warn('ProxyService', `Erreur upstream: ${response.status} ${response.statusText}`, { url: targetUrl });
                 return res.status(502).send(`Erreur proxy: ${response.statusText}`);
             }
 
