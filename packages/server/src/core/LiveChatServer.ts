@@ -113,7 +113,7 @@ export class LiveChatServer extends EventEmitter {
                             }
 
                             const isPremiumGuild = await this.discordClient.hasGuildPremiumSubscription(data.guildId);
-                            if (isPremiumGuild && streamersConnectedLength >= 10) {
+                            if (!isPremiumGuild && streamersConnectedLength >= 10) {
                                 this.emitError(
                                     socket,
                                     "Le nombre maximum de streameurs est atteint pour l'abonnement Gratuit.",
