@@ -3,8 +3,7 @@ import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 // TODO: Changer le lien
-const GIST_URL =
-    'https://gist.githubusercontent.com/Nevylish/b45fd848b5968d23c54f24401253ee44/raw/0e2c360f5ea0b63bf4084ecceaebd3aeb7dc86bb/livechat_updates.json';
+const GIST_URL = 'https://raw.githubusercontent.com/Nevylish/LiveChat/refs/heads/main/patchnotes.json';
 
 interface PatchNote {
     version: string;
