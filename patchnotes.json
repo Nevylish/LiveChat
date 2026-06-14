@@ -1,0 +1,111 @@
+[
+    {
+        "version": "v1.6.1",
+        "date": "14 Juin 2026",
+        "title": "Sécurité, vitesse & logs",
+        "changes": [
+            "Nous avons ajouté des sécurités sur le proxy de LiveChat pour éviter le spam et les attaques par déni de service.",
+            "Quelques autres modifications un peu partout ont été faites pour améliorer la rapidité de LiveChat au global.",
+            "Et nous avons refait le système de logs pour mieux comprendre les bugs et erreurs."
+        ]
+    },
+    {
+        "version": "v1.6.0",
+        "date": "8 Juin 2026",
+        "title": "YouTube, Instagram (presque) & Vite",
+        "changes": [
+            "YouTube et Instagram sont désormais pris en charge sur LiveChat via la commande /livechat lancer-url\n(L'adresse IP du serveur de LiveChat est bloquée par YouTube & Instagram, nous travaillons dessus pour régler ce problème au plus vite)",
+            "Les commandes ont été renommées pour simplifier la compréhension du bot.",
+            "Le code source du projet a été repensé, nettoyé et optimisé. La partie web utilise désormais React + Vite."
+        ]
+    },
+    {
+        "version": "v1.5.4",
+        "date": "30 Mars 2026",
+        "title": "Mode anonyme",
+        "changes": [
+            "Ajout d'une option \"anonyme\" dans la commande /livechat. Si elle est activée, elle masque le pseudo et la photo de profil du LiveChat."
+        ]
+    },
+    {
+        "version": "v1.5.2",
+        "date": "15 Février 2026",
+        "title": "Corrections et boutons",
+        "changes": [
+            "Prise en charge des fichiers .webp",
+            "Ajout d'un bouton \"Passer le LiveChat\" sur l'embed de la commande /livechat. Le bouton reste actif le temps du contenu.",
+            "Ajout d'une limite de streameurs par serveur Discord (20 clients max.)",
+            "Correction du système de sauvegarde de streameurs connectés. Le serveur enregistrait les streameurs seulement par leur nom d'utilisateur, si quelqu'un d'autre avait le même nom d'utilisateur sur un autre serveur, ça rentrait en conflit.",
+            "Si quelqu'un utilise le même nom d'utilisateur qu'un autre sur le même serveur Discord, l'overlay affichera une erreur, ça ne rentrera plus en conflit.",
+            "Les deux nouvelles commandes Discord ont été renommées. /skip -> /livechat-skip, /clear -> /livechat-clear",
+            "Le splash screen de l'overlay ne s'affichera plus s'il y a une erreur de configuration."
+        ]
+    },
+    {
+        "version": "v1.5.1",
+        "date": "12 Février 2026",
+        "title": "Commandes Skip et Clear",
+        "changes": [
+            "Ajout de deux commandes Discord : /skip et /clear.",
+            "/skip : Pour passer à la vidéo suivante.",
+            "/clear : Pour arrêter la vidéo en cours et vider la file d'attente."
+        ]
+    },
+    {
+        "version": "v1.5",
+        "date": "12 Février 2026",
+        "title": "Refonte graphique & Giphy",
+        "changes": [
+            "Refonte complète des pages internet.",
+            "Prise en charge de Giphy suite au remplacement de Tenor sur Discord."
+        ]
+    },
+    {
+        "version": "v1.4",
+        "date": "7 Février 2026",
+        "title": "Proxy de Sécurité & Stabilité",
+        "changes": [
+            "Lecture de médias plus sécurisée et sans bugs. Le serveur devient un intermédiaire pour éviter les fuites d'IP et maximiser la compatibilité des vidéos.",
+            "Correction des images et vidéos X/Twitter et TikTok grâce au proxy."
+        ]
+    },
+    {
+        "version": "v1.3",
+        "date": "26 Janvier 2026",
+        "title": "Améliorations de la commande Discord",
+        "changes": [
+            "La commande /livechat accepte désormais les fichiers (plus besoin de copier le lien).",
+            "Prise en charge des liens TikTok directement dans l'option URL.",
+            "Messages d'erreurs de configuration de l'overlay plus explicites."
+        ]
+    },
+    {
+        "version": "v1.2",
+        "date": "18 Septembre 2025",
+        "title": "Redesign de l'Overlay",
+        "changes": [
+            "Nouvel écran de démarrage (5s) et arrondis sur les médias.",
+            "Affichage du nom d'utilisateur avec bordures noires pour une meilleure lisibilité.",
+            "Correction des animations, taille du container et mise en cache des fichiers.",
+            "Option pour envoyer à tous les streameurs connectés du serveur Discord."
+        ]
+    },
+    {
+        "version": "v1.1",
+        "date": "14 Septembre 2025",
+        "title": "Support Tenor & Text Overlay",
+        "changes": [
+            "Prise en charge des liens GIF Tenor et des médias Twitter.",
+            "Option 'text' avec police Impact par-dessus les médias.",
+            "Durée d'affichage portée à 8s pour les images.",
+            "Refonte des embeds Discord.",
+            "Amélioration de la pertinence des erreurs affichées sur l'overlay."
+        ]
+    },
+    {
+        "version": "v1.0",
+        "date": "12 Juin 2025",
+        "title": "Première publication de LiveChat.",
+        "changes": []
+    }
+]
