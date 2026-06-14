@@ -9,6 +9,20 @@ export class CacheManager {
     private static cache = new Map<string, CacheEntry<any>>();
     private static pendingPromises = new Map<string, Promise<any>>();
 
+    static {
+        setInterval(
+            () => {
+                const now = Date.now();
+                for (const [key, value] of this.cache.entries()) {
+                    if (value.expiresAt <= now) {
+                        this.cache.delete(key);
+                    }
+                }
+            },
+            60 * 60 * 1000,
+        );
+    }
+
     /**
      * Récupère une valeur dans le cache ou exécute la fonction pour la récupérer.
      * @param key Clé unique (ex: l'URL d'origine)
@@ -28,7 +42,6 @@ export class CacheManager {
             return cached.data;
         }
 
-        // Si la donnée est déjà en train d'être récupérée par une autre requête, on attend la même promesse
         if (this.pendingPromises.has(key)) {
             Logger.warn('CacheManager', 'Deduping request, waiting for existing promise', { key });
             return this.pendingPromises.get(key) as Promise<T>;

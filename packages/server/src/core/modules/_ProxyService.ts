@@ -152,11 +152,7 @@ export namespace ProxyService {
                             url: targetUrl,
                         });
                         abortController.abort();
-                        if (!res.headersSent) {
-                            res.status(413).send('File too large');
-                        } else {
-                            res.end();
-                        }
+                        res.end();
                     }
                 });
 

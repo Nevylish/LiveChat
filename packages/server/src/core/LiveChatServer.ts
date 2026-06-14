@@ -124,7 +124,6 @@ export class LiveChatServer extends EventEmitter {
 
                             this.addStreamer(socket.id, data.username, data.guildId);
                             socket.join(data.guildId);
-                            this.discordClient.updateActivity(this.getConnectedStreamersCount());
 
                             if (guild.name) {
                                 socket.emit('updateConnectionStatus', true, ` pour le serveur Discord: ${guild.name}`);
@@ -141,7 +140,8 @@ export class LiveChatServer extends EventEmitter {
                             return;
                         }
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        Logger.error('LiveChatServer', 'Error fetching guild', err);
                         handleBotMissingFromGuild();
                         return;
                     });
@@ -151,7 +151,6 @@ export class LiveChatServer extends EventEmitter {
                 for (const [_, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.removeStreamer(data.username, data.guildId);
-                        this.discordClient.updateActivity(this.getConnectedStreamersCount());
                         Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`);
                     }
                 }
