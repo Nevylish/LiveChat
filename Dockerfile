@@ -2,7 +2,7 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-ENV YOUTUBE_DL_SKIP_PYTHON_CHECK=1
+# ENV YOUTUBE_DL_SKIP_PYTHON_CHECK=1
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@11.3.0 --activate
@@ -31,7 +31,7 @@ ENV FFPROBE_PATH=/usr/bin/ffprobe
 
 WORKDIR /app
 
-ENV YOUTUBE_DL_SKIP_PYTHON_CHECK=1
+# ENV YOUTUBE_DL_SKIP_PYTHON_CHECK=1
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@11.3.0 --activate
