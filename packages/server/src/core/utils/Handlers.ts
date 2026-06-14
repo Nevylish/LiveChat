@@ -10,7 +10,9 @@ import { Functions } from './Functions';
 export namespace Handlers {
     export const setupEventListeners = (client: DiscordClient) => {
         client.on(Events.ClientReady, async () => {
-            client.updateActivity();
+            setInterval(() => {
+                client.updateActivity();
+            }, 30 * 1000);
         });
 
         client.on(

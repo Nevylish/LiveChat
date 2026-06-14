@@ -52,14 +52,22 @@ export default class DiscordClient extends Client {
         }
     }
 
-    public updateActivity(size?: number): void {
+    private lastActivitySize: number | null = null;
+
+    public updateActivity(): void {
+        const size = this.livechat.getConnectedStreamersCount();
+
+        if (size === this.lastActivitySize) return;
+
         const domain = process.env.DOMAIN;
         this.user?.setActivity(
-            size
+            size > 0
                 ? `/livechat | ${size.toString() ?? '0'} ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
                 : `/livechat | ${domain}`,
             { type: 3 },
         );
+
+        this.lastActivitySize = size;
     }
 
     private async start(token: string): Promise<void> {
