@@ -34,10 +34,12 @@ export namespace Router {
         }
 
         if (Instagram.isInstagramUrl(url)) {
-            const proxyUrl = await Instagram.getProxyUrl(url);
-            if (proxyUrl) return { url: proxyUrl, bypassProxy: true };
+            // const proxyUrl = await Instagram.getProxyUrl(url);
+            // if (proxyUrl) return { url: proxyUrl, bypassProxy: true };
 
-            return routeGenericMediaError('Instagram', url);
+            return {
+                error: "Les liens Instagram sont temporairement désactivés.\nL'adresse IP de LiveChat se fait bloquer.",
+            };
         }
 
         if (Tenor.isShortenedUrl(url)) {
@@ -62,10 +64,12 @@ export namespace Router {
         }
 
         if (YouTube.isYouTubeUrl(url)) {
-            const proxyUrl = await YouTube.getProxyUrl(url);
-            if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
+            // const proxyUrl = await YouTube.getProxyUrl(url);
+            // if (proxyUrl) return { url: proxyUrl, bypassProxy: false };
 
-            return routeGenericMediaError('YouTube', url);
+            return {
+                error: "Les liens YouTube sont temporairement désactivés.\nL'adresse IP de LiveChat se fait bloquer.",
+            };
         }
 
         return { url, bypassProxy: false };

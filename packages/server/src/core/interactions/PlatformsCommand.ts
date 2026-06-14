@@ -20,11 +20,11 @@ export default class PlatformsCommand extends Command {
         const platforms = [
             '**Discord** (*voir formats de fichiers supportés*)',
             '**Giphy**',
-            '🆕 **Instagram** *Reels*',
+            // '🆕 **Instagram** *Reels*',
             '**Tenor**',
             '**TikTok** *Vidéos*',
             '**Twitter** *Vidéos, Images*',
-            '🆕 **YouTube** *Vidéos, Shorts*',
+            // '🆕 **YouTube** *Vidéos, Shorts*',
         ];
 
         const embed = Functions.buildEmbed(
