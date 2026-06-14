@@ -10,6 +10,7 @@ const CONFIG = {
     RECONNECT_DELAY: 15 * 1000 /* 15 seconds */,
     DISPLAY_DURATION: 8 * 1000 /* 8 seconds */,
     FADE_DURATION: 500 /* 500 milliseconds */,
+    MEDIA_LOAD_TIMEOUT: 15 * 1000 /* 15 seconds */,
     SUPPORTED_VIDEO_FORMATS: /\.(mp4|webm|mkv|mov)(?:\?|$)/i,
     SUPPORTED_AUDIO_FORMATS: /\.(mp3|wav|ogg)(?:\?|$)/i,
 };
@@ -233,8 +234,17 @@ function createContentElement(content) {
             element.muted = false;
             element.playsInline = true;
 
-            element.onerror = handleMediaError;
+            let loadTimeout = setTimeout(() => {
+                console.warn('Timeout de chargement du média, skip vers le suivant');
+                handleMediaError();
+            }, CONFIG.MEDIA_LOAD_TIMEOUT);
+
+            element.onerror = () => {
+                clearTimeout(loadTimeout);
+                handleMediaError();
+            };
             element.onloadeddata = () => {
+                clearTimeout(loadTimeout);
                 void element.offsetWidth;
                 element.classList.add('fade-in');
                 element.play().catch(console.error);
@@ -256,8 +266,14 @@ function createContentElement(content) {
                 }, 100);
             });
         } else {
-            void element.offsetWidth;
-            element.classList.add('fade-in');
+            element.onerror = () => {
+                console.error("Erreur de chargement de l'image");
+                handleMediaError();
+            };
+            element.onload = () => {
+                void element.offsetWidth;
+                element.classList.add('fade-in');
+            };
 
             currentTimeout = setTimeout(() => {
                 element.classList.add('fade-out');

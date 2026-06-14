@@ -8,6 +8,9 @@ import crypto = require('crypto');
 export namespace ProxyService {
     let secret: string;
 
+    const FETCH_TIMEOUT_MS = 30_000;
+    const MAX_BODY_SIZE = 650 * 1024 * 1024;
+
     export const generateRandomSecretAndStore = (): boolean => {
         if (secret) return false;
         secret = crypto.randomBytes(64).toString('hex');
@@ -72,6 +75,11 @@ export namespace ProxyService {
             return res.status(403).send('Invalid signature');
         }
 
+        const abortController = new AbortController();
+        const fetchTimeout = setTimeout(() => abortController.abort(), FETCH_TIMEOUT_MS);
+
+        res.on('close', () => abortController.abort());
+
         try {
             const urlObj = new URL(targetUrl);
             if (!['http:', 'https:'].includes(urlObj.protocol)) {
@@ -91,13 +99,22 @@ export namespace ProxyService {
             const response = await fetch(targetUrl, {
                 headers,
                 redirect: 'follow',
+                signal: abortController.signal as any,
             });
+
+            clearTimeout(fetchTimeout);
 
             if (!response.ok) {
                 Logger.warn('ProxyService', `Upstream error (502): ${response.status} ${response.statusText}`, {
                     url: targetUrl,
                 });
                 return res.status(502).send(`Upstream error`);
+            }
+
+            const contentLength = response.headers.get('content-length');
+            if (contentLength && parseInt(contentLength) > MAX_BODY_SIZE) {
+                Logger.warn('ProxyService', `File too large: ${contentLength} bytes`, { url: targetUrl });
+                return res.status(413).send('File too large');
             }
 
             res.status(response.status);
@@ -117,14 +134,46 @@ export namespace ProxyService {
             }
 
             res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
 
             if (response.body) {
+                let receivedBytes = 0;
+
+                response.body.on('data', (chunk: Buffer) => {
+                    receivedBytes += chunk.length;
+                    if (receivedBytes > MAX_BODY_SIZE) {
+                        Logger.warn('ProxyService', `Chunked transfer exceeded ${MAX_BODY_SIZE} bytes, aborting`, {
+                            url: targetUrl,
+                        });
+                        abortController.abort();
+                        if (!res.headersSent) {
+                            res.status(413).send('File too large');
+                        } else {
+                            res.end();
+                        }
+                    }
+                });
+
                 (response.body as any).pipe(res);
                 response.body.on('error', () => res.end());
             } else {
                 res.end();
             }
-        } catch (err) {
+        } catch (err: any) {
+            clearTimeout(fetchTimeout);
+
+            if (err.name === 'AbortError') {
+                if (!res.headersSent) {
+                    if (res.writableEnded || res.destroyed) {
+                        Logger.debug('ProxyService', 'Client disconnected, fetch aborted', { url: targetUrl });
+                    } else {
+                        Logger.warn('ProxyService', 'Upstream fetch timed out (504)', { url: targetUrl });
+                        res.status(504).send('Upstream timeout');
+                    }
+                }
+                return;
+            }
+
             Logger.error('ProxyService', 'Error while proxying (500)', err);
             if (!res.headersSent) res.status(500).send('Internal Server Error');
         }
