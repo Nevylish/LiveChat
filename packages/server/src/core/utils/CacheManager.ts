@@ -19,7 +19,7 @@ export class CacheManager {
                     }
                 }
             },
-            60 * 60 * 1000,
+            5 * 60 * 1000,
         );
     }
 
@@ -27,12 +27,12 @@ export class CacheManager {
      * Récupère une valeur dans le cache ou exécute la fonction pour la récupérer.
      * @param key Clé unique (ex: l'URL d'origine)
      * @param fetcher Fonction asynchrone pour récupérer la donnée si elle n'est pas en cache
-     * @param ttlMs Durée de vie en millisecondes (par défaut: 1 heure)
+     * @param ttlMs Durée de vie en millisecondes (par défaut: 50 minutes)
      */
     public static async getOrFetch<T>(
         key: string,
         fetcher: () => Promise<T>,
-        ttlMs: number = 1 * 60 * 60 * 1000,
+        ttlMs: number = 50 * 60 * 1000,
     ): Promise<T> {
         const now = Date.now();
         const cached = this.cache.get(key);
