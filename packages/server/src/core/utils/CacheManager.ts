@@ -1,3 +1,9 @@
+/*
+    Le système garde en cache seulement pendant 50 minutes le lien du proxy. 
+    On pourrait optimiser en gardant le lien de la plateforme et non du proxy pendant plus longtemps.
+    Pour le moment c'est pas prioritaire.
+*/
+
 import { Logger } from './Logger';
 
 interface CacheEntry<T> {

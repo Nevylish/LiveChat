@@ -127,9 +127,9 @@ export default class LiveChatCommand extends Command {
         const subcommand = interaction.options.getSubcommand();
         let label = TargetsManager.EVERYONE_OPTION_LABEL;
 
-        if (subcommand === 'skip') {
+        if (subcommand === 'passer-au-suivant') {
             label = TargetsManager.EVERYONE_SKIP_LABEL;
-        } else if (subcommand === 'stop') {
+        } else if (subcommand === 'stop-et-vider') {
             label = TargetsManager.EVERYONE_CLEAR_LABEL;
         }
 

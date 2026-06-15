@@ -11,30 +11,27 @@ import { Logger } from '../../utils/Logger';
 import { TargetsManager } from '../../utils/Targets';
 import { setupSkipButton } from '../SkipButton';
 
+type ConnectedStreamer = { socketId: string; username: string; guildId: string };
+
 export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
     const target = interaction.options.getString('cible', true) as string;
     let url = interaction.options.getString('url') as string;
-    let file = interaction.options.getAttachment('fichier') as Attachment;
+    const file = interaction.options.getAttachment('fichier') as Attachment;
     const text = (interaction.options.getString('texte') as string) ?? null;
-    let fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
+    const fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
     const anonymous = (interaction.options.getBoolean('anonyme') as boolean) ?? false;
 
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    let parsedUrl: URL;
-    let bypassProxy = false;
-
     if (!url && !file) {
         const embed = Functions.buildEmbed('Vous devez fournir un lien ou un fichier.', 'Alert');
-        embed.setImage(
-            'https://cdn.discordapp.com/attachments/1465389192384217118/1465389287825604658/livechat.gif?ex=6978ed9f&is=69779c1f&hm=f6648976eaf58ae153da91c2aabb5d7d8ac33842185bedaca7289f367534f639&',
-        );
         await interaction.editReply({ embeds: [embed] });
         return;
     }
 
     url = file?.url ?? url;
 
+    let parsedUrl: URL;
     try {
         parsedUrl = new URL(url);
     } catch {
@@ -63,7 +60,7 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
     }
 
     url = platformResult.url;
-    bypassProxy = platformResult.bypassProxy;
+    const bypassProxy = platformResult.bypassProxy;
 
     const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
     const supportedFormats = ['mp4', 'webm', 'mkv', 'mov', 'mp3', 'wav', 'ogg', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -90,130 +87,75 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
     }
 
     if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
-        await broadcastToEveryone(client, interaction, url, fullscreen, anonymous, text);
-        return;
+        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
+        if (!streamers.length) {
+            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+        await broadcast(client, interaction, streamers, url, fullscreen, anonymous, text);
+    } else {
+        const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
+        if (!streamerData) {
+            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+        await broadcast(client, interaction, [streamerData], url, fullscreen, anonymous, text);
     }
-
-    await broadcastToTarget(client, interaction, target, url, fullscreen, anonymous, text);
 };
 
-const broadcastToEveryone = async (
+const broadcast = async (
     client: DiscordClient,
     interaction: ChatInputCommandInteraction,
+    targets: ConnectedStreamer[],
     url: string,
     fullscreen: boolean,
     anonymous: boolean,
-    text: string,
-) => {
-    const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
-
-    if (!streamers.length) {
-        const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
-        await interaction.editReply({ embeds: [embed] });
-        return;
-    }
-
+    text: string | null,
+): Promise<void> => {
     try {
         const filetype = Functions.getMediaType(url);
         const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
+        const isEveryone = targets.length > 1;
 
-        const streamsList = TargetsManager.buildStreamersList(streamers);
+        const streamsList = TargetsManager.buildStreamersList(targets);
         const fileTypeDescription = buildFileTypeDescription(filetype, text, fullscreen, anonymous);
 
         const embed = Functions.buildEmbed(
-            `### LiveChat envoyé à tous les streameurs connectés` +
+            `### LiveChat envoyé ${isEveryone ? 'à tous les streameurs connectés' : `sur le stream de ${targets[0].username}`}` +
                 `\n\nType de fichier: **${fileTypeDescription}**` +
                 `\n\n${streamsList}`,
             'Good',
         );
 
-        await setupSkipButton(
-            client,
-            interaction,
-            embed,
-            filetype.param,
-            url,
-            streamers.map((s) => s.socketId),
-        );
+        const socketIds = targets.map((s) => s.socketId);
 
-        client.livechat.io.to(interaction.guildId).emit('broadcast', {
+        await setupSkipButton(client, interaction, embed, filetype.param, url, socketIds);
+
+        const payload = {
             content: url,
             from: interaction.user,
             fullscreen: adjustedFullscreen,
             anonymous,
             text,
             interactionId: interaction.id,
-        });
+        };
 
-        Logger.success('LiveChatCommand', `Sent to ${streamers.length} client(s)`, {
+        if (isEveryone) {
+            client.livechat.io.to(interaction.guildId).emit('broadcast', payload);
+        } else {
+            client.livechat.io.to(socketIds[0]).emit('broadcast', payload);
+        }
+
+        Logger.success('LiveChatCommand', `Sent to ${targets.length} client(s)`, {
             from: interaction.user.tag,
             type: filetype.display,
-            guild: interaction.guildId,
-        });
-    } catch (err: any) {
-        Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat to everyone', {
-            from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
-            error: err,
-        });
-        const embed = Functions.buildEmbed(
-            `Une erreur est survenue lors de l'envoi du LiveChat.\n${err.message}`,
-            'Error',
-        );
-        await interaction.editReply({ embeds: [embed] });
-    }
-};
-
-const broadcastToTarget = async (
-    client: DiscordClient,
-    interaction: ChatInputCommandInteraction,
-    target: string,
-    url: string,
-    fullscreen: boolean,
-    anonymous: boolean,
-    text: string,
-) => {
-    const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
-
-    if (!streamerData) {
-        const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
-        await interaction.editReply({ embeds: [embed] });
-        return;
-    }
-
-    try {
-        const filetype = Functions.getMediaType(url);
-        const adjustedFullscreen = filetype.param === 'audio' ? true : fullscreen;
-
-        const streamsList = TargetsManager.buildStreamersList([streamerData]);
-        const fileTypeDescription = buildFileTypeDescription(filetype, text, fullscreen, anonymous);
-
-        const embed = Functions.buildEmbed(
-            `### LiveChat envoyé sur le stream de ${target}` +
-                `\n\nType de fichier: **${fileTypeDescription}**` +
-                `\n\n${streamsList}`,
-            'Good',
-        );
-
-        await setupSkipButton(client, interaction, embed, filetype.param, url, [streamerData.socketId]);
-
-        client.livechat.io.to(streamerData.socketId).emit('broadcast', {
-            content: url,
-            from: interaction.user,
-            fullscreen: adjustedFullscreen,
-            anonymous,
-            text,
-            interactionId: interaction.id,
-        });
-
-        Logger.success('LiveChatCommand', `Sent to ${target}`, {
-            from: interaction.user.tag,
-            type: filetype.display,
-            guildId: interaction.guildId,
         });
     } catch (err: any) {
-        Logger.error('LiveChatCommand', `Error while broadcasting LiveChat to ${target}`, {
+        Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat', {
             from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
