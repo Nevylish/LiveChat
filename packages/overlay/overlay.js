@@ -21,6 +21,11 @@ const elements = {
     connectionStatus: document.getElementById('connection-status'),
 };
 
+const params = new URLSearchParams(window.location.search);
+const USERNAME = params.get('username');
+const GUILD_ID = params.get('guildId');
+const NO_SPLASH = params.get('noSplash');
+
 let socket = null;
 let currentContent = null;
 let currentInteractionId = null;
@@ -50,11 +55,7 @@ function initializeSocket(serverUrl) {
 }
 
 function handleConnect() {
-    const username = new URLSearchParams(window.location.search).get('username');
-    const guildId = new URLSearchParams(window.location.search).get('guildId');
-    const noSplash = new URLSearchParams(window.location.search).get('noSplash');
-
-    if (!username) {
+    if (!USERNAME) {
         updateConnectionStatus(
             false,
             'Le paramètre ?username est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
@@ -63,7 +64,7 @@ function handleConnect() {
         return;
     }
 
-    if (!guildId) {
+    if (!GUILD_ID) {
         updateConnectionStatus(
             false,
             'Le paramètre ?guildId est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
@@ -72,9 +73,9 @@ function handleConnect() {
         return;
     }
 
-    displaySplash = !noSplash;
+    displaySplash = !NO_SPLASH;
 
-    socket.emit('register', { username, guildId });
+    socket.emit('register', { username: USERNAME, guildId: GUILD_ID });
 }
 
 function displaySplashScreen() {

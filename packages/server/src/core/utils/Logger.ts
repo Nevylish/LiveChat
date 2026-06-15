@@ -9,7 +9,7 @@ export namespace Logger {
         ERROR,
     }
 
-    // ── Webhook ──────────────────────────────────────────
+    // Webhook
 
     interface WebhookMessage {
         level: LogLevel;
@@ -44,7 +44,7 @@ export namespace Logger {
         }
     };
 
-    // ── Formatting ───────────────────────────────────────
+    // Formatting
 
     export const COLORS = {
         RESET: '\x1b[0m',
@@ -116,7 +116,7 @@ export namespace Logger {
         return line;
     };
 
-    // ── Webhook internals ────────────────────────────────
+    // Webhook internals
 
     const parseArgs = (args: any[]): { message: string; context?: Record<string, any> } => {
         const parts: string[] = [];
@@ -176,7 +176,7 @@ export namespace Logger {
         }
     };
 
-    // ── Log level ────────────────────────────────────────
+    // Log level
 
     let minLogLevel: LogLevel = LogLevel.INFO;
 
@@ -189,7 +189,7 @@ export namespace Logger {
         return level >= minLogLevel;
     };
 
-    // ── Public methods ───────────────────────────────────
+    // Public methods
 
     export const log = (message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.INFO)) {
