@@ -1,20 +1,143 @@
-import { useRef, useState } from 'react';
+import { ExternalLink, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+
+const YOUTUBE_VIDEO_ID = 'iIK6me_W1BQ';
+
+function useIsMobile(breakpoint = 768) {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+        setIsMobile(mql.matches);
+        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+        mql.addEventListener('change', handler);
+        return () => mql.removeEventListener('change', handler);
+    }, [breakpoint]);
+    return isMobile;
+}
+
+function VideoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+    const isMobile = useIsMobile();
+    const overlayRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!open) return;
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, [open, onClose]);
+
+    useEffect(() => {
+        if (open) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [open]);
+
+    if (!open) return null;
+
+    const embedUrl = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`;
+
+    if (isMobile) {
+        return (
+            <div className="fixed inset-0 z-70 flex flex-col items-center justify-center bg-black">
+                <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+                    <a
+                        href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-11 items-center gap-2 rounded-full bg-white/10 px-4 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                    >
+                        <ExternalLink className="h-4 w-4" />
+                        Ouvrir sur YouTube
+                    </a>
+                    <button
+                        onClick={onClose}
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                        aria-label="Fermer la vidéo"
+                    >
+                        <X className="h-6 w-6" />
+                    </button>
+                </div>
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                        src={embedUrl}
+                        title="Tutoriel LiveChat"
+                        allow="autoplay; fullscreen; encrypted-media"
+                        allowFullScreen
+                        className="absolute inset-0 h-full w-full"
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            ref={overlayRef}
+            onClick={(e) => {
+                if (e.target === overlayRef.current) onClose();
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            style={{ animation: 'videoModalFadeIn 0.2s ease-out' }}
+        >
+            <div className="relative w-full max-w-6xl px-4" style={{ animation: 'videoModalScaleIn 0.25s ease-out' }}>
+                <div className="absolute -top-12 right-4 flex items-center gap-2">
+                    <a
+                        href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                        <ExternalLink className="h-4 w-4" />
+                        Ouvrir sur YouTube
+                    </a>
+                    <button
+                        onClick={onClose}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        aria-label="Fermer la vidéo"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl shadow-black/50">
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                        <iframe
+                            src={embedUrl}
+                            title="Tutoriel LiveChat"
+                            allow="autoplay; fullscreen; encrypted-media"
+                            allowFullScreen
+                            className="absolute inset-0 h-full w-full"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function Config() {
     const [username, setUsername] = useState('');
     const [guildId, setGuildId] = useState('');
     const [disableSplash, setDisableSplash] = useState(false);
     const [generatedLink, setGeneratedLink] = useState('');
-    const [activeStep, setActiveStep] = useState('step-install');
+    const [activeStep, setActiveStep] = useState('step-prereqs');
+    const [videoOpen, setVideoOpen] = useState(false);
+    const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     const steps = [
-        { id: 'step-install', label: 'Bot Discord', number: 1 },
-        { id: 'step-config', label: 'Configuration', number: 2 },
-        { id: 'step-obs', label: 'Installation', number: 3 },
-        { id: 'step-usage', label: 'Utilisation', number: 4 },
-        { id: 'step-finish', label: "C'est bon !", number: 5 },
+        { id: 'step-prereqs', label: 'Pré-requis', number: 1 },
+        { id: 'step-install', label: 'Bot Discord', number: 2 },
+        { id: 'step-config', label: 'Lien Overlay', number: 3 },
+        { id: 'step-obs', label: 'Configuration OBS', number: 4 },
+        { id: 'step-finish', label: "C'est prêt !", number: 5 },
     ];
 
     function validateUsername(value: string) {
@@ -71,6 +194,7 @@ export default function Config() {
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
             <Header subtitle="Configuration" />
+            <VideoModal open={videoOpen} onClose={handleCloseVideo} />
 
             <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
                 <div className="grid gap-6 md:grid-cols-[200px_1fr] md:gap-10">
@@ -89,6 +213,12 @@ export default function Config() {
                                     </option>
                                 ))}
                             </select>
+                            <button
+                                onClick={() => setVideoOpen(true)}
+                                className="mt-3 flex w-full items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 pb-3.5 pt-3 text-sm font-semibold leading-none transition-colors duration-200 hover:border-white/25 hover:bg-white/10"
+                            >
+                                Tutoriel vidéo
+                            </button>
                         </div>
 
                         {/* Desktop: nav verticale */}
@@ -127,6 +257,12 @@ export default function Config() {
                                     );
                                 })}
                             </ul>
+                            <button
+                                onClick={() => setVideoOpen(true)}
+                                className="mt-6 flex w-full items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 pb-3.5 pt-3 text-sm font-semibold leading-none transition-colors duration-200 hover:border-white/25 hover:bg-white/10"
+                            >
+                                Tutoriel vidéo
+                            </button>
                         </nav>
                     </aside>
 
@@ -140,362 +276,352 @@ export default function Config() {
                                     : 'config-step-enter-backward'
                             }`}
                         >
-                        {activeStep === 'step-install' && (
-                            <div className="config-card">
-                                <h2 className="config-title">Installation du bot Discord</h2>
-                                <p className="mt-4 text-muted-foreground">
-                                    Pour commencer, invitez le bot sur votre serveur{' '}
-                                    <strong className="text-foreground">privé</strong> Discord. Vous pouvez en créer un
-                                    dédié à cette utilisation.
-                                </p>
-                                <p className="mt-2 text-muted-foreground">
-                                    C'est grâce à lui que vous pourrez faire afficher du contenu sur votre overlay.
-                                </p>
-                                <p className="mt-2 text-muted-foreground">
-                                    Tapez{' '}
-                                    <code className="rounded bg-white/5 px-1.5 py-0.5 text-sm text-foreground">
-                                        /livechat
-                                    </code>{' '}
-                                    dans un salon textuel pour afficher la commande. Nous reviendrons en profondeur sur
-                                    son fonctionnement dans la quatrième partie.
-                                </p>
-                                <div className="mt-5 rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-200/90">
-                                    ⚠️ Gardez à l'esprit que tous les membres présents sur le serveur pourront utiliser
-                                    le LiveChat et faire apparaître du contenu sur votre flux. N'invitez pas n'importe
-                                    qui.
-                                </div>
-                                <div className="mt-6">
-                                    <a
-                                        href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-block rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
-                                    >
-                                        Installer le bot
-                                    </a>
-                                </div>
-                                <div className="unselectable mt-6 flex justify-end">
-                                    <button onClick={() => goToStep('step-config')} className="config-nav-btn">
-                                        Suivant →
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                            {activeStep === 'step-prereqs' && (
+                                <div className="config-card">
+                                    <h2 className="config-title">Pré-requis</h2>
+                                    <p className="mt-4 text-muted-foreground">
+                                        Avant de commencer, assurez-vous d'avoir les éléments suivants.
+                                    </p>
 
-                        {activeStep === 'step-config' && (
-                            <div className="config-card">
-                                <h2 className="config-title">Configuration</h2>
-                                <p className="mt-4 text-muted-foreground">
-                                    Remplissez les informations ci-dessous pour générer votre lien d'overlay unique.
-                                </p>
-
-                                <div className="mt-6 space-y-5">
-                                    <div>
-                                        <label htmlFor="username" className="config-label">
-                                            Nom d'utilisateur Twitch
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="username"
-                                            placeholder="terracid"
-                                            value={username}
-                                            onChange={(e) => validateUsername(e.target.value)}
-                                            className="config-input"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="guildId" className="config-label">
-                                            Identifiant du serveur Discord{' '}
-                                            <span
-                                                className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-white/10 text-[10px] text-muted-foreground"
-                                                title="Mode développeur Discord requis > Clic droit sur le serveur > Copier l'identifiant"
-                                            >
-                                                ?
+                                    <div className="mt-6 space-y-4">
+                                        <div className="flex gap-4 rounded-xl border border-border bg-white/2 px-5 py-4">
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
+                                                💬
                                             </span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="guildId"
-                                            placeholder="1433585274507628556"
-                                            value={guildId}
-                                            onChange={(e) => validateGuildId(e.target.value)}
-                                            className="config-input"
-                                        />
-                                    </div>
-                                    <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                                        <input
-                                            type="checkbox"
-                                            checked={disableSplash}
-                                            onChange={(e) => setDisableSplash(e.target.checked)}
-                                            className="h-4 w-4 accent-white"
-                                        />
-                                        Désactiver l'écran de démarrage (splash screen)
-                                    </label>
-                                </div>
+                                            <div>
+                                                <p className="font-semibold">Un compte Discord et un serveur</p>
+                                                <p className="mt-1 text-sm text-muted-foreground">
+                                                    Vous devez avoir un compte Discord ainsi qu'un serveur (de
+                                                    préférence <strong className="text-foreground">privé</strong>) sur
+                                                    lequel vous inviterez le bot LiveChat.
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                <button
-                                    onClick={generateLink}
-                                    className="mt-6 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
-                                >
-                                    Générer mon lien
-                                </button>
+                                        <div className="flex gap-4 rounded-xl border border-border bg-white/2 px-5 py-4">
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
+                                                🎥
+                                            </span>
+                                            <div>
+                                                <p className="font-semibold">Un logiciel de streaming</p>
+                                                <p className="mt-1 text-sm text-muted-foreground">
+                                                    Un logiciel capable d'afficher des sources navigateur, par exemple{' '}
+                                                    <strong className="text-foreground">OBS Studio</strong>,{' '}
+                                                    <strong className="text-foreground">Streamlabs</strong> ou tout
+                                                    autre logiciel compatible.
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                {generatedLink && (
-                                    <div className="mt-6 rounded-lg border border-border bg-white/3 p-4">
-                                        <label className="mb-2 block text-sm font-medium">Votre lien d'overlay :</label>
-                                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                                            <code className="flex-1 break-all rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
-                                                {generatedLink}
-                                            </code>
-                                            <button
-                                                id="copy-link-btn"
-                                                onClick={() => copyToClipboard(generatedLink, 'copy-link-btn')}
-                                                className="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition-colors duration-200 hover:bg-white/5"
-                                            >
-                                                Copier
-                                            </button>
+                                        <div className="flex gap-4 rounded-xl border border-border bg-white/2 px-5 py-4">
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
+                                                🌐
+                                            </span>
+                                            <div>
+                                                <p className="font-semibold">Une bonne connexion internet</p>
+                                                <p className="mt-1 text-sm text-muted-foreground">
+                                                    Un débit minimum de{' '}
+                                                    <strong className="text-foreground">10 Mbps en upload</strong> est
+                                                    recommandé pour streamer confortablement tout en affichant les
+                                                    médias LiveChat en temps réel.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                )}
 
-                                <div className="unselectable mt-6 flex justify-between">
-                                    <button onClick={() => goToStep('step-install')} className="config-nav-btn">
-                                        ← Précédent
-                                    </button>
-                                    <button onClick={() => goToStep('step-obs')} className="config-nav-btn">
-                                        Suivant →
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeStep === 'step-obs' && (
-                            <div className="config-card">
-                                <h2 className="config-title">Installation de l'overlay</h2>
-                                <p className="mt-4 text-muted-foreground">
-                                    Suivez ces étapes pour ajouter l'overlay à OBS Studio ou Streamlabs.
-                                    <br />
-                                    <em className="text-sm opacity-70">
-                                        Pour les autres logiciels référez-vous à leur documentation pour ajouter une
-                                        source Navigateur.
-                                    </em>
-                                </p>
-                                <ol className="mt-6 space-y-3 text-muted-foreground">
-                                    {[
-                                        <>
-                                            Ajoutez une source <strong className="text-foreground">Navigateur</strong>
-                                        </>,
-                                        <>
-                                            Collez le lien généré précédemment dans{' '}
-                                            <strong className="text-foreground">URL</strong>
-                                        </>,
-                                        <>
-                                            Réglez la taille sur <strong className="text-foreground">1920x1080</strong>
-                                        </>,
-                                        <>
-                                            Cochez{' '}
-                                            <strong className="text-foreground">Contrôler l'audio via OBS</strong>
-                                        </>,
-                                        <>
-                                            Cliquez sur <strong className="text-foreground">OK</strong> et placez la
-                                            source au-dessus
-                                        </>,
-                                        <>
-                                            Dans le mélangeur audio : clic droit &gt;{' '}
-                                            <strong className="text-foreground">Propriétés audio avancées</strong> &gt;
-                                            LiveChat &gt;{' '}
-                                            <strong className="text-foreground">Monitoring et sortie</strong>
-                                        </>,
-                                    ].map((content, i) => (
-                                        <li key={i} className="flex gap-3 text-sm sm:text-base">
-                                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold text-muted-foreground">
-                                                {i + 1}
-                                            </span>
-                                            <span className="pt-0.5">{content}</span>
-                                        </li>
-                                    ))}
-                                </ol>
-
-                                <div className="mt-6 rounded-lg border border-border bg-white/3 p-4">
-                                    <p className="text-sm font-semibold">CSS Personnalisé (Optionnel)</p>
-                                    <p className="mt-1 text-sm text-muted-foreground">
-                                        Pour masquer la page d'erreur Cloudflare si LiveChat est hors-ligne :
-                                    </p>
-                                    <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-                                        <code className="flex-1 rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
-                                            {'#cf-wrapper { display: none; }'}
-                                        </code>
-                                        <button
-                                            id="copy-css-btn"
-                                            onClick={() =>
-                                                copyToClipboard('#cf-wrapper { display: none; }', 'copy-css-btn')
-                                            }
-                                            className="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition-colors duration-200 hover:bg-white/5"
-                                        >
-                                            Copier
+                                    <div className="unselectable mt-6 flex justify-end">
+                                        <button onClick={() => goToStep('step-install')} className="config-nav-btn">
+                                            Suivant →
                                         </button>
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="unselectable mt-6 flex justify-between">
-                                    <button onClick={() => goToStep('step-config')} className="config-nav-btn">
-                                        ← Précédent
-                                    </button>
-                                    <button onClick={() => goToStep('step-usage')} className="config-nav-btn">
-                                        Suivant →
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeStep === 'step-usage' && (
-                            <div className="config-card">
-                                <h2 className="config-title">Utiliser LiveChat</h2>
-                                <p className="mt-4 text-muted-foreground">
-                                    Utilisez la commande{' '}
-                                    <code className="rounded bg-white/5 px-1.5 py-0.5 text-sm text-foreground">
-                                        /livechat
-                                    </code>{' '}
-                                    sur Discord pour partager des médias.
-                                </p>
-                                <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground sm:text-base">
-                                    {[
-                                        { label: 'Cible', desc: 'Sélectionnez le streamer' },
-                                        {
-                                            label: 'URL',
-                                            desc: "Lien direct ou lien d'une des plateformes supportées",
-                                        },
-                                        { label: 'Fichier', desc: 'Upload direct depuis votre PC' },
-                                        { label: 'Texte', desc: 'Ajoute un texte style Meme' },
-                                        {
-                                            label: 'Fullscreen',
-                                            desc: 'Affiche le média en plein écran',
-                                        },
-                                    ].map((item) => (
-                                        <li key={item.label} className="flex gap-2">
-                                            <strong className="shrink-0 text-foreground">{item.label} :</strong>
-                                            <span>{item.desc}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <h3 className="mt-8 text-base font-semibold sm:text-lg">
-                                    Vous avez trois manières de partager vos médias :
-                                </h3>
-                                <ol className="mt-4 space-y-2 text-sm text-muted-foreground sm:text-base">
-                                    <li className="flex gap-3">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold">
-                                            1
-                                        </span>
-                                        Envoyer un fichier depuis votre PC via l'option "Fichier"
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold">
-                                            2
-                                        </span>
-                                        Envoyer un lien direct terminant par l'extension du fichier via "URL"
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold">
-                                            3
-                                        </span>
-                                        Envoyer un lien d'une des plateformes supportées (TikTok, X, etc.) — pas besoin
-                                        de télécharger le média !
-                                    </li>
-                                </ol>
-
-                                <p className="mt-5 text-sm text-muted-foreground sm:text-base">
-                                    Actuellement supporté :{' '}
-                                    {['Discord', 'TikTok', 'Giphy', 'Tenor', 'X'].map((p, i) => (
-                                        <span key={p}>
-                                            <strong className="text-foreground">{p}</strong>
-                                            {i < 4 ? ', ' : '.'}
-                                        </span>
-                                    ))}
-                                </p>
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    Formats : .mp4, .webm, .mkv, .mov, .mp3, .wav, .ogg, .jpg, .png, .gif, .webp
-                                </p>
-
-                                <div className="mt-5 rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-200/90">
-                                    ⚠️ Les liens YouTube ou autres plateformes non cités ne sont pas supportés
-                                    directement. Téléchargez d'abord le média puis utilisez l'option Fichier.
-                                </div>
-
-                                <p className="mt-5 text-sm text-muted-foreground sm:text-base">
-                                    Il existe aussi deux autres commandes :
-                                    <br />
-                                    <code className="rounded bg-white/5 px-1.5 py-0.5 text-sm text-foreground">
-                                        /skip
-                                    </code>{' '}
-                                    : Passer au média suivant
-                                    <br />
-                                    <code className="rounded bg-white/5 px-1.5 py-0.5 text-sm text-foreground">
-                                        /clear
-                                    </code>{' '}
-                                    : Stopper le média actuel et vider la file d'attente
-                                </p>
-
-                                <div className="unselectable mt-6 flex justify-between">
-                                    <button onClick={() => goToStep('step-obs')} className="config-nav-btn">
-                                        ← Précédent
-                                    </button>
-                                    <button onClick={() => goToStep('step-finish')} className="config-nav-btn">
-                                        Suivant →
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeStep === 'step-finish' && (
-                            <div className="config-card">
-                                <h2 className="config-title">C'est bon ! 🎉</h2>
-                                <p className="mt-4 text-muted-foreground">Félicitations, LiveChat est prêt.</p>
-                                <div className="mt-6 space-y-3">
-                                    <p className="text-muted-foreground">
-                                        En cas de problème ou pour une demande, vous pouvez me contacter par mail, sur
-                                        Twitter ou ouvrir une issue sur GitHub.
+                            {activeStep === 'step-install' && (
+                                <div className="config-card">
+                                    <h2 className="config-title">Installation du bot Discord</h2>
+                                    <p className="mt-4 text-muted-foreground">
+                                        Invitez le bot sur votre serveur{' '}
+                                        <strong className="text-foreground">privé</strong> Discord. C'est grâce à lui
+                                        que vous pourrez faire afficher du contenu sur votre overlay.
                                     </p>
-                                    <div className="flex flex-col gap-1.5">
-                                        {[
-                                            {
-                                                href: 'mailto:bonjour@nevylish.fr',
-                                                label: 'bonjour@nevylish.fr',
-                                            },
-                                            {
-                                                href: 'https://twitter.com/Nevylish',
-                                                label: 'Twitter/@Nevylish',
-                                            },
-                                            {
-                                                href: 'https://github.com/Nevylish/LiveChat',
-                                                label: 'GitHub/Nevylish/LiveChat',
-                                            },
-                                        ].map((link) => (
-                                            <a
-                                                key={link.href}
-                                                href={link.href}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm text-muted-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                                            >
-                                                {link.label}
-                                            </a>
-                                        ))}
+                                    <p className="mt-2 text-muted-foreground">
+                                        Une fois installé, tapez{' '}
+                                        <code className="rounded bg-white/5 px-1.5 py-0.5 text-sm text-foreground">
+                                            /livechat
+                                        </code>{' '}
+                                        dans un salon textuel et vérifiez si les commandes apparaissent.
+                                    </p>
+                                    <div className="mt-5 rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-200/90">
+                                        Tous les membres présents sur le serveur pourront utiliser LiveChat et faire
+                                        apparaître du contenu sur votre flux.
+                                        <br />
+                                        S'il vous plaît, n'invitez que des personnes de confiance.
+                                    </div>
+                                    <div className="mt-6">
+                                        <a
+                                            href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                        >
+                                            Installer le bot
+                                        </a>
+                                    </div>
+                                    <div className="unselectable mt-6 flex justify-between">
+                                        <button onClick={() => goToStep('step-prereqs')} className="config-nav-btn">
+                                            ← Précédent
+                                        </button>
+                                        <button onClick={() => goToStep('step-config')} className="config-nav-btn">
+                                            Suivant →
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="unselectable mt-6 flex items-center justify-between">
-                                    <button onClick={() => goToStep('step-usage')} className="config-nav-btn">
-                                        ← Précédent
-                                    </button>
-                                    <a
-                                        href="/"
-                                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                            )}
+
+                            {activeStep === 'step-config' && (
+                                <div className="config-card">
+                                    <h2 className="config-title">Générer votre lien d'overlay</h2>
+                                    <p className="mt-4 text-muted-foreground">
+                                        Remplissez les informations ci-dessous pour générer votre lien d'overlay unique.
+                                    </p>
+
+                                    <div className="mt-6 space-y-5">
+                                        <div>
+                                            <label htmlFor="username" className="config-label">
+                                                Nom d'utilisateur
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="username"
+                                                placeholder="terracid"
+                                                value={username}
+                                                onChange={(e) => validateUsername(e.target.value)}
+                                                className="config-input"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="guildId" className="config-label">
+                                                Identifiant du serveur Discord{' '}
+                                                <span
+                                                    className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-white/10 text-[10px] text-muted-foreground"
+                                                    title="Mode développeur Discord requis > Clic droit sur le serveur > Copier l'identifiant"
+                                                >
+                                                    ?
+                                                </span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="guildId"
+                                                placeholder="1433585274507628556"
+                                                value={guildId}
+                                                onChange={(e) => validateGuildId(e.target.value)}
+                                                className="config-input"
+                                            />
+                                        </div>
+                                        <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                                            <input
+                                                type="checkbox"
+                                                checked={disableSplash}
+                                                onChange={(e) => setDisableSplash(e.target.checked)}
+                                                className="h-4 w-4 accent-white"
+                                            />
+                                            Désactiver l'écran de démarrage (splash screen)
+                                        </label>
+                                    </div>
+
+                                    <button
+                                        onClick={generateLink}
+                                        className="mt-6 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
                                     >
-                                        Retour à l'accueil
-                                    </a>
+                                        Générer mon lien
+                                    </button>
+
+                                    {generatedLink && (
+                                        <div className="mt-6 rounded-lg border border-border bg-white/3 p-4">
+                                            <label className="mb-2 block text-sm font-medium">
+                                                Votre lien d'overlay :
+                                            </label>
+                                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                                <code className="flex-1 break-all rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
+                                                    {generatedLink}
+                                                </code>
+                                                <button
+                                                    id="copy-link-btn"
+                                                    onClick={() => copyToClipboard(generatedLink, 'copy-link-btn')}
+                                                    className="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition-colors duration-200 hover:bg-white/5"
+                                                >
+                                                    Copier
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="unselectable mt-6 flex justify-between">
+                                        <button onClick={() => goToStep('step-install')} className="config-nav-btn">
+                                            ← Précédent
+                                        </button>
+                                        <button onClick={() => goToStep('step-obs')} className="config-nav-btn">
+                                            Suivant →
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+
+                            {activeStep === 'step-obs' && (
+                                <div className="config-card">
+                                    <h2 className="config-title">
+                                        Configurer l'overlay sur votre logiciel de streaming
+                                    </h2>
+                                    <p className="mt-4 text-muted-foreground">
+                                        Suivez ces étapes pour ajouter l'overlay à OBS Studio ou Streamlabs.
+                                        <br />
+                                        <em className="text-sm opacity-70">
+                                            Pour les autres logiciels référez-vous à leur documentation pour ajouter une
+                                            source Navigateur.
+                                        </em>
+                                    </p>
+                                    <ol className="mt-6 space-y-3 text-muted-foreground">
+                                        {[
+                                            <>
+                                                Ajoutez une source{' '}
+                                                <strong className="text-foreground">Navigateur</strong>
+                                            </>,
+                                            <>
+                                                Collez le lien généré précédemment dans{' '}
+                                                <strong className="text-foreground">URL</strong>
+                                            </>,
+                                            <>
+                                                Réglez la <strong className="text-foreground">Largeur</strong> sur{' '}
+                                                <strong className="text-foreground">1920</strong> et la{' '}
+                                                <strong className="text-foreground">Hauteur</strong> sur{' '}
+                                                <strong className="text-foreground">1080</strong>
+                                            </>,
+                                            <>
+                                                Cochez{' '}
+                                                <strong className="text-foreground">Contrôler l'audio via OBS</strong>
+                                            </>,
+                                            <>
+                                                Dans <strong className="text-foreground">CSS personnalisé</strong>,
+                                                collez le code suivant :
+                                                <span className="mt-1.5 flex flex-col gap-2 sm:flex-row sm:items-center">
+                                                    <code className="flex-1 rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
+                                                        {'#cf-wrapper { display: none; }'}
+                                                    </code>
+                                                    <button
+                                                        id="copy-css-btn"
+                                                        onClick={() =>
+                                                            copyToClipboard(
+                                                                '#cf-wrapper { display: none; }',
+                                                                'copy-css-btn',
+                                                            )
+                                                        }
+                                                        className="shrink-0 rounded-lg border border-border px-4 py-2 text-sm transition-colors duration-200 hover:bg-white/5"
+                                                    >
+                                                        Copier
+                                                    </button>
+                                                </span>
+                                            </>,
+                                            <>
+                                                Cliquez sur <strong className="text-foreground">OK</strong> et placez la
+                                                source au-dessus
+                                            </>,
+                                            <>
+                                                Dans le mélangeur audio : cliquez sur l'engrenage &gt; trouvez la ligne
+                                                de LiveChat &gt; puis sélectionnez{' '}
+                                                <strong className="text-foreground">Monitoring et sortie</strong>
+                                            </>,
+                                        ].map((content, i) => (
+                                            <li key={i} className="flex gap-3 text-sm sm:text-base">
+                                                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold text-muted-foreground">
+                                                    {i + 1}
+                                                </span>
+                                                <span className="pt-0.5">{content}</span>
+                                            </li>
+                                        ))}
+                                    </ol>
+
+                                    <div className="unselectable mt-6 flex justify-between">
+                                        <button onClick={() => goToStep('step-config')} className="config-nav-btn">
+                                            ← Précédent
+                                        </button>
+                                        <button onClick={() => goToStep('step-finish')} className="config-nav-btn">
+                                            Suivant →
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeStep === 'step-finish' && (
+                                <div className="config-card">
+                                    <h2 className="config-title">Installation terminée !</h2>
+                                    <p className="mt-4 text-muted-foreground">
+                                        Félicitations, votre LiveChat est configuré et prêt à l'emploi.
+                                    </p>
+
+                                    <div className="mt-6 rounded-lg border border-border bg-white/3 px-4 py-3 text-sm text-muted-foreground">
+                                        <strong className="text-foreground">💡 Pour commencer</strong> - Tapez{' '}
+                                        <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">
+                                            /livechat
+                                        </code>{' '}
+                                        dans un salon textuel de votre serveur Discord pour envoyer votre premier média
+                                        sur l'overlay.
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <a
+                                            href="/usage"
+                                            className="inline-block rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                        >
+                                            Découvrir comment utiliser LiveChat →
+                                        </a>
+                                    </div>
+
+                                    <div className="mt-6 space-y-3">
+                                        <p className="text-sm text-muted-foreground">
+                                            En cas de problème ou pour une demande, n'hésitez pas à nous contacter.
+                                        </p>
+                                        <div className="flex flex-col gap-1.5">
+                                            {[
+                                                {
+                                                    href: 'mailto:bonjour@nevylish.fr',
+                                                    label: 'bonjour@nevylish.fr',
+                                                },
+                                                {
+                                                    href: 'https://twitter.com/Nevylish',
+                                                    label: 'Twitter/@Nevylish',
+                                                },
+                                                {
+                                                    href: 'https://github.com/Nevylish/LiveChat',
+                                                    label: 'GitHub/Nevylish/LiveChat',
+                                                },
+                                            ].map((link) => (
+                                                <a
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm text-muted-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                                >
+                                                    {link.label}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="unselectable mt-6 flex items-center justify-between">
+                                        <button onClick={() => goToStep('step-obs')} className="config-nav-btn">
+                                            ← Précédent
+                                        </button>
+                                        <a
+                                            href="/"
+                                            className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                                        >
+                                            Retour à l'accueil
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </section>
                 </div>

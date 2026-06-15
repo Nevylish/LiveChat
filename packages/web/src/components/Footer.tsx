@@ -1,8 +1,8 @@
 const FOOTER_LINKS: { label: string; href: string; external?: boolean }[] = [
     { label: 'Politique de confidentialité', href: '/privacy' },
     { label: "Conditions d'utilisation", href: '/terms' },
-    { label: 'Code source de LiveChat', href: 'https://github.com/Nevylish/LiveChat', external: true },
-    { label: 'Strachamia Studios', href: 'https://strachamia.fr', external: true },
+    { label: 'Code source', href: 'https://github.com/Nevylish/LiveChat', external: true },
+    { label: 'Serveur Discord', href: 'https://discord.gg/xy4wsUa8xR', external: true },
 ];
 
 export default function Footer() {

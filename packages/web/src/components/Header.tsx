@@ -43,7 +43,6 @@ export default function Header({ subtitle }: HeaderProps) {
 
     return (
         <>
-            {/* Header bar */}
             <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur-sm">
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
                     <a href="/" className="flex items-center gap-2.5 text-lg font-bold">
@@ -106,7 +105,7 @@ export default function Header({ subtitle }: HeaderProps) {
                     />
                     <span
                         className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                            menuOpen ? 'translate-y-[8px] -rotate-45' : ''
+                            menuOpen ? '-translate-y-[8px] -rotate-45' : ''
                         }`}
                     />
                 </div>
