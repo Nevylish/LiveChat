@@ -82,11 +82,10 @@
     --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Disabled for now */
-/* .unselectable {
+.unselectable {
     -webkit-user-select: none;
     user-select: none;
-} */
+}
 
 .dark {
     --background: #0f0e17;
@@ -126,6 +125,15 @@
 @layer base {
     * {
         @apply border-border;
+    }
+
+    button,
+    [role='button'],
+    summary,
+    select,
+    [type='checkbox'],
+    [type='radio'] {
+        cursor: pointer;
     }
 
     body {
@@ -263,4 +271,58 @@
 
 .config-nav-btn:hover {
     color: var(--foreground);
+}
+
+/* Video modal animations */
+@keyframes videoModalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes videoModalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Config step transition — desktop only */
+@media (min-width: 768px) {
+    .config-step-enter-forward {
+        animation: configStepForward 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .config-step-enter-backward {
+        animation: configStepBackward 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+}
+
+@keyframes configStepForward {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes configStepBackward {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }

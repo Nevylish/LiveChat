@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
@@ -57,7 +57,11 @@ export default function Config() {
         });
     }
 
+    const directionRef = useRef<'forward' | 'backward'>('forward');
+
     function goToStep(id: string) {
+        const targetIndex = steps.findIndex((s) => s.id === id);
+        directionRef.current = targetIndex >= currentIndex ? 'forward' : 'backward';
         setActiveStep(id);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -128,6 +132,14 @@ export default function Config() {
 
                     {/* Contenu */}
                     <section className="min-w-0">
+                        <div
+                            key={activeStep}
+                            className={`config-step-transition ${
+                                directionRef.current === 'forward'
+                                    ? 'config-step-enter-forward'
+                                    : 'config-step-enter-backward'
+                            }`}
+                        >
                         {activeStep === 'step-install' && (
                             <div className="config-card">
                                 <h2 className="config-title">Installation du bot Discord</h2>
@@ -484,6 +496,7 @@ export default function Config() {
                                 </div>
                             </div>
                         )}
+                        </div>
                     </section>
                 </div>
             </main>
