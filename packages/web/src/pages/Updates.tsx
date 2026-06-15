@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
-// TODO: Changer le lien
 const GIST_URL = 'https://raw.githubusercontent.com/Nevylish/LiveChat/refs/heads/main/patchnotes.json';
 
 interface PatchNote {
@@ -38,7 +37,30 @@ export default function Updates() {
             <Header subtitle="Patch Notes" />
 
             <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                {loading && <p className="text-center text-sm text-muted-foreground">Chargement des mises à jour...</p>}
+                {loading && (
+                    <div className="space-y-5">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <article
+                                key={i}
+                                className="rounded-xl border border-border bg-white/2 p-5 sm:p-6 animate-pulse"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="h-6 w-16 rounded-md bg-white/10"></div>
+                                    <div className="h-4 w-24 rounded bg-white/5"></div>
+                                </div>
+                                <div className="mt-3 h-6 w-3/4 rounded bg-white/10 sm:h-7 sm:w-1/2"></div>
+                                <div className="mt-4 space-y-2.5">
+                                    {[{ width: '85%' }, { width: '60%' }, { width: '75%' }].map((style, j) => (
+                                        <div key={j} className="flex gap-2.5 items-center">
+                                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/10" />
+                                            <div className="h-4 rounded bg-white/5" style={style}></div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                )}
 
                 {error && (
                     <p className="text-center text-sm text-red-400">
