@@ -55,7 +55,7 @@ export default function Header({ subtitle }: HeaderProps) {
                         <span>
                             LiveChat
                             {subtitle && (
-                                <span className="ml-1.5 text-sm font-normal text-muted-foreground">— {subtitle}</span>
+                                <span className="ml-1.5 text-sm font-normal text-muted-foreground">{subtitle}</span>
                             )}
                         </span>
                     </a>
@@ -85,7 +85,7 @@ export default function Header({ subtitle }: HeaderProps) {
                 </div>
             </header>
 
-            {/* Burger button — fixed, au-dessus de tout, y compris l'overlay */}
+            {/* Burger button - fixed, au-dessus de tout, y compris l'overlay */}
             <button
                 className="fixed right-4 top-3.5 z-60 flex h-10 w-10 items-center justify-center rounded-lg sm:right-5 md:hidden"
                 onClick={toggleMenu}
@@ -111,7 +111,7 @@ export default function Header({ subtitle }: HeaderProps) {
                 </div>
             </button>
 
-            {/* Mobile overlay — z-50, sous le burger button */}
+            {/* Mobile overlay - z-50, sous le burger button */}
             <div
                 className={`fixed inset-0 z-50 flex flex-col bg-background transition-opacity duration-300 md:pointer-events-none md:hidden md:opacity-0 ${
                     menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'

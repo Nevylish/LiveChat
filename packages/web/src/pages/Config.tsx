@@ -85,7 +85,7 @@ export default function Config() {
 
             <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
                 <div className="grid gap-6 md:grid-cols-[200px_1fr] md:gap-10">
-                    {/* Sidebar — select sur mobile, nav sur desktop */}
+                    {/* Sidebar - select sur mobile, nav sur desktop */}
                     <aside>
                         {/* Mobile: select dropdown */}
                         <div className="md:hidden">
@@ -96,7 +96,7 @@ export default function Config() {
                             >
                                 {steps.map((step) => (
                                     <option key={step.id} value={step.id}>
-                                        Étape {step.number} — {step.label}
+                                        Étape {step.number} - {step.label}
                                     </option>
                                 ))}
                             </select>

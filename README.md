@@ -14,11 +14,11 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 
 ## ✨ Fonctionnalités
 
-- 🔗 **Partage facile** — Prend en charge nativement **Discord**, **TikTok**, **YouTube**, **Instagram Reels**, **Twitter/X**, **Tenor** et **Giphy**. Upload de fichiers également supporté.
-- 👥 **Multi-streameurs** — Envoyez un média à tous les streameurs connectés du même serveur Discord en un clic.
-- 📝 **Texte superposé** — Ajoutez du texte style mème (police Impact) par-dessus les médias envoyés.
-- 🔒 **Proxy intégré** — Protège l'adresse IP des streameurs en servant les médias via le serveur.
-- 🌐 **Universel** — Compatible avec OBS Studio, Streamlabs, PRISM Live et tout logiciel supportant les sources navigateur.
+- 🔗 **Partage facile** - Prend en charge nativement **Discord**, **TikTok**, **YouTube**, **Instagram Reels**, **Twitter/X**, **Tenor** et **Giphy**. Upload de fichiers également supporté.
+- 👥 **Multi-streameurs** - Envoyez un média à tous les streameurs connectés du même serveur Discord en un clic.
+- 📝 **Texte superposé** - Ajoutez du texte style mème (police Impact) par-dessus les médias envoyés.
+- 🔒 **Proxy intégré** - Protège l'adresse IP des streameurs en servant les médias via le serveur.
+- 🌐 **Universel** - Compatible avec OBS Studio, Streamlabs, PRISM Live et tout logiciel supportant les sources navigateur.
 
 ## 🚀 Utilisation
 
@@ -79,16 +79,16 @@ pnpm dev:web
 
 ### Scripts
 
-| Commande           | Description                                  |
-| ------------------ | -------------------------------------------- |
-| `pnpm build`       | Build le serveur et le site web              |
-| `pnpm build:server`| Build le serveur uniquement                  |
-| `pnpm build:web`   | Build le site web uniquement                 |
-| `pnpm dev:server`  | Compile le serveur en mode watch             |
-| `pnpm dev:web`     | Lance le site en mode dev (Vite HMR)         |
-| `pnpm start`       | Lance le serveur de production               |
-| `pnpm clean`       | Supprime les dossiers de build               |
-| `pnpm format`      | Formate le code avec Prettier                |
+| Commande            | Description                          |
+| ------------------- | ------------------------------------ |
+| `pnpm build`        | Build le serveur et le site web      |
+| `pnpm build:server` | Build le serveur uniquement          |
+| `pnpm build:web`    | Build le site web uniquement         |
+| `pnpm dev:server`   | Compile le serveur en mode watch     |
+| `pnpm dev:web`      | Lance le site en mode dev (Vite HMR) |
+| `pnpm start`        | Lance le serveur de production       |
+| `pnpm clean`        | Supprime les dossiers de build       |
+| `pnpm format`       | Formate le code avec Prettier        |
 
 ### Docker
 
@@ -124,7 +124,7 @@ Ce projet est ouvert aux contributions. Ouvrez une issue pour en discuter.
 
 <div align="center">
 
-<sub>© Nevylish — LiveChat. Tous droits réservés.</sub>
+<sub>© Nevylish - LiveChat. Tous droits réservés.</sub>
 <br />
 <sub>Non affilié à Twitch, Cacabox ou toute autre marque, plateforme ou personne tierce.</sub>
 
