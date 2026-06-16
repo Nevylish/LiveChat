@@ -1,10 +1,10 @@
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useState } from 'react';
+// import { useCallback, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import VideoModal from '../components/VideoModal';
+// import VideoModal from '../components/VideoModal';
 
-const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
+// const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
 
 const sections = [
     { id: 'commands', label: 'Commandes' },
@@ -46,18 +46,18 @@ export default function Usage() {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    const [videoOpen, setVideoOpen] = useState(false);
-    const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
+    // const [videoOpen, setVideoOpen] = useState(false);
+    // const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
             <Header subtitle="Utilisation" />
-            <VideoModal
+            {/* <VideoModal
                 open={videoOpen}
                 onClose={handleCloseVideo}
                 videoId={YOUTUBE_VIDEO_ID}
                 title="Démonstration LiveChat"
-            />
+            /> */}
 
             <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
                 {/* Page intro */}
@@ -70,12 +70,12 @@ export default function Usage() {
 
                 {/* Quick nav */}
                 <div className="mt-8 flex flex-col items-center gap-3">
-                    <button
+                    {/* <button
                         onClick={() => setVideoOpen(true)}
                         className="w-full max-w-md rounded-full border border-white/15 bg-white/5 px-7 pb-3.5 pt-3 text-center text-sm font-semibold transition-colors duration-200 hover:border-white/25 hover:bg-white/10"
                     >
                         Démonstration vidéo
-                    </button>
+                    </button> */}
                     <nav className="flex flex-wrap justify-center gap-2">
                         {sections.map((s) => (
                             <button
