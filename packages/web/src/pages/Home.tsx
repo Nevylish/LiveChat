@@ -59,16 +59,16 @@ export default function Home() {
                                 {/* <br className="hidden sm:block" />
                                 Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas? */}
                             </p>
-                            <div className="unselectable mt-8 flex flex-wrap gap-3">
+                            <div className="unselectable mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                                 <a
                                     href="/config"
-                                    className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                    className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
                                 >
                                     Configurer votre overlay
                                 </a>
                                 <button
                                     onClick={() => setVideoOpen(true)}
-                                    className="rounded-full border border-border px-7 py-3 text-sm font-semibold transition-colors duration-200 hover:border-foreground/25 hover:bg-white/5"
+                                    className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors duration-200 hover:border-foreground/25 hover:bg-white/5"
                                 >
                                     Démonstration vidéo
                                 </button>
