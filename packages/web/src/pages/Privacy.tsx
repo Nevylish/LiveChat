@@ -30,7 +30,7 @@ const sections = [
     {
         title: '6. Droits des utilisateurs',
         content:
-            "Puisque nous ne collectons aucune donnée, il n'y a aucune donnée à consulter, modifier ou supprimer. Cependant, vous pouvez retirer LiveChat de votre serveur Discord et de votre client OBS Studio à tout moment.",
+            "Puisque nous ne collectons aucune donnée, il n'y a aucune donnée à consulter, modifier ou supprimer. Cependant, vous pouvez retirer LiveChat de votre serveur Discord et de votre logiciel de streaming à tout moment.",
     },
     {
         title: '7. Hébergement',
@@ -62,7 +62,7 @@ export default function Privacy() {
                         acceptez cette politique de confidentialité.
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 8 juin 2026
+                        Dernière mise à jour : 16 juin 2026
                     </p>
                 </div>
 
