@@ -156,4 +156,10 @@ export namespace Functions {
     export const formatBulletList = (items: string[]): string => {
         return items.map((item) => `- ${item}`).join('\n');
     };
+
+    export const escapeMarkdown = (text: string): string => {
+        const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, '$1');
+        const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, '\\$1');
+        return escaped;
+    };
 }
