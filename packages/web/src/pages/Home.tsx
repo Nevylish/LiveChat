@@ -48,7 +48,7 @@ export default function Home() {
                 {/* Hero */}
                 <section className="relative flex min-h-[calc(100vh-65px)] items-center py-16 md:py-0">
                     <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-6 md:grid-cols-2 md:items-center md:gap-16">
-                        <div className="max-md:text-center">
+                        <div>
                             <h1 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.75rem] md:text-5xl">
                                 Laissez vos amis
                                 <br />
@@ -59,7 +59,7 @@ export default function Home() {
                                 {/* <br className="hidden sm:block" />
                                 Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas? */}
                             </p>
-                            <div className="unselectable mt-8 flex flex-wrap gap-3 max-md:justify-center">
+                            <div className="unselectable mt-8 flex flex-wrap gap-3">
                                 <a
                                     href="/config"
                                     className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
@@ -75,7 +75,7 @@ export default function Home() {
                             </div>
 
                             {/* Stats */}
-                            <div className="mt-10 flex flex-col gap-6 max-md:items-center sm:flex-row sm:flex-wrap sm:gap-8">
+                            <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
                                         <Users className="h-4 w-4 text-foreground/80" />
@@ -151,7 +151,7 @@ export default function Home() {
                     <div className="mx-auto max-w-6xl space-y-20 px-5 sm:space-y-28 sm:px-6">
                         {/* Feature 1 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <div className="max-md:text-center">
+                            <div>
                                 <h2 className="text-2xl font-bold sm:text-3xl">
                                     Prise en charge de plusieurs plateformes
                                 </h2>
@@ -190,7 +190,7 @@ export default function Home() {
                                     draggable={false}
                                 />
                             </div>
-                            <div className="order-1 max-md:text-center md:order-2">
+                            <div className="order-1 md:order-2">
                                 <h2 className="text-2xl font-bold sm:text-3xl">Streamez à plusieurs</h2>
                                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
                                     Invitez vos amis à installer LiveChat en configurant le même serveur Discord que
@@ -201,7 +201,7 @@ export default function Home() {
 
                         {/* Feature 3 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <div className="max-md:text-center">
+                            <div>
                                 <h2 className="text-2xl font-bold sm:text-3xl">
                                     Compatible avec toutes les applications de streaming
                                 </h2>
@@ -264,7 +264,7 @@ export default function Home() {
                         {/* CTA */}
                         <div className="text-center">
                             <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
-                            <p className="text-left mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                                 LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox (
                                 <a
                                     href="https://x.com/cacaboxtv"
