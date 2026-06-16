@@ -6,7 +6,7 @@
 
 **LiveChat**, inspiré par la Cacabox, est l'outil ultime pour rendre vos streams interactifs.
 
-Il s'agit d'un **bot Discord couplé à un overlay de stream** qui permet à vos amis et vos modérateurs d'afficher des images, de lancer des vidéos ou de jouer des sons directement sur votre live, via une simple commande Discord (`/livechat`).
+Il s'agit d'un **bot Discord couplé à un overlay de stream** qui permet à vos amis d'afficher des images, de lancer des vidéos ou de jouer des sons directement sur votre live, via une simple commande Discord (`/livechat`).
 
 ## 🎬 Démonstration
 
