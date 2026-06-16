@@ -40,6 +40,8 @@ export class LiveChatServer extends EventEmitter {
                 methods: ['GET', 'POST'],
                 credentials: true,
             },
+            pingInterval: 10000,
+            pingTimeout: 5000,
         });
 
         this.connectedStreamers = new Map<string, ConnectedStreamersType>();
@@ -91,14 +93,22 @@ export class LiveChatServer extends EventEmitter {
                     .then(async (guild) => {
                         if (guild) {
                             if (this.isStreamerConnected(data.username, data.guildId)) {
-                                this.emitError(
-                                    socket,
-                                    guild.name
-                                        ? `Le nom d'utilisateur ${data.username} est déjà utilisé sur le serveur Discord: ${guild.name}`
-                                        : `Le nom d'utilisateur ${data.username} est déjà utilisé sur le serveur Discord.`,
-                                    { username: data.username, guildId: data.guildId },
-                                );
-                                return;
+                                const existingData = this.getStreamerData(data.username, data.guildId);
+                                if (existingData) {
+                                    const existingSocket = this.io.sockets.sockets.get(existingData.socketId);
+                                    if (existingSocket) {
+                                        Logger.warn(
+                                            'LiveChatServer',
+                                            `Replacing existing connection for ${data.username} (old socket: ${existingData.socketId}, new socket: ${socket.id})`,
+                                            {
+                                                username: data.username,
+                                                guildId: data.guildId,
+                                            },
+                                        );
+                                        existingSocket.disconnect(true);
+                                    }
+                                    this.removeStreamer(data.username, data.guildId);
+                                }
                             }
 
                             const streamersConnectedLength = this.getConnectedStreamersCountByGuild(data.guildId);
@@ -118,6 +128,19 @@ export class LiveChatServer extends EventEmitter {
                                     socket,
                                     "Le nombre maximum de streameurs est atteint pour l'abonnement Gratuit.",
                                     { username: data.username, guildId: data.guildId, slots: streamersConnectedLength },
+                                );
+                                return;
+                            }
+
+                            if (!socket.connected) {
+                                Logger.warn(
+                                    'LiveChatServer',
+                                    `Socket disconnected during registration for ${data.username}`,
+                                    {
+                                        username: data.username,
+                                        guildId: data.guildId,
+                                        socketId: socket.id,
+                                    },
                                 );
                                 return;
                             }
@@ -151,7 +174,10 @@ export class LiveChatServer extends EventEmitter {
                 for (const [_, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.removeStreamer(data.username, data.guildId);
-                        Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`);
+                        Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`, {
+                            guildId: data.guildId,
+                            socketId: socket.id,
+                        });
                     }
                 }
             });
