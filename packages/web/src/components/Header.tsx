@@ -105,7 +105,7 @@ export default function Header({ subtitle }: HeaderProps) {
                     />
                     <span
                         className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                            menuOpen ? '-translate-y-[8px] -rotate-45' : ''
+                            menuOpen ? 'translate-y-[8px] -rotate-45' : ''
                         }`}
                     />
                 </div>
