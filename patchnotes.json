@@ -4,7 +4,7 @@
         "date": "16 Juin 2026",
         "title": "Site web & Code source",
         "changes": [
-            "La partie Configuration du site web à été repensée pour être plus belle et compréhensible. Un tutoriel vidéo est désormais disponible pour vous aider à suivre les étapes.",
+            "La partie Configuration du site web a été repensée pour être plus belle et compréhensible. Un tutoriel vidéo est désormais disponible pour vous aider à suivre les étapes.",
             "Nous avons rajouté une page Utilisation pour mieux expliquer le fonctionnement de LiveChat, cette page n'est probablement pas encore parfaite.",
             "Sur le footer, il est désormais possible d'accéder à une page de status des services (status.nevylish.fr).",
             "Le code source de la partie overlay et serveur a encore été optimisé et simplifié."
