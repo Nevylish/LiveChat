@@ -250,7 +250,7 @@ export default function Config() {
                                             href="https://discord.com/oauth2/authorize?client_id=1379921658109890610"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-block rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                            className="block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 sm:inline sm:w-auto"
                                         >
                                             Installer le bot
                                         </a>
@@ -319,7 +319,7 @@ export default function Config() {
 
                                     <button
                                         onClick={generateLink}
-                                        className="mt-6 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                        className="mt-6 w-full rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 sm:w-auto"
                                     >
                                         Générer mon lien
                                     </button>
@@ -458,7 +458,7 @@ export default function Config() {
                                     <div className="mt-6">
                                         <a
                                             href="/usage"
-                                            className="inline-block rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                            className="block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 sm:inline sm:w-auto"
                                         >
                                             Découvrir comment utiliser LiveChat →
                                         </a>

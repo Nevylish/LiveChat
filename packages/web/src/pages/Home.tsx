@@ -262,7 +262,7 @@ export default function Home() {
                         </div>
 
                         {/* CTA */}
-                        <div className="text-center">
+                        <div className="md:text-center">
                             <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
                             <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                                 LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox (
@@ -278,7 +278,7 @@ export default function Home() {
                             <div className="mt-8">
                                 <a
                                     href="/config"
-                                    className="unselectable rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                    className="unselectable block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 md:inline md:w-auto"
                                 >
                                     Passer à la configuration de votre overlay
                                 </a>
