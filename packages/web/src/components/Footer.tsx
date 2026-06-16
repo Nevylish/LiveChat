@@ -2,7 +2,7 @@ const FOOTER_LINKS: { label: string; href: string; external?: boolean }[] = [
     { label: 'Politique de confidentialité', href: '/privacy' },
     { label: "Conditions d'utilisation", href: '/terms' },
     { label: 'Code source', href: 'https://github.com/Nevylish/LiveChat', external: true },
-    { label: 'Serveur Discord', href: 'https://discord.gg/xy4wsUa8xR', external: true },
+    { label: 'État du service', href: 'https://status.nevylish.fr/fr', external: true },
 ];
 
 export default function Footer() {
