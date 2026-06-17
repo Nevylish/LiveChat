@@ -38,7 +38,7 @@ export namespace Handlers {
         commands.forEach((command) => {
             if (command.info.name) {
                 client.commands.set(command.info.name, command);
-                Logger.success('Handlers', `${command.info.name} command loaded`);
+                Logger.log('Handlers', `${command.info.name} command loaded`);
             }
         });
 

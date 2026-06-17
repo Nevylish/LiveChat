@@ -177,10 +177,9 @@ function processNextContent() {
 
     setTimeout(() => {
         if (!anonymous) handleUserInfos(from, fullscreen);
-        socket.emit('started', interactionId);
 
         cleanupCurrentContent(() => {
-            const element = createContentElement(content);
+            const element = createContentElement(content, interactionId);
             if (element) {
                 displayContent(element, fullscreen, text);
             }
@@ -211,7 +210,7 @@ function cleanupCurrentContent(callback) {
     }
 }
 
-function createContentElement(content) {
+function createContentElement(content, interactionId) {
     try {
         const url = new URL(content);
         const filename = url.pathname.split('/').pop() || '';
@@ -249,6 +248,7 @@ function createContentElement(content) {
                 void element.offsetWidth;
                 element.classList.add('fade-in');
                 element.play().catch(console.error);
+                socket.emit('started', interactionId, element.duration * 1000);
             };
             element.addEventListener('ended', () => {
                 element.classList.add('fade-out');
@@ -274,6 +274,7 @@ function createContentElement(content) {
             element.onload = () => {
                 void element.offsetWidth;
                 element.classList.add('fade-in');
+                socket.emit('started', interactionId);
             };
 
             currentTimeout = setTimeout(() => {

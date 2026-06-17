@@ -1,5 +1,6 @@
 import { AutocompleteInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
+import { Functions } from './Functions';
 
 export namespace TargetsManager {
     export const EVERYONE_OPTION_LABEL = '📌 Envoyer à tous les streameurs connectés';
@@ -30,7 +31,10 @@ export namespace TargetsManager {
 
     export const buildStreamersList = (streamers: Array<{ username: string }>): string => {
         return streamers
-            .map((s) => `➜ [**Rejoindre le stream de ${s.username}**](https://twitch.tv/${s.username})`)
+            .map((s) => {
+                const username = Functions.escapeMarkdown(s.username);
+                return `➜ [**Rejoindre le stream de ${username}**](https://twitch.tv/${username})`;
+            })
             .join('\n');
     };
 }

@@ -99,10 +99,13 @@ export class LiveChatServer extends EventEmitter {
                                     if (existingSocket) {
                                         Logger.warn(
                                             'LiveChatServer',
-                                            `Replacing existing connection for ${data.username} (old socket: ${existingData.socketId}, new socket: ${socket.id})`,
+                                            `Replacing existing connection for ${data.username}`,
                                             {
                                                 username: data.username,
                                                 guildId: data.guildId,
+                                                guildName: guild.name ?? 'Unknown',
+                                                oldSocketId: existingData.socketId,
+                                                newSocketId: socket.id,
                                             },
                                         );
                                         existingSocket.disconnect(true);
@@ -139,6 +142,7 @@ export class LiveChatServer extends EventEmitter {
                                     {
                                         username: data.username,
                                         guildId: data.guildId,
+                                        guildName: guild.name ?? 'Unknown',
                                         socketId: socket.id,
                                     },
                                 );
@@ -156,7 +160,8 @@ export class LiveChatServer extends EventEmitter {
                             Logger.success('LiveChatServer', `${data.username} connected to LiveChat`, {
                                 username: data.username,
                                 guildId: data.guildId,
-                                guild: guild.name ?? data.guildId,
+                                guildName: guild.name ?? 'Unknown',
+                                socketId: socket.id,
                             });
                         } else {
                             handleBotMissingFromGuild();
@@ -171,10 +176,12 @@ export class LiveChatServer extends EventEmitter {
             });
 
             socket.on('disconnect', () => {
+                Logger.log('LiveChatServer', `Socket disconnected`, { socketId: socket.id });
                 for (const [_, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.removeStreamer(data.username, data.guildId);
                         Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`, {
+                            username: data.username,
                             guildId: data.guildId,
                             socketId: socket.id,
                         });
@@ -182,8 +189,8 @@ export class LiveChatServer extends EventEmitter {
                 }
             });
 
-            socket.on('started', (interactionId: string) => {
-                this.emit('started', interactionId);
+            socket.on('started', (interactionId: string, duration?: number) => {
+                this.emit('started', interactionId, duration);
             });
 
             socket.on('ended', (interactionId: string) => {
@@ -258,7 +265,7 @@ export class LiveChatServer extends EventEmitter {
 
     private start(): void {
         this.httpServer.listen(this.port, () => {
-            Logger.success('LiveChatServer', `Server is running on port ${this.port}`);
+            Logger.log('LiveChatServer', `Server is running on port ${this.port}`);
         });
     }
 

@@ -1,5 +1,14 @@
 [
     {
+        "version": "v1.6.3",
+        "date": "17 Juin 2026",
+        "title": "Optimisation ++",
+        "changes": [
+            "Nous avons changé la manière de récuperer le temps restant d'une vidéo ou un son du bouton Passer le LiveChat (Xs), il ralentissait la commande parfois de plusieurs secondes. La commande /livechat devrait s'exécuter beaucoup plus rapidement désormais.",
+            "Correction des markdowns dans les pseudos des streameurs (sur les embeds et dans les logs)."
+        ]
+    },
+    {
         "version": "v1.6.2",
         "date": "16 Juin 2026",
         "title": "Site web & Code source",

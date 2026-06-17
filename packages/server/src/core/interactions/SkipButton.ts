@@ -1,8 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
-import getVideoDuration from 'get-video-duration';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
-import { Logger } from '../utils/Logger';
 
 const defaultSkipButtonTime: number = 15;
 const defaultImageDuration: number = 8;
@@ -12,18 +10,9 @@ export const setupSkipButton = async (
     interaction: ChatInputCommandInteraction,
     embed: EmbedBuilder,
     fileType: string,
-    url: string,
     socketIds: string[],
 ) => {
     let duration = fileType === 'image' ? defaultImageDuration * 1000 : defaultSkipButtonTime * 1000;
-
-    if (fileType === 'video' || fileType === 'audio') {
-        duration =
-            (await getVideoDuration(url, process.env.FFPROBE_PATH).catch((err) => {
-                Logger.error('LiveChatCommand', '(addSkipButton.getVideoDuration)', err);
-                return defaultSkipButtonTime;
-            })) * 1000;
-    }
 
     const skipButton = new ButtonBuilder()
         .setCustomId('skip_' + interaction.id)
@@ -54,18 +43,24 @@ export const setupSkipButton = async (
         if (refreshInterval) clearInterval(refreshInterval);
     };
 
-    const onStarted = (id: string) => {
+    // TODO: Les secondes m'ont perdu j'ai demandé à Gemini. A refaire.
+    const onStarted = (id: string, videoDuration?: number) => {
         if (id !== interaction.id || hasStarted) return;
         hasStarted = true;
 
+        if (videoDuration && videoDuration > 0) {
+            duration = videoDuration;
+        }
+
         startTime = Date.now();
         skipButton.setDisabled(false);
-        skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(duration)})`);
+        const initialDisplay = Math.ceil(duration / 1000) * 1000;
+        skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(initialDisplay)})`);
         interaction.editReply({ embeds: [embed], components: [row] }).catch(() => cleanup());
 
         refreshInterval = setInterval(() => {
             const elapsed = Date.now() - startTime;
-            const remaining = duration - elapsed + 1000;
+            const remaining = duration - elapsed;
 
             if (remaining <= 0) {
                 clearInterval(refreshInterval);
@@ -78,7 +73,8 @@ export const setupSkipButton = async (
             }
 
             if (!isSkipped) {
-                skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(remaining)})`);
+                const displayRemaining = Math.ceil(remaining / 1000) * 1000;
+                skipButton.setLabel(`Passer le LiveChat (${Functions.formatDurationMs(displayRemaining)})`);
                 interaction.editReply({ embeds: [embed], components: [row] }).catch(() => cleanup());
             }
         }, 1000);

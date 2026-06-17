@@ -111,7 +111,7 @@ export namespace Logger {
         if (msg.context && Object.keys(msg.context).length > 0) {
             const ctx = Object.entries(msg.context)
                 .map(([key, value]) => Functions.escapeMarkdown(`${key}: ${value}`))
-                .join(' • ');
+                .join('\n\> ');
             line += `\n\> ${ctx}`;
         }
 

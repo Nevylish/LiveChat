@@ -29,6 +29,8 @@ export class CacheManager {
         );
     }
 
+    // On garde les logs en log le temps de réfléchir à l'implémentation du cache et de la manière de le faire.
+
     /**
      * Récupère une valeur dans le cache ou exécute la fonction pour la récupérer.
      * @param key Clé unique (ex: l'URL d'origine)
@@ -44,16 +46,16 @@ export class CacheManager {
         const cached = this.cache.get(key);
 
         if (cached && cached.expiresAt > now) {
-            Logger.warn('CacheManager', 'Cache hit', { key });
+            Logger.log('CacheManager', 'Cache hit', { key });
             return cached.data;
         }
 
         if (this.pendingPromises.has(key)) {
-            Logger.warn('CacheManager', 'Deduping request, waiting for existing promise', { key });
+            Logger.log('CacheManager', 'Deduping request, waiting for existing promise', { key });
             return this.pendingPromises.get(key) as Promise<T>;
         }
 
-        Logger.warn('CacheManager', 'Cache miss, fetching data', { key });
+        Logger.log('CacheManager', 'Cache miss, fetching data', { key });
 
         const promise = fetcher()
             .then((data) => {

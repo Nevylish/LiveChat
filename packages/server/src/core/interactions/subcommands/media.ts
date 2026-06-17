@@ -131,7 +131,7 @@ const broadcast = async (
 
         const socketIds = targets.map((s) => s.socketId);
 
-        await setupSkipButton(client, interaction, embed, filetype.param, url, socketIds);
+        await setupSkipButton(client, interaction, embed, filetype.param, socketIds);
 
         const payload = {
             content: url,
@@ -148,12 +148,16 @@ const broadcast = async (
             client.livechat.io.to(socketIds[0]).emit('broadcast', payload);
         }
 
-        Logger.success('LiveChatCommand', `Sent to ${targets.length} client(s)`, {
-            from: interaction.user.tag,
-            type: filetype.display,
-            guildId: interaction.guildId,
-            guild: interaction.guild?.name,
-        });
+        Logger.success(
+            'LiveChatCommand',
+            `LiveChat sent to ${isEveryone ? 'everyone' : targets[0].username} (${targets.length})`,
+            {
+                from: interaction.user.tag,
+                type: filetype.display,
+                guildId: interaction.guildId,
+                guild: interaction.guild?.name,
+            },
+        );
     } catch (err: any) {
         Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat', {
             from: interaction.user.tag,
