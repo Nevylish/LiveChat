@@ -52,6 +52,23 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         return;
     }
 
+    // Doublon
+    if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
+        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
+        if (!streamers.length) {
+            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+    } else {
+        const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
+        if (!streamerData) {
+            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
+            await interaction.editReply({ embeds: [embed] });
+            return;
+        }
+    }
+
     const platformResult = await Router.route(url);
     if (platformResult.error) {
         const embed = Functions.buildEmbed(platformResult.error, 'Alert');
@@ -86,6 +103,7 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         url = ProxyService.useProxy(url);
     }
 
+    // Doublon
     if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
         const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
         if (!streamers.length) {
