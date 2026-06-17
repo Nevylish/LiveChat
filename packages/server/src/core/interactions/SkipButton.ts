@@ -1,4 +1,11 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Colors,
+    EmbedBuilder,
+} from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
 
@@ -36,11 +43,31 @@ export const setupSkipButton = async (
     let isSkipped = false;
     let hasStarted = false;
     let hasEnded = false;
+    let activeSocketIds = [...socketIds];
 
     const cleanup = () => {
         client.livechat.off('started', onStarted);
         client.livechat.off('ended', onEnded);
+        client.livechat.off('streamerDisconnected', onStreamerDisconnected);
         if (refreshInterval) clearInterval(refreshInterval);
+    };
+
+    const onStreamerDisconnected = (socketId: string) => {
+        if (activeSocketIds.includes(socketId)) {
+            activeSocketIds = activeSocketIds.filter((id) => id !== socketId);
+
+            if (activeSocketIds.length === 0) {
+                cleanup();
+                if (!isSkipped && !hasEnded) {
+                    skipButton.setLabel('Connexion perdue');
+                    skipButton.setStyle(ButtonStyle.Danger);
+                    skipButton.setDisabled(true);
+                    embed.setColor(Colors.Red);
+                    interaction.editReply({ embeds: [embed], components: [row] }).catch(() => {});
+                    collector.stop('disconnected');
+                }
+            }
+        }
     };
 
     // TODO: Les secondes m'ont perdu j'ai demandé à Gemini. A refaire.
@@ -96,6 +123,7 @@ export const setupSkipButton = async (
 
     client.livechat.on('started', onStarted);
     client.livechat.on('ended', onEnded);
+    client.livechat.on('streamerDisconnected', onStreamerDisconnected);
 
     collector.on('collect', async (i) => {
         await i.deferUpdate();

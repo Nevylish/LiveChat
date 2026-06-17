@@ -180,6 +180,7 @@ export class LiveChatServer extends EventEmitter {
                 for (const [_, data] of this.connectedStreamers.entries()) {
                     if (data.socketId === socket.id) {
                         this.removeStreamer(data.username, data.guildId);
+                        this.emit('streamerDisconnected', socket.id);
                         Logger.log('LiveChatServer', `${data.username} is no longer connected to LiveChat`, {
                             username: data.username,
                             guildId: data.guildId,
