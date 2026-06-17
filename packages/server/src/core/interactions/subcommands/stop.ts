@@ -45,10 +45,11 @@ const emitStop = async (
         }
 
         const streamsList = TargetsManager.buildStreamersList(targets);
+        const targetUsername = Functions.escapeMarkdown(targets[0].username);
         const embed = Functions.buildEmbed(
             isEveryone
                 ? `### LiveChat arrêté et file d'attente vidée sur tous les streams\n${streamsList}`
-                : `### LiveChat arrêté et file d'attente vidée sur le stream de ${targets[0].username}` +
+                : `### LiveChat arrêté et file d'attente vidée sur le stream de ${targetUsername}` +
                       `\n\n➜ [**Rejoindre le stream de ${targets[0].username}**](https://twitch.tv/${targets[0].username})`,
             'Good',
         );

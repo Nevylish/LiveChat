@@ -20,7 +20,9 @@ export namespace Functions {
             (color === 'Error' ? '**Erreur:** ' : '') +
             (color === 'Alert' ? '**Alerte:** ' : '') +
             description +
-            `\n\n-# Si vous pensez qu'il s'agit d'un bug, contactez moi sur Twitter [@Nevylish](https://x.com/Nevylish) ou créez une [issue sur GitHub](https://github.com/Nevylish/LiveChat/issues).` +
+            (color === 'Error'
+                ? `\n\n-# Si vous pensez qu'il s'agit d'un bug, contactez moi sur Twitter [@Nevylish](https://x.com/Nevylish) ou créez une [issue sur GitHub](https://github.com/Nevylish/LiveChat/issues).`
+                : '') +
             `\n\n-# [**Installer LiveChat**](${Constants.getBaseUrl()})\u2005\u2005•\u2005\u2005[**Voir les patch notes**](${Constants.getUrl('updates')})`;
 
         switch (color) {

@@ -140,8 +140,10 @@ const broadcast = async (
         const streamsList = TargetsManager.buildStreamersList(targets);
         const fileTypeDescription = buildFileTypeDescription(filetype, text, fullscreen, anonymous);
 
+        const targetUsername = Functions.escapeMarkdown(targets[0].username);
+
         const embed = Functions.buildEmbed(
-            `### LiveChat envoyé ${isEveryone ? 'à tous les streameurs connectés' : `sur le stream de ${targets[0].username}`}` +
+            `### LiveChat envoyé ${isEveryone ? 'à tous les streameurs connectés' : `sur le stream de ${targetUsername}`}` +
                 `\n\nType de fichier: **${fileTypeDescription}**` +
                 `\n\n${streamsList}`,
             'Good',

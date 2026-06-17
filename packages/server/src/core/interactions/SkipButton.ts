@@ -1,11 +1,4 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ChatInputCommandInteraction,
-    Colors,
-    EmbedBuilder,
-} from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
 
@@ -62,7 +55,7 @@ export const setupSkipButton = async (
                     skipButton.setLabel('Connexion perdue');
                     skipButton.setStyle(ButtonStyle.Danger);
                     skipButton.setDisabled(true);
-                    embed.setColor(Colors.Red);
+                    embed.setColor(0xff614d);
                     interaction.editReply({ embeds: [embed], components: [row] }).catch(() => {});
                     collector.stop('disconnected');
                 }

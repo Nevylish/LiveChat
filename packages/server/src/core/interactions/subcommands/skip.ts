@@ -45,10 +45,12 @@ const emitSkip = async (
         }
 
         const streamsList = TargetsManager.buildStreamersList(targets);
+        const targetUsername = Functions.escapeMarkdown(targets[0].username);
+
         const embed = Functions.buildEmbed(
             isEveryone
                 ? `### LiveChat passé au suivant sur tous les streams\n${streamsList}`
-                : `### LiveChat passé au suivant sur le stream de ${targets[0].username}` +
+                : `### LiveChat passé au suivant sur le stream de ${targetUsername}` +
                       `\n\n➜ [**Rejoindre le stream de ${targets[0].username}**](https://twitch.tv/${targets[0].username})`,
             'Good',
         );
