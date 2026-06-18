@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Seo from '../components/Seo';
 
 const GIST_URL = 'https://raw.githubusercontent.com/Nevylish/LiveChat/refs/heads/main/patchnotes.json';
 
@@ -34,6 +35,11 @@ export default function Updates() {
 
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
+            <Seo
+                title="Notes de mise à jour - LiveChat"
+                description="Consultez l'historique des mises à jour de LiveChat : nouvelles fonctionnalités, corrections et améliorations."
+                path="/updates"
+            />
             <Header subtitle="Patch Notes" />
 
             <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:px-6 sm:py-12">

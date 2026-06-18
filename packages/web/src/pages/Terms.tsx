@@ -1,5 +1,6 @@
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Seo from '../components/Seo';
 
 const sections = [
     {
@@ -42,6 +43,11 @@ const sections = [
 export default function Terms() {
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
+            <Seo
+                title="Conditions d'utilisation - LiveChat"
+                description="Conditions d'utilisation de LiveChat, le bot Discord et l'overlay de streaming. Lisez les règles d'usage avant d'utiliser le service."
+                path="/terms"
+            />
             <Header />
 
             <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">

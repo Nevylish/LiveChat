@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 // import { useCallback, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Seo from '../components/Seo';
 // import VideoModal from '../components/VideoModal';
 
 // const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
@@ -51,6 +52,11 @@ export default function Usage() {
 
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
+            <Seo
+                title="Comment utiliser LiveChat ? Guide complet"
+                description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
+                path="/usage"
+            />
             <Header subtitle="Utilisation" />
             {/* <VideoModal
                 open={videoOpen}

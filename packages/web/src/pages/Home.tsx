@@ -2,6 +2,8 @@ import { ChevronDown, Server, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import JsonLd from '../components/JsonLd';
+import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
 const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
@@ -21,6 +23,35 @@ const faqs = [
     },
 ];
 
+const softwareApplicationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'LiveChat',
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Discord, OBS Studio',
+    description:
+        "LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord.",
+    url: 'https://livechat.nevylish.fr/',
+    offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'EUR',
+    },
+};
+
+const faqPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+        },
+    })),
+};
+
 export default function Home() {
     const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(null);
     const [videoOpen, setVideoOpen] = useState(false);
@@ -35,6 +66,14 @@ export default function Home() {
 
     return (
         <div className="dark min-h-screen text-foreground">
+            <Seo
+                title="LiveChat - Laissez vos amis animer vos streams"
+                description="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
+                path="/"
+            />
+            <JsonLd data={softwareApplicationSchema} />
+            <JsonLd data={faqPageSchema} />
+
             <div className="bg-layer" />
             <Header />
             <VideoModal

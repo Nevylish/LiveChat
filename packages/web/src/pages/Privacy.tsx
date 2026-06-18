@@ -1,5 +1,6 @@
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Seo from '../components/Seo';
 
 const sections = [
     {
@@ -52,6 +53,11 @@ const sections = [
 export default function Privacy() {
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
+            <Seo
+                title="Politique de confidentialité - LiveChat"
+                description="LiveChat et son site web ne collectent aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur."
+                path="/privacy"
+            />
             <Header />
 
             <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">

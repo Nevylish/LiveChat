@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
 const YOUTUBE_VIDEO_ID = 'iIK6me_W1BQ';
@@ -75,6 +76,11 @@ export default function Config() {
 
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
+            <Seo
+                title="Configurer LiveChat - Bot Discord et overlay"
+                description="Configurez LiveChat en quelques minutes : installation du bot Discord, génération du lien d'overlay et intégration dans OBS Studio."
+                path="/config"
+            />
             <Header subtitle="Configuration" />
             <VideoModal
                 open={videoOpen}

@@ -11,15 +11,10 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/config" element={<Config />} />
-            <Route path="/config.html" element={<Config />} />
             <Route path="/usage" element={<Usage />} />
-            <Route path="/usage.html" element={<Usage />} />
             <Route path="/updates" element={<Updates />} />
-            <Route path="/updates.html" element={<Updates />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/privacy.html" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
-            <Route path="/terms.html" element={<Terms />} />
             <Route path="*" element={<Home />} />
         </Routes>
     );
