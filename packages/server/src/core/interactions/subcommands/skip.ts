@@ -4,36 +4,26 @@ import { Functions } from '../../utils/Functions';
 import { Logger } from '../../utils/Logger';
 import { TargetsManager } from '../../utils/Targets';
 
-type ConnectedStreamer = { socketId: string; username: string; guildId: string };
-
 export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
     const target = interaction.options.getString('cible', true) as string;
 
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    if (target === TargetsManager.EVERYONE_SKIP_LABEL) {
-        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
-        if (!streamers.length) {
-            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-        await emitSkip(client, interaction, streamers);
-    } else {
-        const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
-        if (!streamerData) {
-            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-        await emitSkip(client, interaction, [streamerData]);
-    }
+    const targets = await TargetsManager.validateAndGetTargets(
+        client,
+        interaction,
+        target,
+        TargetsManager.EVERYONE_SKIP_LABEL,
+    );
+    if (!targets) return;
+
+    await emitSkip(client, interaction, targets);
 };
 
 const emitSkip = async (
     client: DiscordClient,
     interaction: ChatInputCommandInteraction,
-    targets: ConnectedStreamer[],
+    targets: TargetsManager.ConnectedStreamer[],
 ): Promise<void> => {
     try {
         const isEveryone = targets.length > 1;

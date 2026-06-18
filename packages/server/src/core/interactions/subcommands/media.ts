@@ -11,8 +11,6 @@ import { Logger } from '../../utils/Logger';
 import { TargetsManager } from '../../utils/Targets';
 import { setupSkipButton } from '../SkipButton';
 
-type ConnectedStreamer = { socketId: string; username: string; guildId: string };
-
 export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
     const target = interaction.options.getString('cible', true) as string;
     let url = interaction.options.getString('url') as string;
@@ -52,22 +50,13 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         return;
     }
 
-    // Doublon
-    if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
-        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
-        if (!streamers.length) {
-            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-    } else {
-        const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
-        if (!streamerData) {
-            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-    }
+    const targets = await TargetsManager.validateAndGetTargets(
+        client,
+        interaction,
+        target,
+        TargetsManager.EVERYONE_OPTION_LABEL,
+    );
+    if (!targets) return;
 
     const platformResult = await Router.route(url);
     if (platformResult.error) {
@@ -103,30 +92,26 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         url = ProxyService.useProxy(url);
     }
 
-    // Doublon
-    if (target === TargetsManager.EVERYONE_OPTION_LABEL) {
-        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
-        if (!streamers.length) {
-            const embed = Functions.buildEmbed(`Aucun streameur n'est connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-        await broadcast(client, interaction, streamers, url, fullscreen, anonymous, text);
-    } else {
-        const streamerData = client.livechat.getStreamerData(target, interaction.guildId);
-        if (!streamerData) {
-            const embed = Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return;
-        }
-        await broadcast(client, interaction, [streamerData], url, fullscreen, anonymous, text);
+    const activeTargets = targets
+        .map((t) => client.livechat.getStreamerData(t.username, t.guildId))
+        .filter((t): t is TargetsManager.ConnectedStreamer => t !== undefined);
+
+    if (!activeTargets.length) {
+        const embed =
+            target === TargetsManager.EVERYONE_OPTION_LABEL
+                ? Functions.buildEmbed("Aucun streameur n'est connecté à LiveChat.", 'Error')
+                : Functions.buildEmbed(`**${target}** n'est pas connecté à LiveChat.`, 'Error');
+        await interaction.editReply({ embeds: [embed] });
+        return;
     }
+
+    await broadcast(client, interaction, activeTargets, url, fullscreen, anonymous, text);
 };
 
 const broadcast = async (
     client: DiscordClient,
     interaction: ChatInputCommandInteraction,
-    targets: ConnectedStreamer[],
+    targets: TargetsManager.ConnectedStreamer[],
     url: string,
     fullscreen: boolean,
     anonymous: boolean,
@@ -170,7 +155,7 @@ const broadcast = async (
 
         Logger.success(
             'LiveChatCommand',
-            `LiveChat sent to ${isEveryone ? 'everyone' : targets[0].username} (${targets.length})`,
+            `LiveChat sent to ${isEveryone ? `everyone (${targets.length} targets)` : targets[0].username}`,
             {
                 from: interaction.user.tag,
                 type: filetype.display,
