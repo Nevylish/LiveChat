@@ -46,14 +46,15 @@ const emitSkip = async (
         );
 
         await interaction.editReply({ embeds: [embed] });
-    } catch (err: any) {
+    } catch (err) {
+        const errorObj = err instanceof Error ? err : new Error(String(err));
         Logger.error('SkipCommand', 'Error while skipping to next LiveChat', {
             from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
-            error: err,
+            error: errorObj.message,
         });
-        const embed = Functions.buildEmbed(`${err.message}`, 'Error');
+        const embed = Functions.buildEmbed(`${errorObj.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });
     }
 };

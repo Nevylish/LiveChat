@@ -161,10 +161,11 @@ export namespace ProxyService {
             } else {
                 res.end();
             }
-        } catch (err: any) {
+        } catch (err) {
             clearTimeout(fetchTimeout);
 
-            if (err.name === 'AbortError') {
+            const isAbortError = err instanceof Error && err.name === 'AbortError';
+            if (isAbortError) {
                 if (!res.headersSent) {
                     if (res.writableEnded || res.destroyed) {
                         Logger.debug('ProxyService', 'Client disconnected, fetch aborted', { url: targetUrl });
@@ -176,7 +177,8 @@ export namespace ProxyService {
                 return;
             }
 
-            Logger.error('ProxyService', 'Error while proxying (500)', err);
+            const errorObj = err instanceof Error ? err : new Error(String(err));
+            Logger.error('ProxyService', 'Error while proxying (500)', errorObj);
             if (!res.headersSent) res.status(500).send('Internal Server Error');
         }
     };

@@ -41,8 +41,9 @@ export namespace Giphy {
 
                     Logger.warn('Giphy', 'No GIF found', { url });
                     return null;
-                } catch (err: any) {
-                    Logger.error('Giphy', 'Error while fetching media', { url, error: err });
+                } catch (err) {
+                    const errorMessage = err instanceof Error ? err.message : String(err);
+                    Logger.error('Giphy', 'Error while fetching media', { url, error: errorMessage });
                     return null;
                 }
             },

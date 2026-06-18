@@ -56,8 +56,9 @@ export namespace Handlers {
 
         try {
             await cmd.onAutocomplete(interaction);
-        } catch (err: any) {
-            Logger.error('Handlers', err?.message || String(err), {
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            Logger.error('Handlers', errorMessage, {
                 userId: user.id,
                 userTag: user.tag,
                 command: commandName,
@@ -76,8 +77,8 @@ export namespace Handlers {
 
         try {
             await cmd.onExecute(interaction);
-        } catch (err: any) {
-            const errorMessage = err?.message || String(err) || 'Une erreur inconnue est survenue.';
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
             const embed = Functions.buildEmbed(errorMessage, 'Error');
             if (interaction.deferred) {
                 await interaction.editReply({ embeds: [embed] });

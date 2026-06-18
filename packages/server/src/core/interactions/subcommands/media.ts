@@ -163,15 +163,16 @@ const broadcast = async (
                 guild: interaction.guild?.name,
             },
         );
-    } catch (err: any) {
+    } catch (err) {
+        const errorObj = err instanceof Error ? err : new Error(String(err));
         Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat', {
             from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
-            error: err,
+            error: errorObj.message,
         });
         const embed = Functions.buildEmbed(
-            `Une erreur est survenue lors de l'envoi du LiveChat.\n${err.message}`,
+            `Une erreur est survenue lors de l'envoi du LiveChat.\n${errorObj.message}`,
             'Error',
         );
         await interaction.editReply({ embeds: [embed] });

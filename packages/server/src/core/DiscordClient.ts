@@ -44,9 +44,10 @@ export default class DiscordClient extends Client {
 
             return false;
         } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
             Logger.error('Client', 'Error while checking premium subscription', {
                 guildId: guildId,
-                error: err.message,
+                error: errorMessage,
             });
             return false;
         }
