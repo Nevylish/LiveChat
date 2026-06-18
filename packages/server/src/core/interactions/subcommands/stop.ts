@@ -51,7 +51,7 @@ const emitStop = async (
             from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
-            error: errorObj.message,
+            error: err,
         });
         const embed = Functions.buildEmbed(`${errorObj.message}`, 'Error');
         await interaction.editReply({ embeds: [embed] });

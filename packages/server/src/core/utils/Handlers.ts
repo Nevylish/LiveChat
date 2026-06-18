@@ -62,11 +62,11 @@ export namespace Handlers {
         try {
             await cmd.onAutocomplete(interaction);
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : String(err);
-            Logger.error('Handlers', errorMessage, {
+            Logger.error('Handlers', 'Error while handling autocomplete', {
                 userId: user.id,
                 userTag: user.tag,
                 command: commandName,
+                error: err,
             });
         }
     };
@@ -91,10 +91,11 @@ export namespace Handlers {
                 await interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
             }
 
-            Logger.error('Handlers', errorMessage, {
+            Logger.error('Handlers', 'Error while handling command', {
                 userId: user.id,
                 userTag: user.tag,
                 command: commandName,
+                error: err,
             });
         }
     };

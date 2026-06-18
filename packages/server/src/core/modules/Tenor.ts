@@ -22,7 +22,7 @@ export namespace Tenor {
 
                     const response = await fetch(apiUrl);
                     if (!response.ok) {
-                        Logger.error('Tenor', `API Error: ${response.status}`, { url });
+                        Logger.error('Tenor', `API Error: ${response.status}`, url);
                         return null;
                     }
                     const data = (await response.json()) as TenorApiResponse;
@@ -40,7 +40,7 @@ export namespace Tenor {
 
                     return null;
                 } catch (err) {
-                    Logger.error('Tenor', 'Error while fetching media', { url, error: err });
+                    Logger.error('Tenor', 'Error while fetching media', { url, err });
                     return null;
                 }
             },

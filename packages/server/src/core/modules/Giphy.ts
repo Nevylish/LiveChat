@@ -39,11 +39,10 @@ export namespace Giphy {
                         return data.data.images.original.url;
                     }
 
-                    Logger.warn('Giphy', 'No GIF found', { url });
+                    Logger.warn('Giphy', 'No GIF found', url);
                     return null;
                 } catch (err) {
-                    const errorMessage = err instanceof Error ? err.message : String(err);
-                    Logger.error('Giphy', 'Error while fetching media', { url, error: errorMessage });
+                    Logger.error('Giphy', 'Error while fetching media', { url, err });
                     return null;
                 }
             },

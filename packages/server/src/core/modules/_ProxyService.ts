@@ -177,8 +177,7 @@ export namespace ProxyService {
                 return;
             }
 
-            const errorObj = err instanceof Error ? err : new Error(String(err));
-            Logger.error('ProxyService', 'Error while proxying (500)', errorObj);
+            Logger.error('ProxyService', 'Error while proxying (500)', err);
             if (!res.headersSent) res.status(500).send('Internal Server Error');
         }
     };

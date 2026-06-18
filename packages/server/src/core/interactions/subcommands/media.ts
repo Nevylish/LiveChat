@@ -32,9 +32,17 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
     let parsedUrl: URL;
     try {
         parsedUrl = new URL(url);
-    } catch {
+    } catch (err) {
+        Logger.error('MediaCommand', 'Error while parsing URL', {
+            from: interaction.user.tag,
+            guildId: interaction.guildId,
+            guild: interaction.guild?.name,
+            url,
+            error: err,
+        });
+
         const embed = Functions.buildEmbed(
-            "Le lien n'est pas valide.\nVous devez fournir une URL commençant par http:// ou https://.",
+            "L'URL est invalide, seuls les liens commençant par http:// ou https:// sont acceptés.",
             'Alert',
         );
         await interaction.editReply({ embeds: [embed] });
@@ -154,7 +162,7 @@ const broadcast = async (
         }
 
         Logger.success(
-            'LiveChatCommand',
+            'MediaCommand',
             `LiveChat sent to ${isEveryone ? `everyone (${targets.length} targets)` : targets[0].username}`,
             {
                 from: interaction.user.tag,
@@ -165,11 +173,11 @@ const broadcast = async (
         );
     } catch (err) {
         const errorObj = err instanceof Error ? err : new Error(String(err));
-        Logger.error('LiveChatCommand', 'Error while broadcasting LiveChat', {
+        Logger.error('MediaCommand', 'Error while broadcasting LiveChat', {
             from: interaction.user.tag,
             guildId: interaction.guildId,
             guild: interaction.guild?.name,
-            error: errorObj.message,
+            error: err,
         });
         const embed = Functions.buildEmbed(
             `Une erreur est survenue lors de l'envoi du LiveChat.\n${errorObj.message}`,

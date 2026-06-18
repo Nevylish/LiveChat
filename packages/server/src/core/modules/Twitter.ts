@@ -18,7 +18,7 @@ export namespace Twitter {
 
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
-                    Logger.error('Twitter', `API Error: ${response.status}`, { url });
+                    Logger.error('Twitter', `API Error: ${response.status}`, url);
                     return null;
                 }
                 const data = (await response.json()) as TwitterApiResponse;
@@ -34,7 +34,7 @@ export namespace Twitter {
                 Logger.warn('Twitter', 'No media found in the tweet', { url });
                 return null;
             } catch (err) {
-                Logger.error('Twitter', 'Error while fetching media', { url, error: err });
+                Logger.error('Twitter', 'Error while fetching media', { url, err });
                 return null;
             }
         });
