@@ -6,7 +6,7 @@ import { Logger } from './utils/Logger';
 
 export default class DiscordClient extends Client {
     public readonly commands: Collection<string, Command> = new Collection();
-    public livechat: LiveChatServer;
+    public livechat!: LiveChatServer;
 
     constructor() {
         super({
@@ -29,7 +29,8 @@ export default class DiscordClient extends Client {
 
     public async hasGuildPremiumSubscription(guildId: string): Promise<Boolean> {
         try {
-            const SKU_PLUS = process.env.SKU_PLUS_ID;
+            const SKU_PLUS = process.env.SKU_PLUS_ID!;
+            if (!this.application) return false;
 
             const entitlements = await this.application.entitlements.fetch({
                 guild: guildId,

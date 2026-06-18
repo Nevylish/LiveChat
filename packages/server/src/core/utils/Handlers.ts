@@ -15,15 +15,20 @@ export namespace Handlers {
             }, 30 * 1000);
         });
 
-        client.on(
-            Events.InteractionCreate,
-            async (interaction: ChatInputCommandInteraction | AutocompleteInteraction) => {
-                if (!interaction || interaction.user.bot) return;
+        client.on(Events.InteractionCreate, async (interaction) => {
+            if (interaction.user.bot) return;
 
-                if (interaction.isCommand()) await handleCommand(client, interaction);
-                else if (interaction.isAutocomplete()) await handleAutocomplete(client, interaction);
-            },
-        );
+            if (!interaction.guildId) {
+                if (interaction.isChatInputCommand()) {
+                    const embed = Functions.buildEmbed('LiveChat ne peut être utilisé que dans un serveur.', 'Error');
+                    await interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
+                }
+                return;
+            }
+
+            if (interaction.isChatInputCommand()) await handleCommand(client, interaction);
+            else if (interaction.isAutocomplete()) await handleAutocomplete(client, interaction);
+        });
 
         Logger.success('Handlers', 'Events listeners loaded');
     };
@@ -44,7 +49,7 @@ export namespace Handlers {
 
         const commandsData = commands.map((cmd) => cmd.info);
 
-        await client.application.commands.set(commandsData);
+        await client.application!.commands.set(commandsData);
 
         Logger.success('Handlers', `Slash commands registered. (${commandsData.length} commands)`);
     };

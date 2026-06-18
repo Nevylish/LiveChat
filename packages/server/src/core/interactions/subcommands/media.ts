@@ -65,7 +65,7 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         return;
     }
 
-    url = platformResult.url;
+    url = platformResult.url || url;
     const bypassProxy = platformResult.bypassProxy;
 
     const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase();
@@ -148,7 +148,7 @@ const broadcast = async (
         };
 
         if (isEveryone) {
-            client.livechat.io.to(interaction.guildId).emit('broadcast', payload);
+            client.livechat.io.to(interaction.guildId!).emit('broadcast', payload);
         } else {
             client.livechat.io.to(socketIds[0]).emit('broadcast', payload);
         }

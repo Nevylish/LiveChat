@@ -18,7 +18,7 @@ export namespace TargetsManager {
         interaction: AutocompleteInteraction,
         everyoneLabel: string,
     ): string[] => {
-        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId);
+        const streamers = client.livechat.getConnectedStreamersByGuild(interaction.guildId!);
         const focusedOption = interaction.options.getFocused(true);
         const focusedValue = focusedOption.value.toLowerCase();
 
@@ -47,12 +47,7 @@ export namespace TargetsManager {
         target: string,
         everyoneLabel: string,
     ): Promise<ConnectedStreamer[] | null> => {
-        const guildId = interaction.guildId;
-        if (!guildId) {
-            const embed = Functions.buildEmbed('Cette commande ne peut être utilisée que dans un serveur.', 'Error');
-            await interaction.editReply({ embeds: [embed] });
-            return null;
-        }
+        const guildId = interaction.guildId!;
 
         if (target === everyoneLabel) {
             const streamers = client.livechat.getConnectedStreamersByGuild(guildId);

@@ -43,11 +43,11 @@ export namespace Functions {
         return embed;
     };
 
-    export const buildPremiumButton = async (client: DiscordClient, guildId: string): Promise<ButtonBuilder> => {
+    export const buildPremiumButton = async (client: DiscordClient, guildId: string): Promise<ButtonBuilder | null> => {
         const isPremiumGuild = await client.hasGuildPremiumSubscription(guildId);
 
         if (isPremiumGuild) {
-            return new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID);
+            return new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID!);
         }
 
         return null;

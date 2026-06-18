@@ -29,7 +29,7 @@ const emitStop = async (
         const isEveryone = targets.length > 1;
 
         if (isEveryone) {
-            client.livechat.io.to(interaction.guildId).emit('clear');
+            client.livechat.io.to(interaction.guildId!).emit('clear');
         } else {
             client.livechat.io.to(targets[0].socketId).emit('clear');
         }

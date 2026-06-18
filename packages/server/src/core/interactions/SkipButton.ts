@@ -26,6 +26,8 @@ export const setupSkipButton = async (
 
     await interaction.editReply({ embeds: [embed], components: [row] });
 
+    if (!interaction.channel) return;
+
     const collector = interaction.channel.createMessageComponentCollector({
         filter: (i) => i.customId === 'skip_' + interaction.id,
         time: 60 * 60 * 1000,

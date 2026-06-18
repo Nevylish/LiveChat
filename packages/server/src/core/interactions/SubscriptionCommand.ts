@@ -47,7 +47,7 @@ export default class SubscriptionCommand extends Command {
             .setColor('Blurple');
 
         const plusComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID),
+            new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID!),
         );
 
         const starComponent = new ActionRowBuilder<ButtonBuilder>().addComponents(

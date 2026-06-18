@@ -29,7 +29,7 @@ const emitSkip = async (
         const isEveryone = targets.length > 1;
 
         if (isEveryone) {
-            client.livechat.io.to(interaction.guildId).emit('skip');
+            client.livechat.io.to(interaction.guildId!).emit('skip');
         } else {
             client.livechat.io.to(targets[0].socketId).emit('skip');
         }
