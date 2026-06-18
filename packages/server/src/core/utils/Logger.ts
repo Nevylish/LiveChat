@@ -106,7 +106,7 @@ export namespace Logger {
     const formatWebhookMessage = (msg: WebhookMessage): string => {
         const emoji = getLevelEmoji(msg.level);
         const message = Functions.escapeMarkdown(msg.message);
-        let line = `[${getTimestamp(msg.timestamp)}] \ ${emoji} • **${msg.source} →** ${message}`;
+        let line = `[${getTimestamp(msg.timestamp)}] \ ${emoji} \ **${msg.source} →** ${message}`;
 
         if (msg.context && Object.keys(msg.context).length > 0) {
             const ctx = Object.entries(msg.context)
