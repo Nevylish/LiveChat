@@ -193,38 +193,38 @@ export namespace Logger {
 
     // Public methods
 
-    export const log = (message: string, ...optionalParams: any[]): void => {
+    export const log = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.INFO)) {
-            console.log(formatMessage(LogLevel.INFO, message), ...optionalParams);
+            console.log(formatMessage(LogLevel.INFO, source), message, ...optionalParams);
         }
-        queueWebhook(LogLevel.INFO, message, optionalParams);
+        queueWebhook(LogLevel.INFO, source, [message, ...optionalParams]);
     };
 
-    export const error = (message: string, ...optionalParams: any[]): void => {
+    export const error = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.ERROR)) {
-            console.error(formatMessage(LogLevel.ERROR, message), ...optionalParams);
+            console.error(formatMessage(LogLevel.ERROR, source), message, ...optionalParams);
         }
-        queueWebhook(LogLevel.ERROR, message, optionalParams);
+        queueWebhook(LogLevel.ERROR, source, [message, ...optionalParams]);
     };
 
-    export const warn = (message: string, ...optionalParams: any[]): void => {
+    export const warn = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.WARN)) {
-            console.warn(formatMessage(LogLevel.WARN, message), ...optionalParams);
+            console.warn(formatMessage(LogLevel.WARN, source), message, ...optionalParams);
         }
-        queueWebhook(LogLevel.WARN, message, optionalParams);
+        queueWebhook(LogLevel.WARN, source, [message, ...optionalParams]);
     };
 
-    export const success = (message: string, ...optionalParams: any[]): void => {
+    export const success = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.SUCCESS)) {
-            console.log(formatMessage(LogLevel.SUCCESS, message), ...optionalParams);
+            console.log(formatMessage(LogLevel.SUCCESS, source), message, ...optionalParams);
         }
-        queueWebhook(LogLevel.SUCCESS, message, optionalParams);
+        queueWebhook(LogLevel.SUCCESS, source, [message, ...optionalParams]);
     };
 
-    export const debug = (message: string, ...optionalParams: any[]): void => {
+    export const debug = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.DEBUG)) {
-            console.log(formatMessage(LogLevel.DEBUG, message), ...optionalParams);
+            console.log(formatMessage(LogLevel.DEBUG, source), message, ...optionalParams);
         }
-        queueWebhook(LogLevel.DEBUG, message, optionalParams);
+        queueWebhook(LogLevel.DEBUG, source, [message, ...optionalParams]);
     };
 }
