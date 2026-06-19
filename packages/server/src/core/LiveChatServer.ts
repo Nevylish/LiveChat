@@ -269,7 +269,13 @@ export class LiveChatServer extends EventEmitter {
 
         this.app.use('/assets', express.static(path.join(projectRoot, 'shared', 'assets'), staticOptions));
 
-        this.app.use('/', express.static(path.join(projectRoot, 'packages', 'web', 'dist'), staticOptions));
+        this.app.use(
+            '/',
+            express.static(path.join(projectRoot, 'packages', 'web', 'dist'), {
+                ...staticOptions,
+                index: false,
+            }),
+        );
 
         const indexHtmlPath = path.join(projectRoot, 'packages', 'web', 'dist', 'index.html');
 
