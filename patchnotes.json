@@ -6,7 +6,10 @@
         "changes": [
             "Nous avons changé la manière de récuperer le temps restant d'une vidéo ou un son du bouton Passer le LiveChat (Xs), il ralentissait la commande parfois de plusieurs secondes. La commande /livechat devrait s'exécuter beaucoup plus rapidement désormais.",
             "Le bouton se désactive si la connexion avec l'overlay est perdue.",
-            "Correction des markdowns dans les pseudos des streameurs (sur les embeds et dans les logs)."
+            "Correction des markdowns dans les pseudos des streameurs (sur les embeds et dans les logs).",
+            "Tous les assets (images, polices d'écritures) utilisent un cdn externe pour libérer le serveur.",
+            "La durée de validité des liens Proxy ont été réduites.",
+            "Le système de cache a été revu pour être plus efficace sans causer de problème."
         ]
     },
     {
