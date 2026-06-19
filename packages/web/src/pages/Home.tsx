@@ -175,6 +175,8 @@ export default function Home() {
                                 alt="Prévisualisation de l'overlay LiveChat"
                                 className="w-full max-w-lg rounded-xl md:max-w-none"
                                 draggable={false}
+                                loading="eager"
+                                fetchPriority="high"
                             />
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 
 @font-face {
     font-family: 'ABCGinto';
+    font-display: swap;
     src:
         local('ABCGinto'),
         local('ABCGinto-Regular'),
