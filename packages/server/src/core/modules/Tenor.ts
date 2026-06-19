@@ -44,7 +44,7 @@ export namespace Tenor {
                     return null;
                 }
             },
-            24 * 60 * 60 * 1000,
+            6 * 60 * 60 * 1000,
         );
     };
 

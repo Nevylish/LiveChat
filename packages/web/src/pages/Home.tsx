@@ -6,6 +6,15 @@ import JsonLd from '../components/JsonLd';
 import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
+declare global {
+    interface Window {
+        __LIVECHAT_STATS__?: {
+            streamers: number;
+            servers: number;
+        };
+    }
+}
+
 const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
 
 const faqs = [
@@ -53,16 +62,20 @@ const faqPageSchema = {
 };
 
 export default function Home() {
-    const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(null);
+    const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(
+        typeof window !== 'undefined' && window.__LIVECHAT_STATS__ ? window.__LIVECHAT_STATS__ : null
+    );
     const [videoOpen, setVideoOpen] = useState(false);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     useEffect(() => {
-        fetch('/api/stats')
-            .then((res) => res.json())
-            .then((data) => setStats(data))
-            .catch(() => {});
-    }, []);
+        if (!stats) {
+            fetch('/api/stats')
+                .then((res) => res.json())
+                .then((data) => setStats(data))
+                .catch(() => {});
+        }
+    }, [stats]);
 
     return (
         <div className="dark min-h-screen text-foreground">

@@ -25,7 +25,7 @@ export namespace ProxyService {
     export const useProxy = (url: string, source: string = 'Unknown', forceFileType: string = 'false'): string => {
         if (isProxyUrl(url)) return url;
 
-        const expires = Math.floor(Date.now() / 1000) + 3600;
+        const expires = Math.floor(Date.now() / 1000) + 900;
 
         const token = crypto
             .createHmac('sha256', secret)

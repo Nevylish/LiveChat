@@ -1,11 +1,14 @@
 import express = require('express');
 import path = require('path');
+import fs = require('fs');
+import os = require('os');
 import { EventEmitter } from 'events';
 import rateLimit from 'express-rate-limit';
 import { createServer, Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import DiscordClient from './DiscordClient';
 import { ProxyService } from './modules/_ProxyService';
+import { CacheManager } from './utils/CacheManager';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { Validations } from './utils/Validations';
@@ -24,6 +27,7 @@ export class LiveChatServer extends EventEmitter {
     private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer: HttpServer;
+    private indexHtmlTemplate: string | null = null;
 
     constructor(discordClient: DiscordClient) {
         super();
@@ -203,7 +207,7 @@ export class LiveChatServer extends EventEmitter {
     private setupMiddlewares(): void {
         const limiter = rateLimit({
             windowMs: 1 * 60 * 1000,
-            max: 1000,
+            max: 100,
             message: { error: 'Too many requests.' },
             standardHeaders: true,
             legacyHeaders: false,
@@ -215,6 +219,20 @@ export class LiveChatServer extends EventEmitter {
             res.json({
                 streamers: this.getConnectedStreamersCount(),
                 servers: this.discordClient.guilds.cache.size,
+                uptime: Math.round(process.uptime()),
+                discord: {
+                    ping: this.discordClient.ws.ping,
+                },
+                memory: {
+                    heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+                    rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+                    systemFree: Math.round(os.freemem() / 1024 / 1024),
+                    systemTotal: Math.round(os.totalmem() / 1024 / 1024),
+                },
+                sockets: {
+                    totalConnections: this.io.sockets.sockets.size,
+                },
+                cache: CacheManager.getStats(),
             });
         });
 
@@ -253,11 +271,31 @@ export class LiveChatServer extends EventEmitter {
 
         this.app.use('/', express.static(path.join(projectRoot, 'packages', 'web', 'dist'), staticOptions));
 
+        const indexHtmlPath = path.join(projectRoot, 'packages', 'web', 'dist', 'index.html');
+
         this.app.use((req, res) => {
             const hasFileExtension = /\.\w+$/.test(req.path);
 
             if (!hasFileExtension) {
-                res.sendFile(path.join(projectRoot, 'packages', 'web', 'dist', 'index.html'));
+                try {
+                    if (!this.indexHtmlTemplate) {
+                        this.indexHtmlTemplate = fs.readFileSync(indexHtmlPath, 'utf-8');
+                    }
+
+                    const stats = {
+                        streamers: this.getConnectedStreamersCount(),
+                        servers: this.discordClient.guilds.cache.size,
+                    };
+
+                    const injectedScript = `<script id="livechat-stats">window.__LIVECHAT_STATS__ = ${JSON.stringify(stats)};</script>`;
+                    const html = this.indexHtmlTemplate.replace('</head>', `${injectedScript}</head>`);
+
+                    res.setHeader('Content-Type', 'text/html');
+                    res.send(html);
+                } catch (err) {
+                    Logger.error('LiveChatServer', 'Error serving index.html with stats', err);
+                    res.status(500).send('Frontend is not built yet.');
+                }
             } else {
                 res.status(404).send('File not found');
             }
