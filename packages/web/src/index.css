@@ -2,7 +2,11 @@
 
 @font-face {
     font-family: 'ABCGinto';
-    src: local('ABCGinto'), local('ABCGinto-Regular'), url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/ABCGintoNormalVariable.woff2') format('woff2');
+    src:
+        local('ABCGinto'),
+        local('ABCGinto-Regular'),
+        url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/ABCGintoNormalVariable.woff2')
+            format('woff2');
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -325,4 +329,19 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+@keyframes errorPop {
+    0% {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.config-error {
+    animation: errorPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

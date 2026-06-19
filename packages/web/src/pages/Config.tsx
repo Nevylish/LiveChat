@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
 import { EthernetPort } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Seo from '../components/Seo';
@@ -14,6 +14,8 @@ export default function Config() {
     const [generatedLink, setGeneratedLink] = useState('');
     const [activeStep, setActiveStep] = useState('step-prereqs');
     const [videoOpen, setVideoOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isLinkBlurred, setIsLinkBlurred] = useState(true);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     const steps = [
@@ -28,25 +30,29 @@ export default function Config() {
         let v = value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
         if (v.startsWith('_')) v = v.substring(1);
         setUsername(v);
+        setError(null);
     }
 
     function validateGuildId(value: string) {
         setGuildId(value.replace(/[^0-9]/g, ''));
+        setError(null);
     }
 
     function generateLink() {
         if (!username || !guildId) {
-            alert('Veuillez remplir tous les champs.');
+            setError('Veuillez remplir tous les champs.');
             return;
         }
         if (username.length < 4 || username.length > 25) {
-            alert("Le nom d'utilisateur doit contenir entre 4 et 25 caractères.");
+            setError("Le nom d'utilisateur doit contenir entre 4 et 25 caractères.");
             return;
         }
         if (guildId.length < 17 || guildId.length > 21) {
-            alert("L'ID du serveur doit contenir entre 17 et 21 caractères.");
+            setError("L'ID du serveur doit contenir entre 17 et 21 caractères.");
             return;
         }
+        setError(null);
+        setIsLinkBlurred(true);
         const link = `https://${window.location.host}/overlay/overlay.html?username=${username}&guildId=${guildId}${disableSplash ? '&noSplash=true' : ''}`;
         setGeneratedLink(link);
     }
@@ -70,6 +76,7 @@ export default function Config() {
         const targetIndex = steps.findIndex((s) => s.id === id);
         directionRef.current = targetIndex >= currentIndex ? 'forward' : 'backward';
         setActiveStep(id);
+        setError(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -181,7 +188,7 @@ export default function Config() {
                                         <div className="flex gap-4 items-start">
                                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-[#5865F2]">
                                                 <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                                                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.873-.894.077.077 0 0 1-.008-.128c.126-.093.252-.19.372-.287a.075.075 0 0 1 .077-.011c3.92 1.793 8.18 1.793 12.061 0a.073.073 0 0 1 .078.009c.12.099.246.195.373.289a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107 14.36 14.36 0 0 0 1.226 1.99.076.076 0 0 0 .084-.03 19.86 19.86 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.156-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.156 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.156-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.156 2.418z"/>
+                                                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.873-.894.077.077 0 0 1-.008-.128c.126-.093.252-.19.372-.287a.075.075 0 0 1 .077-.011c3.92 1.793 8.18 1.793 12.061 0a.073.073 0 0 1 .078.009c.12.099.246.195.373.289a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107 14.36 14.36 0 0 0 1.226 1.99.076.076 0 0 0 .084-.03 19.86 19.86 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.156-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.156 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.156-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.156 2.418z" />
                                                 </svg>
                                             </span>
                                             <div>
@@ -196,8 +203,12 @@ export default function Config() {
 
                                         <div className="flex gap-4 items-start">
                                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                                                <svg viewBox="0 0 24 24" className="h-5 w-5 text-foreground" fill="currentColor">
-                                                    <path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12S18.617,24,12,24z M12,1.109 C5.995,1.109,1.11,5.995,1.11,12C1.11,18.005,5.995,22.89,12,22.89S22.89,18.005,22.89,12C22.89,5.995,18.005,1.109,12,1.109z M6.182,5.99c0.352-1.698,1.503-3.229,3.05-3.996c-0.269,0.273-0.595,0.483-0.844,0.78c-1.02,1.1-1.48,2.692-1.199,4.156 c0.355,2.235,2.455,4.06,4.732,4.028c1.765,0.079,3.485-0.937,4.348-2.468c1.848,0.063,3.645,1.017,4.7,2.548 c0.54,0.799,0.962,1.736,0.991,2.711c-0.342-1.295-1.202-2.446-2.375-3.095c-1.135-0.639-2.529-0.802-3.772-0.425 c-1.56,0.448-2.849,1.723-3.293,3.293c-0.377,1.25-0.216,2.628,0.377,3.772c-0.825,1.429-2.315,2.449-3.932,2.756 c-1.244,0.261-2.551,0.059-3.709-0.464c1.036,0.302,2.161,0.355,3.191-0.011c1.381-0.457,2.522-1.567,3.024-2.935 c0.556-1.49,0.345-3.261-0.591-4.54c-0.7-1.007-1.803-1.717-3.002-1.969c-0.38-0.068-0.764-0.098-1.148-0.134 c-0.611-1.231-0.834-2.66-0.528-3.996L6.182,5.99z"/>
+                                                <svg
+                                                    viewBox="0 0 24 24"
+                                                    className="h-5 w-5 text-foreground"
+                                                    fill="currentColor"
+                                                >
+                                                    <path d="M12,24C5.383,24,0,18.617,0,12S5.383,0,12,0s12,5.383,12,12S18.617,24,12,24z M12,1.109 C5.995,1.109,1.11,5.995,1.11,12C1.11,18.005,5.995,22.89,12,22.89S22.89,18.005,22.89,12C22.89,5.995,18.005,1.109,12,1.109z M6.182,5.99c0.352-1.698,1.503-3.229,3.05-3.996c-0.269,0.273-0.595,0.483-0.844,0.78c-1.02,1.1-1.48,2.692-1.199,4.156 c0.355,2.235,2.455,4.06,4.732,4.028c1.765,0.079,3.485-0.937,4.348-2.468c1.848,0.063,3.645,1.017,4.7,2.548 c0.54,0.799,0.962,1.736,0.991,2.711c-0.342-1.295-1.202-2.446-2.375-3.095c-1.135-0.639-2.529-0.802-3.772-0.425 c-1.56,0.448-2.849,1.723-3.293,3.293c-0.377,1.25-0.216,2.628,0.377,3.772c-0.825,1.429-2.315,2.449-3.932,2.756 c-1.244,0.261-2.551,0.059-3.709-0.464c1.036,0.302,2.161,0.355,3.191-0.011c1.381-0.457,2.522-1.567,3.024-2.935 c0.556-1.49,0.345-3.261-0.591-4.54c-0.7-1.007-1.803-1.717-3.002-1.969c-0.38-0.068-0.764-0.098-1.148-0.134 c-0.611-1.231-0.834-2.66-0.528-3.996L6.182,5.99z" />
                                                 </svg>
                                             </span>
                                             <div>
@@ -328,6 +339,12 @@ export default function Config() {
                                         </label>
                                     </div>
 
+                                    {error && (
+                                        <div className="config-error mt-5 rounded-lg border border-[#ff0054]/25 bg-[#ff0054]/5 px-4 py-3 text-sm font-semibold text-[#ff0054]">
+                                            {error}
+                                        </div>
+                                    )}
+
                                     <button
                                         onClick={generateLink}
                                         className="mt-6 w-full rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 sm:w-auto"
@@ -341,9 +358,26 @@ export default function Config() {
                                                 Votre lien d'overlay :
                                             </label>
                                             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                                                <code className="flex-1 break-all rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
-                                                    {generatedLink}
-                                                </code>
+                                                <div
+                                                    className="relative flex-1 cursor-pointer group"
+                                                    onClick={() => isLinkBlurred && setIsLinkBlurred(false)}
+                                                >
+                                                    <code
+                                                        className={`block w-full break-all rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm transition-all duration-300 ${
+                                                            isLinkBlurred
+                                                                ? 'blur-sm select-none pointer-events-none'
+                                                                : ''
+                                                        }`}
+                                                    >
+                                                        {generatedLink}
+                                                    </code>
+                                                    {isLinkBlurred && (
+                                                        <div className="absolute inset-0 flex items-center justify-center text-[10px] sm:text-xs font-semibold text-white/90 bg-black/60 rounded-lg backdrop-blur-[1px] border border-white/5 group-hover:bg-black/50 transition-colors">
+                                                            ATTENTION : Cliquez pour révéler le lien (Ne pas montrer en
+                                                            stream)
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <button
                                                     id="copy-link-btn"
                                                     onClick={() => copyToClipboard(generatedLink, 'copy-link-btn')}

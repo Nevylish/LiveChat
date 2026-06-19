@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import JsonLd from '../components/JsonLd';
+import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
@@ -66,6 +67,7 @@ export default function Home() {
         typeof window !== 'undefined' && window.__LIVECHAT_STATS__ ? window.__LIVECHAT_STATS__ : null,
     );
     const [videoOpen, setVideoOpen] = useState(false);
+    const [openFaq, setOpenFaq] = useState<number | null>(null);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     useEffect(() => {
@@ -201,141 +203,201 @@ export default function Home() {
                 {/* Features */}
                 <section id="features" className="py-20 sm:py-28">
                     <div className="mx-auto max-w-6xl space-y-20 px-5 sm:space-y-28 sm:px-6">
-                        {/* Feature 1 */}
-                        <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <div>
-                                <h2 className="text-2xl font-bold sm:text-3xl">
-                                    Prise en charge de plusieurs plateformes
+                        {/* Introduction de référencement */}
+                        <ScrollReveal direction="up" delay={0}>
+                            <div className="max-w-3xl mx-auto text-left space-y-4 pb-12 sm:pb-16 border-b border-border/40">
+                                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                                    Une nouvelle manière d'intégrer vos proches à vos streams.
                                 </h2>
-                                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                                    Partager des TikToks, des Tweets et plus encore en envoyant simplement un lien sans
-                                    devoir télécharger l'image ou la vidéo.
+                                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                                    LiveChat réinvente l'interaction avec vos spectateurs. En associant un bot Discord à
+                                    un overlay de stream, cette solution open-source gratuite permet à vos amis
+                                    d'afficher des images, de lancer des vidéos ou de jouer des sons en direct sur vos
+                                    streams Twitch, YouTube, Kick ou n'importe quelle autre plateforme. Que ce soit pour
+                                    faire des blagues, montrer une photo de vacances ou juste mettre un cri effrayant à
+                                    3 heures du matin, LiveChat est là et prêt à être utilisé.
                                 </p>
-                                <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                                    Actuellement supporté : <strong className="text-foreground">TikTok</strong>,{' '}
-                                    <strong className="text-foreground">YouTube</strong>,{' '}
-                                    <strong className="text-foreground">Instagram Reels</strong>,{' '}
-                                    <strong className="text-foreground">Giphy</strong>,{' '}
-                                    <strong className="text-foreground">Tenor</strong> &{' '}
-                                    <strong className="text-foreground">X</strong>.
-                                    <br />
-                                    Et bien sûr, vous pouvez uploader vos propres fichiers.
+                                <p className="text-xs sm:text-sm text-muted-foreground/60 leading-relaxed">
+                                    Continuez de scroller pour découvrir une partie des fonctionnalités que nous vous proposons.
                                 </p>
                             </div>
-                            <div className="max-md:flex max-md:justify-center">
+                        </ScrollReveal>
+
+                        {/* Feature 1 */}
+                        <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
+                            <ScrollReveal direction="up" delay={0}>
+                                <div>
+                                    <h2 className="text-2xl font-bold sm:text-3xl">
+                                        Prise en charge de plusieurs plateformes
+                                    </h2>
+                                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                                        Partager des TikToks, des Tweets et plus encore en envoyant simplement un lien
+                                        sans devoir télécharger l'image ou la vidéo.
+                                    </p>
+                                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                                        Utilisez la commande{' '}
+                                        <strong className="text-foreground">/liste-des-plateformes</strong> ou{' '}
+                                        <a
+                                            href="/usage#platforms"
+                                            className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                        >
+                                            cliquez ici
+                                        </a>{' '}
+                                        pour découvrir la liste des plateformes supportées.
+                                        <br />
+                                        Et bien sûr, vous pouvez uploader vos propres fichiers.
+                                    </p>
+                                </div>
+                            </ScrollReveal>
+                            <ScrollReveal direction="left" delay={150} className="max-md:flex max-md:justify-center">
                                 <img
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_tiktok.png"
                                     alt="Prise en charge TikTok"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
                                 />
-                            </div>
+                            </ScrollReveal>
                         </div>
 
                         {/* Feature 2 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <div className="order-2 max-md:flex max-md:justify-center md:order-1">
+                            <ScrollReveal
+                                direction="right"
+                                delay={150}
+                                className="order-2 max-md:flex max-md:justify-center md:order-1"
+                            >
                                 <img
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_streamtogether.png"
                                     alt="Streamez à plusieurs"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
                                 />
-                            </div>
-                            <div className="order-1 md:order-2">
-                                <h2 className="text-2xl font-bold sm:text-3xl">Streamez à plusieurs</h2>
-                                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                                    Invitez vos amis à installer LiveChat en configurant le même serveur Discord que
-                                    vous et streamez ensemble !
-                                </p>
-                            </div>
+                            </ScrollReveal>
+                            <ScrollReveal direction="up" delay={0} className="order-1 md:order-2">
+                                <div>
+                                    <h2 className="text-2xl font-bold sm:text-3xl">Streamez à plusieurs</h2>
+                                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                                        Invitez vos amis à installer LiveChat en configurant le même serveur Discord que
+                                        vous et streamez ensemble !
+                                    </p>
+                                </div>
+                            </ScrollReveal>
                         </div>
 
                         {/* Feature 3 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <div>
-                                <h2 className="text-2xl font-bold sm:text-3xl">
-                                    Compatible avec toutes les applications de streaming
-                                </h2>
-                                <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                                    LiveChat est compatible avec{' '}
-                                    <a
-                                        href="https://obsproject.com/"
-                                        className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                                    >
-                                        OBS Studio
-                                    </a>
-                                    ,{' '}
-                                    <a
-                                        href="https://streamlabs.com/"
-                                        className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                                    >
-                                        Streamlabs
-                                    </a>
-                                    ,{' '}
-                                    <a
-                                        href="https://prismlive.com/en_us"
-                                        className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                                    >
-                                        PRISM Live
-                                    </a>{' '}
-                                    et tous les autres logiciels sur lesquels vous pouvez ajouter une source Navigateur
-                                    Web.
-                                </p>
-                            </div>
-                            <div className="max-md:flex max-md:justify-center">
+                            <ScrollReveal direction="up" delay={0}>
+                                <div>
+                                    <h2 className="text-2xl font-bold sm:text-3xl">
+                                        Compatible avec toutes les applications de streaming
+                                    </h2>
+                                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                                        LiveChat est compatible avec{' '}
+                                        <a
+                                            href="https://obsproject.com/"
+                                            className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                        >
+                                            OBS Studio
+                                        </a>
+                                        ,{' '}
+                                        <a
+                                            href="https://streamlabs.com/"
+                                            className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                        >
+                                            Streamlabs
+                                        </a>
+                                        ,{' '}
+                                        <a
+                                            href="https://prismlive.com/en_us"
+                                            className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                        >
+                                            PRISM Live
+                                        </a>{' '}
+                                        et tous les autres logiciels sur lesquels vous pouvez ajouter une source
+                                        Navigateur Web.
+                                    </p>
+                                </div>
+                            </ScrollReveal>
+                            <ScrollReveal direction="left" delay={150} className="max-md:flex max-md:justify-center">
                                 <img
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_platforms.png"
                                     alt="Compatible avec toutes les applications de streaming"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
                                 />
-                            </div>
+                            </ScrollReveal>
                         </div>
 
                         {/* FAQ */}
                         <div className="mx-auto w-full max-w-2xl">
-                            <div className="text-center">
-                                <h2 className="text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
-                            </div>
+                            <ScrollReveal direction="up">
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
+                                </div>
+                            </ScrollReveal>
                             <div className="mt-10 divide-y divide-border border-y border-border">
-                                {faqs.map((faq, i) => (
-                                    <details key={i} className="group py-5 [&_summary::-webkit-details-marker]:hidden">
-                                        <summary className="unselectable flex cursor-pointer items-center justify-between gap-4 text-base font-semibold outline-none transition-colors hover:text-muted-foreground">
-                                            {faq.question}
-                                            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                        </summary>
-                                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                                            {faq.answer}
-                                        </p>
-                                    </details>
-                                ))}
+                                {faqs.map((faq, i) => {
+                                    const isOpen = openFaq === i;
+                                    return (
+                                        <ScrollReveal key={i} direction="up" delay={i * 100}>
+                                            <div className="py-5">
+                                                <button
+                                                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                                                    className="unselectable flex w-full items-center justify-between gap-4 text-left text-base font-semibold outline-none transition-colors hover:text-muted-foreground"
+                                                >
+                                                    {faq.question}
+                                                    <ChevronDown
+                                                        className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ${
+                                                            isOpen ? '-rotate-180' : ''
+                                                        }`}
+                                                    />
+                                                </button>
+                                                <div
+                                                    className={`grid transition-[grid-template-rows,opacity,filter] duration-300 ease-in-out ${
+                                                        isOpen
+                                                            ? 'grid-rows-[1fr] opacity-100 blur-none'
+                                                            : 'grid-rows-[0fr] opacity-0 blur-sm'
+                                                    }`}
+                                                >
+                                                    <div className="overflow-hidden">
+                                                        <p className="pt-3 text-sm leading-relaxed text-muted-foreground">
+                                                            {faq.answer}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ScrollReveal>
+                                    );
+                                })}
                             </div>
                         </div>
 
                         {/* CTA */}
-                        <div className="md:text-center">
-                            <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
-                            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-left">
-                                LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox (
-                                <a
-                                    href="https://x.com/cacaboxtv"
-                                    className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                                >
-                                    @cacaboxtv
-                                </a>{' '}
-                                sur X). En ayant accès aux mêmes technologies qu'eux, vous pouvez agrandir votre
-                                audience à partir de contenus courts verticaux qui peut-être deviendront viraux.
-                            </p>
-                            <div className="mt-8">
-                                <a
-                                    href="/config"
-                                    className="unselectable block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 md:inline md:w-auto"
-                                >
-                                    Passer à la configuration de votre overlay
-                                </a>
+                        <ScrollReveal direction="up">
+                            <div className="md:text-center">
+                                <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
+                                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-left">
+                                    LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox
+                                    (
+                                    <a
+                                        href="https://x.com/cacaboxtv"
+                                        className="text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
+                                    >
+                                        @cacaboxtv
+                                    </a>{' '}
+                                    sur X). En ayant accès aux mêmes technologies qu'eux, vous pouvez agrandir votre
+                                    audience à partir de contenus courts verticaux qui peut-être deviendront viraux.
+                                </p>
+                                <div className="mt-8">
+                                    <a
+                                        href="/config"
+                                        className="unselectable block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 md:inline md:w-auto"
+                                    >
+                                        Passer à la configuration de votre overlay
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </section>
             </main>
