@@ -218,7 +218,8 @@ export default function Home() {
                                     3 heures du matin, LiveChat est là et prêt à être utilisé.
                                 </p>
                                 <p className="text-xs sm:text-sm text-muted-foreground/60 leading-relaxed">
-                                    Continuez de scroller pour découvrir une partie des fonctionnalités que nous vous proposons.
+                                    Faites défiler la page pour découvrir quelques-unes des fonctionnalités que nous
+                                    proposons.
                                 </p>
                             </div>
                         </ScrollReveal>
