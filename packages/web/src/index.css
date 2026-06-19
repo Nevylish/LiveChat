@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: 'ABCGinto';
-    src: local('ABCGinto'), local('ABCGinto-Regular'), url('/assets/fonts/ABCGintoNormalVariable.woff2');
+    src: local('ABCGinto'), local('ABCGinto-Regular'), url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/ABCGintoNormalVariable.woff2') format('woff2');
 }
 
 @custom-variant dark (&:is(.dark *));

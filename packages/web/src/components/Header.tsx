@@ -47,7 +47,7 @@ export default function Header({ subtitle }: HeaderProps) {
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
                     <a href="/" className="flex items-center gap-2.5 text-lg font-bold">
                         <img
-                            src="/assets/images/livechat_transparent.png"
+                            src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/livechat_transparent.png"
                             alt="LiveChat"
                             className="h-8 w-8"
                             draggable={false}

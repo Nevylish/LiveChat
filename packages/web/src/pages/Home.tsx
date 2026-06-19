@@ -63,7 +63,7 @@ const faqPageSchema = {
 
 export default function Home() {
     const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(
-        typeof window !== 'undefined' && window.__LIVECHAT_STATS__ ? window.__LIVECHAT_STATS__ : null
+        typeof window !== 'undefined' && window.__LIVECHAT_STATS__ ? window.__LIVECHAT_STATS__ : null,
     );
     const [videoOpen, setVideoOpen] = useState(false);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
@@ -169,7 +169,7 @@ export default function Home() {
                         </div>
                         <div className="max-md:flex max-md:justify-center">
                             <img
-                                src="/assets/images/livechat_preview.png"
+                                src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/livechat_preview.png"
                                 alt="Prévisualisation de l'overlay LiveChat"
                                 className="w-full max-w-lg rounded-xl md:max-w-none"
                                 draggable={false}
@@ -224,7 +224,7 @@ export default function Home() {
                             </div>
                             <div className="max-md:flex max-md:justify-center">
                                 <img
-                                    src="/assets/images/card_tiktok.png"
+                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_tiktok.png"
                                     alt="Prise en charge TikTok"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
@@ -236,7 +236,7 @@ export default function Home() {
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
                             <div className="order-2 max-md:flex max-md:justify-center md:order-1">
                                 <img
-                                    src="/assets/images/card_streamtogether.png"
+                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_streamtogether.png"
                                     alt="Streamez à plusieurs"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
@@ -285,7 +285,7 @@ export default function Home() {
                             </div>
                             <div className="max-md:flex max-md:justify-center">
                                 <img
-                                    src="/assets/images/card_platforms.png"
+                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_platforms.png"
                                     alt="Compatible avec toutes les applications de streaming"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     draggable={false}
@@ -316,7 +316,7 @@ export default function Home() {
                         {/* CTA */}
                         <div className="md:text-center">
                             <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
-                            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-left">
                                 LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox (
                                 <a
                                     href="https://x.com/cacaboxtv"
