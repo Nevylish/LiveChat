@@ -8,13 +8,15 @@ services:
         env_file:
             - .env
         environment:
-            - NODE_ENV=production
+            - DOMAIN=${DOMAIN}
+            - FRONTEND_URI=${FRONTEND_URI}
+            - OVERLAY_URI=${OVERLAY_URI}
             - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
+            - DISCORD_WEBHOOK_LOGS=${DISCORD_WEBHOOK_LOGS}
             - TENOR_API_KEY=${TENOR_API_KEY}
             - GIPHY_API_KEY=${GIPHY_API_KEY}
-            - DOMAIN=${DOMAIN}
-            - DISCORD_WEBHOOK_LOGS=${DISCORD_WEBHOOK_LOGS}
+            - SKU_PLUS_ID=${SKU_PLUS_ID}
         ports:
             - '5000:5000'
         volumes:
