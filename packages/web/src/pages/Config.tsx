@@ -438,13 +438,13 @@ export default function Config() {
                                                 collez le code suivant :
                                                 <span className="mt-1.5 flex flex-col gap-2 sm:flex-row sm:items-center">
                                                     <code className="flex-1 rounded-lg bg-white/5 px-3 py-2 text-xs sm:text-sm">
-                                                        {'#cf-wrapper { display: none; }'}
+                                                        {'body:not(.livechat-overlay) { display: none !important; }'}
                                                     </code>
                                                     <button
                                                         id="copy-css-btn"
                                                         onClick={() =>
                                                             copyToClipboard(
-                                                                '#cf-wrapper { display: none; }',
+                                                                'body:not(.livechat-overlay) { display: none !important; }',
                                                                 'copy-css-btn',
                                                             )
                                                         }
