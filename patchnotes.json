@@ -6,7 +6,7 @@
         "changes": [
             "Désormais le serveur, l'overlay, le proxy et le site web sont chacun hébergés sur leurs propres serveurs.",
             "Cela permet de faire des mises à jour en quasi-transparence, sans rendre l'ensemble du service inaccessible.",
-            "Les liens d'overlay sont maintenant générés avec un token. Il assure que votre lien d'overlay ne sera pas usurpé."
+            "Les liens d'overlay sont maintenant générés avec une signature. Il assure que votre lien d'overlay ne sera pas usurpé."
         ]
     },
     {
