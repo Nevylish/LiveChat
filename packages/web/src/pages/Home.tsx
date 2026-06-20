@@ -60,7 +60,7 @@ export default function Home() {
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     useEffect(() => {
-        fetch('https://api.livechat.nevylish.fr/api/stats')
+        fetch('https://livechat-api.nevylish.fr/api/stats')
             .then((res) => res.json())
             .then((data) => setStats(data))
             .catch(() => {});

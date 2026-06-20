@@ -3,7 +3,7 @@
  */
 
 const SERVER_URL =
-    window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://api.livechat.nevylish.fr`;
+    window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://livechat-api.nevylish.fr`;
 
 const CONFIG = {
     RECONNECT_ATTEMPTS: 240 /* 240 * 4 = 1 hour ? */,

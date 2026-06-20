@@ -10,15 +10,11 @@ export namespace Constants {
 
     export const getApiPath = (): string => `${getBaseUrl()}/api`;
 
-    export const getAllowedOrigins = (): string[] => {
-        const origins = process.env.ALLOWED_ORIGINS;
-        if (origins) return origins.split(',').map((o) => o.trim());
-        return [getBaseUrl()];
-    };
-
     export const getFrontendUrl = (): string => process.env.FRONTEND_URI!;
 
     export const getOverlayUrl = (): string => process.env.OVERLAY_URI!;
+
+    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];
 
     export const ROUTES = {
         home: '/',
