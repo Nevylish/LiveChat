@@ -60,11 +60,10 @@ export default class DiscordClient extends Client {
 
         if (size === this.lastActivitySize) return;
 
-        const domain = process.env.DOMAIN;
         this.user?.setActivity(
             size > 0
                 ? `/livechat | ${size.toString() ?? '0'} ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
-                : `/livechat | ${domain}`,
+                : `/livechat | ${process.env.FRONTEND_URI!}`,
             { type: 3 },
         );
 

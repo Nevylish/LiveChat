@@ -201,6 +201,23 @@ export class LiveChatServer extends EventEmitter {
     }
 
     private setupMiddlewares(): void {
+        this.app.use((req, res, next) => {
+            const origin = req.headers.origin;
+            const allowedOrigins = Constants.getAllowedOrigins().map((o) => o.replace(/\/$/, ''));
+            if (origin && allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+                res.setHeader('Access-Control-Allow-Origin', origin);
+                res.setHeader('Access-Control-Allow-Credentials', 'true');
+            }
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization');
+
+            if (req.method === 'OPTIONS') {
+                res.sendStatus(204);
+            } else {
+                next();
+            }
+        });
+
         const limiter = rateLimit({
             windowMs: 1 * 60 * 1000,
             max: 100,

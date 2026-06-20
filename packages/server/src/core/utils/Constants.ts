@@ -10,9 +10,15 @@ export namespace Constants {
 
     export const getApiPath = (): string => `${getBaseUrl()}/api`;
 
-    export const getFrontendUrl = (): string => process.env.FRONTEND_URI!;
+    export const getFrontendUrl = (): string => {
+        const host = process.env.FRONTEND_URI!;
+        return host.includes('localhost') ? `http://${host}` : `https://${host}`;
+    };
 
-    export const getOverlayUrl = (): string => process.env.OVERLAY_URI!;
+    export const getOverlayUrl = (): string => {
+        const host = process.env.OVERLAY_URI!;
+        return host.includes('localhost') ? `http://${host}` : `https://${host}`;
+    };
 
     export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];
 
