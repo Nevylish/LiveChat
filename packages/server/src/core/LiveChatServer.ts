@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { createServer, Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import DiscordClient from './DiscordClient';
-import { ProxyService } from './modules/_ProxyService';
+
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { Validations } from './utils/Validations';
@@ -249,8 +249,6 @@ export class LiveChatServer extends EventEmitter {
             standardHeaders: true,
             legacyHeaders: false,
         });
-
-        this.app.get('/api/proxy', limiter, ProxyService.handle);
 
         this.app.get('/api/stats', limiter, (_, res) => {
             res.json({

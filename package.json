@@ -18,7 +18,9 @@
         "dev:server": "pnpm --filter @livechat/server dev",
         "dev:web": "pnpm --filter @livechat/web dev",
         "dev:overlay": "pnpm --filter @livechat/overlay dev",
-        "dev": "concurrently -n SERVER,WEB,OVERLAY -c blue,green,yellow \"pnpm dev:server\" \"pnpm dev:web\" \"pnpm dev:overlay\"",
+        "dev:proxy": "pnpm --filter @livechat/proxy dev",
+        "deploy:proxy": "pnpm --filter @livechat/proxy run deploy",
+        "dev": "concurrently -n SERVER,WEB,OVERLAY,PROXY -c blue,green,yellow,cyan \"pnpm dev:server\" \"pnpm dev:web\" \"pnpm dev:overlay\" \"pnpm dev:proxy\"",
         "start": "pnpm --filter @livechat/server start",
         "clean": "pnpm --filter @livechat/server exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && pnpm --filter @livechat/web exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
         "format": "prettier --write ."
