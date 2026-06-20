@@ -1,6 +1,8 @@
 {
-    "redirects": [{ "source": "/overlay.html", "destination": "/overlay/overlay.html", "permanent": true }],
     "rewrites": [
+        { "source": "/overlay.html", "destination": "https://livechat-overlay.nevylish.fr/overlay.html" },
+        { "source": "/overlay.css", "destination": "https://livechat-overlay.nevylish.fr/overlay.css" },
+        { "source": "/overlay.js", "destination": "https://livechat-overlay.nevylish.fr/overlay.js" },
         { "source": "/overlay/:path*", "destination": "https://livechat-overlay.nevylish.fr/:path*" },
         { "source": "/(.*)", "destination": "/index.html" }
     ]

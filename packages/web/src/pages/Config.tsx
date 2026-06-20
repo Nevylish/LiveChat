@@ -53,7 +53,7 @@ export default function Config() {
         }
         setError(null);
         setIsLinkBlurred(true);
-        const link = `https://livechat-overlay.nevylish.fr/overlay.html?username=${username}&guildId=${guildId}${disableSplash ? '&noSplash=true' : ''}`;
+        const link = `https://livechat.nevylish.fr/overlay.html?username=${username}&guildId=${guildId}${disableSplash ? '&noSplash=true' : ''}`;
         setGeneratedLink(link);
     }
 
