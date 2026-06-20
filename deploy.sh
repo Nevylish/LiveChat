@@ -10,7 +10,7 @@ echo "Fetching latest code..."
 git pull origin main
 
 echo "Rebuilding and restarting the container..."
-docker-compose up -d --build
+docker compose up -d --build
 
 echo "Cleaning up old images..."
 docker image prune -f
