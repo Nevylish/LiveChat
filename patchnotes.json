@@ -1,5 +1,17 @@
 [
     {
+        "version": "v1.6.4",
+        "date": "20 Juin 2026",
+        "title": "Overlay",
+        "changes": [
+            "L'overlay a subi quelques corrections",
+            "1: Les médias s'afficherons toujours au bon ratio désormais, avant les médias très haut ou très large s'aplatissaient.",
+            "2: Les bords arrondis et l'ombre autour des médias ne devraient plus dépasser du média.",
+            "3: Pour les vidéos et les audios, les contrôles (barre de progression, bouton play, pause et volume) sont complètement masqués",
+            "4: Avant le pseudo s'affichait plus rapidement que le média, il apparaissait toujours d'abord au milieu puis sur le coin du média. Maintenant il apparait en même temps que le média."
+        ]
+    },
+    {
         "version": "v1.6.3",
         "date": "17 Juin 2026",
         "title": "Optimisation ++",
