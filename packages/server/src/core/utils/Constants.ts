@@ -12,12 +12,12 @@ export namespace Constants {
 
     export const getFrontendUrl = (): string => {
         const host = process.env.FRONTEND_URI!;
-        return host.includes('localhost') ? `http://${host}` : `https://${host}`;
+        return host.includes('localhost') ? `http://${host}:5173` : `https://${host}`;
     };
 
     export const getOverlayUrl = (): string => {
         const host = process.env.OVERLAY_URI!;
-        return host.includes('localhost') ? `http://${host}` : `https://${host}`;
+        return host.includes('localhost') ? `http://${host}:4000` : `https://${host}`;
     };
 
     export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];

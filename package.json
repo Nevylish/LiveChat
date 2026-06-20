@@ -17,12 +17,16 @@
         "build:web": "pnpm --filter @livechat/web build",
         "dev:server": "pnpm --filter @livechat/server dev",
         "dev:web": "pnpm --filter @livechat/web dev",
+        "dev:overlay": "pnpm --filter @livechat/overlay dev",
+        "dev": "concurrently -n SERVER,WEB,OVERLAY -c blue,green,yellow \"pnpm dev:server\" \"pnpm dev:web\" \"pnpm dev:overlay\"",
         "start": "pnpm --filter @livechat/server start",
         "clean": "pnpm --filter @livechat/server exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && pnpm --filter @livechat/web exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
         "format": "prettier --write ."
     },
     "devDependencies": {
-        "prettier": "^3.8.1"
+        "concurrently": "^10.0.3",
+        "prettier": "^3.8.1",
+        "serve": "^14.2.6"
     },
     "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215"
 }
