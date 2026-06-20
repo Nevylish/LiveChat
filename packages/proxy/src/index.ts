@@ -68,9 +68,13 @@ const handleProxy = async (c: any) => {
     const expires = c.req.query('expires');
     const range = c.req.header('range');
 
+    if (!targetUrl && !token && !expires) {
+        return c.text('LiveChat Proxy is running!', 200);
+    }
+
     if (!targetUrl || !token || !expires) {
         console.warn('ProxyService: Missing parameters', { url: targetUrl, token, expires });
-        return c.text('Missing parameters', 403);
+        return c.text('Missing parameters', 400);
     }
 
     const now = Math.floor(Date.now() / 1000);
