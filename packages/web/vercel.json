@@ -1,8 +1,7 @@
 {
+    "redirects": [{ "source": "/overlay.html", "destination": "/overlay/overlay.html", "permanent": true }],
     "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        }
+        { "source": "/overlay/:path*", "destination": "https://overlay.livechat.nevylish.fr/:path*" },
+        { "source": "/(.*)", "destination": "/index.html" }
     ]
 }
