@@ -4,8 +4,3 @@ node_modules
 .idea
 .vscode
 .DS_Store
-package-lock.json
-
-# Vite
-packages/web/dist
-packages/web/.vite
