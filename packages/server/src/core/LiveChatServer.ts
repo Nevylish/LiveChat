@@ -24,7 +24,6 @@ export class LiveChatServer extends EventEmitter {
     private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer: HttpServer;
-    private indexHtmlTemplate: string | null = null;
 
     constructor(discordClient: DiscordClient) {
         super();
