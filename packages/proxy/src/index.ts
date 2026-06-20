@@ -11,7 +11,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_BODY_SIZE = 650 * 1024 * 1024; // 650 MB
 
-// Helper to extract media type/extension to match Functions.getMediaType in backend
 function getMediaType(url: string): string {
     try {
         const parsedUrl = new URL(url);
@@ -27,7 +26,6 @@ function getMediaType(url: string): string {
     return 'null';
 }
 
-// OPTIONS preflight handler
 app.options('*', (c) => {
     return new Response(null, {
         status: 204,
@@ -40,7 +38,6 @@ app.options('*', (c) => {
     });
 });
 
-// URL generation endpoint (optional, mirrors ProxyService.useProxy)
 app.get('/proxy/generate', (c) => {
     const url = c.req.query('url');
     const source = c.req.query('source') || 'Unknown';
@@ -65,20 +62,17 @@ app.get('/proxy/generate', (c) => {
     return c.json({ proxyUrl });
 });
 
-// Proxy handler logic
 const handleProxy = async (c: any) => {
     const targetUrl = c.req.query('url');
     const token = c.req.query('token');
     const expires = c.req.query('expires');
     const range = c.req.header('range');
 
-    // 1. Check essential parameters
     if (!targetUrl || !token || !expires) {
         console.warn('ProxyService: Missing parameters', { url: targetUrl, token, expires });
         return c.text('Missing parameters', 403);
     }
 
-    // 2. Verify link expiration
     const now = Math.floor(Date.now() / 1000);
     if (now > parseInt(expires)) {
         console.warn('ProxyService: Expired link', { url: targetUrl, expires, now });
@@ -100,7 +94,6 @@ const handleProxy = async (c: any) => {
         return c.text('Invalid signature', 403);
     }
 
-    // 4. Validate protocol
     try {
         const urlObj = new URL(targetUrl);
         if (!['http:', 'https:'].includes(urlObj.protocol)) {
@@ -112,7 +105,6 @@ const handleProxy = async (c: any) => {
         return c.text('Invalid URL', 400);
     }
 
-    // 5. Prepare upstream request headers
     const headers: Record<string, string> = {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
@@ -134,18 +126,18 @@ const handleProxy = async (c: any) => {
         clearTimeout(fetchTimeout);
 
         if (!response.ok) {
-            console.warn(`ProxyService: Upstream error (502): ${response.status} ${response.statusText}`, { url: targetUrl });
+            console.warn(`ProxyService: Upstream error (502): ${response.status} ${response.statusText}`, {
+                url: targetUrl,
+            });
             return c.text('Upstream error', 502);
         }
 
-        // 6. Check content-length header
         const contentLength = response.headers.get('content-length');
         if (contentLength && parseInt(contentLength) > MAX_BODY_SIZE) {
             console.warn(`ProxyService: File too large (Content-Length): ${contentLength} bytes`, { url: targetUrl });
             return c.text('File too large', 413);
         }
 
-        // 7. Forward response headers
         const headersToForward = [
             'content-type',
             'content-length',
@@ -163,11 +155,9 @@ const handleProxy = async (c: any) => {
             }
         }
 
-        // Set CORS and Cache-Control
         responseHeaders.set('Access-Control-Allow-Origin', '*');
         responseHeaders.set('Cache-Control', 'public, max-age=3600');
 
-        // 8. Stream the response body and enforce MAX_BODY_SIZE during stream
         if (!response.body) {
             return new Response(null, {
                 status: response.status,
@@ -181,12 +171,14 @@ const handleProxy = async (c: any) => {
             transform(chunk, controller) {
                 receivedBytes += chunk.byteLength;
                 if (receivedBytes > MAX_BODY_SIZE) {
-                    console.warn(`ProxyService: Stream exceeded max body size of ${MAX_BODY_SIZE} bytes`, { url: targetUrl });
+                    console.warn(`ProxyService: Stream exceeded max body size of ${MAX_BODY_SIZE} bytes`, {
+                        url: targetUrl,
+                    });
                     controller.error(new Error('File too large'));
                     return;
                 }
                 controller.enqueue(chunk);
-            }
+            },
         });
 
         const monitoredBody = response.body.pipeThrough(monitorStream);
@@ -196,7 +188,6 @@ const handleProxy = async (c: any) => {
             statusText: response.statusText,
             headers: responseHeaders,
         });
-
     } catch (err: any) {
         clearTimeout(fetchTimeout);
 
