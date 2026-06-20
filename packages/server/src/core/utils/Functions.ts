@@ -9,7 +9,7 @@ import { Constants } from './Constants';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
-        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 17/06/2026` });
+        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 20/06/2026` });
     };
 
     export const buildEmbed = (
