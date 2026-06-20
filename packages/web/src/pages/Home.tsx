@@ -7,15 +7,6 @@ import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
-declare global {
-    interface Window {
-        __LIVECHAT_STATS__?: {
-            streamers: number;
-            servers: number;
-        };
-    }
-}
-
 const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
 
 const faqs = [
@@ -63,21 +54,17 @@ const faqPageSchema = {
 };
 
 export default function Home() {
-    const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(
-        typeof window !== 'undefined' && window.__LIVECHAT_STATS__ ? window.__LIVECHAT_STATS__ : null,
-    );
+    const [stats, setStats] = useState<{ streamers: number; servers: number } | null>(null);
     const [videoOpen, setVideoOpen] = useState(false);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
     useEffect(() => {
-        if (!stats) {
-            fetch('/api/stats')
-                .then((res) => res.json())
-                .then((data) => setStats(data))
-                .catch(() => {});
-        }
-    }, [stats]);
+        fetch('https://api.livechat.nevylish.fr/api/stats')
+            .then((res) => res.json())
+            .then((data) => setStats(data))
+            .catch(() => {});
+    }, []);
 
     return (
         <div className="dark min-h-screen text-foreground">
