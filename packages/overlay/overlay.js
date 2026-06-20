@@ -176,10 +176,8 @@ function processNextContent() {
     currentInteractionId = interactionId;
 
     setTimeout(() => {
-        if (!anonymous) handleUserInfos(from, fullscreen);
-
         cleanupCurrentContent(() => {
-            const element = createContentElement(content, interactionId);
+            const element = createContentElement(content, interactionId, from, anonymous, fullscreen);
             if (element) {
                 displayContent(element, fullscreen, text);
             }
@@ -194,7 +192,14 @@ function cleanupCurrentContent(callback) {
     }
 
     if (currentContent) {
+        if (currentContent.tagName === 'VIDEO' || currentContent.tagName === 'AUDIO') {
+            currentContent.controls = false;
+        }
         currentContent.classList.add('fade-out');
+        const userInfoElement = document.querySelector('.user-info');
+        if (userInfoElement) {
+            userInfoElement.classList.add('fade-out');
+        }
         const textElement = document.querySelector('.content-text');
         if (textElement) {
             textElement.classList.add('fade-out');
@@ -210,7 +215,7 @@ function cleanupCurrentContent(callback) {
     }
 }
 
-function createContentElement(content, interactionId) {
+function createContentElement(content, interactionId, from, anonymous, fullscreen) {
     try {
         const url = new URL(content);
         const filename = url.pathname.split('/').pop() || '';
@@ -246,11 +251,14 @@ function createContentElement(content, interactionId) {
             element.onloadeddata = () => {
                 clearTimeout(loadTimeout);
                 void element.offsetWidth;
+                adjustMediaSize(element, fullscreen);
                 element.classList.add('fade-in');
                 element.play().catch(console.error);
                 socket.emit('started', interactionId, element.duration * 1000);
+                if (!anonymous) handleUserInfos(from, fullscreen);
             };
             element.addEventListener('ended', () => {
+                element.controls = false;
                 element.classList.add('fade-out');
                 const userInfoElement = document.querySelector('.user-info');
                 if (userInfoElement) {
@@ -273,8 +281,10 @@ function createContentElement(content, interactionId) {
             };
             element.onload = () => {
                 void element.offsetWidth;
+                adjustMediaSize(element, fullscreen);
                 element.classList.add('fade-in');
                 socket.emit('started', interactionId);
+                if (!anonymous) handleUserInfos(from, fullscreen);
             };
 
             currentTimeout = setTimeout(() => {
@@ -305,6 +315,9 @@ function createContentElement(content, interactionId) {
 function displayContent(element, fullscreen, text) {
     elements.contentContainer.appendChild(element);
     currentContent = element;
+    if (currentContent.tagName === 'VIDEO' || currentContent.tagName === 'AUDIO') {
+        currentContent.controls = false;
+    }
     elements.contentContainer.style.display = 'block';
     if (fullscreen) {
         currentContent.classList.add('fullscreen');
@@ -446,6 +459,50 @@ function updateConnectionStatus(connected, message = '', timeout = 5000) {
     }, timeout);
 
     isDisconnected = !connected;
+}
+
+function adjustMediaSize(element, fullscreen) {
+    if (element.tagName === 'AUDIO') return;
+
+    if (fullscreen) {
+        element.style.width = '';
+        element.style.height = '';
+        return;
+    }
+
+    let naturalWidth = 0;
+    let naturalHeight = 0;
+
+    if (element.tagName === 'IMG') {
+        naturalWidth = element.naturalWidth;
+        naturalHeight = element.naturalHeight;
+    } else if (element.tagName === 'VIDEO') {
+        naturalWidth = element.videoWidth;
+        naturalHeight = element.videoHeight;
+    }
+
+    if (!naturalWidth || !naturalHeight) return;
+
+    const targetMin = 600;
+
+    let width = naturalWidth;
+    let height = naturalHeight;
+
+    if (width < targetMin && height < targetMin) {
+        const ratio = width / height;
+        if (width >= height) {
+            width = targetMin;
+            height = Math.round(targetMin / ratio);
+        } else {
+            height = targetMin;
+            width = Math.round(targetMin * ratio);
+        }
+        element.style.width = `${width}px`;
+        element.style.height = `${height}px`;
+    } else {
+        element.style.width = '';
+        element.style.height = '';
+    }
 }
 
 initializeSocket(SERVER_URL);

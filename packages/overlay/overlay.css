@@ -1,6 +1,8 @@
 @font-face {
     font-family: 'SuperTrend';
-    src: local('SuperTrend'), url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/SuperTrend.ttf') format('truetype');
+    src:
+        local('SuperTrend'),
+        url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/SuperTrend.ttf') format('truetype');
     font-weight: 200;
     font-style: normal;
 }
@@ -79,13 +81,10 @@ body {
 .content {
     max-width: 65vw;
     max-height: 65vh;
-    /* border: 4px solid rgb(255, 0, 0); */
     opacity: 0;
     width: auto;
     height: auto;
-    min-width: 400px;
-    min-height: 400px;
-    aspect-ratio: auto;
+    object-fit: contain;
     box-shadow: rgba(0, 0, 0, 1) 0px 5px 15px;
     border-radius: 10px;
     transition: opacity 0.1s ease;
