@@ -1,5 +1,11 @@
 [
     {
+        "version": "v1.6.5",
+        "date": "20 Juin 2026",
+        "title": "Séparation des élements",
+        "changes": ["Désormais le serveur, l'overlay et le site web sont chacun hébergés sur leurs propres serveurs."]
+    },
+    {
         "version": "v1.6.4",
         "date": "20 Juin 2026",
         "title": "Overlay",
