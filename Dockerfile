@@ -2,10 +2,8 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Install pnpm
 RUN corepack enable && corepack prepare pnpm@11.3.0 --activate
 
-# Copy workspace config
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY packages/server/package.json ./packages/server/
 
@@ -13,26 +11,21 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY . .
 
-# Build server
 RUN pnpm --filter @livechat/server build
 
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Install pnpm
 RUN corepack enable && corepack prepare pnpm@11.3.0 --activate
 
-# Copy workspace config
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
 COPY packages/server/package.json ./packages/server/
 
 RUN pnpm install --filter @livechat/server --prod --frozen-lockfile --ignore-scripts
 
-# Copy built server
 COPY --from=builder /app/packages/server/dist ./packages/server/dist
 
-# Copy .env
 COPY --from=builder /app/.env ./.env
 
 ENV NODE_ENV=production
