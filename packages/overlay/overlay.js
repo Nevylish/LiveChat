@@ -82,7 +82,7 @@ function displaySplashScreen() {
     const splashContainer = elements.splashContainer;
     if (splashContainer) {
         const img = document.createElement('img');
-        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/packages/overlay/images/splash.png';
+        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/splash.png';
         splashContainer.appendChild(img);
         img.classList.remove('fade-in', 'fade-out');
         img.classList.add('fade-in');

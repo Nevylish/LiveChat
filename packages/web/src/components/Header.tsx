@@ -47,9 +47,11 @@ export default function Header({ subtitle }: HeaderProps) {
                 <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
                     <a href="/" className="flex items-center gap-2.5 text-lg font-bold">
                         <img
-                            src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/livechat_transparent.png"
+                            src="/assets/images/livechat_transparent.png"
                             alt="LiveChat"
                             className="h-8 w-8"
+                            width={32}
+                            height={32}
                             draggable={false}
                         />
                         <span>
@@ -126,6 +128,7 @@ export default function Header({ subtitle }: HeaderProps) {
                             target={link.external ? '_blank' : undefined}
                             rel={link.external ? 'noopener noreferrer' : undefined}
                             onClick={link.external ? undefined : closeMenu}
+                            tabIndex={menuOpen ? 0 : -1}
                             className="text-2xl font-bold text-muted-foreground transition-colors duration-200 hover:text-foreground"
                             style={{
                                 transitionDelay: menuOpen ? `${80 + i * 60}ms` : '0ms',

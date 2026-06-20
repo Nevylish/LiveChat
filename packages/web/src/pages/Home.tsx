@@ -158,7 +158,7 @@ export default function Home() {
                         </div>
                         <div className="max-md:flex max-md:justify-center">
                             <img
-                                src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/livechat_preview.png"
+                                src="/assets/images/livechat_preview.png"
                                 alt="Prévisualisation de l'overlay LiveChat"
                                 className="w-full max-w-lg rounded-xl md:max-w-none"
                                 width={499}
@@ -243,7 +243,7 @@ export default function Home() {
                             </ScrollReveal>
                             <ScrollReveal direction="left" delay={150} className="max-md:flex max-md:justify-center">
                                 <img
-                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_tiktok.png"
+                                    src="/assets/images/card_tiktok.png"
                                     alt="Prise en charge TikTok"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     width={540}
@@ -262,7 +262,7 @@ export default function Home() {
                                 className="order-2 max-md:flex max-md:justify-center md:order-1"
                             >
                                 <img
-                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_streamtogether.png"
+                                    src="/assets/images/card_streamtogether.png"
                                     alt="Streamez à plusieurs"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     width={540}
@@ -318,7 +318,7 @@ export default function Home() {
                             </ScrollReveal>
                             <ScrollReveal direction="left" delay={150} className="max-md:flex max-md:justify-center">
                                 <img
-                                    src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_platforms.png"
+                                    src="/assets/images/card_platforms.png"
                                     alt="Compatible avec toutes les applications de streaming"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
                                     width={540}

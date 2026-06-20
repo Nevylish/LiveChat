@@ -5,7 +5,7 @@ type SeoProps = {
 };
 
 const SITE_URL = 'https://livechat.nevylish.fr';
-const OG_IMAGE = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/ico/android-chrome-512x512.png';
+const OG_IMAGE = 'https://livechat.nevylish.fr/assets/ico/android-chrome-512x512.png';
 
 export default function Seo({ title, description, path }: SeoProps) {
     const url = `${SITE_URL}${path}`;

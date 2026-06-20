@@ -6,7 +6,7 @@
     src:
         local('ABCGinto'),
         local('ABCGinto-Regular'),
-        url('https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/fonts/ABCGintoNormalVariable.woff2')
+        url('/assets/fonts/ABCGintoNormalVariable.woff2')
             format('woff2');
 }
 
