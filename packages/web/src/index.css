@@ -346,3 +346,19 @@
 .config-error {
     animation: errorPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+@keyframes pulse-discord {
+    0%, 100% {
+        background-color: #5865F2;
+        box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4);
+    }
+    50% {
+        background-color: #4752C4;
+        box-shadow: 0 0 0 8px rgba(88, 101, 242, 0);
+    }
+}
+
+.animate-pulse-discord {
+    animation: pulse-discord 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+

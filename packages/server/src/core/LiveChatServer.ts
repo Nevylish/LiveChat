@@ -1,5 +1,5 @@
 import express = require('express');
-import os = require('os');
+import crypto = require('crypto');
 import { EventEmitter } from 'events';
 import rateLimit from 'express-rate-limit';
 import { createServer, Server as HttpServer } from 'http';
@@ -57,9 +57,18 @@ export class LiveChatServer extends EventEmitter {
         socket.disconnect();
     }
 
+    private generateOverlayToken(username: string, guildId: string): string {
+        return crypto.createHmac('sha256', process.env.OVERLAY_SECRET!).update(`${username}:${guildId}`).digest('hex');
+    }
+
+    private isValidOverlayToken(username: string, guildId: string, token: string): boolean {
+        const expected = this.generateOverlayToken(username, guildId);
+        return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token));
+    }
+
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
-            socket.on('register', (data: { username: string; guildId: string }) => {
+            socket.on('register', (data: { username: string; guildId: string; token: string }) => {
                 // Validation du nom d'utilisateur
                 const usernameValidation = Validations.validateUsername(data.username);
                 if (!usernameValidation.valid) {
@@ -78,6 +87,21 @@ export class LiveChatServer extends EventEmitter {
                         guildId: data.guildId,
                     });
                     return;
+                }
+
+                if (data.token) {
+                    if (!this.isValidOverlayToken(data.username, data.guildId, data.token)) {
+                        this.emitError(socket, "Le lien de l'overlay est invalide. Régénérez-le depuis le site.", {
+                            username: data.username,
+                            guildId: data.guildId,
+                        });
+                        return;
+                    }
+                } else {
+                    Logger.warn('LiveChatServer', `Legacy connection without token for ${data.username}`, {
+                        username: data.username,
+                        guildId: data.guildId,
+                    });
                 }
 
                 const handleBotMissingFromGuild = () => {
@@ -247,6 +271,47 @@ export class LiveChatServer extends EventEmitter {
                 // },
                 // cache: CacheManager.getStats(),
             });
+        });
+
+        this.app.get('/api/token/generate', limiter, async (req, res) => {
+            const { username, guildId } = req.query;
+
+            if (typeof username !== 'string' || typeof guildId !== 'string') {
+                res.status(400).json({ error: 'Missing or invalid username/guildId.' });
+                return;
+            }
+
+            const usernameValidation = Validations.validateUsername(username);
+            if (!usernameValidation.valid) {
+                res.status(400).json({ error: usernameValidation.error });
+                return;
+            }
+
+            const guildIdValidation = Validations.validateGuildId(guildId);
+            if (!guildIdValidation.valid) {
+                res.status(400).json({ error: guildIdValidation.error });
+                return;
+            }
+
+            try {
+                const guild = await this.discordClient.guilds.fetch(guildId);
+                if (!guild) {
+                    res.status(404).json({
+                        error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
+                        id: 'bot_not_in_guild',
+                    });
+                    return;
+                }
+            } catch {
+                res.status(404).json({
+                    error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
+                    id: 'bot_not_in_guild',
+                });
+                return;
+            }
+
+            const token = this.generateOverlayToken(username, guildId);
+            res.json({ token });
         });
     }
 

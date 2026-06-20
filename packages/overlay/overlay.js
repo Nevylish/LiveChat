@@ -24,6 +24,7 @@ const elements = {
 const params = new URLSearchParams(window.location.search);
 const USERNAME = params.get('username');
 const GUILD_ID = params.get('guildId');
+const TOKEN = params.get('token');
 const NO_SPLASH = params.get('noSplash');
 
 let socket = null;
@@ -75,7 +76,10 @@ function handleConnect() {
 
     displaySplash = !NO_SPLASH;
 
-    socket.emit('register', { username: USERNAME, guildId: GUILD_ID });
+    socket.emit(
+        'register',
+        TOKEN ? { username: USERNAME, guildId: GUILD_ID, token: TOKEN } : { username: USERNAME, guildId: GUILD_ID },
+    );
 }
 
 function displaySplashScreen() {

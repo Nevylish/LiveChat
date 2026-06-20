@@ -11,6 +11,7 @@ services:
             - DOMAIN=${DOMAIN}
             - FRONTEND_URI=${FRONTEND_URI}
             - OVERLAY_URI=${OVERLAY_URI}
+            - OVERLAY_SECRET=${OVERLAY_SECRET}
             - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
             - DISCORD_WEBHOOK_LOGS=${DISCORD_WEBHOOK_LOGS}

@@ -13,14 +13,15 @@ import { Logger } from './core/utils/Logger';
 dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
 const requiredEnvVars = [
-    'LIVECHAT_PORT',
+    'DOMAIN',
     'FRONTEND_URI',
     'OVERLAY_URI',
+    'OVERLAY_SECRET',
+    'LIVECHAT_PORT',
     'TOKEN',
     'DISCORD_WEBHOOK_LOGS',
     'TENOR_API_KEY',
     'GIPHY_API_KEY',
-    'DOMAIN',
     'SKU_PLUS_ID',
 ];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
