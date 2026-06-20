@@ -16,7 +16,6 @@ const requiredEnvVars = [
     'LIVECHAT_PORT',
     'FRONTEND_URI',
     'OVERLAY_URI',
-    'ALLOWED_ORIGINS',
     'TOKEN',
     'DISCORD_WEBHOOK_LOGS',
     'TENOR_API_KEY',
