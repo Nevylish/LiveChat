@@ -161,6 +161,8 @@ export default function Home() {
                                 src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/livechat_preview.png"
                                 alt="Prévisualisation de l'overlay LiveChat"
                                 className="w-full max-w-lg rounded-xl md:max-w-none"
+                                width={499}
+                                height={672}
                                 draggable={false}
                                 loading="eager"
                                 fetchPriority="high"
@@ -244,7 +246,10 @@ export default function Home() {
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_tiktok.png"
                                     alt="Prise en charge TikTok"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    width={540}
+                                    height={304}
                                     draggable={false}
+                                    loading="lazy"
                                 />
                             </ScrollReveal>
                         </div>
@@ -260,7 +265,10 @@ export default function Home() {
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_streamtogether.png"
                                     alt="Streamez à plusieurs"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    width={540}
+                                    height={304}
                                     draggable={false}
+                                    loading="lazy"
                                 />
                             </ScrollReveal>
                             <ScrollReveal direction="up" delay={0} className="order-1 md:order-2">
@@ -313,7 +321,10 @@ export default function Home() {
                                     src="https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/card_platforms.png"
                                     alt="Compatible avec toutes les applications de streaming"
                                     className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    width={540}
+                                    height={304}
                                     draggable={false}
+                                    loading="lazy"
                                 />
                             </ScrollReveal>
                         </div>
