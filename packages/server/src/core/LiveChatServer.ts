@@ -1,6 +1,4 @@
 import express = require('express');
-import path = require('path');
-import fs = require('fs');
 import os = require('os');
 import { EventEmitter } from 'events';
 import rateLimit from 'express-rate-limit';
@@ -8,7 +6,6 @@ import { createServer, Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import DiscordClient from './DiscordClient';
 import { ProxyService } from './modules/_ProxyService';
-import { CacheManager } from './utils/CacheManager';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { Validations } from './utils/Validations';
@@ -27,7 +24,6 @@ export class LiveChatServer extends EventEmitter {
     private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer: HttpServer;
-    private indexHtmlTemplate: string | null = null;
 
     constructor(discordClient: DiscordClient) {
         super();
@@ -40,7 +36,7 @@ export class LiveChatServer extends EventEmitter {
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
             cors: {
-                origin: Constants.getBaseUrl(),
+                origin: Constants.getAllowedOrigins(),
                 methods: ['GET', 'POST'],
                 credentials: true,
             },
@@ -219,92 +215,21 @@ export class LiveChatServer extends EventEmitter {
             res.json({
                 streamers: this.getConnectedStreamersCount(),
                 servers: this.discordClient.guilds.cache.size,
-                uptime: Math.round(process.uptime()),
-                discord: {
-                    ping: this.discordClient.ws.ping,
-                },
-                memory: {
-                    heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-                    rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
-                    systemFree: Math.round(os.freemem() / 1024 / 1024),
-                    systemTotal: Math.round(os.totalmem() / 1024 / 1024),
-                },
-                sockets: {
-                    totalConnections: this.io.sockets.sockets.size,
-                },
-                cache: CacheManager.getStats(),
+                // uptime: Math.round(process.uptime()),
+                // discord: {
+                //     ping: this.discordClient.ws.ping,
+                // },
+                // memory: {
+                //     heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+                //     rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+                //     systemFree: Math.round(os.freemem() / 1024 / 1024),
+                //     systemTotal: Math.round(os.totalmem() / 1024 / 1024),
+                // },
+                // sockets: {
+                //     totalConnections: this.io.sockets.sockets.size,
+                // },
+                // cache: CacheManager.getStats(),
             });
-        });
-
-        const staticOptions = {
-            etag: true,
-            lastModified: true,
-            cacheControl: true,
-            setHeaders: (res: express.Response, filePath: string) => {
-                const lower = filePath.toLowerCase();
-
-                res.setHeader('X-Robots-Tag', 'index, follow');
-
-                if (lower.endsWith('.html')) {
-                    res.setHeader('Cache-Control', 'no-cache');
-                    res.setHeader('X-Robots-Tag', 'index, follow');
-                } else if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|mp4|webm)$/.test(lower)) {
-                    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-                } else {
-                    res.setHeader('Cache-Control', 'public, no-cache');
-                }
-            },
-        };
-
-        // Chemins vers les différents packages depuis packages/server/dist/core/
-        const projectRoot = path.join(__dirname, '..', '..', '..', '..');
-
-        // Redirection pour la compatibilité avec les anciens liens d'overlay (/overlay.html -> /overlay/overlay.html)
-        this.app.get('/overlay.html', (req, res) => {
-            const query = req.url.split('?')[1];
-            res.redirect(301, `/overlay/overlay.html${query ? '?' + query : ''}`);
-        });
-
-        this.app.use('/overlay', express.static(path.join(projectRoot, 'packages', 'overlay'), staticOptions));
-
-        this.app.use('/assets', express.static(path.join(projectRoot, 'shared', 'assets'), staticOptions));
-
-        this.app.use(
-            '/',
-            express.static(path.join(projectRoot, 'packages', 'web', 'dist'), {
-                ...staticOptions,
-                index: false,
-            }),
-        );
-
-        const indexHtmlPath = path.join(projectRoot, 'packages', 'web', 'dist', 'index.html');
-
-        this.app.use((req, res) => {
-            const hasFileExtension = /\.\w+$/.test(req.path);
-
-            if (!hasFileExtension) {
-                try {
-                    if (!this.indexHtmlTemplate) {
-                        this.indexHtmlTemplate = fs.readFileSync(indexHtmlPath, 'utf-8');
-                    }
-
-                    const stats = {
-                        streamers: this.getConnectedStreamersCount(),
-                        servers: this.discordClient.guilds.cache.size,
-                    };
-
-                    const injectedScript = `<script id="livechat-stats">window.__LIVECHAT_STATS__ = ${JSON.stringify(stats)};</script>`;
-                    const html = this.indexHtmlTemplate.replace('</head>', `${injectedScript}</head>`);
-
-                    res.setHeader('Content-Type', 'text/html');
-                    res.send(html);
-                } catch (err) {
-                    Logger.error('LiveChatServer', 'Error serving index.html with stats', err);
-                    res.status(500).send('Frontend is not built yet.');
-                }
-            } else {
-                res.status(404).send('File not found');
-            }
         });
     }
 

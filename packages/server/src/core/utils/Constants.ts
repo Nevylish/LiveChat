@@ -1,7 +1,7 @@
 export namespace Constants {
-    export const getHostname = (): string => process.env.DOMAIN || 'localhost';
+    export const getHostname = (): string => process.env.DOMAIN!;
 
-    export const getPort = (): string => process.env.LIVECHAT_PORT || '3000';
+    export const getPort = (): string => process.env.LIVECHAT_PORT!;
 
     export const getBaseUrl = (): string => {
         if (getHostname().includes('localhost')) return `http://${getHostname()}:${getPort()}`;
@@ -9,6 +9,12 @@ export namespace Constants {
     };
 
     export const getApiPath = (): string => `${getBaseUrl()}/api`;
+
+    export const getFrontendUrl = (): string => process.env.FRONTEND_URI!;
+
+    export const getOverlayUrl = (): string => process.env.OVERLAY_URI!;
+
+    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];
 
     export const ROUTES = {
         home: '/',
@@ -21,6 +27,6 @@ export namespace Constants {
     export type ConstantRoutes = keyof typeof ROUTES;
 
     export const getUrl = (route: ConstantRoutes): string => {
-        return `${getBaseUrl()}/${ROUTES[route]}`;
+        return `${getFrontendUrl()}/${ROUTES[route]}`;
     };
 }

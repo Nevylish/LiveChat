@@ -3,7 +3,7 @@
  */
 
 const SERVER_URL =
-    window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://${window.location.hostname}`;
+    window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://livechat-api.nevylish.fr`;
 
 const CONFIG = {
     RECONNECT_ATTEMPTS: 240 /* 240 * 4 = 1 hour ? */,
@@ -221,9 +221,9 @@ function createContentElement(content, interactionId, from, anonymous, fullscree
         const filename = url.pathname.split('/').pop() || '';
 
         const isVideoProxied =
-            url.hostname.includes(window.location.hostname) && url.searchParams.get('type') === 'video';
+            url.hostname.includes(new URL(SERVER_URL).hostname) && url.searchParams.get('type') === 'video';
         const isAudioProxied =
-            url.hostname.includes(window.location.hostname) && url.searchParams.get('type') === 'audio';
+            url.hostname.includes(new URL(SERVER_URL).hostname) && url.searchParams.get('type') === 'audio';
 
         const isVideo = CONFIG.SUPPORTED_VIDEO_FORMATS.test(filename) || isVideoProxied;
         const isAudio = CONFIG.SUPPORTED_AUDIO_FORMATS.test(filename) || isAudioProxied;
