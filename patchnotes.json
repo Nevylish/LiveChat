@@ -1,5 +1,11 @@
 [
     {
+        "version": "v2.0.0",
+        "date": "22 Juin 2026",
+        "title": "LiveChat V2",
+        "changes": ["placeholder"]
+    },
+    {
         "version": "v1.6.5",
         "date": "20 Juin 2026",
         "title": "Séparation des élements",
