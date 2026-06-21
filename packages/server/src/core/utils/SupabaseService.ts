@@ -105,34 +105,61 @@ export class SupabaseService {
         guildIds: string[],
         userId: string,
     ): Promise<Record<string, number>> {
-        try {
-            const supabase = this.getClient();
-            const { data, error } = await supabase
-                .from('overlay_configs')
-                .select('guild_id')
-                .in('guild_id', guildIds)
-                .eq('user_id', userId);
+        const counts: Record<string, number> = {};
+        const missingGuildIds: string[] = [];
 
-            if (error) {
-                Logger.error('SupabaseService', `Error fetching counts for user ${userId}`, error);
-                return {};
+        for (const guildId of guildIds) {
+            const cacheKey = `overlay:count:${guildId}:${userId}`;
+            const cachedCount = CacheManager.get<number>(cacheKey);
+            if (cachedCount !== undefined) {
+                counts[guildId] = cachedCount;
+            } else {
+                missingGuildIds.push(guildId);
             }
-
-            const counts: Record<string, number> = {};
-            for (const id of guildIds) {
-                counts[id] = 0;
-            }
-            if (data) {
-                for (const row of data) {
-                    const gId = row.guild_id;
-                    counts[gId] = (counts[gId] || 0) + 1;
-                }
-            }
-            return counts;
-        } catch (err) {
-            Logger.error('SupabaseService', `Unexpected error fetching counts for user ${userId}`, err);
-            return {};
         }
+
+        // Initialize missing counts to 0 by default (in case of error or no DB records)
+        for (const guildId of missingGuildIds) {
+            counts[guildId] = 0;
+        }
+
+        if (missingGuildIds.length > 0) {
+            try {
+                const supabase = this.getClient();
+                const { data, error } = await supabase
+                    .from('overlay_configs')
+                    .select('guild_id')
+                    .in('guild_id', missingGuildIds)
+                    .eq('user_id', userId);
+
+                if (error) {
+                    Logger.error('SupabaseService', `Error fetching counts for user ${userId}`, error);
+                } else {
+                    const dbCounts: Record<string, number> = {};
+                    for (const guildId of missingGuildIds) {
+                        dbCounts[guildId] = 0;
+                    }
+                    if (data) {
+                        for (const row of data) {
+                            const gId = row.guild_id;
+                            dbCounts[gId] = (dbCounts[gId] || 0) + 1;
+                        }
+                    }
+
+                    for (const guildId of missingGuildIds) {
+                        const count = dbCounts[guildId];
+                        counts[guildId] = count;
+                        
+                        const cacheKey = `overlay:count:${guildId}:${userId}`;
+                        CacheManager.set(cacheKey, count, 5 * 60 * 1000);
+                    }
+                }
+            } catch (err) {
+                Logger.error('SupabaseService', `Unexpected error fetching counts for user ${userId}`, err);
+            }
+        }
+
+        return counts;
     }
 
     public static async getOverlayConfigsByGuild(guildId: string): Promise<OverlayConfigRow[]> {
@@ -217,6 +244,7 @@ export class SupabaseService {
             CacheManager.delete(`overlay:token:${token}`);
             if (userId) {
                 CacheManager.delete(`overlay:configs:user:${guildId}:${userId}`);
+                CacheManager.delete(`overlay:count:${guildId}:${userId}`);
             }
 
             return true;
@@ -228,9 +256,19 @@ export class SupabaseService {
 
     public static async deleteOverlayConfig(token: string): Promise<boolean> {
         try {
-            const config = await this.getOverlayConfigByToken(token);
-
             const supabase = this.getClient();
+            
+            // Query DB directly to bypass cache and get the metadata for eviction
+            const { data: config, error: fetchError } = await supabase
+                .from('overlay_configs')
+                .select('*')
+                .eq('token', token)
+                .maybeSingle();
+
+            if (fetchError) {
+                Logger.error('SupabaseService', `Error fetching config for deletion from DB: ${token}`, fetchError);
+            }
+
             const { error } = await supabase.from('overlay_configs').delete().eq('token', token);
 
             if (error) {
@@ -239,12 +277,13 @@ export class SupabaseService {
             }
 
             // Invalidate cache
+            CacheManager.delete(`overlay:token:${token}`);
             if (config) {
                 CacheManager.delete(`overlay:config:${config.guild_id}:${config.username.toLowerCase()}`);
                 CacheManager.delete(`overlay:configs:guild:${config.guild_id}`);
-                CacheManager.delete(`overlay:token:${token}`);
                 if (config.user_id) {
                     CacheManager.delete(`overlay:configs:user:${config.guild_id}:${config.user_id}`);
+                    CacheManager.delete(`overlay:count:${config.guild_id}:${config.user_id}`);
                 }
             }
 
@@ -257,9 +296,19 @@ export class SupabaseService {
 
     public static async updateOverlayToken(oldToken: string, newToken: string): Promise<boolean> {
         try {
-            const config = await this.getOverlayConfigByToken(oldToken);
-
             const supabase = this.getClient();
+
+            // Query DB directly to bypass cache and get the metadata for eviction
+            const { data: config, error: fetchError } = await supabase
+                .from('overlay_configs')
+                .select('*')
+                .eq('token', oldToken)
+                .maybeSingle();
+
+            if (fetchError) {
+                Logger.error('SupabaseService', `Error fetching config for token update from DB: ${oldToken}`, fetchError);
+            }
+
             const { error } = await supabase.from('overlay_configs').update({ token: newToken }).eq('token', oldToken);
 
             if (error) {
@@ -268,13 +317,14 @@ export class SupabaseService {
             }
 
             // Invalidate cache
+            CacheManager.delete(`overlay:token:${oldToken}`);
+            CacheManager.delete(`overlay:token:${newToken}`);
             if (config) {
                 CacheManager.delete(`overlay:config:${config.guild_id}:${config.username.toLowerCase()}`);
                 CacheManager.delete(`overlay:configs:guild:${config.guild_id}`);
-                CacheManager.delete(`overlay:token:${oldToken}`);
-                CacheManager.delete(`overlay:token:${newToken}`);
                 if (config.user_id) {
                     CacheManager.delete(`overlay:configs:user:${config.guild_id}:${config.user_id}`);
+                    CacheManager.delete(`overlay:count:${config.guild_id}:${config.user_id}`);
                 }
             }
 

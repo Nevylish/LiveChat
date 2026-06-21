@@ -152,7 +152,26 @@ export class CacheManager {
         return promise;
     }
 
-    private static set(key: string, data: any, ttlMs: number, isNegative = false): void {
+    public static get<T>(key: string): T | undefined {
+        const now = Date.now();
+        const cached = this.cache.get(key);
+
+        if (cached && cached.expiresAt > now) {
+            this.cache.delete(key);
+            this.cache.set(key, cached);
+
+            if (cached.isNegative) {
+                this.stats.negativeHits++;
+            } else {
+                this.stats.hits++;
+            }
+            Logger.debug('CacheManager', cached.isNegative ? 'Negative cache hit' : 'Cache hit', { key });
+            return cached.data;
+        }
+        return undefined;
+    }
+
+    public static set(key: string, data: any, ttlMs: number, isNegative = false): void {
         this.cache.delete(key);
         this.cache.set(key, { data, expiresAt: Date.now() + ttlMs, isNegative });
         this.evictIfNeeded();
