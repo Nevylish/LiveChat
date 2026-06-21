@@ -10,6 +10,7 @@ import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { SupabaseService } from './utils/SupabaseService';
 import { Validations } from './utils/Validations';
+import { createAuthMiddlewares, checkGuildAccess } from './middlewares/auth';
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -25,6 +26,7 @@ export class LiveChatServer extends EventEmitter {
     private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer: HttpServer;
+    private auth: ReturnType<typeof createAuthMiddlewares>;
 
     constructor(discordClient: DiscordClient) {
         super();
@@ -33,6 +35,8 @@ export class LiveChatServer extends EventEmitter {
 
         this.app = express();
         this.app.set('trust proxy', 1);
+
+        this.auth = createAuthMiddlewares(this.discordClient);
 
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
@@ -65,49 +69,6 @@ export class LiveChatServer extends EventEmitter {
     private isValidOverlayToken(username: string, guildId: string, token: string): boolean {
         const expected = this.generateOverlayToken(username, guildId);
         return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token));
-    }
-
-    private async isUserAdminInGuild(guildId: string, userId: string): Promise<boolean> {
-        try {
-            const guild = this.discordClient.guilds.cache.get(guildId) || await this.discordClient.guilds.fetch(guildId).catch(() => null);
-            if (!guild) return false;
-
-            if (guild.ownerId === userId) return true;
-
-            const member = await guild.members.fetch(userId).catch(() => null);
-            if (!member) return false;
-
-            return member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
-        } catch (e) {
-            console.error('Error checking admin status', e);
-            return false;
-        }
-    }
-
-    private async isUserAllowedToUseLiveChat(guildId: string, userId: string | null | undefined): Promise<boolean> {
-        try {
-            if (!userId) return true; // Backward compatibility for legacy configurations without user_id
-
-            const guild = this.discordClient.guilds.cache.get(guildId) || await this.discordClient.guilds.fetch(guildId).catch(() => null);
-            if (!guild) return false;
-
-            if (guild.ownerId === userId) return true;
-
-            const member = await guild.members.fetch(userId).catch(() => null);
-            if (!member) return false;
-
-            if (member.permissions.has('Administrator') || member.permissions.has('ManageGuild')) return true;
-
-            const settings = await SupabaseService.getGuildSettings(guildId);
-            if (!settings || !settings.required_role_id) {
-                return true;
-            }
-
-            return member.roles.cache.has(settings.required_role_id);
-        } catch (e) {
-            console.error('Error checking user allowed status', e);
-            return false;
-        }
     }
 
     private setupSocket(): void {
@@ -206,7 +167,7 @@ export class LiveChatServer extends EventEmitter {
                         ? await SupabaseService.getOverlayConfigByToken(token)
                         : await SupabaseService.getOverlayConfig(guildId, username);
                     if (config) {
-                        const allowed = await this.isUserAllowedToUseLiveChat(guildId, config.user_id);
+                        const allowed = await checkGuildAccess(this.discordClient, guildId, config.user_id);
                         if (!allowed) {
                             this.emitError(
                                 socket,
@@ -363,24 +324,12 @@ export class LiveChatServer extends EventEmitter {
             legacyHeaders: false,
         });
 
+        const { requireAdmin, requireGuildAccess, requireOverlayOwnership } = this.auth;
+
         this.app.get('/api/stats', limiter, (_, res) => {
             res.json({
                 streamers: this.getConnectedStreamersCount(),
                 servers: this.discordClient.guilds.cache.size,
-                // uptime: Math.round(process.uptime()),
-                // discord: {
-                //     ping: this.discordClient.ws.ping,
-                // },
-                // memory: {
-                //     heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-                //     rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
-                //     systemFree: Math.round(os.freemem() / 1024 / 1024),
-                //     systemTotal: Math.round(os.totalmem() / 1024 / 1024),
-                // },
-                // sockets: {
-                //     totalConnections: this.io.sockets.sockets.size,
-                // },
-                // cache: CacheManager.getStats(),
             });
         });
 
@@ -436,20 +385,11 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/config/get', limiter, async (req, res) => {
+        this.app.get('/api/config/get', limiter, requireGuildAccess, async (req, res) => {
             const { guildId, userId } = req.query;
-            if (typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId or userId' });
-                return;
-            }
             try {
-                const allowed = await this.isUserAllowedToUseLiveChat(guildId, userId);
-                if (!allowed) {
-                    res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis." });
-                    return;
-                }
-                const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId);
-                const settings = await SupabaseService.getGuildSettings(guildId);
+                const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId as string, userId as string);
+                const settings = await SupabaseService.getGuildSettings(guildId as string);
                 const maxOverlays = settings?.max_overlays_per_user ?? 5;
                 res.json({ configs, exists: configs.length > 0, maxOverlays });
             } catch (err) {
@@ -457,12 +397,8 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/create', limiter, async (req, res) => {
+        this.app.post('/api/config/create', limiter, requireGuildAccess, async (req, res) => {
             const { username, guildId, userId } = req.body;
-            if (typeof username !== 'string' || typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing username, guildId, or userId' });
-                return;
-            }
 
             const usernameValidation = Validations.validateUsername(username);
             if (!usernameValidation.valid) {
@@ -471,12 +407,6 @@ export class LiveChatServer extends EventEmitter {
             }
 
             try {
-                const allowed = await this.isUserAllowedToUseLiveChat(guildId, userId);
-                if (!allowed) {
-                    res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis." });
-                    return;
-                }
-
                 // Check user overlays limit
                 const settings = await SupabaseService.getGuildSettings(guildId);
                 const maxOverlays = settings?.max_overlays_per_user ?? 5;
@@ -506,12 +436,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/save', limiter, async (req, res) => {
+        this.app.post('/api/config/save', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
             const { username, guildId, token, userId } = req.body;
-            if (typeof username !== 'string' || typeof guildId !== 'string' || typeof token !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing username, guildId, token, or userId' });
-                return;
-            }
+            const config = req.overlayConfig!;
 
             const usernameValidation = Validations.validateUsername(username);
             if (!usernameValidation.valid) {
@@ -520,23 +447,6 @@ export class LiveChatServer extends EventEmitter {
             }
 
             try {
-                const allowed = await this.isUserAllowedToUseLiveChat(guildId, userId);
-                if (!allowed) {
-                    res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis." });
-                    return;
-                }
-
-                const config = await SupabaseService.getOverlayConfigByToken(token);
-                if (!config) {
-                    res.status(404).json({ error: 'Overlay introuvable.' });
-                    return;
-                }
-
-                if (config.user_id !== userId) {
-                    res.status(403).json({ error: 'Vous ne possédez pas les droits requis pour modifier cet overlay.' });
-                    return;
-                }
-
                 // Check name uniqueness on this server (excluding current overlay)
                 if (username.toLowerCase() !== config.username.toLowerCase()) {
                     const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
@@ -558,30 +468,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/regenerate', limiter, async (req, res) => {
-            const { token, userId } = req.body;
-            if (typeof token !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing token or userId' });
-                return;
-            }
+        this.app.post('/api/config/regenerate', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
+            const { token } = req.body;
             try {
-                const config = await SupabaseService.getOverlayConfigByToken(token);
-                if (!config) {
-                    res.status(404).json({ error: 'Overlay introuvable.' });
-                    return;
-                }
-
-                if (config.user_id !== userId) {
-                    res.status(403).json({ error: 'Vous ne possédez pas les droits requis pour modifier cet overlay.' });
-                    return;
-                }
-
-                const allowed = await this.isUserAllowedToUseLiveChat(config.guild_id, userId);
-                if (!allowed) {
-                    res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire é requis." });
-                    return;
-                }
-
                 const newToken = crypto.randomBytes(32).toString('hex');
                 const success = await SupabaseService.updateOverlayToken(token, newToken);
                 if (success) {
@@ -594,30 +483,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/delete', limiter, async (req, res) => {
-            const { token, userId } = req.body;
-            if (typeof token !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing token or userId' });
-                return;
-            }
+        this.app.post('/api/config/delete', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
+            const { token } = req.body;
             try {
-                const config = await SupabaseService.getOverlayConfigByToken(token);
-                if (!config) {
-                    res.status(404).json({ error: 'Overlay introuvable.' });
-                    return;
-                }
-
-                if (config.user_id !== userId) {
-                    res.status(403).json({ error: 'Vous ne possédez pas les droits requis pour supprimer cet overlay.' });
-                    return;
-                }
-
-                const allowed = await this.isUserAllowedToUseLiveChat(config.guild_id, userId);
-                if (!allowed) {
-                    res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis." });
-                    return;
-                }
-
                 const success = await SupabaseService.deleteOverlayConfig(token);
                 if (success) {
                     res.json({ success: true });
@@ -628,7 +496,6 @@ export class LiveChatServer extends EventEmitter {
                 res.status(500).json({ error: 'Failed to delete config' });
             }
         });
-
 
         this.app.get('/api/guild/check', limiter, async (req, res) => {
             const { guildId, userId } = req.query;
@@ -674,21 +541,10 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/config/all', limiter, async (req, res) => {
-            const { guildId, userId } = req.query;
-            if (typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId or userId' });
-                return;
-            }
-
+        this.app.get('/api/config/all', limiter, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
             try {
-                const isAdmin = await this.isUserAdminInGuild(guildId, userId);
-                if (!isAdmin) {
-                    res.status(403).json({ error: 'Vous devez être administrateur du serveur pour voir tous les overlays.' });
-                    return;
-                }
-
-                const configs = await SupabaseService.getOverlayConfigsByGuild(guildId);
+                const configs = await SupabaseService.getOverlayConfigsByGuild(guildId as string);
                 const publicConfigs = configs.map(c => ({
                     guild_id: c.guild_id,
                     username: c.username,
@@ -702,20 +558,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/admin/delete', limiter, async (req, res) => {
-            const { guildId, username, userId } = req.body;
-            if (typeof guildId !== 'string' || typeof username !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId, username, or userId' });
-                return;
-            }
-
+        this.app.post('/api/config/admin/delete', limiter, requireAdmin, async (req, res) => {
+            const { guildId, username } = req.body;
             try {
-                const isAdmin = await this.isUserAdminInGuild(guildId, userId);
-                if (!isAdmin) {
-                    res.status(403).json({ error: 'Vous devez être administrateur du serveur pour effectuer cette action.' });
-                    return;
-                }
-
                 const config = await SupabaseService.getOverlayConfig(guildId, username);
                 if (!config) {
                     res.status(404).json({ error: 'Overlay introuvable.' });
@@ -733,21 +578,10 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/guild/roles', limiter, async (req, res) => {
-            const { guildId, userId } = req.query;
-            if (typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId or userId' });
-                return;
-            }
-
+        this.app.get('/api/guild/roles', limiter, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
             try {
-                const isAdmin = await this.isUserAdminInGuild(guildId, userId);
-                if (!isAdmin) {
-                    res.status(403).json({ error: 'Vous devez être administrateur du serveur pour récupérer les rôles.' });
-                    return;
-                }
-
-                const guild = this.discordClient.guilds.cache.get(guildId) || await this.discordClient.guilds.fetch(guildId).catch(() => null);
+                const guild = this.discordClient.guilds.cache.get(guildId as string) || await this.discordClient.guilds.fetch(guildId as string).catch(() => null);
                 if (!guild) {
                     res.status(404).json({ error: 'Serveur introuvable.' });
                     return;
@@ -772,33 +606,18 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/guild/settings', limiter, async (req, res) => {
-            const { guildId, userId } = req.query;
-            if (typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId or userId' });
-                return;
-            }
-
+        this.app.get('/api/guild/settings', limiter, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
             try {
-                const isAdmin = await this.isUserAdminInGuild(guildId, userId);
-                if (!isAdmin) {
-                    res.status(403).json({ error: 'Vous devez être administrateur du serveur pour accéder aux paramètres.' });
-                    return;
-                }
-
-                const settings = await SupabaseService.getGuildSettings(guildId);
+                const settings = await SupabaseService.getGuildSettings(guildId as string);
                 res.json({ settings: settings || { guild_id: guildId, required_role_id: null, max_overlays_per_user: 5 } });
             } catch (err) {
                 res.status(500).json({ error: 'Failed to fetch settings' });
             }
         });
 
-        this.app.post('/api/guild/settings/save', limiter, async (req, res) => {
-            const { guildId, requiredRoleId, maxOverlaysPerUser, userId } = req.body;
-            if (typeof guildId !== 'string' || typeof userId !== 'string') {
-                res.status(400).json({ error: 'Missing guildId or userId' });
-                return;
-            }
+        this.app.post('/api/guild/settings/save', limiter, requireAdmin, async (req, res) => {
+            const { guildId, requiredRoleId, maxOverlaysPerUser } = req.body;
 
             if (maxOverlaysPerUser !== undefined) {
                 const maxOverlays = Number(maxOverlaysPerUser);
@@ -809,12 +628,6 @@ export class LiveChatServer extends EventEmitter {
             }
 
             try {
-                const isAdmin = await this.isUserAdminInGuild(guildId, userId);
-                if (!isAdmin) {
-                    res.status(403).json({ error: 'Vous devez être administrateur du serveur pour modifier les paramètres.' });
-                    return;
-                }
-
                 const success = await SupabaseService.saveGuildSettings(
                     guildId,
                     requiredRoleId || null,
