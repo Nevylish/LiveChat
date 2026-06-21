@@ -13,7 +13,6 @@ const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const [user, setUser] = useState<SupabaseUser | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
@@ -48,19 +47,6 @@ export default function Header() {
         });
 
         return () => subscription.unsubscribe();
-    }, []);
-
-    // Scroll listener to detach header
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 20) {
-                setScrolled(true);
-            } else {
-                setScrolled(false);
-            }
-        };
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     // Close dropdown on click outside
@@ -99,18 +85,14 @@ export default function Header() {
                 className={`sticky z-50 transition-all duration-300 w-full ${
                     menuOpen
                         ? 'top-0 px-0 bg-transparent border-b border-transparent backdrop-blur-none'
-                        : scrolled
-                          ? 'top-4 px-4 sm:px-6 bg-transparent border-b border-transparent backdrop-blur-none'
-                          : 'top-0 px-0 bg-background/80 backdrop-blur-sm border-b border-border/40'
+                        : 'top-4 px-4 sm:px-6 bg-transparent border-b border-transparent backdrop-blur-none'
                 }`}
             >
                 <div
                     className={`mx-auto flex w-full max-w-6xl items-center justify-between transition-all duration-300 ${
                         menuOpen
                             ? 'rounded-none border border-transparent bg-transparent shadow-none px-5 py-4'
-                            : scrolled
-                              ? 'rounded-2xl border border-border bg-background/70 backdrop-blur-md shadow-lg shadow-black/10 px-5 py-3'
-                              : 'rounded-none border border-transparent bg-transparent shadow-none px-5 py-4'
+                            : 'rounded-2xl border border-border bg-background/70 backdrop-blur-md shadow-lg shadow-black/10 px-5 py-3'
                     }`}
                 >
                     <div className="flex items-center gap-8">
