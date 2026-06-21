@@ -16,16 +16,8 @@ export class SupabaseService {
 
     private static getClient(): SupabaseClient {
         if (!this.client) {
-            const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-            const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-            if (!url || !serviceKey) {
-                Logger.error(
-                    'SupabaseService',
-                    'SUPABASE_URL (or VITE_SUPABASE_URL) or SUPABASE_SERVICE_ROLE_KEY is not defined in environment variables',
-                );
-                throw new Error('Supabase configuration error');
-            }
+            const url = process.env.VITE_SUPABASE_URL!;
+            const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
             this.client = createClient(url, serviceKey, {
                 auth: {
@@ -39,16 +31,8 @@ export class SupabaseService {
 
     public static getAnonClient(): SupabaseClient {
         if (!this.anonClient) {
-            const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-            const anonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-
-            if (!url || !anonKey) {
-                Logger.error(
-                    'SupabaseService',
-                    'SUPABASE_URL (or VITE_SUPABASE_URL) or SUPABASE_ANON_KEY (or VITE_SUPABASE_ANON_KEY) is not defined in environment variables',
-                );
-                throw new Error('Supabase anon configuration error');
-            }
+            const url = process.env.VITE_SUPABASE_URL!;
+            const anonKey = process.env.VITE_SUPABASE_ANON_KEY!;
 
             this.anonClient = createClient(url, anonKey, {
                 auth: {

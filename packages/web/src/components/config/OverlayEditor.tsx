@@ -1,4 +1,4 @@
-import { Bell, CheckCircle, Copy, Eye, EyeOff, LinkIcon, Pause, Play, ShieldAlert } from 'lucide-react';
+import { CheckCircle, Copy, Eye, EyeOff, LinkIcon, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
 import ObsGuide from './ObsGuide';
 
@@ -32,10 +32,10 @@ export default function OverlayEditor({
     justRegenerated,
     isGenerating,
     regenerateLink,
-    draftConfig,
-    updateDraftConfig,
-    isPlayingSoundWave,
-    handlePlaySound,
+    // draftConfig,
+    // updateDraftConfig,
+    // isPlayingSoundWave,
+    // handlePlaySound,
 }: OverlayEditorProps) {
     const [isLinkCopied, setIsLinkCopied] = useState(false);
 
@@ -163,7 +163,7 @@ export default function OverlayEditor({
             </div>
 
             {/* Card 2 : Sons de Notification */}
-            <div className="config-card space-y-6">
+            {/* <div className="config-card space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
@@ -186,7 +186,6 @@ export default function OverlayEditor({
 
                 {draftConfig.soundEnabled && (
                     <div className="space-y-6 border-t border-white/5 pt-6">
-                        {/* Type de signal */}
                         <div className="space-y-3">
                             <label className="text-sm font-semibold text-muted-foreground block">
                                 Type de signal audio
@@ -232,7 +231,6 @@ export default function OverlayEditor({
                             </div>
                         </div>
 
-                        {/* Test Button & State */}
                         <div className="flex flex-col items-center gap-3 pt-2">
                             <button
                                 onClick={() => handlePlaySound(draftConfig.soundType, 50)}
@@ -249,7 +247,7 @@ export default function OverlayEditor({
                         </div>
                     </div>
                 )}
-            </div>
+            </div> */}
 
             {/* Card 3 : Guide OBS */}
             <ObsGuide />
