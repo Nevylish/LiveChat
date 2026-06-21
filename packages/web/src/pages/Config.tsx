@@ -173,11 +173,7 @@ export default function Config() {
                 setError(null);
                 return;
             }
-            if (!user) {
-                return;
-            }
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
-            if (!userId) {
+            if (!session) {
                 return;
             }
             setCheckingLink(true);
@@ -185,7 +181,12 @@ export default function Config() {
             setIsRestricted(false);
             try {
                 const response = await fetch(
-                    `${apiBase}/api/config/get?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                    `${apiBase}/api/config/get?guildId=${encodeURIComponent(selectedGuild.id)}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`,
+                        },
+                    }
                 );
                 if (!active) return;
                 if (response.status === 403) {
@@ -230,13 +231,13 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, user, apiBase]);
+    }, [selectedGuild, session, apiBase]);
 
     // Fetch all guild configs for administration if user is admin
     useEffect(() => {
         let active = true;
         const fetchAllConfigs = async () => {
-            if (!selectedGuild || isEditing || !user) {
+            if (!selectedGuild || isEditing || !session) {
                 setAllGuildConfigs([]);
                 return;
             }
@@ -247,13 +248,15 @@ export default function Config() {
                 return;
             }
 
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
-            if (!userId) return;
-
             setLoadingAllConfigs(true);
             try {
                 const response = await fetch(
-                    `${apiBase}/api/config/all?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                    `${apiBase}/api/config/all?guildId=${encodeURIComponent(selectedGuild.id)}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`,
+                        },
+                    }
                 );
                 if (!active) return;
                 if (response.ok) {
@@ -277,13 +280,13 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, isEditing, user, apiBase]);
+    }, [selectedGuild, isEditing, session, apiBase]);
 
     // Fetch server settings and roles for administration if user is admin
     useEffect(() => {
         let active = true;
         const fetchSettingsAndRoles = async () => {
-            if (!selectedGuild || !user) {
+            if (!selectedGuild || !session) {
                 setGuildRoles([]);
                 setRequiredRoleId(null);
                 setDbRequiredRoleId(null);
@@ -305,14 +308,16 @@ export default function Config() {
                 return;
             }
 
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
-            if (!userId) return;
-
             setLoadingRoles(true);
             try {
                 // Fetch settings
                 const settingsRes = await fetch(
-                    `${apiBase}/api/guild/settings?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                    `${apiBase}/api/guild/settings?guildId=${encodeURIComponent(selectedGuild.id)}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`,
+                        },
+                    }
                 );
                 if (!active) return;
                 if (settingsRes.ok) {
@@ -332,7 +337,12 @@ export default function Config() {
 
                 // Fetch roles
                 const rolesRes = await fetch(
-                    `${apiBase}/api/guild/roles?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                    `${apiBase}/api/guild/roles?guildId=${encodeURIComponent(selectedGuild.id)}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session.access_token}`,
+                        },
+                    }
                 );
                 if (!active) return;
                 if (rolesRes.ok) {
@@ -356,7 +366,7 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, user, apiBase]);
+    }, [selectedGuild, session, apiBase]);
 
     const updateDraftConfig = <K extends keyof ServerConfig>(key: K, value: ServerConfig[K]) => {
         setDraftConfig((prev) => ({ ...prev, [key]: value }));
@@ -372,7 +382,7 @@ export default function Config() {
     };
 
     const handleSaveConfig = async () => {
-        if (!selectedGuild || !activeConfig) return;
+        if (!selectedGuild || !activeConfig || !session) return;
 
         setError(null);
         setIsGenerating(true);
@@ -386,18 +396,16 @@ export default function Config() {
                     throw new Error("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
                 }
 
-                const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
-
                 const response = await fetch(`${apiBase}/api/config/save`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`,
                     },
                     body: JSON.stringify({
                         username: username,
                         guildId: selectedGuild.id,
                         token: activeConfig.token,
-                        userId: userId,
                     }),
                 });
 
@@ -426,13 +434,10 @@ export default function Config() {
     const hasUnsavedChanges = JSON.stringify(draftConfig) !== JSON.stringify(serverConfig) || username !== dbUsername;
 
     const handleSaveSettings = async () => {
-        if (!selectedGuild || !user) return;
+        if (!selectedGuild || !session) return;
         setSavingSettings(true);
         setSettingsSuccess(false);
         setError(null);
-
-        const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
-        if (!userId) return;
 
         const targetRoleId = isRoleRestrictionEnabled ? requiredRoleId : null;
         let parsedLimit = parseInt(maxOverlaysInput);
@@ -444,12 +449,12 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     guildId: selectedGuild.id,
                     requiredRoleId: targetRoleId,
                     maxOverlaysPerUser: parsedLimit,
-                    userId: userId,
                 }),
             });
 
@@ -544,9 +549,6 @@ export default function Config() {
                     return chunked;
                 };
 
-                const userId = session.user?.user_metadata?.provider_id || session.user?.user_metadata?.sub;
-                const userIdQuery = userId ? `&userId=${encodeURIComponent(userId)}` : '';
-
                 const guildChunks = chunkArray(userGuilds, 80);
                 const botPresenceMap: Record<string, { hasBot: boolean; overlayCount: number }> = {};
 
@@ -555,7 +557,12 @@ export default function Config() {
                         try {
                             const ids = chunk.map((g) => g.id).join(',');
                             const botRes = await fetch(
-                                `${apiBase}/api/guild/check?guildId=${encodeURIComponent(ids)}${userIdQuery}`,
+                                `${apiBase}/api/guild/check?guildId=${encodeURIComponent(ids)}`,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${session.access_token}`,
+                                    },
+                                }
                             );
                             if (botRes.ok) {
                                 const data = await botRes.json();
@@ -640,7 +647,7 @@ export default function Config() {
     };
 
     const handleCreateConfig = async (customName?: string) => {
-        if (!selectedGuild) return;
+        if (!selectedGuild || !session) return;
         const nameToCreate = customName || username;
         if (!nameToCreate || nameToCreate.length < 4 || nameToCreate.length > 25) {
             setError("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
@@ -650,7 +657,7 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            const userId = session.user?.user_metadata?.provider_id || session.user?.user_metadata?.sub;
             if (!userId) {
                 throw new Error("Impossible d'identifier votre compte Discord.");
             }
@@ -658,11 +665,11 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     username: nameToCreate,
                     guildId: selectedGuild.id,
-                    userId: userId,
                 }),
             });
 
@@ -712,15 +719,17 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!session) {
+                throw new Error("Vous n'êtes pas connecté.");
+            }
             const response = await fetch(`${apiBase}/api/config/delete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     token: configToken,
-                    userId: userId,
                 }),
             });
 
@@ -765,16 +774,18 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!session) {
+                throw new Error("Vous n'êtes pas connecté.");
+            }
             const response = await fetch(`${apiBase}/api/config/admin/delete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     guildId: selectedGuild?.id,
                     username: targetUsername,
-                    userId: userId,
                 }),
             });
 
@@ -801,7 +812,7 @@ export default function Config() {
     };
 
     const regenerateLink = async () => {
-        if (!selectedGuild || !activeConfig) return;
+        if (!selectedGuild || !activeConfig || !session) return;
         if (
             !confirm(
                 "ATTENTION : Si vous régénérez le lien, l'ancien jeton sera invalidé. L'overlay actuel configuré sur OBS cessera de fonctionner immédiatement. Voulez-vous continuer ?",
@@ -813,15 +824,14 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
             const response = await fetch(`${apiBase}/api/config/regenerate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     token: activeConfig.token,
-                    userId: userId,
                 }),
             });
 

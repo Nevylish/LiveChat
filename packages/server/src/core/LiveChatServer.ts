@@ -324,7 +324,7 @@ export class LiveChatServer extends EventEmitter {
             legacyHeaders: false,
         });
 
-        const { requireAdmin, requireGuildAccess, requireOverlayOwnership } = this.auth;
+        const { requireAuth, requireAdmin, requireGuildAccess, requireOverlayOwnership } = this.auth;
 
         this.app.get('/api/stats', limiter, (_, res) => {
             res.json({
@@ -385,10 +385,11 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/config/get', limiter, requireGuildAccess, async (req, res) => {
-            const { guildId, userId } = req.query;
+        this.app.get('/api/config/get', limiter, requireAuth, requireGuildAccess, async (req, res) => {
+            const { guildId } = req.query;
+            const userId = req.userId!;
             try {
-                const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId as string, userId as string);
+                const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId as string, userId);
                 const settings = await SupabaseService.getGuildSettings(guildId as string);
                 const maxOverlays = settings?.max_overlays_per_user ?? 5;
                 res.json({ configs, exists: configs.length > 0, maxOverlays });
@@ -397,8 +398,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/create', limiter, requireGuildAccess, async (req, res) => {
-            const { username, guildId, userId } = req.body;
+        this.app.post('/api/config/create', limiter, requireAuth, requireGuildAccess, async (req, res) => {
+            const { username, guildId } = req.body;
+            const userId = req.userId!;
 
             const usernameValidation = Validations.validateUsername(username);
             if (!usernameValidation.valid) {
@@ -436,8 +438,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/save', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
-            const { username, guildId, token, userId } = req.body;
+        this.app.post('/api/config/save', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
+            const { username, guildId, token } = req.body;
+            const userId = req.userId!;
             const config = req.overlayConfig!;
 
             const usernameValidation = Validations.validateUsername(username);
@@ -468,7 +471,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/regenerate', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
+        this.app.post('/api/config/regenerate', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
             const { token } = req.body;
             try {
                 const newToken = crypto.randomBytes(32).toString('hex');
@@ -483,7 +486,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/delete', limiter, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
+        this.app.post('/api/config/delete', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
             const { token } = req.body;
             try {
                 const success = await SupabaseService.deleteOverlayConfig(token);
@@ -497,8 +500,9 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/guild/check', limiter, async (req, res) => {
-            const { guildId, userId } = req.query;
+        this.app.get('/api/guild/check', limiter, requireAuth, async (req, res) => {
+            const { guildId } = req.query;
+            const userId = req.userId!;
             if (typeof guildId !== 'string') {
                 res.status(400).json({ error: 'Missing guildId' });
                 return;
@@ -512,11 +516,8 @@ export class LiveChatServer extends EventEmitter {
                     botPresence[id] = this.discordClient.guilds.cache.has(id);
                 }
 
-                // Get overlay counts if userId is provided
-                let overlayCounts: Record<string, number> = {};
-                if (typeof userId === 'string' && userId) {
-                    overlayCounts = await SupabaseService.getOverlayCountsByGuildsAndUser(ids, userId);
-                }
+                // Get overlay counts for the authenticated user
+                const overlayCounts = await SupabaseService.getOverlayCountsByGuildsAndUser(ids, userId);
 
                 if (guildId.includes(',')) {
                     // Return batch response
@@ -541,7 +542,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/config/all', limiter, requireAdmin, async (req, res) => {
+        this.app.get('/api/config/all', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId } = req.query;
             try {
                 const configs = await SupabaseService.getOverlayConfigsByGuild(guildId as string);
@@ -558,7 +559,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/admin/delete', limiter, requireAdmin, async (req, res) => {
+        this.app.post('/api/config/admin/delete', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId, username } = req.body;
             try {
                 const config = await SupabaseService.getOverlayConfig(guildId, username);
@@ -578,7 +579,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/guild/roles', limiter, requireAdmin, async (req, res) => {
+        this.app.get('/api/guild/roles', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId } = req.query;
             try {
                 const guild = this.discordClient.guilds.cache.get(guildId as string) || await this.discordClient.guilds.fetch(guildId as string).catch(() => null);
@@ -606,7 +607,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.get('/api/guild/settings', limiter, requireAdmin, async (req, res) => {
+        this.app.get('/api/guild/settings', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId } = req.query;
             try {
                 const settings = await SupabaseService.getGuildSettings(guildId as string);
@@ -616,7 +617,7 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/guild/settings/save', limiter, requireAdmin, async (req, res) => {
+        this.app.post('/api/guild/settings/save', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId, requiredRoleId, maxOverlaysPerUser } = req.body;
 
             if (maxOverlaysPerUser !== undefined) {

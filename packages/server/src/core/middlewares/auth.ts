@@ -6,6 +6,7 @@ declare global {
     namespace Express {
         interface Request {
             overlayConfig?: OverlayConfigRow;
+            userId?: string;
         }
     }
 }
@@ -69,14 +70,56 @@ export async function checkGuildAccess(
 export function createAuthMiddlewares(discordClient: DiscordClient) {
     return {
         /**
+         * Middleware to authenticate Supabase JWT token and extract Discord userId.
+         */
+        requireAuth: (req: Request, res: Response, next: NextFunction): void => {
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                res.status(401).json({ error: 'Missing or malformed Authorization header' });
+                return;
+            }
+
+            const token = authHeader.split(' ')[1];
+            if (!token) {
+                res.status(401).json({ error: 'Missing token in Authorization header' });
+                return;
+            }
+
+            SupabaseService.getAnonClient().auth.getUser(token)
+                .then(({ data, error }) => {
+                    if (error || !data.user) {
+                        res.status(401).json({ error: 'Session invalide ou expirée.' });
+                        return;
+                    }
+
+                    const userId = data.user.user_metadata?.provider_id || data.user.user_metadata?.sub;
+                    if (!userId) {
+                        res.status(401).json({ error: 'Impossible de récupérer votre identifiant Discord.' });
+                        return;
+                    }
+
+                    req.userId = userId;
+                    next();
+                })
+                .catch((err) => {
+                    console.error('Error in requireAuth middleware', err);
+                    res.status(500).json({ error: 'Internal server error during authentication' });
+                });
+        },
+
+        /**
          * Middleware to check if the user is an admin of the guild.
          */
         requireAdmin: (req: Request, res: Response, next: NextFunction): void => {
             const guildId = (req.query.guildId || req.body.guildId) as string;
-            const userId = (req.query.userId || req.body.userId) as string;
+            const userId = req.userId;
 
-            if (!guildId || !userId) {
-                res.status(400).json({ error: 'Missing guildId or userId' });
+            if (!guildId) {
+                res.status(400).json({ error: 'Missing guildId' });
+                return;
+            }
+            if (!userId) {
+                res.status(401).json({ error: 'Unauthorized: User not authenticated' });
                 return;
             }
 
@@ -98,10 +141,14 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
          */
         requireGuildAccess: (req: Request, res: Response, next: NextFunction): void => {
             const guildId = (req.query.guildId || req.body.guildId || req.overlayConfig?.guild_id) as string;
-            const userId = (req.query.userId || req.body.userId) as string;
+            const userId = req.userId;
 
-            if (!guildId || !userId) {
-                res.status(400).json({ error: 'Missing guildId or userId' });
+            if (!guildId) {
+                res.status(400).json({ error: 'Missing guildId' });
+                return;
+            }
+            if (!userId) {
+                res.status(401).json({ error: 'Unauthorized: User not authenticated' });
                 return;
             }
 
@@ -124,10 +171,14 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
          */
         requireOverlayOwnership: (req: Request, res: Response, next: NextFunction): void => {
             const token = (req.body.token || req.query.token) as string;
-            const userId = (req.body.userId || req.query.userId) as string;
+            const userId = req.userId;
 
-            if (!token || !userId) {
-                res.status(400).json({ error: 'Missing token or userId' });
+            if (!token) {
+                res.status(400).json({ error: 'Missing token' });
+                return;
+            }
+            if (!userId) {
+                res.status(401).json({ error: 'Unauthorized: User not authenticated' });
                 return;
             }
 
