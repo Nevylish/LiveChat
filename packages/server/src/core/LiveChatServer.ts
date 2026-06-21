@@ -333,57 +333,7 @@ export class LiveChatServer extends EventEmitter {
             });
         });
 
-        this.app.get('/api/token/generate', limiter, async (req, res) => {
-            const { username, guildId } = req.query;
 
-            if (typeof username !== 'string' || typeof guildId !== 'string') {
-                res.status(400).json({ error: 'Missing or invalid username/guildId.' });
-                return;
-            }
-
-            const usernameValidation = Validations.validateUsername(username);
-            if (!usernameValidation.valid) {
-                res.status(400).json({ error: usernameValidation.error });
-                return;
-            }
-
-            const guildIdValidation = Validations.validateGuildId(guildId);
-            if (!guildIdValidation.valid) {
-                res.status(400).json({ error: guildIdValidation.error });
-                return;
-            }
-
-            try {
-                const guild = await this.discordClient.guilds.fetch(guildId);
-                if (!guild) {
-                    res.status(404).json({
-                        error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
-                        id: 'bot_not_in_guild',
-                    });
-                    return;
-                }
-            } catch {
-                res.status(404).json({
-                    error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
-                    id: 'bot_not_in_guild',
-                });
-                return;
-            }
-
-            try {
-                const config = await SupabaseService.getOverlayConfig(guildId, username);
-                if (config && config.token) {
-                    res.json({ token: config.token });
-                } else {
-                    const token = this.generateOverlayToken(username, guildId);
-                    await SupabaseService.saveOverlayConfig(guildId, username, token);
-                    res.json({ token });
-                }
-            } catch (err) {
-                const token = this.generateOverlayToken(username, guildId);
-                res.json({ token });
-            }
-        });
 
         this.app.get('/api/config/get', limiter, requireAuth, requireGuildAccess, async (req, res) => {
             const { guildId } = req.query;
