@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { Functions } from '../../utils/Functions';
 import { SupabaseService } from '../../utils/SupabaseService';
 
@@ -12,7 +12,7 @@ export const execute = async (interaction: ChatInputCommandInteraction): Promise
         const embed = Functions.buildEmbed('Vous devez fournir un nombre entre **1** et **20**.', 'Error');
         await interaction.reply({
             embeds: [embed],
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         });
         return;
     }
@@ -27,6 +27,6 @@ export const execute = async (interaction: ChatInputCommandInteraction): Promise
     );
     await interaction.reply({
         embeds: [embed],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
     });
 };

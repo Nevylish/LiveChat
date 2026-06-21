@@ -85,8 +85,8 @@ export default function GuildGrid({
                 onClick={() => g.hasBot && onSelectGuild(g.id)}
                 className={`config-card flex flex-col justify-between h-full p-6 transition-colors group border ${
                     g.hasBot
-                        ? 'cursor-pointer hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.04]'
-                        : 'bg-white/[0.01] border-white/5 opacity-70'
+                        ? 'cursor-pointer hover:border-white/30 bg-white/2 hover:bg-white/4'
+                        : 'bg-white/1 border-white/5 opacity-70'
                 }`}
             >
                 <div className="flex items-start gap-4">

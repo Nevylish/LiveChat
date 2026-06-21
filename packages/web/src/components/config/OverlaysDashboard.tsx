@@ -97,7 +97,7 @@ export default function OverlaysDashboard({
                             configs.map((config) => (
                                 <div
                                     key={config.token}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors"
                                 >
                                     <div className="flex items-center gap-4 min-w-0">
                                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/5 text-white">
@@ -224,7 +224,7 @@ export default function OverlaysDashboard({
                                     {allGuildConfigs.map((c) => (
                                         <div
                                             key={c.username}
-                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01]"
+                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/1"
                                         >
                                             <div className="min-w-0 flex-1">
                                                 <p className="font-bold text-sm text-foreground truncate">

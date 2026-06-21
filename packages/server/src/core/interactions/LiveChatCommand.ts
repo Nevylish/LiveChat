@@ -1,4 +1,9 @@
-import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    MessageFlags,
+} from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
 import { TargetsManager } from '../utils/Targets';
@@ -152,7 +157,7 @@ export default class LiveChatCommand extends Command {
                 );
                 await interaction.reply({
                     embeds: [embed],
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
                 return;
             }
