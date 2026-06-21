@@ -2,9 +2,9 @@ import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommand
 import DiscordClient from '../DiscordClient';
 import { TargetsManager } from '../utils/Targets';
 import Command from './classes/Command';
-import * as media from './subcommands/media';
-import * as skip from './subcommands/skip';
-import * as stop from './subcommands/stop';
+import * as media from './livechat_subcommands/media';
+import * as skip from './livechat_subcommands/skip';
+import * as stop from './livechat_subcommands/stop';
 import { SupabaseService } from '../utils/SupabaseService';
 
 export default class LiveChatCommand extends Command {

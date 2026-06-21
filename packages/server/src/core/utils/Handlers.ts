@@ -2,7 +2,9 @@ import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFl
 import DiscordClient from '../DiscordClient';
 import Command from '../interactions/classes/Command';
 import LiveChatCommand from '../interactions/LiveChatCommand';
+import ManageOverlaysCommand from '../interactions/ManageOverlaysCommand';
 import PlatformsCommand from '../interactions/PlatformsCommand';
+import SettingsCommand from '../interactions/SettingsCommand';
 import SubscriptionCommand from '../interactions/SubscriptionCommand';
 import { Logger } from '../utils/Logger';
 import { Functions } from './Functions';
@@ -28,6 +30,8 @@ export namespace Handlers {
 
             if (interaction.isChatInputCommand()) await handleCommand(client, interaction);
             else if (interaction.isAutocomplete()) await handleAutocomplete(client, interaction);
+            else if (interaction.isButton()) await ManageOverlaysCommand.handleButton(client, interaction);
+            else if (interaction.isModalSubmit()) await ManageOverlaysCommand.handleModalSubmit(client, interaction);
         });
 
         Logger.success('Handlers', 'Events listeners loaded');
@@ -38,6 +42,8 @@ export namespace Handlers {
             new LiveChatCommand(client),
             new SubscriptionCommand(client),
             new PlatformsCommand(client),
+            new SettingsCommand(client),
+            new ManageOverlaysCommand(client),
         ];
 
         commands.forEach((command) => {
