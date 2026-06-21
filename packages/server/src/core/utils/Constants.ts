@@ -16,11 +16,11 @@ export namespace Constants {
     };
 
     export const getOverlayUrl = (): string => {
-        const host = process.env.OVERLAY_URI!;
+        const host = getFrontendUrl();
         return host.includes('localhost') ? `http://${host}:4000` : `https://${host}`;
     };
 
-    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];
+    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl(), getBaseUrl()];
 
     export const ROUTES = {
         home: '/',
