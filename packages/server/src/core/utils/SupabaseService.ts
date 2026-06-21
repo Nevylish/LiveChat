@@ -5,6 +5,7 @@ export interface OverlayConfigRow {
     guild_id: string;
     username: string;
     token: string;
+    user_id: string;
     updated_at?: string;
 }
 
@@ -53,24 +54,75 @@ export class SupabaseService {
         }
     }
 
-    public static async getOverlayConfigByGuild(guildId: string): Promise<OverlayConfigRow | null> {
+    public static async getOverlayConfigsByGuildAndUser(guildId: string, userId: string): Promise<OverlayConfigRow[]> {
         try {
             const supabase = this.getClient();
             const { data, error } = await supabase
                 .from('overlay_configs')
                 .select('*')
                 .eq('guild_id', guildId)
-                .maybeSingle();
+                .eq('user_id', userId);
 
             if (error) {
-                Logger.error('SupabaseService', `Error fetching config for guild ${guildId}`, error);
-                return null;
+                Logger.error('SupabaseService', `Error fetching configs for guild ${guildId} and user ${userId}`, error);
+                return [];
             }
 
-            return data as OverlayConfigRow;
+            return (data as OverlayConfigRow[]) || [];
         } catch (err) {
-            Logger.error('SupabaseService', `Unexpected error fetching config for guild ${guildId}`, err);
-            return null;
+            Logger.error('SupabaseService', `Unexpected error fetching configs for guild ${guildId} and user ${userId}`, err);
+            return [];
+        }
+    }
+
+    public static async getOverlayCountsByGuildsAndUser(guildIds: string[], userId: string): Promise<Record<string, number>> {
+        try {
+            const supabase = this.getClient();
+            const { data, error } = await supabase
+                .from('overlay_configs')
+                .select('guild_id')
+                .in('guild_id', guildIds)
+                .eq('user_id', userId);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error fetching counts for user ${userId}`, error);
+                return {};
+            }
+
+            const counts: Record<string, number> = {};
+            for (const id of guildIds) {
+                counts[id] = 0;
+            }
+            if (data) {
+                for (const row of data) {
+                    const gId = row.guild_id;
+                    counts[gId] = (counts[gId] || 0) + 1;
+                }
+            }
+            return counts;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error fetching counts for user ${userId}`, err);
+            return {};
+        }
+    }
+
+    public static async getOverlayConfigsByGuild(guildId: string): Promise<OverlayConfigRow[]> {
+        try {
+            const supabase = this.getClient();
+            const { data, error } = await supabase
+                .from('overlay_configs')
+                .select('*')
+                .eq('guild_id', guildId);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error fetching configs for guild ${guildId}`, error);
+                return [];
+            }
+
+            return (data as OverlayConfigRow[]) || [];
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error fetching configs for guild ${guildId}`, err);
+            return [];
         }
     }
 
@@ -95,24 +147,21 @@ export class SupabaseService {
         }
     }
 
-    public static async saveOverlayConfig(guildId: string, username: string, token: string): Promise<boolean> {
+    public static async saveOverlayConfig(guildId: string, username: string, token: string, userId?: string): Promise<boolean> {
         try {
             const supabase = this.getClient();
-            
-            // Delete existing config for this guild first to prevent duplicate rows for the same guild when username changes
-            await supabase
-                .from('overlay_configs')
-                .delete()
-                .eq('guild_id', guildId);
-
+            const payload: any = {
+                guild_id: guildId,
+                username: username.toLowerCase(),
+                token: token,
+                updated_at: new Date().toISOString(),
+            };
+            if (userId) {
+                payload.user_id = userId;
+            }
             const { error } = await supabase
                 .from('overlay_configs')
-                .insert({
-                    guild_id: guildId,
-                    username: username.toLowerCase(),
-                    token: token,
-                    updated_at: new Date().toISOString(),
-                });
+                .upsert(payload);
 
             if (error) {
                 Logger.error('SupabaseService', `Error saving config for ${username}:${guildId}`, error);
@@ -126,23 +175,99 @@ export class SupabaseService {
         }
     }
 
-    public static async deleteOverlayConfig(guildId: string): Promise<boolean> {
+    public static async deleteOverlayConfig(token: string): Promise<boolean> {
         try {
             const supabase = this.getClient();
             const { error } = await supabase
                 .from('overlay_configs')
                 .delete()
-                .eq('guild_id', guildId);
+                .eq('token', token);
 
             if (error) {
-                Logger.error('SupabaseService', `Error deleting config for guild ${guildId}`, error);
+                Logger.error('SupabaseService', `Error deleting config for token ${token}`, error);
                 return false;
             }
 
             return true;
         } catch (err) {
-            Logger.error('SupabaseService', `Unexpected error deleting config for guild ${guildId}`, err);
+            Logger.error('SupabaseService', `Unexpected error deleting config for token ${token}`, err);
             return false;
         }
     }
+
+    public static async updateOverlayToken(oldToken: string, newToken: string): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+            const { error } = await supabase
+                .from('overlay_configs')
+                .update({ token: newToken })
+                .eq('token', oldToken);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error updating token from ${oldToken} to ${newToken}`, error);
+                return false;
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error updating token from ${oldToken} to ${newToken}`, err);
+            return false;
+        }
+    }
+
+    public static async getGuildSettings(guildId: string): Promise<GuildSettingsRow | null> {
+        try {
+            const supabase = this.getClient();
+            const { data, error } = await supabase
+                .from('guild_settings')
+                .select('*')
+                .eq('guild_id', guildId)
+                .maybeSingle();
+
+            if (error) {
+                Logger.error('SupabaseService', `Error fetching settings for guild ${guildId}`, error);
+                return null;
+            }
+
+            return data as GuildSettingsRow;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error fetching settings for guild ${guildId}`, err);
+            return null;
+        }
+    }
+
+    public static async saveGuildSettings(
+        guildId: string,
+        requiredRoleId: string | null,
+        maxOverlaysPerUser?: number | null
+    ): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+            const { error } = await supabase
+                .from('guild_settings')
+                .upsert({
+                    guild_id: guildId,
+                    required_role_id: requiredRoleId,
+                    max_overlays_per_user: maxOverlaysPerUser !== undefined ? maxOverlaysPerUser : 5,
+                    updated_at: new Date().toISOString(),
+                });
+
+            if (error) {
+                Logger.error('SupabaseService', `Error saving settings for guild ${guildId}`, error);
+                return false;
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error saving settings for guild ${guildId}`, err);
+            return false;
+        }
+    }
+}
+
+export interface GuildSettingsRow {
+    guild_id: string;
+    required_role_id: string | null;
+    max_overlays_per_user?: number | null;
+    updated_at?: string;
 }

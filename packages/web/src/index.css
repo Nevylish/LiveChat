@@ -252,6 +252,11 @@
         background-color 0.2s ease;
 }
 
+.config-input option {
+    background-color: #1e1c2e;
+    color: #fffffe;
+}
+
 .config-input::placeholder {
     color: var(--muted-foreground);
     opacity: 0.6;

@@ -15,6 +15,8 @@ import {
     RefreshCw,
     ShieldAlert,
     Sliders,
+    Trash2,
+    Tv,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,6 +26,14 @@ interface ServerConfig {
     soundEnabled: boolean;
     soundType: string;
     soundVolume: number;
+}
+
+interface OverlayConfigRow {
+    guild_id: string;
+    username: string;
+    token: string;
+    user_id: string;
+    updated_at?: string;
 }
 
 const DEFAULT_CONFIG: ServerConfig = {
@@ -40,8 +50,7 @@ const playSynthSound = (type: string, volume: number) => {
         gainNode.connect(audioCtx.destination);
 
         if (type === 'chime') {
-            // Accord majour arpégé (do-mi-sol) avec une cloche douce
-            const freqs = [523.25, 659.25, 783.99]; // Do5, Mi5, Sol5
+            const freqs = [523.25, 659.25, 783.99];
             freqs.forEach((freq, i) => {
                 const osc = audioCtx.createOscillator();
                 const noteGain = audioCtx.createGain();
@@ -57,7 +66,6 @@ const playSynthSound = (type: string, volume: number) => {
                 osc.stop(startTime + 0.6);
             });
         } else if (type === 'arcade') {
-            // Bip-bip arcade, deux notes montantes nettes mais pas agressives
             const notes = [440, 659.25];
             notes.forEach((freq, i) => {
                 const osc = audioCtx.createOscillator();
@@ -74,8 +82,7 @@ const playSynthSound = (type: string, volume: number) => {
                 osc.stop(startTime + 0.12);
             });
         } else if (type === 'success') {
-            // Son "succès" type jeu vidéo : deux notes ascendantes nettes et satisfaisantes
-            const notes = [659.25, 987.77]; // Mi5 -> Si5 (quinte)
+            const notes = [659.25, 987.77];
             notes.forEach((freq, i) => {
                 const osc = audioCtx.createOscillator();
                 const noteGain = audioCtx.createGain();
@@ -91,8 +98,7 @@ const playSynthSound = (type: string, volume: number) => {
                 osc.stop(startTime + 0.25);
             });
         } else {
-            // Son de notification type Discord : deux notes graves et chaudes, "dong" rond
-            const notes = [466.16, 587.33]; // Si4 -> Ré5 (tierce mineure, plus grave et chaud)
+            const notes = [466.16, 587.33];
             notes.forEach((freq, i) => {
                 const osc = audioCtx.createOscillator();
                 const noteGain = audioCtx.createGain();
@@ -127,6 +133,7 @@ interface DiscordGuild {
     owner: boolean;
     permissions: string;
     hasBot?: boolean;
+    overlayCount?: number;
 }
 
 export default function Config() {
@@ -144,9 +151,16 @@ export default function Config() {
     const [fetchingGuilds, setFetchingGuilds] = useState(false);
     const [selectedGuild, setSelectedGuild] = useState<DiscordGuild | null>(null);
 
+    const [configs, setConfigs] = useState<OverlayConfigRow[]>([]);
+    const [activeConfig, setActiveConfig] = useState<OverlayConfigRow | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newOverlayName, setNewOverlayName] = useState('');
+
+    const [allGuildConfigs, setAllGuildConfigs] = useState<any[]>([]);
+    const [loadingAllConfigs, setLoadingAllConfigs] = useState(false);
+
     const [username, setUsername] = useState('');
     const [dbUsername, setDbUsername] = useState('');
-    const [token, setToken] = useState('');
     const [generatedLink, setGeneratedLink] = useState('');
     const [isLinkBlurred, setIsLinkBlurred] = useState(true);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -164,7 +178,23 @@ export default function Config() {
     const [checkingLink, setCheckingLink] = useState(false);
     const [showObsGuide, setShowObsGuide] = useState(false);
 
-    // Sync URL guildId with selectedGuild state
+    const [isRestricted, setIsRestricted] = useState(false);
+    const [guildRoles, setGuildRoles] = useState<any[]>([]);
+    const [loadingRoles, setLoadingRoles] = useState(false);
+    const [requiredRoleId, setRequiredRoleId] = useState<string | null>(null);
+    const [dbRequiredRoleId, setDbRequiredRoleId] = useState<string | null>(null);
+    const [isRoleRestrictionEnabled, setIsRoleRestrictionEnabled] = useState(false);
+    const [savingSettings, setSavingSettings] = useState(false);
+    const [settingsSuccess, setSettingsSuccess] = useState(false);
+    const [isSessionExpired, setIsSessionExpired] = useState(false);
+    const [maxOverlays, setMaxOverlays] = useState<number>(5);
+    const [dbMaxOverlaysLimit, setDbMaxOverlaysLimit] = useState<number>(5);
+    const [maxOverlaysInput, setMaxOverlaysInput] = useState<string>('5');
+
+    const isLocal = window.location.hostname === 'localhost';
+    const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
+    const overlayBase = isLocal ? 'http://localhost:4000/v2/overlay' : 'https://livechat.nevylish.fr/v2/overlay.html';
+
     useEffect(() => {
         if (guildId && guilds.length > 0) {
             const matched = guilds.find((g) => g.id === guildId);
@@ -182,64 +212,87 @@ export default function Config() {
         }
     }, [guildId, guilds, navigate]);
 
-    // Load server-specific settings from localStorage when guild changes
     useEffect(() => {
-        if (selectedGuild) {
-            const saved = localStorage.getItem(`livechat_settings_${selectedGuild.id}`);
+        if (activeConfig && selectedGuild) {
+            const savedToken = localStorage.getItem(`livechat_settings_${activeConfig.token}`);
             let loaded = DEFAULT_CONFIG;
-            if (saved) {
+            if (savedToken) {
                 try {
-                    loaded = JSON.parse(saved);
+                    loaded = JSON.parse(savedToken);
                 } catch (_) {
                     loaded = DEFAULT_CONFIG;
+                }
+            } else {
+                const savedGuild = localStorage.getItem(`livechat_settings_${selectedGuild.id}`);
+                if (savedGuild) {
+                    try {
+                        loaded = JSON.parse(savedGuild);
+                        localStorage.setItem(`livechat_settings_${activeConfig.token}`, savedGuild);
+                    } catch (_) {
+                        loaded = DEFAULT_CONFIG;
+                    }
                 }
             }
             setServerConfig(loaded);
             setDraftConfig(loaded);
         }
-    }, [selectedGuild]);
+    }, [activeConfig, selectedGuild]);
 
-    // Check if configuration exists in the database
     useEffect(() => {
         const checkExistingConfig = async () => {
             if (!selectedGuild) {
                 setHasExistingLink(null);
+                setConfigs([]);
+                setActiveConfig(null);
+                setIsEditing(false);
+                setUsername('');
+                setDbUsername('');
+                setGeneratedLink('');
+                setIsRestricted(false);
+                setMaxOverlays(5);
+                setError(null);
+                return;
+            }
+            if (!user) {
+                return;
+            }
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!userId) {
                 return;
             }
             setCheckingLink(true);
             setError(null);
+            setIsRestricted(false);
             try {
-                const isLocal = window.location.hostname === 'localhost';
-                const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
-                const overlayBase = isLocal
-                    ? 'http://localhost:4000/v2/overlay'
-                    : 'https://livechat.nevylish.fr/v2/overlay.html';
-
                 const response = await fetch(
-                    `${apiBase}/api/config/get?guildId=${encodeURIComponent(selectedGuild.id)}`,
+                    `${apiBase}/api/config/get?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
                 );
+                if (response.status === 403) {
+                    const data = await response.json();
+                    setError(data.error || "Vous n'avez pas l'autorisation d'utiliser LiveChat sur ce serveur.");
+                    setIsRestricted(true);
+                    setConfigs([]);
+                    setHasExistingLink(null);
+                    return;
+                }
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.exists && data.token) {
-                        setGeneratedLink(`${overlayBase}?token=${data.token}`);
-                        setToken(data.token);
-                        if (data.username) {
-                            setUsername(data.username);
-                            setDbUsername(data.username);
-                        }
+                    if (data.exists && data.configs && data.configs.length > 0) {
+                        setConfigs(data.configs);
                         setHasExistingLink(true);
                     } else {
-                        setGeneratedLink('');
-                        setToken('');
-                        setDbUsername('');
+                        setConfigs([]);
                         setHasExistingLink(false);
                     }
+                    setMaxOverlays(data.maxOverlays ?? 5);
                 } else {
+                    setConfigs([]);
                     setHasExistingLink(false);
                 }
             } catch (err: any) {
                 console.error(err);
                 setError('Impossible de vérifier la configuration de ce serveur.');
+                setConfigs([]);
                 setHasExistingLink(false);
             } finally {
                 setCheckingLink(false);
@@ -247,31 +300,143 @@ export default function Config() {
         };
 
         checkExistingConfig();
-    }, [selectedGuild]);
+    }, [selectedGuild, user]);
+
+    // Fetch all guild configs for administration if user is admin
+    useEffect(() => {
+        const fetchAllConfigs = async () => {
+            if (!selectedGuild || isEditing || !user) {
+                setAllGuildConfigs([]);
+                return;
+            }
+            const perms = parseInt(selectedGuild.permissions);
+            const isUserAdmin = selectedGuild.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+            if (!isUserAdmin) {
+                setAllGuildConfigs([]);
+                return;
+            }
+
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!userId) return;
+
+            setLoadingAllConfigs(true);
+            try {
+                const response = await fetch(
+                    `${apiBase}/api/config/all?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.configs) {
+                        setAllGuildConfigs(data.configs);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch all configurations', err);
+            } finally {
+                setLoadingAllConfigs(false);
+            }
+        };
+
+        fetchAllConfigs();
+    }, [selectedGuild, isEditing, user]);
+
+    // Fetch server settings and roles for administration if user is admin
+    useEffect(() => {
+        const fetchSettingsAndRoles = async () => {
+            if (!selectedGuild || !user) {
+                setGuildRoles([]);
+                setRequiredRoleId(null);
+                setDbRequiredRoleId(null);
+                setIsRoleRestrictionEnabled(false);
+                setDbMaxOverlaysLimit(5);
+                setMaxOverlaysInput('5');
+                return;
+            }
+
+            const perms = parseInt(selectedGuild.permissions);
+            const isUserAdmin = selectedGuild.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+            if (!isUserAdmin) {
+                setGuildRoles([]);
+                setRequiredRoleId(null);
+                setDbRequiredRoleId(null);
+                setIsRoleRestrictionEnabled(false);
+                setDbMaxOverlaysLimit(5);
+                setMaxOverlaysInput('5');
+                return;
+            }
+
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!userId) return;
+
+            setLoadingRoles(true);
+            try {
+                // Fetch settings
+                const settingsRes = await fetch(
+                    `${apiBase}/api/guild/settings?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                );
+                if (settingsRes.ok) {
+                    const data = await settingsRes.json();
+                    if (data.settings) {
+                        const roleId = data.settings.required_role_id;
+                        setRequiredRoleId(roleId);
+                        setDbRequiredRoleId(roleId);
+                        setIsRoleRestrictionEnabled(roleId !== null && roleId !== '');
+
+                        const limit = data.settings.max_overlays_per_user ?? 5;
+                        setDbMaxOverlaysLimit(limit);
+                        setMaxOverlaysInput(String(limit));
+                    }
+                }
+
+                // Fetch roles
+                const rolesRes = await fetch(
+                    `${apiBase}/api/guild/roles?guildId=${encodeURIComponent(selectedGuild.id)}&userId=${encodeURIComponent(userId)}`,
+                );
+                if (rolesRes.ok) {
+                    const data = await rolesRes.json();
+                    if (data.roles) {
+                        setGuildRoles(data.roles);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch settings and roles', err);
+            } finally {
+                setLoadingRoles(false);
+            }
+        };
+
+        fetchSettingsAndRoles();
+    }, [selectedGuild, user]);
 
     const updateDraftConfig = <K extends keyof ServerConfig>(key: K, value: ServerConfig[K]) => {
         setDraftConfig((prev) => ({ ...prev, [key]: value }));
     };
 
+    const handleConfigureConfig = (config: OverlayConfigRow) => {
+        setActiveConfig(config);
+        setUsername(config.username);
+        setDbUsername(config.username);
+        setGeneratedLink(`${overlayBase}?token=${config.token}`);
+        setIsEditing(true);
+        setError(null);
+    };
+
     const handleSaveConfig = async () => {
-        if (!selectedGuild) return;
+        if (!selectedGuild || !activeConfig) return;
 
         setError(null);
         setIsGenerating(true);
 
         try {
-            // Save sound config to localStorage
-            localStorage.setItem(`livechat_settings_${selectedGuild.id}`, JSON.stringify(draftConfig));
+            localStorage.setItem(`livechat_settings_${activeConfig.token}`, JSON.stringify(draftConfig));
             setServerConfig(draftConfig);
 
-            // Save username config to backend database if it changed
             if (username !== dbUsername) {
                 if (!username || username.length < 4 || username.length > 25) {
                     throw new Error("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
                 }
 
-                const isLocal = window.location.hostname === 'localhost';
-                const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
+                const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
 
                 const response = await fetch(`${apiBase}/api/config/save`, {
                     method: 'POST',
@@ -281,17 +446,22 @@ export default function Config() {
                     body: JSON.stringify({
                         username: username,
                         guildId: selectedGuild.id,
-                        token: token,
+                        token: activeConfig.token,
+                        userId: userId,
                     }),
                 });
 
                 if (!response.ok) {
-                    throw new Error("Impossible d'enregistrer le nouveau pseudo.");
+                    const data = await response.json();
+                    throw new Error(data.error || "Impossible d'enregistrer le nouveau pseudo.");
                 }
 
                 const data = await response.json();
                 if (data.success) {
                     setDbUsername(username);
+                    const updatedConfig = { ...activeConfig, username: username };
+                    setActiveConfig(updatedConfig);
+                    setConfigs((prev) => prev.map((c) => (c.token === activeConfig.token ? updatedConfig : c)));
                 } else {
                     throw new Error("Impossible d'enregistrer le nouveau pseudo.");
                 }
@@ -305,13 +475,62 @@ export default function Config() {
 
     const hasUnsavedChanges = JSON.stringify(draftConfig) !== JSON.stringify(serverConfig) || username !== dbUsername;
 
+    const handleSaveSettings = async () => {
+        if (!selectedGuild || !user) return;
+        setSavingSettings(true);
+        setSettingsSuccess(false);
+        setError(null);
+
+        const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+        if (!userId) return;
+
+        const targetRoleId = isRoleRestrictionEnabled ? requiredRoleId : null;
+        let parsedLimit = parseInt(maxOverlaysInput);
+        if (isNaN(parsedLimit) || parsedLimit < 1) parsedLimit = 1;
+        if (parsedLimit > 20) parsedLimit = 20;
+
+        try {
+            const response = await fetch(`${apiBase}/api/guild/settings/save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    guildId: selectedGuild.id,
+                    requiredRoleId: targetRoleId,
+                    maxOverlaysPerUser: parsedLimit,
+                    userId: userId,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Impossible de sauvegarder les paramètres du serveur.');
+            }
+
+            setDbRequiredRoleId(targetRoleId);
+            setDbMaxOverlaysLimit(parsedLimit);
+            setMaxOverlaysInput(String(parsedLimit));
+            setMaxOverlays(parsedLimit);
+            setSettingsSuccess(true);
+            setTimeout(() => setSettingsSuccess(false), 3000);
+        } catch (err: any) {
+            setError(err.message || 'Une erreur est survenue lors de la sauvegarde.');
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    const hasUnsavedSettings =
+        (isRoleRestrictionEnabled ? requiredRoleId : null) !== dbRequiredRoleId ||
+        (parseInt(maxOverlaysInput) || 5) !== dbMaxOverlaysLimit;
+
     const handlePlaySound = (type: string, volume: number) => {
         setIsPlayingSoundWave(true);
         playSynthSound(type, volume);
         setTimeout(() => setIsPlayingSoundWave(false), 800);
     };
 
-    // Check Auth session
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
@@ -329,15 +548,23 @@ export default function Config() {
         return () => subscription.unsubscribe();
     }, []);
 
-    // Load user's administrative guilds
     const loadGuilds = useCallback(
         async (force = false) => {
             if (!session) return;
             const providerToken = session.provider_token;
             if (!providerToken) {
                 console.warn('No Discord provider token found in session.');
+                const hasTriedOAuth = sessionStorage.getItem('livechat_oauth_retry');
+                if (!hasTriedOAuth) {
+                    sessionStorage.setItem('livechat_oauth_retry', 'true');
+                    handleLogin();
+                } else {
+                    setIsSessionExpired(true);
+                }
                 return;
             }
+            sessionStorage.removeItem('livechat_oauth_retry');
+            setIsSessionExpired(false);
 
             if (
                 !force &&
@@ -359,30 +586,54 @@ export default function Config() {
 
                 const userGuilds: DiscordGuild[] = await res.json();
 
-                // Filter: Owner, Administrator (0x8) or Manage Guild (0x20)
-                const adminGuilds = userGuilds.filter((g) => {
-                    const perms = parseInt(g.permissions);
-                    return g.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
-                });
+                const chunkArray = (arr: any[], size: number): any[][] => {
+                    const chunked: any[][] = [];
+                    for (let i = 0; i < arr.length; i += size) {
+                        chunked.push(arr.slice(i, i + size));
+                    }
+                    return chunked;
+                };
 
-                // Check bot status for each server on the backend
-                const isLocal = window.location.hostname === 'localhost';
-                const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
+                const userId = session.user?.user_metadata?.provider_id || session.user?.user_metadata?.sub;
+                const userIdQuery = userId ? `&userId=${encodeURIComponent(userId)}` : '';
 
-                const checkedGuilds = await Promise.all(
-                    adminGuilds.map(async (g) => {
+                const guildChunks = chunkArray(userGuilds, 80);
+                const botPresenceMap: Record<string, { hasBot: boolean; overlayCount: number }> = {};
+
+                await Promise.all(
+                    guildChunks.map(async (chunk) => {
                         try {
-                            const botRes = await fetch(`${apiBase}/api/guild/check?guildId=${g.id}`);
+                            const ids = chunk.map((g) => g.id).join(',');
+                            const botRes = await fetch(
+                                `${apiBase}/api/guild/check?guildId=${encodeURIComponent(ids)}${userIdQuery}`,
+                            );
                             if (botRes.ok) {
-                                const { hasBot } = await botRes.json();
-                                return { ...g, hasBot };
+                                const data = await botRes.json();
+                                if (data.results) {
+                                    Object.assign(botPresenceMap, data.results);
+                                }
                             }
-                        } catch (_) {}
-                        return { ...g, hasBot: false };
+                        } catch (e) {
+                            console.error('Failed to batch check guilds', e);
+                        }
                     }),
                 );
 
-                // Sort: bot present first, then alphabetically
+                const checkedGuilds = userGuilds
+                    .map((g) => {
+                        const status = botPresenceMap[g.id] || { hasBot: false, overlayCount: 0 };
+                        return {
+                            ...g,
+                            hasBot: status.hasBot,
+                            overlayCount: status.overlayCount,
+                        };
+                    })
+                    .filter((g) => {
+                        const perms = parseInt(g.permissions);
+                        const isAdmin = g.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+                        return isAdmin || g.hasBot;
+                    });
+
                 checkedGuilds.sort((a, b) => {
                     if (a.hasBot && !b.hasBot) return -1;
                     if (!a.hasBot && b.hasBot) return 1;
@@ -400,7 +651,7 @@ export default function Config() {
                 setFetchingGuilds(false);
             }
         },
-        [session],
+        [session, apiBase],
     );
 
     useEffect(() => {
@@ -411,7 +662,6 @@ export default function Config() {
 
     useEffect(() => {
         if (session && user) {
-            // Default pre-fill streamer username using Discord username if not set already
             const discordUsername = user?.user_metadata?.preferred_username || user?.user_metadata?.name || '';
             const formattedName = discordUsername.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
             setUsername((prev) => prev || formattedName);
@@ -439,13 +689,10 @@ export default function Config() {
         setUsername(clean);
     };
 
-    const isLocal = window.location.hostname === 'localhost';
-    const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
-    const overlayBase = isLocal ? 'http://localhost:4000/v2/overlay' : 'https://livechat.nevylish.fr/v2/overlay.html';
-
-    const handleCreateConfig = async () => {
+    const handleCreateConfig = async (customName?: string) => {
         if (!selectedGuild) return;
-        if (!username || username.length < 4 || username.length > 25) {
+        const nameToCreate = customName || username;
+        if (!nameToCreate || nameToCreate.length < 4 || nameToCreate.length > 25) {
             setError("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
             return;
         }
@@ -453,27 +700,47 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            if (!userId) {
+                throw new Error("Impossible d'identifier votre compte Discord.");
+            }
             const response = await fetch(`${apiBase}/api/config/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: username,
+                    username: nameToCreate,
                     guildId: selectedGuild.id,
+                    userId: userId,
                 }),
             });
 
             if (!response.ok) {
-                throw new Error("Impossible de créer la configuration de l'overlay.");
+                const data = await response.json();
+                throw new Error(data.error || "Impossible de créer la configuration de l'overlay.");
             }
 
             const data = await response.json();
             if (data.exists && data.token) {
-                setToken(data.token);
-                setDbUsername(username);
-                setGeneratedLink(`${overlayBase}?token=${data.token}`);
+                const newConfig: OverlayConfigRow = {
+                    guild_id: selectedGuild.id,
+                    username: nameToCreate,
+                    token: data.token,
+                    user_id: userId,
+                };
+
+                const updatedConfigs = [...configs, newConfig];
+                setConfigs(updatedConfigs);
                 setHasExistingLink(true);
+
+                setActiveConfig(null);
+                setUsername('');
+                setDbUsername('');
+                setGeneratedLink('');
+                setIsEditing(false);
+
+                setNewOverlayName('');
             }
         } catch (err: any) {
             setError(err.message || 'Une erreur est survenue lors de la création.');
@@ -482,8 +749,109 @@ export default function Config() {
         }
     };
 
+    const handleDeleteConfig = async (configToken: string) => {
+        if (
+            !confirm(
+                'ATTENTION : Cette action supprimera définitivement cet overlay et sa configuration. Les scènes OBS utilisant cet overlay cesseront de fonctionner immédiatement. Voulez-vous continuer ?',
+            )
+        ) {
+            return;
+        }
+
+        setError(null);
+        setIsGenerating(true);
+
+        try {
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            const response = await fetch(`${apiBase}/api/config/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: configToken,
+                    userId: userId,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Impossible de supprimer la configuration.');
+            }
+
+            localStorage.removeItem(`livechat_settings_${configToken}`);
+
+            const updatedConfigs = configs.filter((c) => c.token !== configToken);
+            setConfigs(updatedConfigs);
+
+            if (activeConfig && activeConfig.token === configToken) {
+                setActiveConfig(null);
+                setUsername('');
+                setDbUsername('');
+                setGeneratedLink('');
+                setIsEditing(false);
+            }
+
+            if (updatedConfigs.length === 0) {
+                setHasExistingLink(false);
+            }
+        } catch (err: any) {
+            setError(err.message || 'Une erreur est survenue lors de la suppression.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleAdminDeleteConfig = async (targetUsername: string) => {
+        if (
+            !confirm(
+                `ATTENTION : En tant qu'administrateur, vous allez supprimer définitivement l'overlay de "${targetUsername}". Cette action est irréversible. Voulez-vous continuer ?`,
+            )
+        ) {
+            return;
+        }
+
+        setError(null);
+        setIsGenerating(true);
+
+        try {
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
+            const response = await fetch(`${apiBase}/api/config/admin/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    guildId: selectedGuild?.id,
+                    username: targetUsername,
+                    userId: userId,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Impossible de supprimer la configuration.');
+            }
+
+            // Remove from administrative list local state
+            const updatedAll = allGuildConfigs.filter((c) => c.username !== targetUsername);
+            setAllGuildConfigs(updatedAll);
+
+            // Also check if this overlay belonged to the admin themselves, and update their own local configs list
+            const updatedConfigs = configs.filter((c) => c.username.toLowerCase() !== targetUsername.toLowerCase());
+            setConfigs(updatedConfigs);
+            if (updatedConfigs.length === 0) {
+                setHasExistingLink(false);
+            }
+        } catch (err: any) {
+            setError(err.message || 'Une erreur est survenue lors de la suppression.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const regenerateLink = async () => {
-        if (!selectedGuild || !username) return;
+        if (!selectedGuild || !activeConfig) return;
         if (
             !confirm(
                 "ATTENTION : Si vous régénérez le lien, l'ancien jeton sera invalidé. L'overlay actuel configuré sur OBS cessera de fonctionner immédiatement. Voulez-vous continuer ?",
@@ -495,24 +863,34 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
+            const userId = user?.user_metadata?.provider_id || user?.user_metadata?.sub;
             const response = await fetch(`${apiBase}/api/config/regenerate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: username,
-                    guildId: selectedGuild.id,
+                    token: activeConfig.token,
+                    userId: userId,
                 }),
             });
 
             if (!response.ok) {
-                throw new Error('Impossible de régénérer la clé.');
+                const data = await response.json();
+                throw new Error(data.error || 'Impossible de régénérer la clé.');
             }
 
             const { token: newToken } = await response.json();
-            setToken(newToken);
-            setDbUsername(username);
+
+            const savedSettings = localStorage.getItem(`livechat_settings_${activeConfig.token}`);
+            if (savedSettings) {
+                localStorage.setItem(`livechat_settings_${newToken}`, savedSettings);
+                localStorage.removeItem(`livechat_settings_${activeConfig.token}`);
+            }
+
+            const updatedConfig = { ...activeConfig, token: newToken };
+            setActiveConfig(updatedConfig);
+            setConfigs((prev) => prev.map((c) => (c.token === activeConfig.token ? updatedConfig : c)));
             setGeneratedLink(`${overlayBase}?token=${newToken}`);
             setIsLinkBlurred(true);
             setJustRegenerated(true);
@@ -625,9 +1003,24 @@ export default function Config() {
                                 {selectedGuild ? (
                                     <>
                                         <button
-                                            onClick={() => navigate('/config')}
+                                            onClick={() => {
+                                                if (isEditing) {
+                                                    setIsEditing(false);
+                                                    setActiveConfig(null);
+                                                    setUsername('');
+                                                    setDbUsername('');
+                                                    setGeneratedLink('');
+                                                    setError(null);
+                                                } else {
+                                                    navigate('/config');
+                                                }
+                                            }}
                                             className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white/3 hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
-                                            title="Retour à la liste des serveurs"
+                                            title={
+                                                isEditing
+                                                    ? 'Retour à la liste des overlays'
+                                                    : 'Retour à la liste des serveurs'
+                                            }
                                         >
                                             <ArrowLeft className="h-4.5 w-4.5" />
                                         </button>
@@ -645,7 +1038,9 @@ export default function Config() {
                                         <div>
                                             <p className="font-semibold text-sm">{selectedGuild.name}</p>
                                             <p className="text-xs text-muted-foreground">
-                                                Configuration de votre overlay
+                                                {isEditing && activeConfig
+                                                    ? `Configuration de l'overlay : ${activeConfig.username}`
+                                                    : 'Sélectionnez ou créez un overlay'}
                                             </p>
                                         </div>
                                     </>
@@ -668,34 +1063,45 @@ export default function Config() {
                                                     user?.user_metadata?.name ||
                                                     'Utilisateur Discord'}
                                             </p>
-                                            <p className="text-xs text-muted-foreground">Selectionnez le serveur</p>
+                                            <p className="text-xs text-muted-foreground">Sélectionnez un serveur</p>
                                         </div>
                                     </>
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                {selectedGuild && hasExistingLink && (
+                                {selectedGuild && isEditing && activeConfig && (
+                                    <>
+                                        <button
+                                            onClick={handleSaveConfig}
+                                            disabled={!hasUnsavedChanges}
+                                            className={`rounded-lg px-4 h-9 text-xs font-bold transition-colors ${
+                                                hasUnsavedChanges
+                                                    ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
+                                                    : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
+                                            }`}
+                                        >
+                                            Sauvegarder
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteConfig(activeConfig.token)}
+                                            className="flex h-9 items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 px-4 py-1.5 text-xs font-bold text-red-200 transition-colors duration-200 cursor-pointer"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                            Supprimer
+                                        </button>
+                                    </>
+                                )}
+                                {!selectedGuild && (
                                     <button
-                                        onClick={handleSaveConfig}
-                                        disabled={!hasUnsavedChanges}
-                                        className={`rounded-lg px-4 h-9 text-xs font-bold transition-colors ${
-                                            hasUnsavedChanges
-                                                ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
-                                                : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
-                                        }`}
+                                        onClick={() => loadGuilds(true)}
+                                        disabled={fetchingGuilds}
+                                        title="Actualiser la liste des serveurs"
+                                        className="flex h-9 items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 disabled:opacity-50 hover:text-foreground"
                                     >
-                                        Sauvegarder
+                                        <RefreshCw className={`h-3.5 w-3.5 ${fetchingGuilds ? 'animate-spin' : ''}`} />
+                                        Actualiser
                                     </button>
                                 )}
-                                <button
-                                    onClick={() => loadGuilds(true)}
-                                    disabled={fetchingGuilds}
-                                    title="Actualiser la liste des serveurs"
-                                    className="flex h-9 items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 disabled:opacity-50 hover:text-foreground"
-                                >
-                                    <RefreshCw className={`h-3.5 w-3.5 ${fetchingGuilds ? 'animate-spin' : ''}`} />
-                                    Actualiser
-                                </button>
                                 <button
                                     onClick={() => setVideoOpen(true)}
                                     className="flex h-9 items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground"
@@ -706,7 +1112,7 @@ export default function Config() {
                             </div>
                         </div>
 
-                        {error && (
+                        {error && !isRestricted && (
                             <div className="flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3.5 text-sm text-red-200">
                                 <ShieldAlert className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                                 <div>{error}</div>
@@ -722,6 +1128,21 @@ export default function Config() {
                                         <span className="text-sm font-semibold text-muted-foreground">
                                             Chargement de vos serveurs...
                                         </span>
+                                    </div>
+                                ) : isSessionExpired ? (
+                                    <div className="config-card py-16 text-center max-w-md mx-auto space-y-4">
+                                        <ShieldAlert className="h-12 w-12 opacity-80 mx-auto text-amber-500" />
+                                        <h3 className="font-bold text-lg text-foreground">Session Discord expirée</h3>
+                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                            Votre session Discord a expiré ou a été réinitialisée. Veuillez vous
+                                            reconnecter pour actualiser la liste de vos serveurs de stream.
+                                        </p>
+                                        <button
+                                            onClick={handleLogin}
+                                            className="rounded-lg bg-white hover:bg-white/90 text-black px-6 py-2.5 text-xs font-bold transition-colors cursor-pointer"
+                                        >
+                                            Se connecter avec Discord
+                                        </button>
                                     </div>
                                 ) : guilds.length === 0 ? (
                                     <div className="config-card py-16 text-center max-w-md mx-auto space-y-4">
@@ -765,15 +1186,24 @@ export default function Config() {
                                                             <h3 className="font-bold text-base sm:text-lg truncate transition-colors">
                                                                 {g.name}
                                                             </h3>
-                                                            <div className="flex items-center gap-2">
-                                                                <span
-                                                                    className={`h-2 w-2 rounded-full ${g.hasBot ? 'bg-emerald-500' : 'bg-white/20'}`}
-                                                                />
-                                                                <span className="text-xs font-medium text-muted-foreground">
-                                                                    {g.hasBot
-                                                                        ? "Prêt pour l'intégration"
-                                                                        : 'Bot Discord absent'}
-                                                                </span>
+                                                            <div className="flex flex-col gap-1">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span
+                                                                        className={`h-2 w-2 rounded-full ${g.hasBot ? 'bg-emerald-500' : 'bg-white/20'}`}
+                                                                    />
+                                                                    <span className="text-xs font-medium text-muted-foreground">
+                                                                        {g.hasBot
+                                                                            ? 'LiveChat installé'
+                                                                            : 'LiveChat non installé'}
+                                                                    </span>
+                                                                </div>
+                                                                {g.hasBot && (
+                                                                    <p className="text-xs text-muted-foreground">
+                                                                        {g.overlayCount && g.overlayCount > 0
+                                                                            ? `${g.overlayCount} overlay${g.overlayCount > 1 ? 's' : ''} configuré${g.overlayCount > 1 ? 's' : ''}`
+                                                                            : 'Aucun overlay créé'}
+                                                                    </p>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -783,17 +1213,17 @@ export default function Config() {
                                                             href={`https://discord.com/oauth2/authorize?client_id=1379921658109890610&permissions=1049600&scope=bot&guild_id=${g.id}&disable_guild_select=true`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white hover:bg-white/90 px-4 py-2.5 text-sm font-bold text-black transition-opacity"
+                                                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2.5 text-sm font-bold text-white transition-colors"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            Inviter le Bot
+                                                            Inviter le bot
                                                             <ExternalLink className="h-4 w-4" />
                                                         </a>
                                                     ) : (
-                                                        <div className="mt-6 text-right">
-                                                            <span className="text-xs font-semibold text-white group-hover:underline inline-flex items-center gap-1">
-                                                                Configurer →
-                                                            </span>
+                                                        <div className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white hover:bg-white/90 px-4 py-2.5 text-sm font-bold text-black transition-colors">
+                                                            {g.overlayCount && g.overlayCount > 0
+                                                                ? 'Gérer mes overlays'
+                                                                : 'Créer mon overlay'}
                                                         </div>
                                                     )}
                                                 </div>
@@ -819,6 +1249,28 @@ export default function Config() {
                                         <span className="text-sm font-semibold text-muted-foreground">
                                             Vérification de la configuration...
                                         </span>
+                                    </div>
+                                ) : isRestricted ? (
+                                    /* ÉCRAN ACCÈS RESTREINT (ROLE OBLIGATOIRE MANQUANT) */
+                                    <div className="max-w-xl mx-auto py-8">
+                                        <div className="config-card flex flex-col items-center text-center space-y-6 border-red-500/20 bg-red-500/5">
+                                            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 text-red-400">
+                                                <ShieldAlert className="h-8 w-8" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h3 className="text-xl font-bold sm:text-2xl text-red-200">
+                                                    Accès restreint
+                                                </h3>
+                                                <p className="text-sm text-red-200/80 leading-relaxed max-w-md">
+                                                    {error ||
+                                                        'Un rôle obligatoire est requis pour utiliser LiveChat et configurer des overlays sur ce serveur Discord.'}
+                                                </p>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground max-w-sm">
+                                                Veuillez contacter un administrateur du serveur pour obtenir le rôle
+                                                nécessaire.
+                                            </p>
+                                        </div>
                                     </div>
                                 ) : !hasExistingLink ? (
                                     /* ÉCRAN ONBOARDING */
@@ -868,7 +1320,7 @@ export default function Config() {
                                                 )}
 
                                                 <button
-                                                    onClick={handleCreateConfig}
+                                                    onClick={() => handleCreateConfig()}
                                                     disabled={isGenerating || !username}
                                                     className="w-full flex items-center justify-center gap-2 rounded-full bg-white hover:bg-white/90 px-8 py-3.5 text-sm font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
@@ -878,6 +1330,335 @@ export default function Config() {
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+                                ) : !isEditing ? (
+                                    /* TABLEAU DE BORD - LISTE DES OVERLAYS */
+                                    <div className="space-y-8 max-w-6xl mx-auto">
+                                        <div className="flex flex-col md:flex-row gap-8">
+                                            {/* Liste des Overlays */}
+                                            <div className="flex-1 space-y-4">
+                                                <div className="flex items-center justify-between pb-2">
+                                                    <div>
+                                                        <h3 className="text-lg font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                                            <Tv className="h-5 w-5" />
+                                                            Vos Overlays ({configs.length}/{maxOverlays})
+                                                        </h3>
+                                                        <p className="text-sm text-muted-foreground mt-1">
+                                                            Sélectionnez l'overlay que vous souhaitez configurer.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid gap-4">
+                                                    {configs.map((config) => (
+                                                        <div
+                                                            key={config.token}
+                                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                                                        >
+                                                            <div className="flex items-center gap-4 min-w-0">
+                                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/5 text-white">
+                                                                    <Tv className="h-5 w-5" />
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <p className="font-bold text-base text-foreground truncate">
+                                                                        {config.username}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 shrink-0 sm:justify-end">
+                                                                <button
+                                                                    onClick={() => handleConfigureConfig(config)}
+                                                                    className="flex items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 h-10 text-xs font-bold text-foreground transition-colors cursor-pointer"
+                                                                >
+                                                                    <Sliders className="h-3.5 w-3.5" />
+                                                                    Configurer
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteConfig(config.token)}
+                                                                    className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 px-4 h-10 text-xs font-bold text-red-200 transition-colors cursor-pointer"
+                                                                >
+                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                    Supprimer
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Bloc de Création / Infos de Limite */}
+                                            <div className="w-full md:w-80 shrink-0">
+                                                {configs.length < maxOverlays ? (
+                                                    <div className="config-card flex flex-col items-start text-left space-y-4">
+                                                        <div className="space-y-1">
+                                                            <h4 className="font-bold text-base text-foreground">
+                                                                Créer un overlay
+                                                            </h4>
+                                                            <p className="text-xs text-muted-foreground leading-normal">
+                                                                Ajoutez un nouvel overlay indépendant pour ce serveur
+                                                                Discord.
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-full space-y-3 pt-2">
+                                                            <div>
+                                                                <label
+                                                                    htmlFor="newOverlayName"
+                                                                    className="config-label text-xs text-muted-foreground font-semibold"
+                                                                >
+                                                                    Nom d'affichage
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    id="newOverlayName"
+                                                                    placeholder="pseudo_streamer"
+                                                                    value={newOverlayName}
+                                                                    onChange={(e) => {
+                                                                        let clean = e.target.value
+                                                                            .replace(/[^a-zA-Z0-9_]/g, '')
+                                                                            .toLowerCase();
+                                                                        if (clean.startsWith('_'))
+                                                                            clean = clean.substring(1);
+                                                                        setNewOverlayName(clean);
+                                                                    }}
+                                                                    className="config-input py-2 px-3 text-sm"
+                                                                />
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleCreateConfig(newOverlayName)}
+                                                                disabled={isGenerating || !newOverlayName}
+                                                                className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-white hover:bg-white/90 px-4 py-2.5 text-xs font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                                                            >
+                                                                {isGenerating
+                                                                    ? 'Création...'
+                                                                    : 'Créer mon nouvel overlay'}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="config-card border-amber-500/20 bg-amber-500/5 flex flex-col items-start text-left space-y-4">
+                                                        <div className="space-y-1">
+                                                            <h4 className="font-bold text-base text-amber-200">
+                                                                Limite atteinte
+                                                            </h4>
+                                                            <p className="text-xs text-amber-200/70 leading-normal">
+                                                                Vous avez atteint la limite maximale de {maxOverlays}{' '}
+                                                                overlay{maxOverlays > 1 ? 's' : ''} par personne sur ce
+                                                                serveur.
+                                                            </p>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground leading-normal pt-1">
+                                                            Pour créer un nouvel overlay, veuillez d'abord en supprimer
+                                                            un parmi vos configurations actives sur ce serveur.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* SECTION ADMINISTRATION DU SERVEUR */}
+                                        {selectedGuild &&
+                                            (selectedGuild.owner ||
+                                                (parseInt(selectedGuild.permissions) & 0x8) === 0x8 ||
+                                                (parseInt(selectedGuild.permissions) & 0x20) === 0x20) && (
+                                                <div className="border-t border-white/5 pt-8 space-y-6">
+                                                    <div>
+                                                        <h3 className="text-lg font-bold uppercase tracking-wider text-red-400 flex items-center gap-2">
+                                                            <ShieldAlert className="h-5 w-5" />
+                                                            Administration du serveur
+                                                        </h3>
+                                                        <p className="text-sm text-muted-foreground mt-1">
+                                                            Gérez les overlays des membres et configurez les
+                                                            autorisations d'utilisation de LiveChat pour ce serveur.
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                        {/* Colonne gauche : Liste des overlays des membres */}
+                                                        <div className="space-y-4">
+                                                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                                                <Tv className="h-4.5 w-4.5" />
+                                                                Overlays des membres ({allGuildConfigs.length})
+                                                            </h4>
+
+                                                            {loadingAllConfigs ? (
+                                                                <div className="py-8 flex items-center gap-3">
+                                                                    <RefreshCw className="h-5 w-5 animate-spin text-white/40" />
+                                                                    <span className="text-xs text-muted-foreground font-semibold">
+                                                                        Chargement des configurations...
+                                                                    </span>
+                                                                </div>
+                                                            ) : allGuildConfigs.length === 0 ? (
+                                                                <div className="config-card py-6 text-center text-xs text-muted-foreground">
+                                                                    Aucune configuration active d'overlay sur ce
+                                                                    serveur.
+                                                                </div>
+                                                            ) : (
+                                                                <div className="grid gap-3 max-h-[350px] overflow-y-auto pr-2 scrollbar-thin">
+                                                                    {allGuildConfigs.map((c) => (
+                                                                        <div
+                                                                            key={c.username}
+                                                                            className="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01]"
+                                                                        >
+                                                                            <div className="min-w-0">
+                                                                                <p className="font-bold text-sm text-foreground truncate">
+                                                                                    {c.username}
+                                                                                </p>
+                                                                                <p className="text-xs text-muted-foreground truncate mt-0.5">
+                                                                                    Créateur (ID Discord):{' '}
+                                                                                    <span className="font-mono text-[10px]">
+                                                                                        {c.user_id}
+                                                                                    </span>
+                                                                                </p>
+                                                                            </div>
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    handleAdminDeleteConfig(c.username)
+                                                                                }
+                                                                                className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/20 px-3 h-8.5 text-xs font-bold text-red-200 transition-colors cursor-pointer shrink-0"
+                                                                            >
+                                                                                <Trash2 className="h-3.5 w-3.5" />
+                                                                                Révoquer
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* Colonne droite : Configuration du Serveur (Rôle requis & Limites) */}
+                                                        <div className="space-y-4">
+                                                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                                                <Sliders className="h-4.5 w-4.5" />
+                                                                Configuration du Serveur
+                                                            </h4>
+
+                                                            <div className="config-card space-y-5">
+                                                                <div className="flex items-center justify-between">
+                                                                    <div className="space-y-0.5">
+                                                                        <p className="text-sm font-semibold text-foreground">
+                                                                            Restreindre par rôle
+                                                                        </p>
+                                                                        <p className="text-xs text-muted-foreground max-w-xs leading-normal">
+                                                                            Exiger un rôle Discord spécifique pour créer
+                                                                            ou utiliser des overlays.
+                                                                        </p>
+                                                                    </div>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const nextState = !isRoleRestrictionEnabled;
+                                                                            setIsRoleRestrictionEnabled(nextState);
+                                                                            if (
+                                                                                nextState &&
+                                                                                !requiredRoleId &&
+                                                                                guildRoles.length > 0
+                                                                            ) {
+                                                                                setRequiredRoleId(guildRoles[0].id);
+                                                                            }
+                                                                        }}
+                                                                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isRoleRestrictionEnabled ? 'bg-white' : 'bg-white/10'}`}
+                                                                    >
+                                                                        <span
+                                                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${isRoleRestrictionEnabled ? 'bg-black translate-x-5' : 'bg-white translate-x-0'}`}
+                                                                        />
+                                                                    </button>
+                                                                </div>
+
+                                                                {isRoleRestrictionEnabled && (
+                                                                    <div className="space-y-3 pt-2 border-t border-white/5">
+                                                                        <label className="text-xs font-semibold text-muted-foreground block">
+                                                                            Rôle requis
+                                                                        </label>
+                                                                        {loadingRoles ? (
+                                                                            <div className="py-2 flex items-center gap-2">
+                                                                                <RefreshCw className="h-3.5 w-3.5 animate-spin text-white/40" />
+                                                                                <span className="text-xs text-muted-foreground">
+                                                                                    Chargement des rôles...
+                                                                                </span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <select
+                                                                                value={requiredRoleId || ''}
+                                                                                onChange={(e) =>
+                                                                                    setRequiredRoleId(
+                                                                                        e.target.value || null,
+                                                                                    )
+                                                                                }
+                                                                                className="config-input w-full py-2 px-3 text-sm rounded-lg"
+                                                                            >
+                                                                                {guildRoles.length === 0 ? (
+                                                                                    <option value="">
+                                                                                        Aucun rôle disponible
+                                                                                    </option>
+                                                                                ) : (
+                                                                                    guildRoles.map((role) => (
+                                                                                        <option
+                                                                                            key={role.id}
+                                                                                            value={role.id}
+                                                                                        >
+                                                                                            {role.name}
+                                                                                        </option>
+                                                                                    ))
+                                                                                )}
+                                                                            </select>
+                                                                        )}
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="space-y-3 pt-4 border-t border-white/5">
+                                                                    <div className="space-y-0.5">
+                                                                        <p className="text-sm font-semibold text-foreground">
+                                                                            Limite d'overlays par personne
+                                                                        </p>
+                                                                        <p className="text-xs text-muted-foreground max-w-xs leading-normal">
+                                                                            Nombre maximum d'overlays que chaque membre
+                                                                            peut créer (min 1, max 20).
+                                                                        </p>
+                                                                    </div>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="5"
+                                                                        value={maxOverlaysInput}
+                                                                        onChange={(e) => {
+                                                                            const clean = e.target.value.replace(
+                                                                                /[^0-9]/g,
+                                                                                '',
+                                                                            );
+                                                                            setMaxOverlaysInput(clean);
+                                                                        }}
+                                                                        className="config-input w-full py-2 px-3 text-sm rounded-lg"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="pt-2">
+                                                                    <button
+                                                                        onClick={handleSaveSettings}
+                                                                        disabled={savingSettings || !hasUnsavedSettings}
+                                                                        className={`w-full flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-xs font-bold transition-all ${
+                                                                            hasUnsavedSettings
+                                                                                ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
+                                                                                : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
+                                                                        }`}
+                                                                    >
+                                                                        {savingSettings ? (
+                                                                            <>
+                                                                                <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                                                                                Sauvegarde...
+                                                                            </>
+                                                                        ) : settingsSuccess ? (
+                                                                            <>
+                                                                                <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />
+                                                                                Configuration enregistrée !
+                                                                            </>
+                                                                        ) : (
+                                                                            'Enregistrer la configuration'
+                                                                        )}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                     </div>
                                 ) : (
                                     /* ÉCRAN DE CONFIGURATION BRUTE */
