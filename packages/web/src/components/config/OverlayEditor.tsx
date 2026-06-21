@@ -104,10 +104,7 @@ export default function OverlayEditor({
 
                     {/* Modification du pseudo inline */}
                     <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
-                        <label
-                            htmlFor="username"
-                            className="text-xs font-semibold text-muted-foreground"
-                        >
+                        <label htmlFor="username" className="text-xs font-semibold text-muted-foreground">
                             Modifier votre pseudo d'affichage
                         </label>
                         <div className="flex gap-2">
@@ -141,9 +138,7 @@ export default function OverlayEditor({
                                 ) : (
                                     <ShieldAlert className="h-4.5 w-4.5 text-red-400" />
                                 )}
-                                {justRegenerated
-                                    ? 'Votre nouveau lien est prêt !'
-                                    : 'Vous avez fait fuiter ce lien ?'}
+                                {justRegenerated ? 'Votre nouveau lien est prêt !' : 'Vous avez fait fuiter ce lien ?'}
                             </p>
                             <p
                                 className={`text-xs leading-normal transition-colors duration-300 ${
@@ -156,13 +151,13 @@ export default function OverlayEditor({
                             </p>
                         </div>
                         <button
-                          onClick={regenerateLink}
-                          disabled={isGenerating || justRegenerated}
-                          className={`shrink-0 rounded-lg border px-4 py-2 text-xs font-bold transition-all duration-300 cursor-pointer ${
-                              justRegenerated
-                                  ? 'border-emerald-500/30 bg-emerald-500/25 text-emerald-200 cursor-not-allowed'
-                                  : 'border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-200'
-                          }`}
+                            onClick={regenerateLink}
+                            disabled={isGenerating || justRegenerated}
+                            className={`shrink-0 rounded-lg border px-4 py-2 text-xs font-bold transition-all duration-300 cursor-pointer ${
+                                justRegenerated
+                                    ? 'border-emerald-500/30 bg-emerald-500/25 text-emerald-200 cursor-not-allowed'
+                                    : 'border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-200'
+                            }`}
                         >
                             {justRegenerated ? 'Régénéré' : 'Régénérer'}
                         </button>
@@ -231,9 +226,7 @@ export default function OverlayEditor({
                                                 : 'border-white/5 bg-white/2 hover:bg-white/3'
                                         }`}
                                     >
-                                        <p className="text-foreground font-bold text-sm">
-                                            {s.name}
-                                        </p>
+                                        <p className="text-foreground font-bold text-sm">{s.name}</p>
                                         <p className="text-xs text-muted-foreground mt-1 font-normal leading-normal">
                                             {s.desc}
                                         </p>

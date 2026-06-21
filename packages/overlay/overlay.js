@@ -5,8 +5,7 @@
 const SERVER_URL =
     window.location.hostname === 'localhost' ? 'http://localhost:3000' : `https://livechat-api.nevylish.fr`;
 
-const PROXY_HOST =
-    window.location.hostname === 'localhost' ? 'localhost:8787' : 'livechat-proxy.nevylish.workers.dev';
+const PROXY_HOST = window.location.hostname === 'localhost' ? 'localhost:8787' : 'livechat-proxy.nevylish.workers.dev';
 
 const CONFIG = {
     RECONNECT_ATTEMPTS: 240 /* 240 * 4 = 1 hour ? */,

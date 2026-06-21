@@ -1,6 +1,6 @@
 /**
  * Synthesizes and plays notification sounds using the Web Audio API.
- * 
+ *
  * @param type Sound preset type: 'chime', 'arcade', 'success', or default (ping)
  * @param volume Output volume level (0 to 100)
  */

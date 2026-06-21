@@ -138,9 +138,7 @@ export default function OverlaysDashboard({
                     {configs.length < maxOverlays ? (
                         <div className="config-card flex flex-col items-start text-left space-y-4">
                             <div className="space-y-1">
-                                <h4 className="font-bold text-base text-foreground">
-                                    Créer un overlay
-                                </h4>
+                                <h4 className="font-bold text-base text-foreground">Créer un overlay</h4>
                                 <p className="text-xs text-muted-foreground leading-normal">
                                     Ajoutez un nouvel overlay indépendant pour ce serveur Discord.
                                 </p>
@@ -159,11 +157,8 @@ export default function OverlaysDashboard({
                                         placeholder="pseudo_streamer"
                                         value={newOverlayName}
                                         onChange={(e) => {
-                                            let clean = e.target.value
-                                                .replace(/[^a-zA-Z0-9_]/g, '')
-                                                .toLowerCase();
-                                            if (clean.startsWith('_'))
-                                                clean = clean.substring(1);
+                                            let clean = e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
+                                            if (clean.startsWith('_')) clean = clean.substring(1);
                                             setNewOverlayName(clean);
                                         }}
                                         className="config-input py-2 px-3 text-sm"
@@ -181,15 +176,15 @@ export default function OverlaysDashboard({
                     ) : (
                         <div className="config-card border-amber-500/20 bg-amber-500/5 flex flex-col items-start text-left space-y-4">
                             <div className="space-y-1">
-                                <h4 className="font-bold text-base text-amber-200">
-                                    Limite atteinte
-                                </h4>
+                                <h4 className="font-bold text-base text-amber-200">Limite atteinte</h4>
                                 <p className="text-xs text-amber-200/70 leading-normal">
-                                    Vous avez atteint la limite maximale de {maxOverlays} overlay{maxOverlays > 1 ? 's' : ''} par personne sur ce serveur.
+                                    Vous avez atteint la limite maximale de {maxOverlays} overlay
+                                    {maxOverlays > 1 ? 's' : ''} par personne sur ce serveur.
                                 </p>
                             </div>
                             <p className="text-xs text-muted-foreground leading-normal pt-1">
-                                Pour créer un nouvel overlay, veuillez d'abord en supprimer un parmi vos configurations actives sur ce serveur.
+                                Pour créer un nouvel overlay, veuillez d'abord en supprimer un parmi vos configurations
+                                actives sur ce serveur.
                             </p>
                         </div>
                     )}
@@ -205,7 +200,8 @@ export default function OverlaysDashboard({
                             Administration du serveur
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                            Gerez les overlays des membres et configurez les autorisations d'utilisation de LiveChat pour ce serveur.
+                            Gerez les overlays des membres et configurez les autorisations d'utilisation de LiveChat
+                            pour ce serveur.
                         </p>
                     </div>
 
@@ -233,22 +229,25 @@ export default function OverlaysDashboard({
                                     {allGuildConfigs.map((c) => (
                                         <div
                                             key={c.username}
-                                            className="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01]"
+                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.01]"
                                         >
                                             <div className="min-w-0 flex-1">
                                                 <p className="font-bold text-sm text-foreground truncate">
                                                     {c.username}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                                    Créateur (ID Discord):{' '}
+                                                    Créateur: <span className="font-mono text-[10px]">{c.user_id}</span>
+                                                </p>
+                                                <p className="text-xs text-muted-foreground truncate mt-0.5">
+                                                    Dernière modification:{' '}
                                                     <span className="font-mono text-[10px]">
-                                                        {c.user_id}
+                                                        {new Date(c.updated_at).toLocaleString()}
                                                     </span>
                                                 </p>
                                             </div>
                                             <button
                                                 onClick={() => handleAdminDeleteConfig(c.username)}
-                                                className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/20 px-3 h-8.5 text-xs font-bold text-red-200 transition-colors cursor-pointer shrink-0"
+                                                className="flex items-center justify-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/20 px-3 h-8.5 text-xs font-bold text-red-200 transition-colors cursor-pointer shrink-0 w-full sm:w-auto"
                                             >
                                                 <Trash2 className="h-3.5 w-3.5" />
                                                 Révoquer
@@ -269,9 +268,7 @@ export default function OverlaysDashboard({
                             <div className="config-card space-y-5">
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
-                                        <p className="text-sm font-semibold text-foreground">
-                                            Restreindre par rôle
-                                        </p>
+                                        <p className="text-sm font-semibold text-foreground">Restreindre par rôle</p>
                                         <p className="text-xs text-muted-foreground max-w-xs leading-normal">
                                             Exiger un rôle Discord spécifique pour créer ou utiliser des overlays.
                                         </p>
@@ -280,11 +277,7 @@ export default function OverlaysDashboard({
                                         onClick={() => {
                                             const nextState = !isRoleRestrictionEnabled;
                                             setIsRoleRestrictionEnabled(nextState);
-                                            if (
-                                                nextState &&
-                                                !requiredRoleId &&
-                                                guildRoles.length > 0
-                                            ) {
+                                            if (nextState && !requiredRoleId && guildRoles.length > 0) {
                                                 setRequiredRoleId(guildRoles[0].id);
                                             }
                                         }}
@@ -311,21 +304,14 @@ export default function OverlaysDashboard({
                                         ) : (
                                             <select
                                                 value={requiredRoleId || ''}
-                                                onChange={(e) =>
-                                                    setRequiredRoleId(e.target.value || null)
-                                                }
+                                                onChange={(e) => setRequiredRoleId(e.target.value || null)}
                                                 className="config-input w-full py-2 px-3 text-sm rounded-lg"
                                             >
                                                 {guildRoles.length === 0 ? (
-                                                    <option value="">
-                                                        Aucun rôle disponible
-                                                    </option>
+                                                    <option value="">Aucun rôle disponible</option>
                                                 ) : (
                                                     guildRoles.map((role) => (
-                                                        <option
-                                                            key={role.id}
-                                                            value={role.id}
-                                                        >
+                                                        <option key={role.id} value={role.id}>
                                                             {role.name}
                                                         </option>
                                                     ))

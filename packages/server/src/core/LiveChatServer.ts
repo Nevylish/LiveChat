@@ -172,7 +172,7 @@ export class LiveChatServer extends EventEmitter {
                             this.emitError(
                                 socket,
                                 "Le propriétaire de cet overlay n'a pas le rôle requis sur Discord pour utiliser LiveChat.",
-                                { username, guildId }
+                                { username, guildId },
                             );
                             return;
                         }
@@ -333,8 +333,6 @@ export class LiveChatServer extends EventEmitter {
             });
         });
 
-
-
         this.app.get('/api/config/get', limiter, requireAuth, requireGuildAccess, async (req, res) => {
             const { guildId } = req.query;
             const userId = req.userId!;
@@ -364,13 +362,15 @@ export class LiveChatServer extends EventEmitter {
                 const maxOverlays = settings?.max_overlays_per_user ?? 5;
                 const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId);
                 if (userConfigs.length >= maxOverlays) {
-                    res.status(400).json({ error: `Vous avez atteint la limite maximale de ${maxOverlays} overlay${maxOverlays > 1 ? 's' : ''} par personne pour ce serveur.` });
+                    res.status(400).json({
+                        error: `Vous avez atteint la limite maximale de ${maxOverlays} overlay${maxOverlays > 1 ? 's' : ''} par personne pour ce serveur.`,
+                    });
                     return;
                 }
 
                 // Check overlay name uniqueness on this server across all users
                 const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
-                const nameExists = allConfigs.some(c => c.username.toLowerCase() === username.toLowerCase());
+                const nameExists = allConfigs.some((c) => c.username.toLowerCase() === username.toLowerCase());
                 if (nameExists) {
                     res.status(400).json({ error: 'Un overlay avec ce nom existe déjà sur ce serveur.' });
                     return;
@@ -388,67 +388,90 @@ export class LiveChatServer extends EventEmitter {
             }
         });
 
-        this.app.post('/api/config/save', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
-            const { username, guildId, token } = req.body;
-            const userId = req.userId!;
-            const config = req.overlayConfig!;
+        this.app.post(
+            '/api/config/save',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { username, guildId, token } = req.body;
+                const userId = req.userId!;
+                const config = req.overlayConfig!;
 
-            const usernameValidation = Validations.validateUsername(username);
-            if (!usernameValidation.valid) {
-                res.status(400).json({ error: usernameValidation.error });
-                return;
-            }
-
-            try {
-                // Check name uniqueness on this server (excluding current overlay)
-                if (username.toLowerCase() !== config.username.toLowerCase()) {
-                    const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
-                    const nameExists = allConfigs.some(c => c.token !== token && c.username.toLowerCase() === username.toLowerCase());
-                    if (nameExists) {
-                        res.status(400).json({ error: 'Un overlay avec ce nom existe déjà sur ce serveur.' });
-                        return;
-                    }
+                const usernameValidation = Validations.validateUsername(username);
+                if (!usernameValidation.valid) {
+                    res.status(400).json({ error: usernameValidation.error });
+                    return;
                 }
 
-                const success = await SupabaseService.saveOverlayConfig(guildId, username, token, userId);
-                if (success) {
-                    res.json({ success: true });
-                } else {
+                try {
+                    // Check name uniqueness on this server (excluding current overlay)
+                    if (username.toLowerCase() !== config.username.toLowerCase()) {
+                        const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
+                        const nameExists = allConfigs.some(
+                            (c) => c.token !== token && c.username.toLowerCase() === username.toLowerCase(),
+                        );
+                        if (nameExists) {
+                            res.status(400).json({ error: 'Un overlay avec ce nom existe déjà sur ce serveur.' });
+                            return;
+                        }
+                    }
+
+                    const success = await SupabaseService.saveOverlayConfig(guildId, username, token, userId);
+                    if (success) {
+                        res.json({ success: true });
+                    } else {
+                        res.status(500).json({ error: 'Failed to save config' });
+                    }
+                } catch (err) {
                     res.status(500).json({ error: 'Failed to save config' });
                 }
-            } catch (err) {
-                res.status(500).json({ error: 'Failed to save config' });
-            }
-        });
+            },
+        );
 
-        this.app.post('/api/config/regenerate', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
-            const { token } = req.body;
-            try {
-                const newToken = crypto.randomBytes(32).toString('hex');
-                const success = await SupabaseService.updateOverlayToken(token, newToken);
-                if (success) {
-                    res.json({ token: newToken });
-                } else {
+        this.app.post(
+            '/api/config/regenerate',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { token } = req.body;
+                try {
+                    const newToken = crypto.randomBytes(32).toString('hex');
+                    const success = await SupabaseService.updateOverlayToken(token, newToken);
+                    if (success) {
+                        res.json({ token: newToken });
+                    } else {
+                        res.status(500).json({ error: 'Failed to regenerate token' });
+                    }
+                } catch (err) {
                     res.status(500).json({ error: 'Failed to regenerate token' });
                 }
-            } catch (err) {
-                res.status(500).json({ error: 'Failed to regenerate token' });
-            }
-        });
+            },
+        );
 
-        this.app.post('/api/config/delete', limiter, requireAuth, requireOverlayOwnership, requireGuildAccess, async (req, res) => {
-            const { token } = req.body;
-            try {
-                const success = await SupabaseService.deleteOverlayConfig(token);
-                if (success) {
-                    res.json({ success: true });
-                } else {
+        this.app.post(
+            '/api/config/delete',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { token } = req.body;
+                try {
+                    const success = await SupabaseService.deleteOverlayConfig(token);
+                    if (success) {
+                        res.json({ success: true });
+                    } else {
+                        res.status(500).json({ error: 'Failed to delete config' });
+                    }
+                } catch (err) {
                     res.status(500).json({ error: 'Failed to delete config' });
                 }
-            } catch (err) {
-                res.status(500).json({ error: 'Failed to delete config' });
-            }
-        });
+            },
+        );
 
         this.app.get('/api/guild/check', limiter, requireAuth, async (req, res) => {
             const { guildId } = req.query;
@@ -459,7 +482,7 @@ export class LiveChatServer extends EventEmitter {
             }
             try {
                 const ids = guildId.includes(',') ? guildId.split(',') : [guildId];
-                
+
                 // Get bot presence
                 const botPresence: Record<string, boolean> = {};
                 for (const id of ids) {
@@ -496,11 +519,11 @@ export class LiveChatServer extends EventEmitter {
             const { guildId } = req.query;
             try {
                 const configs = await SupabaseService.getOverlayConfigsByGuild(guildId as string);
-                const publicConfigs = configs.map(c => ({
+                const publicConfigs = configs.map((c) => ({
                     guild_id: c.guild_id,
                     username: c.username,
                     user_id: c.user_id,
-                    updated_at: c.updated_at
+                    updated_at: c.updated_at,
                 }));
 
                 res.json({ configs: publicConfigs });
@@ -532,7 +555,9 @@ export class LiveChatServer extends EventEmitter {
         this.app.get('/api/guild/roles', limiter, requireAuth, requireAdmin, async (req, res) => {
             const { guildId } = req.query;
             try {
-                const guild = this.discordClient.guilds.cache.get(guildId as string) || await this.discordClient.guilds.fetch(guildId as string).catch(() => null);
+                const guild =
+                    this.discordClient.guilds.cache.get(guildId as string) ||
+                    (await this.discordClient.guilds.fetch(guildId as string).catch(() => null));
                 if (!guild) {
                     res.status(404).json({ error: 'Serveur introuvable.' });
                     return;
@@ -544,12 +569,14 @@ export class LiveChatServer extends EventEmitter {
                     return;
                 }
 
-                const rolesList = roles.map(r => ({
-                    id: r.id,
-                    name: r.name,
-                    color: r.hexColor,
-                    managed: r.managed
-                })).filter(r => r.name !== '@everyone' && !r.managed);
+                const rolesList = roles
+                    .map((r) => ({
+                        id: r.id,
+                        name: r.name,
+                        color: r.hexColor,
+                        managed: r.managed,
+                    }))
+                    .filter((r) => r.name !== '@everyone' && !r.managed);
 
                 res.json({ roles: rolesList });
             } catch (err) {
@@ -561,7 +588,9 @@ export class LiveChatServer extends EventEmitter {
             const { guildId } = req.query;
             try {
                 const settings = await SupabaseService.getGuildSettings(guildId as string);
-                res.json({ settings: settings || { guild_id: guildId, required_role_id: null, max_overlays_per_user: 5 } });
+                res.json({
+                    settings: settings || { guild_id: guildId, required_role_id: null, max_overlays_per_user: 5 },
+                });
             } catch (err) {
                 res.status(500).json({ error: 'Failed to fetch settings' });
             }
@@ -573,7 +602,9 @@ export class LiveChatServer extends EventEmitter {
             if (maxOverlaysPerUser !== undefined) {
                 const maxOverlays = Number(maxOverlaysPerUser);
                 if (isNaN(maxOverlays) || maxOverlays < 1 || maxOverlays > 20) {
-                    res.status(400).json({ error: "La limite d'overlays par personne doit être comprise entre 1 et 20." });
+                    res.status(400).json({
+                        error: "La limite d'overlays par personne doit être comprise entre 1 et 20.",
+                    });
                     return;
                 }
             }
@@ -582,7 +613,7 @@ export class LiveChatServer extends EventEmitter {
                 const success = await SupabaseService.saveGuildSettings(
                     guildId,
                     requiredRoleId || null,
-                    maxOverlaysPerUser !== undefined ? Number(maxOverlaysPerUser) : 5
+                    maxOverlaysPerUser !== undefined ? Number(maxOverlaysPerUser) : 5,
                 );
                 if (success) {
                     res.json({ success: true });

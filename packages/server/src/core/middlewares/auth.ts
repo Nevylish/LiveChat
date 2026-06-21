@@ -14,9 +14,14 @@ declare global {
 /**
  * Checks if a Discord user is an administrator or has ManageGuild permission.
  */
-export async function checkAdminAccess(discordClient: DiscordClient, guildId: string, userId: string): Promise<boolean> {
+export async function checkAdminAccess(
+    discordClient: DiscordClient,
+    guildId: string,
+    userId: string,
+): Promise<boolean> {
     try {
-        const guild = discordClient.guilds.cache.get(guildId) || await discordClient.guilds.fetch(guildId).catch(() => null);
+        const guild =
+            discordClient.guilds.cache.get(guildId) || (await discordClient.guilds.fetch(guildId).catch(() => null));
         if (!guild) return false;
 
         if (guild.ownerId === userId) return true;
@@ -37,12 +42,13 @@ export async function checkAdminAccess(discordClient: DiscordClient, guildId: st
 export async function checkGuildAccess(
     discordClient: DiscordClient,
     guildId: string,
-    userId: string | null | undefined
+    userId: string | null | undefined,
 ): Promise<boolean> {
     try {
         if (!userId) return true; // Backward compatibility for legacy configurations without user_id
 
-        const guild = discordClient.guilds.cache.get(guildId) || await discordClient.guilds.fetch(guildId).catch(() => null);
+        const guild =
+            discordClient.guilds.cache.get(guildId) || (await discordClient.guilds.fetch(guildId).catch(() => null));
         if (!guild) return false;
 
         if (guild.ownerId === userId) return true;
@@ -85,7 +91,8 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 return;
             }
 
-            SupabaseService.getAnonClient().auth.getUser(token)
+            SupabaseService.getAnonClient()
+                .auth.getUser(token)
                 .then(({ data, error }) => {
                     if (error || !data.user) {
                         res.status(401).json({ error: 'Session invalide ou expirée.' });
@@ -128,7 +135,9 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                     if (isAdmin) {
                         next();
                     } else {
-                        res.status(403).json({ error: 'Vous devez être administrateur du serveur pour effectuer cette action.' });
+                        res.status(403).json({
+                            error: 'Vous devez être administrateur du serveur pour effectuer cette action.',
+                        });
                     }
                 })
                 .catch(() => {
@@ -157,7 +166,9 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                     if (allowed) {
                         next();
                     } else {
-                        res.status(403).json({ error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis." });
+                        res.status(403).json({
+                            error: "Vous n'êtes pas autorisé à utiliser LiveChat sur ce serveur. Un rôle obligatoire est requis.",
+                        });
                     }
                 })
                 .catch(() => {
@@ -191,7 +202,9 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
 
                     if (config.user_id !== userId) {
                         const action = req.path.includes('delete') ? 'supprimer' : 'modifier';
-                        res.status(403).json({ error: `Vous ne possédez pas les droits requis pour ${action} cet overlay.` });
+                        res.status(403).json({
+                            error: `Vous ne possédez pas les droits requis pour ${action} cet overlay.`,
+                        });
                         return;
                     }
 
@@ -201,6 +214,6 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 .catch(() => {
                     res.status(500).json({ error: 'Internal server error validating overlay ownership' });
                 });
-        }
+        },
     };
 }

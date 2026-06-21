@@ -29,22 +29,16 @@ export default function OnboardingView({
                     <Sliders className="h-8 w-8" />
                 </div>
                 <div className="space-y-2">
-                    <h3 className="text-xl font-bold sm:text-2xl">
-                        Activer votre premier overlay
-                    </h3>
+                    <h3 className="text-xl font-bold sm:text-2xl">Activer votre premier overlay</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Configurez votre pseudo de diffusion ci-dessous pour générer le lien
-                        de votre source navigateur OBS unique pour le serveur{' '}
-                        {selectedGuild.name}.
+                        Configurez votre pseudo de diffusion ci-dessous pour générer le lien de votre source navigateur
+                        OBS unique pour le serveur {selectedGuild.name}.
                     </p>
                 </div>
 
                 <div className="w-full text-left space-y-4 pt-2">
                     <div>
-                        <label
-                            htmlFor="username"
-                            className="config-label text-sm text-muted-foreground font-semibold"
-                        >
+                        <label htmlFor="username" className="config-label text-sm text-muted-foreground font-semibold">
                             Pseudo de diffusion (Twitch, Kick, YouTube)
                         </label>
                         <input
@@ -56,8 +50,7 @@ export default function OnboardingView({
                             className="config-input mt-1.5 py-3 px-4 text-base"
                         />
                         <p className="mt-2 text-xs text-muted-foreground leading-normal">
-                            Ce pseudo permet d'identifier votre overlay. Vous pourrez le
-                            modifier plus tard.
+                            Ce pseudo permet d'identifier votre overlay. Vous pourrez le modifier plus tard.
                         </p>
                     </div>
 
@@ -73,9 +66,7 @@ export default function OnboardingView({
                         disabled={isGenerating || !username}
                         className="w-full flex items-center justify-center gap-2 rounded-full bg-white hover:bg-white/90 px-8 py-3.5 text-sm font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
-                        {isGenerating
-                            ? "Génération de l'overlay..."
-                            : "Créer et générer votre lien d'overlay"}
+                        {isGenerating ? "Génération de l'overlay..." : "Créer et générer votre lien d'overlay"}
                     </button>
                 </div>
             </div>

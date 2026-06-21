@@ -15,8 +15,8 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                 </div>
                 <h2 className="config-title">Configurer votre overlay</h2>
                 <p className="mt-4 text-muted-foreground text-sm leading-relaxed max-w-sm">
-                    Connectez-vous avec votre compte Discord pour récupérer automatiquement vos serveurs de
-                    stream et gérer votre lien d'overlay en toute sécurité.
+                    Connectez-vous avec votre compte Discord pour récupérer automatiquement vos serveurs de stream et
+                    gérer votre lien d'overlay en toute sécurité.
                 </p>
 
                 <button
@@ -37,10 +37,7 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                         </li>
                         <li className="flex gap-2.5 items-start">
                             <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
-                            <span>
-                                Un logiciel de streaming supportant les sources navigateur (OBS,
-                                Streamlabs).
-                            </span>
+                            <span>Un logiciel de streaming supportant les sources navigateur (OBS, Streamlabs).</span>
                         </li>
                         <li className="flex gap-2.5 items-start">
                             <EthernetPort className="h-4 w-4 text-white/60 shrink-0" />

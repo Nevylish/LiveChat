@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ObsGuide() {
     const [showObsGuide, setShowObsGuide] = useState(false);
@@ -52,31 +52,22 @@ export default function ObsGuide() {
                                 title: "Contrôler l'audio",
                                 text: 'Cochez la case "Contrôler l\'audio via OBS" afin de pouvoir gérer ou couper le son directement depuis votre mixeur audio OBS.',
                             },
-                            {
-                                step: 5,
-                                title: 'Monitoring audio',
-                                text: 'Dans le Mélangeur Audio d\'OBS, cliquez sur les options de la source > Propriétés audio avancées > réglez sur "Monitoring et sortie" pour entendre les alertes dans votre casque.',
-                            },
                         ].map((item) => (
-                            <div key={item.step} className="flex gap-4 items-start">
+                            <div key={item.step} className="flex gap-4 items-start max-w-[75vw]">
                                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-white text-xs font-bold font-mono">
                                     {item.step}
                                 </span>
                                 <div className="space-y-0.5">
-                                    <p className="text-sm font-bold text-foreground leading-snug">
-                                        {item.title}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground leading-normal">
-                                        {item.text}
-                                    </p>
+                                    <p className="text-sm font-bold text-foreground leading-snug">{item.title}</p>
+                                    <p className="text-xs text-muted-foreground leading-normal">{item.text}</p>
                                 </div>
                             </div>
                         ))}
 
                         {/* CSS personnalisation */}
-                        <div className="flex gap-4 items-start pt-2">
+                        <div className="flex gap-4 items-start pt-2 max-w-[75vw]">
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-white text-xs font-bold font-mono">
-                                6
+                                5
                             </span>
                             <div className="flex-1 min-w-0 space-y-2">
                                 <div>
@@ -84,7 +75,8 @@ export default function ObsGuide() {
                                         Masquer le fond noir (CSS)
                                     </p>
                                     <p className="text-xs text-muted-foreground leading-normal">
-                                        Collez la règle CSS suivante dans le champ "CSS personnalisé" d'OBS pour masquer le fond noir lorsque le chat est inactif :
+                                        Collez la règle CSS suivante dans le champ "CSS personnalisé" d'OBS pour masquer
+                                        le fond noir lorsque le chat est inactif :
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
@@ -98,6 +90,21 @@ export default function ObsGuide() {
                                         {isCssCopied ? 'Copié !' : 'Copier'}
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Monitoring audio */}
+                        <div className="flex gap-4 items-start pt-2 max-w-[75vw]">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-white text-xs font-bold font-mono">
+                                6
+                            </span>
+                            <div className="space-y-0.5">
+                                <p className="text-sm font-bold text-foreground leading-snug">Monitoring audio</p>
+                                <p className="text-xs text-muted-foreground leading-normal">
+                                    Dans le Mélangeur Audio d'OBS, cliquez sur les options de la source &gt; Propriétés
+                                    audio avancées &gt; réglez sur "Monitoring et sortie" pour entendre les alertes dans
+                                    votre casque.
+                                </p>
                             </div>
                         </div>
                     </div>

@@ -31,9 +31,7 @@ export default function GuildGrid({
         return (
             <div className="py-20 flex flex-col items-center justify-center gap-4">
                 <RefreshCw className="h-10 w-10 animate-spin text-white/60" />
-                <span className="text-sm font-semibold text-muted-foreground">
-                    Chargement de vos serveurs...
-                </span>
+                <span className="text-sm font-semibold text-muted-foreground">Chargement de vos serveurs...</span>
             </div>
         );
     }
@@ -44,8 +42,8 @@ export default function GuildGrid({
                 <ShieldAlert className="h-12 w-12 opacity-80 mx-auto text-amber-500" />
                 <h3 className="font-bold text-lg text-foreground">Session Discord expirée</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                    Votre session Discord a expiré ou a été réinitialisée. Veuillez vous
-                    reconnecter pour actualiser la liste de vos serveurs de stream.
+                    Votre session Discord a expiré ou a été réinitialisée. Veuillez vous reconnecter pour actualiser la
+                    liste de vos serveurs de stream.
                 </p>
                 <button
                     onClick={handleLogin}
@@ -61,9 +59,7 @@ export default function GuildGrid({
         return (
             <div className="config-card py-16 text-center max-w-md mx-auto space-y-4">
                 <HelpCircle className="h-12 w-12 opacity-40 mx-auto text-muted-foreground" />
-                <p className="text-base text-muted-foreground">
-                    Aucun serveur Discord administré n'a été trouvé.
-                </p>
+                <p className="text-base text-muted-foreground">Aucun serveur Discord administré n'a été trouvé.</p>
                 <button
                     onClick={() => loadGuilds(true)}
                     className="rounded-full bg-white/10 hover:bg-white/15 px-6 py-2 text-sm font-semibold transition-colors cursor-pointer"
@@ -100,18 +96,14 @@ export default function GuildGrid({
                                 </div>
                             )}
                             <div className="space-y-1 min-w-0 flex-1">
-                                <h3 className="font-bold text-base sm:text-lg truncate transition-colors">
-                                    {g.name}
-                                </h3>
+                                <h3 className="font-bold text-base sm:text-lg truncate transition-colors">{g.name}</h3>
                                 <div className="flex flex-col gap-1">
                                     <div className="flex items-center gap-2">
                                         <span
                                             className={`h-2 w-2 rounded-full ${g.hasBot ? 'bg-emerald-500' : 'bg-white/20'}`}
                                         />
                                         <span className="text-xs font-medium text-muted-foreground">
-                                            {g.hasBot
-                                                ? 'LiveChat installé'
-                                                : 'LiveChat non installé'}
+                                            {g.hasBot ? 'LiveChat installé' : 'LiveChat non installé'}
                                         </span>
                                     </div>
                                     {g.hasBot && (
@@ -138,9 +130,7 @@ export default function GuildGrid({
                             </a>
                         ) : (
                             <div className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white hover:bg-white/90 px-4 py-2.5 text-sm font-bold text-black transition-colors">
-                                {g.overlayCount && g.overlayCount > 0
-                                    ? 'Gérer mes overlays'
-                                    : 'Créer mon overlay'}
+                                {g.overlayCount && g.overlayCount > 0 ? 'Gérer mes overlays' : 'Créer mon overlay'}
                             </div>
                         )}
                     </div>

@@ -145,12 +145,13 @@ export default class LiveChatCommand extends Command {
 
         if (guildId) {
             try {
-                const guild = interaction.guild || await this.client.guilds.fetch(guildId).catch(() => null);
+                const guild = interaction.guild || (await this.client.guilds.fetch(guildId).catch(() => null));
                 if (guild) {
                     const member = await guild.members.fetch(userId).catch(() => null);
                     if (member) {
                         const isOwner = guild.ownerId === userId;
-                        const isAdmin = member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
+                        const isAdmin =
+                            member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
 
                         if (!isOwner && !isAdmin) {
                             const settings = await SupabaseService.getGuildSettings(guildId);
@@ -158,8 +159,9 @@ export default class LiveChatCommand extends Command {
                                 const hasRole = member.roles.cache.has(settings.required_role_id);
                                 if (!hasRole) {
                                     await interaction.reply({
-                                        content: "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
-                                        ephemeral: true
+                                        content:
+                                            "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
+                                        ephemeral: true,
                                     });
                                     return;
                                 }

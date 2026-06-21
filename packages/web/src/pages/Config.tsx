@@ -1,11 +1,5 @@
 import type { Session, User } from '@supabase/supabase-js';
-import {
-    ArrowLeft,
-    Play,
-    RefreshCw,
-    ShieldAlert,
-    Trash2,
-} from 'lucide-react';
+import { ArrowLeft, Play, RefreshCw, ShieldAlert, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -186,7 +180,7 @@ export default function Config() {
                         headers: {
                             Authorization: `Bearer ${session.access_token}`,
                         },
-                    }
+                    },
                 );
                 if (!active) return;
                 if (response.status === 403) {
@@ -256,7 +250,7 @@ export default function Config() {
                         headers: {
                             Authorization: `Bearer ${session.access_token}`,
                         },
-                    }
+                    },
                 );
                 if (!active) return;
                 if (response.ok) {
@@ -317,7 +311,7 @@ export default function Config() {
                         headers: {
                             Authorization: `Bearer ${session.access_token}`,
                         },
-                    }
+                    },
                 );
                 if (!active) return;
                 if (settingsRes.ok) {
@@ -342,7 +336,7 @@ export default function Config() {
                         headers: {
                             Authorization: `Bearer ${session.access_token}`,
                         },
-                    }
+                    },
                 );
                 if (!active) return;
                 if (rolesRes.ok) {
@@ -400,7 +394,7 @@ export default function Config() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session.access_token}`,
+                        Authorization: `Bearer ${session.access_token}`,
                     },
                     body: JSON.stringify({
                         username: username,
@@ -449,7 +443,7 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`,
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     guildId: selectedGuild.id,
@@ -562,7 +556,7 @@ export default function Config() {
                                     headers: {
                                         Authorization: `Bearer ${session.access_token}`,
                                     },
-                                }
+                                },
                             );
                             if (botRes.ok) {
                                 const data = await botRes.json();
@@ -665,7 +659,7 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`,
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     username: nameToCreate,
@@ -726,7 +720,7 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`,
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     token: configToken,
@@ -781,7 +775,7 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`,
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     guildId: selectedGuild?.id,
@@ -828,7 +822,7 @@ export default function Config() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`,
+                    Authorization: `Bearer ${session.access_token}`,
                 },
                 body: JSON.stringify({
                     token: activeConfig.token,
@@ -970,13 +964,13 @@ export default function Config() {
                                     </>
                                 )}
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                                 {selectedGuild && isEditing && activeConfig && (
                                     <>
                                         <button
                                             onClick={handleSaveConfig}
                                             disabled={!hasUnsavedChanges}
-                                            className={`rounded-lg px-4 h-9 text-xs font-bold transition-colors ${
+                                            className={`flex items-center justify-center rounded-lg px-4 h-9 text-xs font-bold transition-colors w-full sm:w-auto ${
                                                 hasUnsavedChanges
                                                     ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
                                                     : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
@@ -986,7 +980,7 @@ export default function Config() {
                                         </button>
                                         <button
                                             onClick={() => handleDeleteConfig(activeConfig.token)}
-                                            className="flex h-9 items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 px-4 py-1.5 text-xs font-bold text-red-200 transition-colors duration-200 cursor-pointer"
+                                            className="flex h-9 items-center justify-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 px-4 py-1.5 text-xs font-bold text-red-200 transition-colors duration-200 cursor-pointer w-full sm:w-auto"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                             Supprimer
@@ -998,7 +992,7 @@ export default function Config() {
                                         onClick={() => loadGuilds(true)}
                                         disabled={fetchingGuilds}
                                         title="Actualiser la liste des serveurs"
-                                        className="flex h-9 items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 disabled:opacity-50 hover:text-foreground cursor-pointer"
+                                        className="flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 disabled:opacity-50 hover:text-foreground cursor-pointer w-full sm:w-auto"
                                     >
                                         <RefreshCw className={`h-3.5 w-3.5 ${fetchingGuilds ? 'animate-spin' : ''}`} />
                                         Actualiser
@@ -1006,7 +1000,7 @@ export default function Config() {
                                 )}
                                 <button
                                     onClick={() => setVideoOpen(true)}
-                                    className="flex h-9 items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground cursor-pointer"
+                                    className="flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground cursor-pointer w-full sm:w-auto"
                                 >
                                     <Play className="h-3.5 w-3.5" />
                                     Tutoriel vidéo

@@ -173,7 +173,7 @@ export class SupabaseService {
                     for (const guildId of missingGuildIds) {
                         const count = dbCounts[guildId];
                         counts[guildId] = count;
-                        
+
                         const cacheKey = `overlay:count:${guildId}:${userId}`;
                         CacheManager.set(cacheKey, count, 5 * 60 * 1000);
                     }
@@ -281,7 +281,7 @@ export class SupabaseService {
     public static async deleteOverlayConfig(token: string): Promise<boolean> {
         try {
             const supabase = this.getClient();
-            
+
             // Query DB directly to bypass cache and get the metadata for eviction
             const { data: config, error: fetchError } = await supabase
                 .from('overlay_configs')
@@ -330,7 +330,11 @@ export class SupabaseService {
                 .maybeSingle();
 
             if (fetchError) {
-                Logger.error('SupabaseService', `Error fetching config for token update from DB: ${oldToken}`, fetchError);
+                Logger.error(
+                    'SupabaseService',
+                    `Error fetching config for token update from DB: ${oldToken}`,
+                    fetchError,
+                );
             }
 
             const { error } = await supabase.from('overlay_configs').update({ token: newToken }).eq('token', oldToken);

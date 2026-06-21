@@ -12,9 +12,7 @@ export default function RestrictedView({ error }: RestrictedViewProps) {
                     <ShieldAlert className="h-8 w-8" />
                 </div>
                 <div className="space-y-2">
-                    <h3 className="text-xl font-bold sm:text-2xl text-red-200">
-                        Accès restreint
-                    </h3>
+                    <h3 className="text-xl font-bold sm:text-2xl text-red-200">Accès restreint</h3>
                     <p className="text-sm text-red-200/80 leading-relaxed max-w-md">
                         {error ||
                             'Un rôle obligatoire est requis pour utiliser LiveChat et configurer des overlays sur ce serveur Discord.'}
