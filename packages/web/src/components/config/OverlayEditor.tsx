@@ -32,10 +32,6 @@ export default function OverlayEditor({
     justRegenerated,
     isGenerating,
     regenerateLink,
-    // draftConfig,
-    // updateDraftConfig,
-    // isPlayingSoundWave,
-    // handlePlaySound,
 }: OverlayEditorProps) {
     const [isLinkCopied, setIsLinkCopied] = useState(false);
 
@@ -48,7 +44,6 @@ export default function OverlayEditor({
 
     return (
         <div className="space-y-6 max-w-6xl mx-auto animate-fade-in">
-            {/* Card 1 : Lien d'Overlay */}
             <div className="config-card space-y-5">
                 <div>
                     <h3 className="text-lg font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
@@ -99,7 +94,6 @@ export default function OverlayEditor({
                         </div>
                     </div>
 
-                    {/* Modification du pseudo inline */}
                     <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
                         <label htmlFor="username" className="text-xs font-semibold text-muted-foreground">
                             Modifier votre pseudo d'affichage
@@ -116,7 +110,6 @@ export default function OverlayEditor({
                         </div>
                     </div>
 
-                    {/* Compromis token */}
                     <div
                         className={`rounded-xl border p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-colors duration-300 ${
                             justRegenerated
@@ -162,7 +155,6 @@ export default function OverlayEditor({
                 </div>
             </div>
 
-            {/* Card 2 : Sons de Notification */}
             {/* <div className="config-card space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -249,7 +241,6 @@ export default function OverlayEditor({
                 )}
             </div> */}
 
-            {/* Card 3 : Guide OBS */}
             <ObsGuide />
         </div>
     );

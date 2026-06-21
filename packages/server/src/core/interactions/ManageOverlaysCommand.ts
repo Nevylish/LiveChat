@@ -165,8 +165,8 @@ export default class ManageOverlaysCommand extends Command {
     private static getOverlayUrl(token: string): string {
         const isLocal = Constants.getHostname().includes('localhost');
         return isLocal
-            ? `${Constants.getOverlayUrl()}/v2/overlay?token=${token}`
-            : `${Constants.getOverlayUrl()}/v2/overlay.html?token=${token}`;
+            ? `${Constants.getFrontendUrl()}/v2/overlay?token=${token}`
+            : `${Constants.getFrontendUrl()}/v2/overlay.html?token=${token}`;
     }
 
     private static buildManageComponents(username: string, token: string) {

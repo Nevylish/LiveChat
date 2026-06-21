@@ -11,9 +11,6 @@ declare global {
     }
 }
 
-/**
- * Checks if a Discord user is an administrator or has ManageGuild permission.
- */
 export async function checkAdminAccess(
     discordClient: DiscordClient,
     guildId: string,
@@ -36,16 +33,13 @@ export async function checkAdminAccess(
     }
 }
 
-/**
- * Checks if a user is allowed to use LiveChat on a specific guild.
- */
 export async function checkGuildAccess(
     discordClient: DiscordClient,
     guildId: string,
     userId: string | null | undefined,
 ): Promise<boolean> {
     try {
-        if (!userId) return true; // Backward compatibility for legacy configurations without user_id
+        if (!userId) return true;
 
         const guild =
             discordClient.guilds.cache.get(guildId) || (await discordClient.guilds.fetch(guildId).catch(() => null));
@@ -70,14 +64,8 @@ export async function checkGuildAccess(
     }
 }
 
-/**
- * Factory to generate auth middlewares with the DiscordClient dependency injected.
- */
 export function createAuthMiddlewares(discordClient: DiscordClient) {
     return {
-        /**
-         * Middleware to authenticate Supabase JWT token and extract Discord userId.
-         */
         requireAuth: (req: Request, res: Response, next: NextFunction): void => {
             const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -114,9 +102,6 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 });
         },
 
-        /**
-         * Middleware to check if the user is an admin of the guild.
-         */
         requireAdmin: (req: Request, res: Response, next: NextFunction): void => {
             const guildId = (req.query.guildId || req.body.guildId) as string;
             const userId = req.userId;
@@ -145,9 +130,6 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 });
         },
 
-        /**
-         * Middleware to check if the user is allowed to use LiveChat on the guild.
-         */
         requireGuildAccess: (req: Request, res: Response, next: NextFunction): void => {
             const guildId = (req.query.guildId || req.body.guildId || req.overlayConfig?.guild_id) as string;
             const userId = req.userId;
@@ -176,10 +158,6 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 });
         },
 
-        /**
-         * Middleware to verify if the user is the creator of the target overlay config.
-         * Attaches overlayConfig to req for reuse in subsequent middlewares or routes.
-         */
         requireOverlayOwnership: (req: Request, res: Response, next: NextFunction): void => {
             const token = (req.body.token || req.query.token) as string;
             const userId = req.userId;

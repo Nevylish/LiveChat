@@ -49,7 +49,6 @@ export default function Header() {
         return () => subscription.unsubscribe();
     }, []);
 
-    // Close dropdown on click outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -108,7 +107,6 @@ export default function Header() {
                             <span>LiveChat</span>
                         </a>
 
-                        {/* Desktop nav */}
                         <nav className="hidden md:block">
                             <ul className="flex items-center gap-6 text-sm font-semibold text-muted-foreground">
                                 {NAV_LINKS.map((link) => (
@@ -176,7 +174,6 @@ export default function Header() {
                             </a>
                         )}
 
-                        {/* Dropdown Menu */}
                         {user && dropdownOpen && (
                             <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
                                 <button
@@ -199,7 +196,6 @@ export default function Header() {
                             </div>
                         )}
 
-                        {/* Burger button */}
                         <button
                             className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden hover:bg-white/5 transition-colors cursor-pointer shrink-0"
                             onClick={toggleMenu}

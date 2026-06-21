@@ -227,7 +227,6 @@ export default function Config() {
         };
     }, [selectedGuild, session, apiBase]);
 
-    // Fetch all guild configs for administration if user is admin
     useEffect(() => {
         let active = true;
         const fetchAllConfigs = async () => {
@@ -276,7 +275,6 @@ export default function Config() {
         };
     }, [selectedGuild, isEditing, session, apiBase]);
 
-    // Fetch server settings and roles for administration if user is admin
     useEffect(() => {
         let active = true;
         const fetchSettingsAndRoles = async () => {
@@ -304,7 +302,6 @@ export default function Config() {
 
             setLoadingRoles(true);
             try {
-                // Fetch settings
                 const settingsRes = await fetch(
                     `${apiBase}/api/guild/settings?guildId=${encodeURIComponent(selectedGuild.id)}`,
                     {
@@ -329,7 +326,6 @@ export default function Config() {
                     }
                 }
 
-                // Fetch roles
                 const rolesRes = await fetch(
                     `${apiBase}/api/guild/roles?guildId=${encodeURIComponent(selectedGuild.id)}`,
                     {
@@ -512,8 +508,6 @@ export default function Config() {
         };
     }, []);
 
-    // If we are in the login popup and the session has successfully loaded,
-    // notify the main window and close the popup.
     useEffect(() => {
         if (session && window.name === 'discord-login' && window.opener) {
             try {
@@ -830,11 +824,9 @@ export default function Config() {
                 throw new Error(data.error || 'Impossible de supprimer la configuration.');
             }
 
-            // Remove from administrative list local state
             const updatedAll = allGuildConfigs.filter((c) => c.username !== targetUsername);
             setAllGuildConfigs(updatedAll);
 
-            // Also check if this overlay belonged to the admin themselves, and update their own local configs list
             const updatedConfigs = configs.filter((c) => c.username.toLowerCase() !== targetUsername.toLowerCase());
             setConfigs(updatedConfigs);
             if (updatedConfigs.length === 0) {
@@ -935,7 +927,6 @@ export default function Config() {
                     <LoginView onLogin={handleLogin} />
                 ) : (
                     <div className="space-y-6">
-                        {/* Barre utilisateur supérieure */}
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white/2 border border-border/40 rounded-2xl p-4 sm:px-6">
                             <div className="flex items-center gap-3.5">
                                 {selectedGuild ? (

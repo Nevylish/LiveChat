@@ -111,8 +111,6 @@ function handleBroadcast({ content, from, fullscreen, anonymous, text, interacti
     }
 }
 
-// REST OF THE FILE REMAINS IDENTICAL TO ORIGINAL OVERLAY.JS
-
 function handleSkip() {
     if (currentInteractionId) socket.emit('ended', currentInteractionId);
     cleanupCurrentContent(() => {
@@ -344,7 +342,6 @@ function createTextElement(text, fullscreen) {
     textElement.classList.add('fade-in');
 }
 
-// REST OF THE FUNCTIONS
 function removeContent(element, callback) {
     if (elements.contentContainer.contains(element)) {
         if (currentInteractionId) socket.emit('ended', currentInteractionId);

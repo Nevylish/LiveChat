@@ -1,4 +1,10 @@
-import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import {
+    ActionRowBuilder,
+    AutocompleteInteraction,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+} from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
 import Command from './Command';
@@ -20,11 +26,10 @@ export default class PlatformsCommand extends Command {
         const platforms = [
             '**Discord** (*voir formats de fichiers supportés*)',
             '**Giphy**',
-            // '🆕 **Instagram** *Reels*',
+
             '**Tenor**',
             '**TikTok** *Vidéos*',
             '**Twitter** *Vidéos, Images*',
-            // '🆕 **YouTube** *Vidéos, Shorts*',
         ];
 
         const embed = Functions.buildEmbed(

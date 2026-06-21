@@ -26,7 +26,6 @@ interface OverlaysDashboardProps {
     handleConfigureConfig: (config: OverlayConfigRow) => void;
     handleDeleteConfig: (token: string) => void;
 
-    // Administrative section
     allGuildConfigs: any[];
     loadingAllConfigs: boolean;
     handleAdminDeleteConfig: (targetUsername: string) => void;
@@ -76,7 +75,6 @@ export default function OverlaysDashboard({
     return (
         <div className="space-y-8 max-w-6xl mx-auto animate-fade-in">
             <div className="flex flex-col md:flex-row gap-8">
-                {/* Liste des Overlays */}
                 <div className="flex-1 space-y-4">
                     <div className="flex items-center justify-between pb-2">
                         <div>
@@ -133,7 +131,6 @@ export default function OverlaysDashboard({
                     </div>
                 </div>
 
-                {/* Bloc de Création / Infos de Limite */}
                 <div className="w-full md:w-80 shrink-0">
                     {configs.length < maxOverlays ? (
                         <div className="config-card flex flex-col items-start text-left space-y-4">
@@ -191,7 +188,6 @@ export default function OverlaysDashboard({
                 </div>
             </div>
 
-            {/* SECTION ADMINISTRATION DU SERVEUR */}
             {isUserAdmin && (
                 <div className="border-t border-white/5 pt-8 space-y-6">
                     <div>
@@ -206,7 +202,6 @@ export default function OverlaysDashboard({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Colonne gauche : Liste des overlays des membres */}
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                 <Tv className="h-4.5 w-4.5" />
@@ -258,7 +253,6 @@ export default function OverlaysDashboard({
                             )}
                         </div>
 
-                        {/* Colonne droite : Configuration du Serveur (Rôle requis & Limites) */}
                         <div className="space-y-4">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                 <Sliders className="h-4.5 w-4.5" />

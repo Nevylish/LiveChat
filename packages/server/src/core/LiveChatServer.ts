@@ -141,7 +141,6 @@ export class LiveChatServer extends EventEmitter {
                     return;
                 }
 
-                // Validation du nom d'utilisateur
                 const usernameValidation = Validations.validateUsername(username);
                 if (!usernameValidation.valid) {
                     this.emitError(socket, usernameValidation.error!, {
@@ -151,7 +150,6 @@ export class LiveChatServer extends EventEmitter {
                     return;
                 }
 
-                // Validation de l'identifiant du serveur Discord
                 const guildIdValidation = Validations.validateGuildId(guildId);
                 if (!guildIdValidation.valid) {
                     this.emitError(socket, guildIdValidation.error!, {
@@ -161,7 +159,6 @@ export class LiveChatServer extends EventEmitter {
                     return;
                 }
 
-                // Vérifier si le propriétaire de l'overlay est toujours autorisé à l'utiliser (rôle obligatoire)
                 try {
                     const config = token
                         ? await SupabaseService.getOverlayConfigByToken(token)
@@ -357,7 +354,6 @@ export class LiveChatServer extends EventEmitter {
             }
 
             try {
-                // Check user overlays limit
                 const settings = await SupabaseService.getGuildSettings(guildId);
                 const maxOverlays = settings?.max_overlays_per_user ?? 5;
                 const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId);
@@ -368,7 +364,6 @@ export class LiveChatServer extends EventEmitter {
                     return;
                 }
 
-                // Check overlay name uniqueness on this server across all users
                 const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
                 const nameExists = allConfigs.some((c) => c.username.toLowerCase() === username.toLowerCase());
                 if (nameExists) {
@@ -406,7 +401,6 @@ export class LiveChatServer extends EventEmitter {
                 }
 
                 try {
-                    // Check name uniqueness on this server (excluding current overlay)
                     if (username.toLowerCase() !== config.username.toLowerCase()) {
                         const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
                         const nameExists = allConfigs.some(
@@ -483,17 +477,14 @@ export class LiveChatServer extends EventEmitter {
             try {
                 const ids = guildId.includes(',') ? guildId.split(',') : [guildId];
 
-                // Get bot presence
                 const botPresence: Record<string, boolean> = {};
                 for (const id of ids) {
                     botPresence[id] = this.discordClient.guilds.cache.has(id);
                 }
 
-                // Get overlay counts for the authenticated user
                 const overlayCounts = await SupabaseService.getOverlayCountsByGuildsAndUser(ids, userId);
 
                 if (guildId.includes(',')) {
-                    // Return batch response
                     const results: Record<string, { hasBot: boolean; overlayCount: number }> = {};
                     for (const id of ids) {
                         results[id] = {

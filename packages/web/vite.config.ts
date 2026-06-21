@@ -21,10 +21,6 @@ const MIME_TYPES: Record<string, string> = {
     '.webmanifest': 'application/manifest+json',
 };
 
-/**
- * Plugin pour servir les assets partagés (shared/assets) pendant le développement.
- * En production, c'est le serveur Express qui s'en charge.
- */
 function serveSharedAssets(): Plugin {
     const sharedDir = path.resolve(__dirname, '../../shared/assets');
 
@@ -51,7 +47,6 @@ function serveSharedAssets(): Plugin {
     };
 }
 
-// https://vite.dev/config/
 export default defineConfig({
     plugins: [react(), tailwindcss(), serveSharedAssets()],
     envDir: '../../',

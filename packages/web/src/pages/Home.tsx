@@ -86,7 +86,6 @@ export default function Home() {
             />
 
             <main>
-                {/* Hero */}
                 <section className="relative flex min-h-[calc(100vh-65px)] items-center py-16 md:py-0">
                     <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-6 md:grid-cols-2 md:items-center md:gap-16">
                         <div>
@@ -97,8 +96,6 @@ export default function Home() {
                             </h1>
                             <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
                                 Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.
-                                {/* <br className="hidden sm:block" />
-                                Et puis s'ils sont vos amis, c'est que vous les trouvez drôles, n'est-ce pas? */}
                             </p>
                             <div className="unselectable mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                                 <a
@@ -115,7 +112,6 @@ export default function Home() {
                                 </button>
                             </div>
 
-                            {/* Stats */}
                             <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
@@ -170,7 +166,6 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Scroll indicator */}
                     <button
                         onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                         className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-muted-foreground transition-colors duration-200 hover:text-foreground"
@@ -191,10 +186,8 @@ export default function Home() {
                     </button>
                 </section>
 
-                {/* Features */}
                 <section id="features" className="py-20 sm:py-28">
                     <div className="mx-auto max-w-6xl space-y-20 px-5 sm:space-y-28 sm:px-6">
-                        {/* Introduction de référencement */}
                         <ScrollReveal direction="up" delay={0}>
                             <div className="max-w-3xl mx-auto text-left space-y-4 pb-12 sm:pb-16 border-b border-border/40">
                                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
@@ -215,7 +208,6 @@ export default function Home() {
                             </div>
                         </ScrollReveal>
 
-                        {/* Feature 1 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
                             <ScrollReveal direction="up" delay={0}>
                                 <div>
@@ -254,7 +246,6 @@ export default function Home() {
                             </ScrollReveal>
                         </div>
 
-                        {/* Feature 2 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
                             <ScrollReveal
                                 direction="right"
@@ -282,7 +273,6 @@ export default function Home() {
                             </ScrollReveal>
                         </div>
 
-                        {/* Feature 3 */}
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
                             <ScrollReveal direction="up" delay={0}>
                                 <div>
@@ -329,7 +319,6 @@ export default function Home() {
                             </ScrollReveal>
                         </div>
 
-                        {/* FAQ */}
                         <div className="mx-auto w-full max-w-2xl">
                             <ScrollReveal direction="up">
                                 <div className="text-center">
@@ -373,7 +362,6 @@ export default function Home() {
                             </div>
                         </div>
 
-                        {/* CTA */}
                         <ScrollReveal direction="up">
                             <div className="md:text-center">
                                 <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>

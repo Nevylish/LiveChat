@@ -7,8 +7,6 @@ import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
 import ObsGuide from '../components/config/ObsGuide';
 
-// const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
-
 const sections = [
     { id: 'commands', label: 'Commandes' },
     { id: 'platforms', label: 'Plateformes' },
@@ -19,11 +17,9 @@ const sections = [
 const platforms = [
     { name: 'Discord', desc: 'Fichiers envoyés directement sur Discord', icon: '💬' },
     { name: 'Giphy', desc: 'GIFs depuis Giphy', icon: '🎞️' },
-    // { name: 'Instagram', desc: 'Reels Instagram', icon: '📸' },
     { name: 'Tenor', desc: 'GIFs depuis Tenor', icon: '🎬' },
     { name: 'TikTok', desc: 'Vidéos TikTok', icon: '🎵' },
     { name: 'X (Twitter)', desc: 'Vidéos et images de Tweets', icon: '𝕏' },
-    // { name: 'YouTube', desc: 'Vidéos et Shorts YouTube', icon: '▶️' },
 ];
 
 const formats = [
@@ -65,9 +61,6 @@ export default function Usage() {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // const [videoOpen, setVideoOpen] = useState(false);
-    // const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
-
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
             <Seo
@@ -76,15 +69,8 @@ export default function Usage() {
                 path="/usage"
             />
             <Header />
-            {/* <VideoModal
-                open={videoOpen}
-                onClose={handleCloseVideo}
-                videoId={YOUTUBE_VIDEO_ID}
-                title="Démonstration LiveChat"
-            /> */}
 
             <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                {/* Page intro */}
                 <ScrollReveal direction="up" delay={0}>
                     <div className="text-center">
                         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -96,15 +82,8 @@ export default function Usage() {
                     </div>
                 </ScrollReveal>
 
-                {/* Quick nav */}
                 <ScrollReveal direction="up" delay={100}>
                     <div className="mt-8 flex flex-col items-center gap-3">
-                        {/* <button
-                            onClick={() => setVideoOpen(true)}
-                            className="w-full max-w-md rounded-full border border-white/15 bg-white/5 px-7 pb-3.5 pt-3 text-center text-sm font-semibold transition-colors duration-200 hover:border-white/25 hover:bg-white/10"
-                        >
-                            Démonstration vidéo
-                        </button> */}
                         <nav className="flex flex-wrap justify-center gap-2">
                             {sections.map((s) => (
                                 <button
@@ -123,7 +102,6 @@ export default function Usage() {
                     <ObsGuide showObsGuide={showObsDefault} />
                 </section>
 
-                {/* Commands section */}
                 <section id="commands" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Commandes Discord</h2>
@@ -132,7 +110,6 @@ export default function Usage() {
                         </p>
                     </ScrollReveal>
 
-                    {/* /livechat */}
                     <div className="mt-6 space-y-4">
                         <ScrollReveal direction="up" delay={30}>
                             <details
@@ -152,7 +129,6 @@ export default function Usage() {
                                 </summary>
                                 <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
                                     <div className="space-y-6">
-                                        {/* lancer-url */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -201,7 +177,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* lancer-fichier */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -250,7 +225,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* passer-au-suivant */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-blue-500/10 px-2 py-0.5 text-xs font-bold text-blue-300">
@@ -277,7 +251,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* stop-et-vider */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-red-500/10 px-2 py-0.5 text-xs font-bold text-red-300">
@@ -306,7 +279,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /liste-des-plateformes */}
                         <ScrollReveal direction="up" delay={60}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -329,7 +301,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /abonnement */}
                         <ScrollReveal direction="up" delay={90}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -353,7 +324,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /gérer-mes-overlays */}
                         <ScrollReveal direction="up" delay={100}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -392,7 +362,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /réglages */}
                         <ScrollReveal direction="up" delay={110}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -412,7 +381,6 @@ export default function Usage() {
                                         pour le serveur.
                                     </p>
                                     <div className="space-y-4">
-                                        {/* rôle-autorisé */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -440,7 +408,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* overlays-max-par-personne */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -470,7 +437,6 @@ export default function Usage() {
                         </ScrollReveal>
                     </div>
 
-                    {/* Target info */}
                     <ScrollReveal direction="up" delay={120}>
                         <div className="mt-5 rounded-lg border border-border bg-white/3 px-4 py-3 text-sm text-muted-foreground">
                             <strong className="text-foreground">💡 L'option « cible »</strong> - L'autocomplétion vous
@@ -482,7 +448,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Platforms section */}
                 <section id="platforms" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Plateformes supportées</h2>
@@ -517,7 +482,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Formats section */}
                 <section id="formats" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Formats de fichiers acceptés</h2>
@@ -561,7 +525,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Features section */}
                 <section id="features" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Fonctionnalités</h2>
@@ -666,7 +629,6 @@ export default function Usage() {
                     </div>
                 </section>
 
-                {/* CTA */}
                 <ScrollReveal direction="up">
                     <div className="mt-16 text-center">
                         <p className="text-sm text-muted-foreground sm:text-base">

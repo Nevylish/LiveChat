@@ -68,7 +68,6 @@ export default function ObsGuide({ showObsGuide: defaultShowObsGuide = false }: 
                             </div>
                         ))}
 
-                        {/* CSS personnalisation */}
                         <div className="flex gap-4 items-start pt-2 max-w-[75vw]">
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-white text-xs font-bold font-mono">
                                 5
@@ -97,7 +96,6 @@ export default function ObsGuide({ showObsGuide: defaultShowObsGuide = false }: 
                             </div>
                         </div>
 
-                        {/* Monitoring audio */}
                         <div className="flex gap-4 items-start pt-2 max-w-[75vw]">
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10 text-white text-xs font-bold font-mono">
                                 6

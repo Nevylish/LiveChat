@@ -16,7 +16,7 @@ export namespace Constants {
     };
 
     export const getOverlayUrl = (): string => {
-        const host = getFrontendUrl();
+        const host = process.env.OVERLAY_URI!;
         return host.includes('localhost') ? `http://${host}:4000` : `https://${host}`;
     };
 
