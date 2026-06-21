@@ -352,6 +352,122 @@ export default function Usage() {
                                 </div>
                             </details>
                         </ScrollReveal>
+
+                        {/* /gérer-mes-overlays */}
+                        <ScrollReveal direction="up" delay={100}>
+                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
+                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
+                                    <div className="flex items-center gap-3">
+                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
+                                            /gérer-mes-overlays
+                                        </code>
+                                        <span className="text-sm font-normal text-muted-foreground">
+                                            Créer et gérer vos overlays sur ce serveur
+                                        </span>
+                                    </div>
+                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                </summary>
+                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                    <p className="text-sm text-muted-foreground">
+                                        Permet aux membres autorisés de créer un nouvel overlay (avec un pseudo
+                                        d'affichage personnalisé) ou de gérer leurs overlays existants sur le serveur
+                                        (récupérer le lien OBS, régénérer la clé d'authentification ou supprimer
+                                        l'overlay).
+                                    </p>
+                                    <ul className="mt-3 space-y-1.5 pl-1">
+                                        <li className="flex items-start gap-2 text-sm">
+                                            <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                choix
+                                            </code>
+                                            <span className="text-muted-foreground">
+                                                Sélectionnez un overlay existant à gérer, ou choisissez d'en créer un
+                                                nouveau
+                                            </span>
+                                            <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                Requis
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </details>
+                        </ScrollReveal>
+
+                        {/* /réglages */}
+                        <ScrollReveal direction="up" delay={110}>
+                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
+                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
+                                    <div className="flex items-center gap-3">
+                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
+                                            /réglages
+                                        </code>
+                                        <span className="text-sm font-normal text-muted-foreground">
+                                            Configurer les options de LiveChat pour ce serveur
+                                        </span>
+                                    </div>
+                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                </summary>
+                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        Permet aux administrateurs de configurer les règles d'utilisation de LiveChat
+                                        pour le serveur.
+                                    </p>
+                                    <div className="space-y-4">
+                                        {/* rôle-autorisé */}
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
+                                                    rôle-autorisé
+                                                </code>
+                                                <span className="text-sm text-muted-foreground">
+                                                    Définir un rôle requis pour créer ou configurer des overlays
+                                                </span>
+                                            </div>
+                                            <ul className="mt-2.5 space-y-1.5 pl-1">
+                                                <li className="flex items-start gap-2 text-sm">
+                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                        rôle
+                                                    </code>
+                                                    <span className="text-muted-foreground">
+                                                        Sélectionnez le rôle restreint (ou "none" pour retirer la
+                                                        restriction)
+                                                    </span>
+                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                        Requis
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="h-px bg-border/50" />
+
+                                        {/* overlays-max-par-personne */}
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
+                                                    overlays-max-par-personne
+                                                </code>
+                                                <span className="text-sm text-muted-foreground">
+                                                    Définir un nombre maximal d'overlays par personne
+                                                </span>
+                                            </div>
+                                            <ul className="mt-2.5 space-y-1.5 pl-1">
+                                                <li className="flex items-start gap-2 text-sm">
+                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                        nombre
+                                                    </code>
+                                                    <span className="text-muted-foreground">
+                                                        Le nombre maximum d'overlays par utilisateur (entre 1 et 20)
+                                                    </span>
+                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                        Requis
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </ScrollReveal>
                     </div>
 
                     {/* Target info */}

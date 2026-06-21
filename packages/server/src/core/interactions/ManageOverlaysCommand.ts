@@ -102,8 +102,12 @@ export default class ManageOverlaysCommand extends Command {
 
         const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
         if (!isAuthorized) {
+            const embed = Functions.buildEmbed(
+                "Vous n'avez pas le rôle requis sur ce serveur pour utiliser cette commande.",
+                'Error',
+            );
             await interaction.reply({
-                content: "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser cette commande.",
+                embeds: [embed],
                 ephemeral: true,
             });
             return;
@@ -215,15 +219,14 @@ export default class ManageOverlaysCommand extends Command {
 
             const config = await SupabaseService.getOverlayConfigByToken(oldToken);
             if (!config) {
-                await interaction.followUp({ content: '❌ Overlay introuvable.', flags: MessageFlags.Ephemeral });
+                const embed = Functions.buildEmbed('Overlay introuvable.', 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
             if (config.user_id !== user.id) {
-                await interaction.followUp({
-                    content: "❌ Vous n'êtes pas le propriétaire de cet overlay.",
-                    flags: MessageFlags.Ephemeral,
-                });
+                const embed = Functions.buildEmbed("Vous n'êtes pas le propriétaire de cet overlay.", 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
@@ -231,10 +234,8 @@ export default class ManageOverlaysCommand extends Command {
 
             const success = await SupabaseService.updateOverlayToken(oldToken, newToken);
             if (!success) {
-                await interaction.followUp({
-                    content: '❌ Impossible de régénérer le lien en base de données.',
-                    flags: MessageFlags.Ephemeral,
-                });
+                const embed = Functions.buildEmbed('Impossible de régénérer le lien en base de données.', 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
@@ -247,24 +248,27 @@ export default class ManageOverlaysCommand extends Command {
 
             const config = await SupabaseService.getOverlayConfigByToken(token);
             if (!config) {
-                await interaction.followUp({ content: '❌ Overlay introuvable.', flags: MessageFlags.Ephemeral });
+                const embed = Functions.buildEmbed('Overlay introuvable.', 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
             if (config.user_id !== user.id) {
-                await interaction.followUp({
-                    content: "❌ Vous n'êtes pas le propriétaire de cet overlay.",
-                    flags: MessageFlags.Ephemeral,
-                });
+                const embed = Functions.buildEmbed("Vous n'êtes pas le propriétaire de cet overlay.", 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
+                return;
+            }
+
+            if (config.user_id !== user.id) {
+                const embed = Functions.buildEmbed("Vous n'êtes pas le propriétaire de cet overlay.", 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
             const success = await SupabaseService.deleteOverlayConfig(token);
             if (!success) {
-                await interaction.followUp({
-                    content: "❌ Impossible de supprimer l'overlay en base de données.",
-                    flags: MessageFlags.Ephemeral,
-                });
+                const embed = Functions.buildEmbed("Impossible de supprimer l'overlay en base de données.", 'Error');
+                await interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
 
