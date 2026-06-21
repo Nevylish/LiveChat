@@ -180,7 +180,7 @@ export namespace Logger {
 
     // Log level
 
-    let minLogLevel: LogLevel = LogLevel.INFO;
+    let minLogLevel: LogLevel = LogLevel.DEBUG;
 
     export const setMinLogLevel = (level: LogLevel): void => {
         minLogLevel = level;
