@@ -9,12 +9,12 @@ import Header from '../components/Header';
 import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
-import LoginView from '../components/config/LoginView';
 import GuildGrid from '../components/config/GuildGrid';
-import RestrictedView from '../components/config/RestrictedView';
+import LoginView from '../components/config/LoginView';
 import OnboardingView from '../components/config/OnboardingView';
-import OverlaysDashboard from '../components/config/OverlaysDashboard';
 import OverlayEditor from '../components/config/OverlayEditor';
+import OverlaysDashboard from '../components/config/OverlaysDashboard';
+import RestrictedView from '../components/config/RestrictedView';
 
 import { playSynthSound } from '../utils/audio';
 
@@ -682,9 +682,9 @@ export default function Config() {
         setUsername(clean);
     };
 
-    const handleCreateConfig = async (customName?: string) => {
+    const handleCreateConfig = async (customName?: any) => {
         if (!selectedGuild || !session) return;
-        const nameToCreate = customName || username;
+        const nameToCreate = typeof customName === 'string' ? customName : username;
         if (!nameToCreate || nameToCreate.length < 4 || nameToCreate.length > 25) {
             setError("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
             return;

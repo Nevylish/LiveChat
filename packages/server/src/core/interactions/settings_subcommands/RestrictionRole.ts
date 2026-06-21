@@ -40,26 +40,10 @@ export const autocomplete = async (client: DiscordClient, interaction: Autocompl
 
 export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
     const guildId = interaction.guildId;
-    const userId = interaction.user.id;
     if (!guildId) return;
 
     const guild = interaction.guild || (await client.guilds.fetch(guildId).catch(() => null));
     if (!guild) return;
-
-    const member = await guild.members.fetch(userId).catch(() => null);
-    if (!member) return;
-
-    const isOwner = guild.ownerId === userId;
-    const isAdmin = member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
-
-    if (!isOwner && !isAdmin) {
-        const embed = Functions.buildEmbed(
-            "Vous n'avez pas les permissions pour exécuter cette commande.\nVous devez avoir la permission Administrateur ou Gérer le serveur.",
-            'Error',
-        );
-        await interaction.reply({ embeds: [embed] });
-        return;
-    }
 
     const roleValue = interaction.options.getString('rôle', true);
     const settings = await SupabaseService.getGuildSettings(guildId);

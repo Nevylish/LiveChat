@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { CacheManager } from '../utils/CacheManager';
 import { Logger } from '../utils/Logger';
-import { ProxyService } from './_ProxyService';
+import { ProxyService } from '../utils/ProxyService';
 import { TikTokApiResponse } from './_types';
 
 export namespace TikTok {

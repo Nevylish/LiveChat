@@ -7,8 +7,8 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import DiscordClient from './core/DiscordClient';
-import { ProxyService } from './core/modules/_ProxyService';
 import { Logger } from './core/utils/Logger';
+import { ProxyService } from './core/utils/ProxyService';
 
 dotenv.config({ path: resolve(__dirname, '../../../.env') });
 

@@ -1,12 +1,12 @@
 import { ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import DiscordClient from '../DiscordClient';
-import { SupabaseService } from './SupabaseService';
-import { ProxyService } from '../modules/_ProxyService';
 import { Giphy } from '../modules/Giphy';
 import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
 import { Constants } from './Constants';
+import { ProxyService } from './ProxyService';
+import { SupabaseService } from './SupabaseService';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {

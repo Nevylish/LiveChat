@@ -1,10 +1,11 @@
 import { ChevronDown } from 'lucide-react';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
+import ObsGuide from '../components/config/ObsGuide';
 
 // const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
 
@@ -45,6 +46,8 @@ const formats = [
 
 export default function Usage() {
     const { hash } = useLocation();
+    const [searchParams] = useSearchParams();
+    const showObsDefault = searchParams.get('obs') === 'true';
 
     useEffect(() => {
         if (hash) {
@@ -115,6 +118,10 @@ export default function Usage() {
                         </nav>
                     </div>
                 </ScrollReveal>
+
+                <section id="setup" className="mt-16 scroll-mt-24">
+                    <ObsGuide showObsGuide={showObsDefault} />
+                </section>
 
                 {/* Commands section */}
                 <section id="commands" className="mt-16 scroll-mt-24">

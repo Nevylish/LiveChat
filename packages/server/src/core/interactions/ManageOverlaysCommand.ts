@@ -10,6 +10,7 @@ import {
     MessageFlags,
     ModalBuilder,
     ModalSubmitInteraction,
+    subtext,
     TextInputBuilder,
     TextInputStyle,
 } from 'discord.js';
@@ -22,7 +23,7 @@ import Command from './classes/Command';
 export default class ManageOverlaysCommand extends Command {
     constructor(client: DiscordClient) {
         super(client, {
-            name: 'gérer-mon-overlay',
+            name: 'gérer-mes-overlays',
             description: 'Gérer, afficher ou créer vos overlays sur ce serveur.',
             dmPermission: false,
             options: [
@@ -43,12 +44,12 @@ export default class ManageOverlaysCommand extends Command {
         const userId = interaction.user.id;
         const focusedValue = interaction.options.getFocused().toLowerCase();
 
-        // Check role restriction
         const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+
         if (!isAuthorized) {
             await interaction.respond([
                 {
-                    name: "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser LiveChat.",
+                    name: "Vous n'avez pas le rôle requis sur ce serveur pour utiliser LiveChat.",
                     value: 'restricted',
                 },
             ]);
@@ -62,7 +63,6 @@ export default class ManageOverlaysCommand extends Command {
 
             const choices = [];
 
-            // If the user has remaining slots, offer the option to create a new overlay
             if (userConfigs.length < maxOverlays) {
                 const remaining = maxOverlays - userConfigs.length;
                 choices.push({
@@ -76,12 +76,10 @@ export default class ManageOverlaysCommand extends Command {
                 });
             }
 
-            // Add a visual separator if there are existing overlays
             if (userConfigs.length > 0) {
                 choices.push({ name: '▬▬▬▬▬ Vos overlays ▬▬▬▬▬', value: 'divider' });
             }
 
-            // Add existing overlays
             for (const config of userConfigs) {
                 choices.push({
                     name: `🎥 Overlay : ${config.username}`,
@@ -89,7 +87,6 @@ export default class ManageOverlaysCommand extends Command {
                 });
             }
 
-            // Filter and limit choices
             const filtered = choices.filter((choice) => choice.name.toLowerCase().includes(focusedValue)).slice(0, 25);
 
             await interaction.respond(filtered);
@@ -103,7 +100,6 @@ export default class ManageOverlaysCommand extends Command {
         if (!guildId) return;
         const userId = interaction.user.id;
 
-        // Check role restriction
         const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
         if (!isAuthorized) {
             await interaction.reply({
@@ -116,8 +112,9 @@ export default class ManageOverlaysCommand extends Command {
         const value = interaction.options.getString('choix', true);
 
         if (value === 'divider' || value === 'limit_reached') {
+            const embed = Functions.buildEmbed('Veuillez sélectionner une option valide dans la liste.', 'Error');
             await interaction.reply({
-                content: '❌ Choix invalide. Veuillez sélectionner une option valide dans la liste.',
+                embeds: [embed],
                 ephemeral: true,
             });
             return;
@@ -128,7 +125,7 @@ export default class ManageOverlaysCommand extends Command {
 
             const usernameInput = new TextInputBuilder()
                 .setCustomId('overlay_username')
-                .setLabel("Pseudo d'affichage (Twitch, Kick, YT)")
+                .setLabel("Pseudo d'affichage")
                 .setStyle(TextInputStyle.Short)
                 .setPlaceholder('noobmaster69')
                 .setMinLength(3)
@@ -172,14 +169,27 @@ export default class ManageOverlaysCommand extends Command {
         const overlayUrl = this.getOverlayUrl(token);
 
         const embed = Functions.buildEmbed(
-            `### 🎥 Gestion de l'overlay de \`${username}\`\n` +
-                `- **URL OBS (Source Navigateur)** :\n\`\`\`\n${overlayUrl}\n\`\`\`\n` +
-                `⚠️ **Gardez ce lien privé.** Ne le partagez pas en public, car n'importe qui pourrait envoyer des médias sur votre écran.\n` +
-                `Utilisez les boutons ci-dessous pour modifier ce lien ou le supprimer.`,
+            `### Gestion de l'overlay : ${username}\n` +
+                `Lien d'overlay :\n\n` +
+                subtext(
+                    "Voici votre lien d'overlay, vous pouvez l'intégrer à n'importe quel logiciel qui supporte les sources navigateur.",
+                ) +
+                `\n\n\`\`\`\n${overlayUrl}\n\`\`\`\n` +
+                `⚠️ **Gardez ce lien privé.** Ne le partagez pas en public.`,
             'Blurple',
         );
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setLabel('Guide OBS')
+                .setURL(
+                    Constants.getUrl('usage', {
+                        params: [{ name: 'obs', value: 'true' }],
+                        hash: 'setup',
+                    }),
+                )
+                .setStyle(ButtonStyle.Link)
+                .setEmoji('🖥️'),
             new ButtonBuilder()
                 .setCustomId(`regenerate_token_${token}`)
                 .setLabel('Régénérer le lien')
@@ -276,7 +286,6 @@ export default class ManageOverlaysCommand extends Command {
 
             if (!guildId) return;
 
-            // Check role restriction
             const isAuthorized = await Functions.checkRoleRestriction(client, guildId, user.id);
             if (!isAuthorized) {
                 const embed = Functions.buildEmbed(
@@ -344,7 +353,30 @@ export default class ManageOverlaysCommand extends Command {
                 'Good',
             );
 
-            await interaction.editReply({ embeds: [embed] });
+            const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+                new ButtonBuilder()
+                    .setLabel('Guide OBS')
+                    .setURL(
+                        Constants.getUrl('usage', {
+                            params: [{ name: 'obs', value: 'true' }],
+                            hash: 'setup',
+                        }),
+                    )
+                    .setStyle(ButtonStyle.Link)
+                    .setEmoji('🖥️'),
+                new ButtonBuilder()
+                    .setCustomId(`regenerate_token_${token}`)
+                    .setLabel('Régénérer le lien')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setEmoji('🔄'),
+                new ButtonBuilder()
+                    .setCustomId(`delete_overlay_${token}`)
+                    .setLabel("Supprimer l'overlay")
+                    .setStyle(ButtonStyle.Danger)
+                    .setEmoji('🗑️'),
+            );
+
+            await interaction.editReply({ embeds: [embed], components: [row] });
         }
     }
 }

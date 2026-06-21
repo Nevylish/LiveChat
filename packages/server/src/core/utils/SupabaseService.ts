@@ -142,7 +142,6 @@ export class SupabaseService {
             }
         }
 
-        // Initialize missing counts to 0 by default (in case of error or no DB records)
         for (const guildId of missingGuildIds) {
             counts[guildId] = 0;
         }
@@ -262,7 +261,6 @@ export class SupabaseService {
                 return false;
             }
 
-            // Invalidate cache
             CacheManager.delete(`overlay:config:${guildId}:${username.toLowerCase()}`);
             CacheManager.delete(`overlay:configs:guild:${guildId}`);
             CacheManager.delete(`overlay:token:${token}`);
@@ -282,7 +280,6 @@ export class SupabaseService {
         try {
             const supabase = this.getClient();
 
-            // Query DB directly to bypass cache and get the metadata for eviction
             const { data: config, error: fetchError } = await supabase
                 .from('overlay_configs')
                 .select('*')
@@ -300,7 +297,6 @@ export class SupabaseService {
                 return false;
             }
 
-            // Invalidate cache
             CacheManager.delete(`overlay:token:${token}`);
             if (config) {
                 CacheManager.delete(`overlay:config:${config.guild_id}:${config.username.toLowerCase()}`);
@@ -322,7 +318,6 @@ export class SupabaseService {
         try {
             const supabase = this.getClient();
 
-            // Query DB directly to bypass cache and get the metadata for eviction
             const { data: config, error: fetchError } = await supabase
                 .from('overlay_configs')
                 .select('*')
@@ -344,7 +339,6 @@ export class SupabaseService {
                 return false;
             }
 
-            // Invalidate cache
             CacheManager.delete(`overlay:token:${oldToken}`);
             CacheManager.delete(`overlay:token:${newToken}`);
             if (config) {
@@ -410,7 +404,6 @@ export class SupabaseService {
                 return false;
             }
 
-            // Invalidate cache
             CacheManager.delete(`guild:settings:${guildId}`);
 
             return true;

@@ -1,8 +1,12 @@
 import { HelpCircle } from 'lucide-react';
 import { useState } from 'react';
 
-export default function ObsGuide() {
-    const [showObsGuide, setShowObsGuide] = useState(false);
+interface ObsGuideProps {
+    showObsGuide?: boolean;
+}
+
+export default function ObsGuide({ showObsGuide: defaultShowObsGuide = false }: ObsGuideProps) {
+    const [showObsGuide, setShowObsGuide] = useState(defaultShowObsGuide);
     const [isCssCopied, setIsCssCopied] = useState(false);
 
     const handleCopyCss = () => {

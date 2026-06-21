@@ -4,10 +4,10 @@ import { Discord } from '../../modules/Discord';
 import { Giphy } from '../../modules/Giphy';
 import { Instagram } from '../../modules/Instagram';
 import { Tenor } from '../../modules/Tenor';
-import { ProxyService } from '../../modules/_ProxyService';
 import { Router } from '../../modules/_Router';
 import { Functions } from '../../utils/Functions';
 import { Logger } from '../../utils/Logger';
+import { ProxyService } from '../../utils/ProxyService';
 import { TargetsManager } from '../../utils/Targets';
 import { setupSkipButton } from '../SkipButton';
 

@@ -62,7 +62,7 @@ export default function OnboardingView({
                     )}
 
                     <button
-                        onClick={handleCreateConfig}
+                        onClick={() => handleCreateConfig()}
                         disabled={isGenerating || !username}
                         className="w-full flex items-center justify-center gap-2 rounded-full bg-white hover:bg-white/90 px-8 py-3.5 text-sm font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
