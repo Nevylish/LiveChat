@@ -494,8 +494,36 @@ export default function Config() {
             setUser(session?.user ?? null);
         });
 
-        return () => subscription.unsubscribe();
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== window.location.origin) return;
+            if (event.data?.type === 'supabase-auth-success') {
+                supabase.auth.getSession().then(({ data: { session } }) => {
+                    setSession(session);
+                    setUser(session?.user ?? null);
+                });
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+
+        return () => {
+            subscription.unsubscribe();
+            window.removeEventListener('message', handleMessage);
+        };
     }, []);
+
+    // If we are in the login popup and the session has successfully loaded,
+    // notify the main window and close the popup.
+    useEffect(() => {
+        if (session && window.name === 'discord-login' && window.opener) {
+            try {
+                window.opener.postMessage({ type: 'supabase-auth-success' }, window.location.origin);
+                window.close();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, [session]);
 
     const loadGuilds = useCallback(
         async (force = false) => {
@@ -621,16 +649,30 @@ export default function Config() {
 
     const handleLogin = async () => {
         try {
-            await supabase.auth.signInWithOAuth({
+            const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: 'discord',
                 options: {
                     redirectTo: window.location.origin + '/config',
                     scopes: 'identify guilds',
+                    skipBrowserRedirect: true,
                 },
             });
-        } catch (err) {
+
+            if (error) throw error;
+            if (data?.url) {
+                const width = 600;
+                const height = 800;
+                const left = window.screen.width / 2 - width / 2;
+                const top = window.screen.height / 2 - height / 2;
+                window.open(
+                    data.url,
+                    'discord-login',
+                    `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=no`,
+                );
+            }
+        } catch (err: any) {
             console.error('Login error', err);
-            setError('Une erreur est survenue lors de la connexion avec Discord.');
+            setError(err.message || 'Une erreur est survenue lors de la connexion avec Discord.');
         }
     };
 

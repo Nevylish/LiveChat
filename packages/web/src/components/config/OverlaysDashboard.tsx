@@ -200,7 +200,7 @@ export default function OverlaysDashboard({
                             Administration du serveur
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                            Gerez les overlays des membres et configurez les autorisations d'utilisation de LiveChat
+                            Gérez les overlays des membres et configurez les autorisations d'utilisation de LiveChat
                             pour ce serveur.
                         </p>
                     </div>
@@ -270,7 +270,8 @@ export default function OverlaysDashboard({
                                     <div className="space-y-0.5">
                                         <p className="text-sm font-semibold text-foreground">Restreindre par rôle</p>
                                         <p className="text-xs text-muted-foreground max-w-xs leading-normal">
-                                            Exiger un rôle Discord spécifique pour créer ou utiliser des overlays.
+                                            Exiger un rôle Discord spécifique pour créer ou utiliser des overlays et les
+                                            commandes /livechat.
                                         </p>
                                     </div>
                                     <button
@@ -326,7 +327,7 @@ export default function OverlaysDashboard({
                                         <p className="text-sm font-semibold text-foreground">
                                             Limite d'overlays par personne
                                         </p>
-                                        <p className="text-xs text-muted-foreground max-w-xs leading-normal">
+                                        <p className="text-xs text-muted-foreground leading-normal">
                                             Nombre maximum d'overlays que chaque membre peut créer (min 1, max 20).
                                         </p>
                                     </div>

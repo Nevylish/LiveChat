@@ -118,7 +118,10 @@ export default function Header() {
                                             target={link.external ? '_blank' : undefined}
                                             rel={link.external ? 'noopener noreferrer' : undefined}
                                             className={`transition-colors duration-200 hover:text-foreground ${
-                                                !link.external && location.pathname === link.href
+                                                !link.external &&
+                                                (link.href === '/'
+                                                    ? location.pathname === '/'
+                                                    : location.pathname.startsWith(link.href))
                                                     ? 'text-foreground'
                                                     : ''
                                             }`}
@@ -135,7 +138,7 @@ export default function Header() {
                         {user ? (
                             <button
                                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className={`flex items-center gap-2 rounded-full border border-border bg-white/3 hover:bg-white/5 p-1 pr-3 transition-all duration-200 group shrink-0 cursor-pointer ${
+                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 cursor-pointer ${
                                     menuOpen ? 'hidden' : 'flex'
                                 }`}
                                 aria-expanded={dropdownOpen}
@@ -147,9 +150,9 @@ export default function Header() {
                                         'https://cdn.discordapp.com/embed/avatars/0.png'
                                     }
                                     alt="Avatar"
-                                    className="h-7 w-7 rounded-full border border-white/10 object-cover"
+                                    className="h-full w-8 rounded-full object-cover shrink-0"
                                 />
-                                <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors truncate max-w-[120px]">
+                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors truncate max-w-[120px]">
                                     {user.user_metadata?.global_name ||
                                         user.user_metadata?.custom_claims?.global_name ||
                                         user.user_metadata?.full_name ||
@@ -160,14 +163,14 @@ export default function Header() {
                         ) : (
                             <a
                                 href="/config"
-                                className={`flex items-center gap-2 rounded-full border border-border bg-white/3 hover:bg-white/5 p-1 pr-3 transition-all duration-200 group shrink-0 ${
+                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 ${
                                     menuOpen ? 'hidden' : 'flex'
                                 }`}
                             >
-                                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/5 text-muted-foreground group-hover:bg-white/10 group-hover:text-foreground transition-colors duration-200">
+                                <div className="flex h-full w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground group-hover:bg-white/10 group-hover:text-foreground transition-colors duration-200">
                                     <UserIcon className="h-4 w-4" />
                                 </div>
-                                <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
+                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
                                     Se connecter
                                 </span>
                             </a>
@@ -240,7 +243,14 @@ export default function Header() {
                             rel={link.external ? 'noopener noreferrer' : undefined}
                             onClick={link.external ? undefined : closeMenu}
                             tabIndex={menuOpen ? 0 : -1}
-                            className="text-2xl font-bold text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                            className={`text-2xl font-bold transition-colors duration-200 hover:text-foreground ${
+                                !link.external &&
+                                (link.href === '/'
+                                    ? location.pathname === '/'
+                                    : location.pathname.startsWith(link.href))
+                                    ? 'text-foreground'
+                                    : 'text-muted-foreground'
+                            }`}
                             style={{
                                 transitionDelay: menuOpen ? `${80 + i * 60}ms` : '0ms',
                                 transform: menuOpen ? 'translateY(0)' : 'translateY(16px)',

@@ -279,7 +279,10 @@ export default class ManageOverlaysCommand extends Command {
             // Check role restriction
             const isAuthorized = await Functions.checkRoleRestriction(client, guildId, user.id);
             if (!isAuthorized) {
-                const embed = Functions.buildEmbed("Vous n'avez pas le rôle requis sur ce serveur pour configurer des overlays.", 'Error');
+                const embed = Functions.buildEmbed(
+                    "Vous n'avez pas le rôle requis sur ce serveur pour configurer des overlays.",
+                    'Error',
+                );
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
@@ -288,7 +291,10 @@ export default class ManageOverlaysCommand extends Command {
 
             const cleanUsername = username.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
             if (!cleanUsername || cleanUsername.length < 3) {
-                const embed = Functions.buildEmbed("Pseudo invalide. Seuls les caractères alphanumériques et underscores sont autorisés.", 'Error');
+                const embed = Functions.buildEmbed(
+                    'Pseudo invalide. Seuls les caractères alphanumériques et underscores sont autorisés.',
+                    'Error',
+                );
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
@@ -298,14 +304,20 @@ export default class ManageOverlaysCommand extends Command {
             const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, user.id);
 
             if (userConfigs.length >= maxOverlays) {
-                const embed = Functions.buildEmbed(`Vous avez atteint la limite de ${maxOverlays} overlays sur ce serveur.`, 'Error');
+                const embed = Functions.buildEmbed(
+                    `Vous avez atteint la limite de ${maxOverlays} overlays sur ce serveur.`,
+                    'Error',
+                );
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
 
             const existing = await SupabaseService.getOverlayConfig(guildId, cleanUsername);
             if (existing) {
-                const embed = Functions.buildEmbed(`Le pseudo \`${cleanUsername}\` est déjà utilisé pour un overlay sur ce serveur.`, 'Error');
+                const embed = Functions.buildEmbed(
+                    `Le pseudo \`${cleanUsername}\` est déjà utilisé pour un overlay sur ce serveur.`,
+                    'Error',
+                );
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
@@ -314,7 +326,10 @@ export default class ManageOverlaysCommand extends Command {
             const success = await SupabaseService.saveOverlayConfig(guildId, cleanUsername, token, user.id);
 
             if (!success) {
-                const embed = Functions.buildEmbed("Une erreur est survenue lors de la création de l'overlay.", 'Error');
+                const embed = Functions.buildEmbed(
+                    "Une erreur est survenue lors de la création de l'overlay.",
+                    'Error',
+                );
                 await interaction.editReply({ embeds: [embed] });
                 return;
             }
