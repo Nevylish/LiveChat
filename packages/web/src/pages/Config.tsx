@@ -132,7 +132,7 @@ export default function Config() {
             if (savedToken) {
                 try {
                     loaded = JSON.parse(savedToken);
-                } catch (_) {
+                } catch {
                     loaded = DEFAULT_CONFIG;
                 }
             } else {
@@ -141,7 +141,7 @@ export default function Config() {
                     try {
                         loaded = JSON.parse(savedGuild);
                         localStorage.setItem(`livechat_settings_${activeConfig.token}`, savedGuild);
-                    } catch (_) {
+                    } catch {
                         loaded = DEFAULT_CONFIG;
                     }
                 }

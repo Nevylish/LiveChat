@@ -3,7 +3,7 @@ import DiscordClient from '../../DiscordClient';
 import { Functions } from '../../utils/Functions';
 import { SupabaseService } from '../../utils/SupabaseService';
 
-export const autocomplete = async (client: DiscordClient, interaction: AutocompleteInteraction): Promise<void> => {
+export const autocomplete = async (interaction: AutocompleteInteraction): Promise<void> => {
     const guildId = interaction.guildId;
     if (!guildId) return;
     const focusedOption = interaction.options.getFocused(true);

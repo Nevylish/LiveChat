@@ -1,7 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
-import Command from './classes/Command';
+import Command from './Command';
 
 export default class PlatformsCommand extends Command {
     constructor(client: DiscordClient) {
@@ -12,7 +12,7 @@ export default class PlatformsCommand extends Command {
         });
     }
 
-    async onAutocomplete(): Promise<void> {}
+    async onAutocomplete(_interaction: AutocompleteInteraction): Promise<void> {}
 
     async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply();

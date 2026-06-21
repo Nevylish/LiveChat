@@ -1,11 +1,12 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { TargetsManager } from '../utils/Targets';
-import Command from './classes/Command';
-import * as media from './livechat_subcommands/media';
-import * as skip from './livechat_subcommands/skip';
-import * as stop from './livechat_subcommands/stop';
-import { SupabaseService } from '../utils/SupabaseService';
+import { Functions } from '../utils/Functions';
+import Command from './Command';
+import * as media from './livechat_subcommands/Media';
+import * as skip from './livechat_subcommands/Skip';
+import * as stop from './livechat_subcommands/Stop';
+
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -144,33 +145,13 @@ export default class LiveChatCommand extends Command {
         const userId = interaction.user.id;
 
         if (guildId) {
-            try {
-                const guild = interaction.guild || (await this.client.guilds.fetch(guildId).catch(() => null));
-                if (guild) {
-                    const member = await guild.members.fetch(userId).catch(() => null);
-                    if (member) {
-                        const isOwner = guild.ownerId === userId;
-                        const isAdmin =
-                            member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
-
-                        if (!isOwner && !isAdmin) {
-                            const settings = await SupabaseService.getGuildSettings(guildId);
-                            if (settings && settings.required_role_id) {
-                                const hasRole = member.roles.cache.has(settings.required_role_id);
-                                if (!hasRole) {
-                                    await interaction.reply({
-                                        content:
-                                            "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error('Error validating role in LiveChatCommand', err);
+            const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+            if (!isAuthorized) {
+                await interaction.reply({
+                    content: "❌ Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
+                    ephemeral: true,
+                });
+                return;
             }
         }
 

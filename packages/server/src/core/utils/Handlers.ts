@@ -1,6 +1,6 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction, Events, MessageFlags } from 'discord.js';
 import DiscordClient from '../DiscordClient';
-import Command from '../interactions/classes/Command';
+import Command from '../interactions/Command';
 import LiveChatCommand from '../interactions/LiveChatCommand';
 import ManageOverlaysCommand from '../interactions/ManageOverlaysCommand';
 import PlatformsCommand from '../interactions/PlatformsCommand';
@@ -30,7 +30,7 @@ export namespace Handlers {
 
             if (interaction.isChatInputCommand()) await handleCommand(client, interaction);
             else if (interaction.isAutocomplete()) await handleAutocomplete(client, interaction);
-            else if (interaction.isButton()) await ManageOverlaysCommand.handleButton(client, interaction);
+            else if (interaction.isButton()) await ManageOverlaysCommand.handleButton(interaction);
             else if (interaction.isModalSubmit()) await ManageOverlaysCommand.handleModalSubmit(client, interaction);
         });
 

@@ -1,6 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import DiscordClient from '../DiscordClient';
-import Command from './classes/Command';
+import Command from './Command';
 
 export default class SubscriptionCommand extends Command {
     constructor(client: DiscordClient) {
@@ -11,7 +11,7 @@ export default class SubscriptionCommand extends Command {
         });
     }
 
-    async onAutocomplete(): Promise<void> {}
+    async onAutocomplete(_interaction: AutocompleteInteraction): Promise<void> {}
 
     async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
         await interaction.deferReply();

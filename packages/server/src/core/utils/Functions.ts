@@ -1,4 +1,4 @@
-import { ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import DiscordClient from '../DiscordClient';
 import { Giphy } from '../modules/Giphy';
@@ -42,16 +42,6 @@ export namespace Functions {
 
         addVersionFooter(embed);
         return embed;
-    };
-
-    export const buildPremiumButton = async (client: DiscordClient, guildId: string): Promise<ButtonBuilder | null> => {
-        const isPremiumGuild = await client.hasGuildPremiumSubscription(guildId);
-
-        if (isPremiumGuild) {
-            return new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID!);
-        }
-
-        return null;
     };
 
     /* Utilisé uniquement si c'est une URL du proxy */

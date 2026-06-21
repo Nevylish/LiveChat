@@ -1,9 +1,8 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import DiscordClient from '../../DiscordClient';
 import { Functions } from '../../utils/Functions';
 import { SupabaseService } from '../../utils/SupabaseService';
 
-export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
+export const execute = async (interaction: ChatInputCommandInteraction): Promise<void> => {
     const guildId = interaction.guildId;
     const number = interaction.options.getNumber('nombre');
 

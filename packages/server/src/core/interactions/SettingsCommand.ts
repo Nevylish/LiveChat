@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from '../utils/Functions';
-import Command from './classes/Command';
+import Command from './Command';
 import * as maxOverlaysPerMember from './settings_subcommands/MaxOverlaysPerMember';
 import * as restrictionRole from './settings_subcommands/RestrictionRole';
 
@@ -47,7 +47,7 @@ export default class SettingsCommand extends Command {
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === 'rôle-autorisé') {
-            await restrictionRole.autocomplete(this.client, interaction);
+            await restrictionRole.autocomplete(interaction);
         }
     }
 
@@ -79,7 +79,7 @@ export default class SettingsCommand extends Command {
         if (subcommand === 'rôle-autorisé') {
             await restrictionRole.execute(this.client, interaction);
         } else if (subcommand === 'overlays-max-par-personne') {
-            await maxOverlaysPerMember.execute(this.client, interaction);
+            await maxOverlaysPerMember.execute(interaction);
         }
     }
 }

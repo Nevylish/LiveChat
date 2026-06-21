@@ -18,7 +18,7 @@ import DiscordClient from '../DiscordClient';
 import { Constants } from '../utils/Constants';
 import { Functions } from '../utils/Functions';
 import { SupabaseService } from '../utils/SupabaseService';
-import Command from './classes/Command';
+import Command from './Command';
 
 export default class ManageOverlaysCommand extends Command {
     constructor(client: DiscordClient) {
@@ -205,7 +205,7 @@ export default class ManageOverlaysCommand extends Command {
         return { embeds: [embed], components: [row] };
     }
 
-    public static async handleButton(client: DiscordClient, interaction: ButtonInteraction): Promise<void> {
+    public static async handleButton(interaction: ButtonInteraction): Promise<void> {
         const { customId, user } = interaction;
 
         if (customId.startsWith('regenerate_token_')) {
