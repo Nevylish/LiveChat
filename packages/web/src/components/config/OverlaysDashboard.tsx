@@ -149,12 +149,12 @@ export default function OverlaysDashboard({
                                         htmlFor="newOverlayName"
                                         className="config-label text-xs text-muted-foreground font-semibold"
                                     >
-                                        Nom d'affichage
+                                        Pseudo d'affichage
                                     </label>
                                     <input
                                         type="text"
                                         id="newOverlayName"
-                                        placeholder="pseudo_streamer"
+                                        placeholder="noobmaster69"
                                         value={newOverlayName}
                                         onChange={(e) => {
                                             let clean = e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();

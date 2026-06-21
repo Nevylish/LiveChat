@@ -31,20 +31,20 @@ export default function OnboardingView({
                 <div className="space-y-2">
                     <h3 className="text-xl font-bold sm:text-2xl">Activer votre premier overlay</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                        Configurez votre pseudo de diffusion ci-dessous pour générer le lien de votre source navigateur
-                        OBS unique pour le serveur {selectedGuild.name}.
+                        Choisissez votre pseudo d'affichage ci-dessous pour générer le lien de votre overlay pour le
+                        serveur {selectedGuild.name}.
                     </p>
                 </div>
 
                 <div className="w-full text-left space-y-4 pt-2">
                     <div>
                         <label htmlFor="username" className="config-label text-sm text-muted-foreground font-semibold">
-                            Pseudo de diffusion (Twitch, Kick, YouTube)
+                            Pseudo d'affichage
                         </label>
                         <input
                             type="text"
                             id="username"
-                            placeholder="pseudo_streamer"
+                            placeholder="noobmaster69"
                             value={username}
                             onChange={(e) => validateAndSetUsername(e.target.value)}
                             className="config-input mt-1.5 py-3 px-4 text-base"

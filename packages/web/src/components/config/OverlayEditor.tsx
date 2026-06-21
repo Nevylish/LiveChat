@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { Bell, CheckCircle, Copy, Eye, EyeOff, LinkIcon, Pause, Play, ShieldAlert } from 'lucide-react';
+import { useState } from 'react';
 import ObsGuide from './ObsGuide';
 
 interface ServerConfig {
@@ -49,23 +49,20 @@ export default function OverlayEditor({
     return (
         <div className="space-y-6 max-w-6xl mx-auto animate-fade-in">
             {/* Card 1 : Lien d'Overlay */}
-            <div className="config-card space-y-6">
+            <div className="config-card space-y-5">
                 <div>
                     <h3 className="text-lg font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                         <LinkIcon className="h-5 w-5" />
                         Lien d'overlay
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Lien unique source navigateur à intégrer sur OBS.
+                    <p className="text-sm text-muted-foreground mt-2">
+                        Voici votre lien d'overlay, vous pouvez l'intégrer à n'importe quel logiciel qui supporte les
+                        sources navigateur.
                     </p>
                 </div>
 
                 <div className="space-y-4">
                     <div className="rounded-xl border border-border bg-white/3 p-4 sm:p-6 space-y-3.5">
-                        <label className="block text-sm font-semibold text-muted-foreground">
-                            URL Source Navigateur
-                        </label>
-
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                             <div
                                 className="relative flex-1 cursor-pointer group min-w-0"
@@ -83,17 +80,17 @@ export default function OverlayEditor({
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0 justify-end">
+                            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
                                 <button
                                     onClick={() => setIsLinkBlurred(!isLinkBlurred)}
-                                    className="flex h-11 w-11 items-center justify-center rounded-lg border border-border bg-white/3 hover:bg-white/5 transition-colors cursor-pointer"
+                                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-white/3 hover:bg-white/5 transition-colors cursor-pointer"
                                     title={isLinkBlurred ? 'Révéler' : 'Masquer'}
                                 >
                                     {isLinkBlurred ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                                 </button>
                                 <button
                                     onClick={handleCopyLink}
-                                    className="flex items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 h-11 text-sm font-semibold transition-colors cursor-pointer"
+                                    className="flex flex-1 sm:flex-initial items-center justify-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 h-11 text-sm font-semibold transition-colors cursor-pointer"
                                 >
                                     <Copy className="h-4 w-4" />
                                     {isLinkCopied ? 'Copié !' : 'Copier'}
