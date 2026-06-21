@@ -41,7 +41,7 @@ export default function Updates() {
                 description="Consultez l'historique des mises à jour de LiveChat : nouvelles fonctionnalités, corrections et améliorations."
                 path="/updates"
             />
-            <Header subtitle="Patch Notes" />
+            <Header />
 
             <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
                 {loading && (

@@ -72,7 +72,7 @@ export default function Usage() {
                 description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
                 path="/usage"
             />
-            <Header subtitle="Utilisation" />
+            <Header />
             {/* <VideoModal
                 open={videoOpen}
                 onClose={handleCloseVideo}

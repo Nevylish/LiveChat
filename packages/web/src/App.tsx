@@ -11,6 +11,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/config" element={<Config />} />
+            <Route path="/config/:guildId" element={<Config />} />
             <Route path="/usage" element={<Usage />} />
             <Route path="/updates" element={<Updates />} />
             <Route path="/privacy" element={<Privacy />} />
