@@ -350,11 +350,14 @@ export default class ManageOverlaysCommand extends Command {
             const overlayUrl = ManageOverlaysCommand.getOverlayUrl(token);
 
             const embed = Functions.buildEmbed(
-                `### 🎉 Votre overlay a été créé avec succès !\n` +
-                    `- **Pseudo** : \`${cleanUsername}\`\n` +
-                    `- **URL OBS (Source Navigateur)** :\n\`\`\`\n${overlayUrl}\n\`\`\`\n` +
-                    `⚠️ **Gardez ce lien privé.** Ne le partagez pas en public, car n'importe qui pourrait envoyer des médias sur votre écran.`,
-                'Good',
+                `### Création de l'overlay : ${username}\n` +
+                    `Lien d'overlay :\n\n` +
+                    subtext(
+                        "Voici votre lien d'overlay, vous pouvez l'intégrer à n'importe quel logiciel qui supporte les sources navigateur.",
+                    ) +
+                    `\n\n\`\`\`\n${overlayUrl}\n\`\`\`\n` +
+                    `⚠️ **Gardez ce lien privé.** Ne le partagez pas en public.`,
+                'Blurple',
             );
 
             const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

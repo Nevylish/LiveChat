@@ -25,7 +25,7 @@ export default function ObsGuide({ showObsGuide: defaultShowObsGuide = false }: 
             >
                 <span className="flex items-center gap-2">
                     <HelpCircle className="h-5 w-5 text-white" />
-                    Guide d'intégration OBS Studio
+                    Guide : Installer LiveChat sur OBS Studio
                 </span>
                 <span className="text-xs text-muted-foreground bg-white/5 px-2.5 py-1 rounded-full hover:bg-white/10 transition-colors">
                     {showObsGuide ? 'Masquer' : 'Afficher'}
