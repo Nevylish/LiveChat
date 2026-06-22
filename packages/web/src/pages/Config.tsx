@@ -470,6 +470,20 @@ export default function Config() {
         (isRoleRestrictionEnabled ? requiredRoleId : null) !== dbRequiredRoleId ||
         (parseInt(maxOverlaysInput) || 5) !== dbMaxOverlaysLimit;
 
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (hasUnsavedChanges || hasUnsavedSettings) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [hasUnsavedChanges, hasUnsavedSettings]);
+
     const handlePlaySound = (type: string, volume: number) => {
         setIsPlayingSoundWave(true);
         playSynthSound(type, volume);
@@ -934,6 +948,12 @@ export default function Config() {
                                         <button
                                             onClick={() => {
                                                 if (isEditing) {
+                                                    if (hasUnsavedChanges) {
+                                                        const confirm = window.confirm(
+                                                            'Vous avez des modifications non sauvegardées sur votre overlay. Voulez-vous vraiment les annuler ?',
+                                                        );
+                                                        if (!confirm) return;
+                                                    }
                                                     setIsEditing(false);
                                                     setActiveConfig(null);
                                                     setUsername('');
@@ -941,6 +961,12 @@ export default function Config() {
                                                     setGeneratedLink('');
                                                     setError(null);
                                                 } else {
+                                                    if (hasUnsavedSettings) {
+                                                        const confirm = window.confirm(
+                                                            'Vous avez des modifications de paramètres serveur non sauvegardées. Voulez-vous vraiment les annuler ?',
+                                                        );
+                                                        if (!confirm) return;
+                                                    }
                                                     navigate('/config');
                                                 }
                                             }}
