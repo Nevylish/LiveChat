@@ -8,7 +8,9 @@ import DiscordClient from './DiscordClient';
 
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
+import { SupabaseService } from './utils/SupabaseService';
 import { Validations } from './utils/Validations';
+import { createAuthMiddlewares, checkGuildAccess } from './middlewares/auth';
 
 type ConnectedStreamersType = {
     socketId: string;
@@ -24,6 +26,7 @@ export class LiveChatServer extends EventEmitter {
     private discordClient: DiscordClient;
     private app: express.Application;
     private httpServer: HttpServer;
+    private auth: ReturnType<typeof createAuthMiddlewares>;
 
     constructor(discordClient: DiscordClient) {
         super();
@@ -32,6 +35,8 @@ export class LiveChatServer extends EventEmitter {
 
         this.app = express();
         this.app.set('trust proxy', 1);
+
+        this.auth = createAuthMiddlewares(this.discordClient);
 
         this.httpServer = createServer(this.app);
         this.io = new Server(this.httpServer, {
@@ -68,93 +73,158 @@ export class LiveChatServer extends EventEmitter {
 
     private setupSocket(): void {
         this.io.on('connection', (socket) => {
-            socket.on('register', (data: { username: string; guildId: string; token: string }) => {
-                // Validation du nom d'utilisateur
-                const usernameValidation = Validations.validateUsername(data.username);
-                if (!usernameValidation.valid) {
-                    this.emitError(socket, usernameValidation.error!, {
-                        username: data.username,
-                        guildId: data.guildId,
-                    });
-                    return;
-                }
+            socket.on('register', async (data: { username?: string; guildId?: string; token?: string }) => {
+                let username = data.username;
+                let guildId = data.guildId;
+                const token = data.token;
 
-                // Validation de l'identifiant du serveur Discord
-                const guildIdValidation = Validations.validateGuildId(data.guildId);
-                if (!guildIdValidation.valid) {
-                    this.emitError(socket, guildIdValidation.error!, {
-                        username: data.username,
-                        guildId: data.guildId,
-                    });
-                    return;
-                }
-
-                if (data.token) {
-                    if (!this.isValidOverlayToken(data.username, data.guildId, data.token)) {
-                        this.emitError(socket, "Le lien de l'overlay est invalide. Régénérez-le depuis le site.", {
-                            username: data.username,
-                            guildId: data.guildId,
-                        });
-                        return;
+                if (token) {
+                    try {
+                        const config = await SupabaseService.getOverlayConfigByToken(token);
+                        if (config) {
+                            username = config.username;
+                            guildId = config.guild_id;
+                        } else {
+                            if (username && guildId) {
+                                if (!this.isValidOverlayToken(username, guildId, token)) {
+                                    this.emitError(
+                                        socket,
+                                        "Le lien de l'overlay est invalide. Régénérez-le depuis le site.",
+                                        {
+                                            username,
+                                            guildId,
+                                        },
+                                    );
+                                    return;
+                                }
+                            } else {
+                                this.emitError(socket, 'Jeton invalide ou configuration inexistante.', { token });
+                                return;
+                            }
+                        }
+                    } catch (err) {
+                        Logger.error('LiveChatServer', 'Error validating token via Supabase', err);
+                        if (username && guildId) {
+                            if (!this.isValidOverlayToken(username, guildId, token)) {
+                                this.emitError(
+                                    socket,
+                                    "Le lien de l'overlay est invalide. Régénérez-le depuis le site.",
+                                    {
+                                        username,
+                                        guildId,
+                                    },
+                                );
+                                return;
+                            }
+                        } else {
+                            this.emitError(socket, "Erreur lors de la validation du jeton d'overlay.", { token });
+                            return;
+                        }
                     }
                 } else {
-                    Logger.warn('LiveChatServer', `Legacy connection without token for ${data.username}`, {
-                        username: data.username,
-                        guildId: data.guildId,
+                    if (username) {
+                        Logger.warn('LiveChatServer', `Legacy connection without token for ${username}`, {
+                            username,
+                            guildId,
+                        });
+                    } else {
+                        this.emitError(socket, 'Jeton de connexion ou identifiants manquants.');
+                        return;
+                    }
+                }
+
+                if (!username || !guildId) {
+                    this.emitError(socket, "Impossible d'identifier la session : identifiants manquants.", {
+                        username,
+                        guildId,
                     });
+                    return;
+                }
+
+                const usernameValidation = Validations.validateUsername(username);
+                if (!usernameValidation.valid) {
+                    this.emitError(socket, usernameValidation.error!, {
+                        username,
+                        guildId,
+                    });
+                    return;
+                }
+
+                const guildIdValidation = Validations.validateGuildId(guildId);
+                if (!guildIdValidation.valid) {
+                    this.emitError(socket, guildIdValidation.error!, {
+                        username,
+                        guildId,
+                    });
+                    return;
+                }
+
+                try {
+                    const config = token
+                        ? await SupabaseService.getOverlayConfigByToken(token)
+                        : await SupabaseService.getOverlayConfig(guildId, username);
+                    if (config) {
+                        const allowed = await checkGuildAccess(this.discordClient, guildId, config.user_id);
+                        if (!allowed) {
+                            this.emitError(
+                                socket,
+                                "Le propriétaire de cet overlay n'a pas le rôle requis sur Discord pour utiliser LiveChat.",
+                                { username, guildId },
+                            );
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    Logger.error('LiveChatServer', 'Error checking role authorization during registration', err);
                 }
 
                 const handleBotMissingFromGuild = () => {
                     this.emitError(
                         socket,
                         "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis relancez OBS Studio.",
-                        { username: data.username, guildId: data.guildId },
+                        { username, guildId },
                     );
                 };
 
                 this.discordClient.guilds
-                    .fetch(data.guildId)
+                    .fetch(guildId)
                     .then(async (guild) => {
                         if (guild) {
-                            if (this.isStreamerConnected(data.username, data.guildId)) {
-                                const existingData = this.getStreamerData(data.username, data.guildId);
+                            if (this.isStreamerConnected(username, guildId)) {
+                                const existingData = this.getStreamerData(username, guildId);
                                 if (existingData) {
                                     const existingSocket = this.io.sockets.sockets.get(existingData.socketId);
                                     if (existingSocket) {
-                                        Logger.warn(
-                                            'LiveChatServer',
-                                            `Replacing existing connection for ${data.username}`,
-                                            {
-                                                username: data.username,
-                                                guildId: data.guildId,
-                                                guildName: guild.name ?? 'Unknown',
-                                                oldSocketId: existingData.socketId,
-                                                newSocketId: socket.id,
-                                            },
-                                        );
+                                        Logger.warn('LiveChatServer', `Replacing existing connection for ${username}`, {
+                                            username,
+                                            guildId,
+                                            guildName: guild.name ?? 'Unknown',
+                                            oldSocketId: existingData.socketId,
+                                            newSocketId: socket.id,
+                                        });
                                         existingSocket.disconnect(true);
                                     }
-                                    this.removeStreamer(data.username, data.guildId);
+                                    this.removeStreamer(username, guildId);
                                 }
                             }
 
-                            const streamersConnectedLength = this.getConnectedStreamersCountByGuild(data.guildId);
+                            const streamersConnectedLength = this.getConnectedStreamersCountByGuild(guildId);
 
                             if (streamersConnectedLength >= 20) {
                                 this.emitError(
                                     socket,
                                     'Le nombre maximum de streameurs est atteint sur ce serveur Discord.',
-                                    { username: data.username, guildId: data.guildId, slots: streamersConnectedLength },
+                                    { username, guildId, slots: streamersConnectedLength },
                                 );
                                 return;
                             }
 
-                            const isPremiumGuild = await this.discordClient.hasGuildPremiumSubscription(data.guildId);
+                            const isPremiumGuild = await this.discordClient.hasGuildPremiumSubscription(guildId);
                             if (!isPremiumGuild && streamersConnectedLength >= 10) {
                                 this.emitError(
                                     socket,
                                     "Le nombre maximum de streameurs est atteint pour l'abonnement Gratuit.",
-                                    { username: data.username, guildId: data.guildId, slots: streamersConnectedLength },
+                                    { username, guildId, slots: streamersConnectedLength },
                                 );
                                 return;
                             }
@@ -162,10 +232,10 @@ export class LiveChatServer extends EventEmitter {
                             if (!socket.connected) {
                                 Logger.warn(
                                     'LiveChatServer',
-                                    `Socket disconnected during registration for ${data.username}`,
+                                    `Socket disconnected during registration for ${username}`,
                                     {
-                                        username: data.username,
-                                        guildId: data.guildId,
+                                        username,
+                                        guildId,
                                         guildName: guild.name ?? 'Unknown',
                                         socketId: socket.id,
                                     },
@@ -173,17 +243,17 @@ export class LiveChatServer extends EventEmitter {
                                 return;
                             }
 
-                            this.addStreamer(socket.id, data.username, data.guildId);
-                            socket.join(data.guildId);
+                            this.addStreamer(socket.id, username, guildId);
+                            socket.join(guildId);
 
                             if (guild.name) {
                                 socket.emit('updateConnectionStatus', true, ` pour le serveur Discord: ${guild.name}`);
                             } else {
                                 socket.emit('updateConnectionStatus', true);
                             }
-                            Logger.success('LiveChatServer', `${data.username} connected to LiveChat`, {
-                                username: data.username,
-                                guildId: data.guildId,
+                            Logger.success('LiveChatServer', `${username} connected to LiveChat`, {
+                                username,
+                                guildId,
                                 guildName: guild.name ?? 'Unknown',
                                 socketId: socket.id,
                             });
@@ -225,6 +295,7 @@ export class LiveChatServer extends EventEmitter {
     }
 
     private setupMiddlewares(): void {
+        this.app.use(express.json());
         this.app.use((req, res, next) => {
             const origin = req.headers.origin;
             const allowedOrigins = Constants.getAllowedOrigins().map((o) => o.replace(/\/$/, ''));
@@ -250,34 +321,31 @@ export class LiveChatServer extends EventEmitter {
             legacyHeaders: false,
         });
 
+        const { requireAuth, requireAdmin, requireGuildAccess, requireOverlayOwnership } = this.auth;
+
         this.app.get('/api/stats', limiter, (_, res) => {
             res.json({
                 streamers: this.getConnectedStreamersCount(),
                 servers: this.discordClient.guilds.cache.size,
-                // uptime: Math.round(process.uptime()),
-                // discord: {
-                //     ping: this.discordClient.ws.ping,
-                // },
-                // memory: {
-                //     heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-                //     rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
-                //     systemFree: Math.round(os.freemem() / 1024 / 1024),
-                //     systemTotal: Math.round(os.totalmem() / 1024 / 1024),
-                // },
-                // sockets: {
-                //     totalConnections: this.io.sockets.sockets.size,
-                // },
-                // cache: CacheManager.getStats(),
             });
         });
 
-        this.app.get('/api/token/generate', limiter, async (req, res) => {
-            const { username, guildId } = req.query;
-
-            if (typeof username !== 'string' || typeof guildId !== 'string') {
-                res.status(400).json({ error: 'Missing or invalid username/guildId.' });
-                return;
+        this.app.get('/api/config/get', limiter, requireAuth, requireGuildAccess, async (req, res) => {
+            const { guildId } = req.query;
+            const userId = req.userId!;
+            try {
+                const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId as string, userId);
+                const settings = await SupabaseService.getGuildSettings(guildId as string);
+                const maxOverlays = settings?.max_overlays_per_user ?? 5;
+                res.json({ configs, exists: configs.length > 0, maxOverlays });
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to fetch config' });
             }
+        });
+
+        this.app.post('/api/config/create', limiter, requireAuth, requireGuildAccess, async (req, res) => {
+            const { username, guildId } = req.body;
+            const userId = req.userId!;
 
             const usernameValidation = Validations.validateUsername(username);
             if (!usernameValidation.valid) {
@@ -285,31 +353,267 @@ export class LiveChatServer extends EventEmitter {
                 return;
             }
 
-            const guildIdValidation = Validations.validateGuildId(guildId);
-            if (!guildIdValidation.valid) {
-                res.status(400).json({ error: guildIdValidation.error });
-                return;
-            }
-
             try {
-                const guild = await this.discordClient.guilds.fetch(guildId);
-                if (!guild) {
-                    res.status(404).json({
-                        error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
-                        id: 'bot_not_in_guild',
+                const settings = await SupabaseService.getGuildSettings(guildId);
+                const maxOverlays = settings?.max_overlays_per_user ?? 5;
+                const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId);
+                if (userConfigs.length >= maxOverlays) {
+                    res.status(400).json({
+                        error: `Vous avez atteint la limite maximale de ${maxOverlays} overlay${maxOverlays > 1 ? 's' : ''} par personne pour ce serveur.`,
                     });
                     return;
                 }
-            } catch {
-                res.status(404).json({
-                    error: "Le bot Discord n'est pas présent dans le serveur inscrit. Ajoutez le bot puis réessayez.",
-                    id: 'bot_not_in_guild',
-                });
+
+                const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
+                const nameExists = allConfigs.some((c) => c.username.toLowerCase() === username.toLowerCase());
+                if (nameExists) {
+                    res.status(400).json({ error: 'Un overlay avec ce nom existe déjà sur ce serveur.' });
+                    return;
+                }
+
+                const token = crypto.randomBytes(32).toString('hex');
+                const success = await SupabaseService.saveOverlayConfig(guildId, username, token, userId);
+                if (success) {
+                    res.json({ token, exists: true });
+                } else {
+                    res.status(500).json({ error: 'Failed to create config' });
+                }
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to create config' });
+            }
+        });
+
+        this.app.post(
+            '/api/config/save',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { username, guildId, token } = req.body;
+                const userId = req.userId!;
+                const config = req.overlayConfig!;
+
+                const usernameValidation = Validations.validateUsername(username);
+                if (!usernameValidation.valid) {
+                    res.status(400).json({ error: usernameValidation.error });
+                    return;
+                }
+
+                try {
+                    if (username.toLowerCase() !== config.username.toLowerCase()) {
+                        const allConfigs = await SupabaseService.getOverlayConfigsByGuild(guildId);
+                        const nameExists = allConfigs.some(
+                            (c) => c.token !== token && c.username.toLowerCase() === username.toLowerCase(),
+                        );
+                        if (nameExists) {
+                            res.status(400).json({ error: 'Un overlay avec ce nom existe déjà sur ce serveur.' });
+                            return;
+                        }
+                    }
+
+                    const success = await SupabaseService.saveOverlayConfig(guildId, username, token, userId);
+                    if (success) {
+                        res.json({ success: true });
+                    } else {
+                        res.status(500).json({ error: 'Failed to save config' });
+                    }
+                } catch (err) {
+                    res.status(500).json({ error: 'Failed to save config' });
+                }
+            },
+        );
+
+        this.app.post(
+            '/api/config/regenerate',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { token } = req.body;
+                try {
+                    const newToken = crypto.randomBytes(32).toString('hex');
+                    const success = await SupabaseService.updateOverlayToken(token, newToken);
+                    if (success) {
+                        res.json({ token: newToken });
+                    } else {
+                        res.status(500).json({ error: 'Failed to regenerate token' });
+                    }
+                } catch (err) {
+                    res.status(500).json({ error: 'Failed to regenerate token' });
+                }
+            },
+        );
+
+        this.app.post(
+            '/api/config/delete',
+            limiter,
+            requireAuth,
+            requireOverlayOwnership,
+            requireGuildAccess,
+            async (req, res) => {
+                const { token } = req.body;
+                try {
+                    const success = await SupabaseService.deleteOverlayConfig(token);
+                    if (success) {
+                        res.json({ success: true });
+                    } else {
+                        res.status(500).json({ error: 'Failed to delete config' });
+                    }
+                } catch (err) {
+                    res.status(500).json({ error: 'Failed to delete config' });
+                }
+            },
+        );
+
+        this.app.get('/api/guild/check', limiter, requireAuth, async (req, res) => {
+            const { guildId } = req.query;
+            const userId = req.userId!;
+            if (typeof guildId !== 'string') {
+                res.status(400).json({ error: 'Missing guildId' });
                 return;
             }
+            try {
+                const ids = guildId.includes(',') ? guildId.split(',') : [guildId];
 
-            const token = this.generateOverlayToken(username, guildId);
-            res.json({ token });
+                const botPresence: Record<string, boolean> = {};
+                for (const id of ids) {
+                    botPresence[id] = this.discordClient.guilds.cache.has(id);
+                }
+
+                const overlayCounts = await SupabaseService.getOverlayCountsByGuildsAndUser(ids, userId);
+
+                if (guildId.includes(',')) {
+                    const results: Record<string, { hasBot: boolean; overlayCount: number }> = {};
+                    for (const id of ids) {
+                        results[id] = {
+                            hasBot: botPresence[id],
+                            overlayCount: overlayCounts[id] || 0,
+                        };
+                    }
+                    res.json({ results });
+                } else {
+                    const id = ids[0];
+                    res.json({
+                        hasBot: botPresence[id],
+                        overlayCount: overlayCounts[id] || 0,
+                    });
+                }
+            } catch (err) {
+                Logger.error('LiveChatServer', 'Failed to check guild status', err);
+                res.status(500).json({ error: 'Failed to check guild status' });
+            }
+        });
+
+        this.app.get('/api/config/all', limiter, requireAuth, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
+            try {
+                const configs = await SupabaseService.getOverlayConfigsByGuild(guildId as string);
+                const publicConfigs = configs.map((c) => ({
+                    guild_id: c.guild_id,
+                    username: c.username,
+                    user_id: c.user_id,
+                    updated_at: c.updated_at,
+                }));
+
+                res.json({ configs: publicConfigs });
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to fetch all configurations' });
+            }
+        });
+
+        this.app.post('/api/config/admin/delete', limiter, requireAuth, requireAdmin, async (req, res) => {
+            const { guildId, username } = req.body;
+            try {
+                const config = await SupabaseService.getOverlayConfig(guildId, username);
+                if (!config) {
+                    res.status(404).json({ error: 'Overlay introuvable.' });
+                    return;
+                }
+
+                const success = await SupabaseService.deleteOverlayConfig(config.token);
+                if (success) {
+                    res.json({ success: true });
+                } else {
+                    res.status(500).json({ error: 'Failed to delete config' });
+                }
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to delete config' });
+            }
+        });
+
+        this.app.get('/api/guild/roles', limiter, requireAuth, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
+            try {
+                const guild =
+                    this.discordClient.guilds.cache.get(guildId as string) ||
+                    (await this.discordClient.guilds.fetch(guildId as string).catch(() => null));
+                if (!guild) {
+                    res.status(404).json({ error: 'Serveur introuvable.' });
+                    return;
+                }
+
+                const roles = await guild.roles.fetch().catch(() => null);
+                if (!roles) {
+                    res.status(500).json({ error: 'Impossible de charger les rôles Discord.' });
+                    return;
+                }
+
+                const rolesList = roles
+                    .map((r) => ({
+                        id: r.id,
+                        name: r.name,
+                        color: r.hexColor,
+                        managed: r.managed,
+                    }))
+                    .filter((r) => r.name !== '@everyone' && !r.managed);
+
+                res.json({ roles: rolesList });
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to fetch roles' });
+            }
+        });
+
+        this.app.get('/api/guild/settings', limiter, requireAuth, requireAdmin, async (req, res) => {
+            const { guildId } = req.query;
+            try {
+                const settings = await SupabaseService.getGuildSettings(guildId as string);
+                res.json({
+                    settings: settings || { guild_id: guildId, required_role_id: null, max_overlays_per_user: 5 },
+                });
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to fetch settings' });
+            }
+        });
+
+        this.app.post('/api/guild/settings/save', limiter, requireAuth, requireAdmin, async (req, res) => {
+            const { guildId, requiredRoleId, maxOverlaysPerUser } = req.body;
+
+            if (maxOverlaysPerUser !== undefined) {
+                const maxOverlays = Number(maxOverlaysPerUser);
+                if (isNaN(maxOverlays) || maxOverlays < 1 || maxOverlays > 20) {
+                    res.status(400).json({
+                        error: "La limite d'overlays par personne doit être comprise entre 1 et 20.",
+                    });
+                    return;
+                }
+            }
+
+            try {
+                const success = await SupabaseService.saveGuildSettings(
+                    guildId,
+                    requiredRoleId || null,
+                    maxOverlaysPerUser !== undefined ? Number(maxOverlaysPerUser) : 5,
+                );
+                if (success) {
+                    res.json({ success: true });
+                } else {
+                    res.status(500).json({ error: 'Failed to save settings' });
+                }
+            } catch (err) {
+                res.status(500).json({ error: 'Failed to save settings' });
+            }
         });
     }
 

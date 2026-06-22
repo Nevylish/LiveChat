@@ -41,7 +41,7 @@ export default function Updates() {
                 description="Consultez l'historique des mises à jour de LiveChat : nouvelles fonctionnalités, corrections et améliorations."
                 path="/updates"
             />
-            <Header subtitle="Patch Notes" />
+            <Header />
 
             <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
                 {loading && (
@@ -80,9 +80,7 @@ export default function Updates() {
                         <div className="space-y-5">
                             {patchNotes.map((note, i) => (
                                 <ScrollReveal key={note.version} direction="up" delay={(i % 3) * 20}>
-                                    <article
-                                        className="rounded-xl border border-border bg-white/2 p-5 sm:p-6"
-                                    >
+                                    <article className="rounded-xl border border-border bg-white/2 p-5 sm:p-6">
                                         <div className="flex items-center gap-3">
                                             <span className="rounded-md bg-white/10 px-2.5 py-1 text-xs font-bold">
                                                 {note.version}

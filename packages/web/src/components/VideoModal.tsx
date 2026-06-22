@@ -24,7 +24,6 @@ export default function VideoModal({ open, onClose, videoId, title }: VideoModal
     const isMobile = useIsMobile();
     const overlayRef = useRef<HTMLDivElement>(null);
 
-    // Close on Escape
     useEffect(() => {
         if (!open) return;
         const handler = (e: KeyboardEvent) => {
@@ -34,7 +33,6 @@ export default function VideoModal({ open, onClose, videoId, title }: VideoModal
         return () => window.removeEventListener('keydown', handler);
     }, [open, onClose]);
 
-    // Lock body scroll when open
     useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden';
@@ -50,7 +48,6 @@ export default function VideoModal({ open, onClose, videoId, title }: VideoModal
 
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
-    // Mobile: full-viewport overlay with centered 16:9 video
     if (isMobile) {
         return (
             <div className="fixed inset-0 z-70 flex flex-col items-center justify-center bg-black">
@@ -85,7 +82,6 @@ export default function VideoModal({ open, onClose, videoId, title }: VideoModal
         );
     }
 
-    // Desktop: centered modal with backdrop
     return (
         <div
             ref={overlayRef}

@@ -10,8 +10,6 @@ export namespace Logger {
         ERROR,
     }
 
-    // Webhook
-
     interface WebhookMessage {
         level: LogLevel;
         source: string;
@@ -44,8 +42,6 @@ export namespace Logger {
             debug('Logger', 'Webhook Discord enabled');
         }
     };
-
-    // Formatting
 
     export const COLORS = {
         RESET: '\x1b[0m',
@@ -118,8 +114,6 @@ export namespace Logger {
         return line;
     };
 
-    // Webhook internals
-
     const parseArgs = (args: any[]): { message: string; context?: Record<string, any> } => {
         const parts: string[] = [];
         let context: Record<string, any> | undefined;
@@ -178,9 +172,7 @@ export namespace Logger {
         }
     };
 
-    // Log level
-
-    let minLogLevel: LogLevel = LogLevel.INFO;
+    let minLogLevel: LogLevel = LogLevel.DEBUG;
 
     export const setMinLogLevel = (level: LogLevel): void => {
         minLogLevel = level;
@@ -190,8 +182,6 @@ export namespace Logger {
     const shouldLog = (level: LogLevel): boolean => {
         return level >= minLogLevel;
     };
-
-    // Public methods
 
     export const log = (source: string, message: string, ...optionalParams: any[]): void => {
         if (shouldLog(LogLevel.INFO)) {

@@ -1,4 +1,4 @@
-import { Functions } from '../utils/Functions';
+import { Functions } from './Functions';
 import crypto = require('crypto');
 
 export namespace ProxyService {

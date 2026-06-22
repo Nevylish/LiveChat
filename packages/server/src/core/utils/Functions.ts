@@ -1,15 +1,16 @@
-import { ButtonBuilder, ButtonStyle, ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import { version } from '../../../package.json';
 import DiscordClient from '../DiscordClient';
-import { ProxyService } from '../modules/_ProxyService';
 import { Giphy } from '../modules/Giphy';
 import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
 import { Constants } from './Constants';
+import { ProxyService } from './ProxyService';
+import { SupabaseService } from './SupabaseService';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
-        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 20/06/2026` });
+        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 22/06/2026` });
     };
 
     export const buildEmbed = (
@@ -41,16 +42,6 @@ export namespace Functions {
 
         addVersionFooter(embed);
         return embed;
-    };
-
-    export const buildPremiumButton = async (client: DiscordClient, guildId: string): Promise<ButtonBuilder | null> => {
-        const isPremiumGuild = await client.hasGuildPremiumSubscription(guildId);
-
-        if (isPremiumGuild) {
-            return new ButtonBuilder().setStyle(ButtonStyle.Premium).setSKUId(process.env.SKU_PLUS_ID!);
-        }
-
-        return null;
     };
 
     /* Utilisé uniquement si c'est une URL du proxy */
@@ -161,5 +152,32 @@ export namespace Functions {
         const unescaped = text.replace(/\\(\*|_|`|~|\\)/g, '$1');
         const escaped = unescaped.replace(/(\*|_|`|~|\\)/g, '\\$1');
         return escaped;
+    };
+
+    export const checkRoleRestriction = async (
+        client: DiscordClient,
+        guildId: string,
+        userId: string,
+    ): Promise<boolean> => {
+        try {
+            const guild = client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId).catch(() => null));
+            if (!guild) return true;
+
+            const member = guild.members.cache.get(userId) || (await guild.members.fetch(userId).catch(() => null));
+            if (!member) return true;
+
+            const isOwner = guild.ownerId === userId;
+            const isAdmin = member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
+
+            if (isOwner || isAdmin) return true;
+
+            const settings = await SupabaseService.getGuildSettings(guildId);
+            if (settings && settings.required_role_id) {
+                return member.roles.cache.has(settings.required_role_id);
+            }
+        } catch (err) {
+            console.error('Error checking role restriction:', err);
+        }
+        return true;
     };
 }

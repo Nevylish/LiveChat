@@ -20,11 +20,12 @@ export namespace Constants {
         return host.includes('localhost') ? `http://${host}:4000` : `https://${host}`;
     };
 
-    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl()];
+    export const getAllowedOrigins = (): string[] => [getFrontendUrl(), getOverlayUrl(), getBaseUrl()];
 
     export const ROUTES = {
         home: '/',
         configuration: 'config',
+        usage: 'usage',
         updates: 'updates',
         privacy: 'privacy',
         terms: 'terms',
@@ -32,7 +33,16 @@ export namespace Constants {
 
     export type ConstantRoutes = keyof typeof ROUTES;
 
-    export const getUrl = (route: ConstantRoutes): string => {
-        return `${getFrontendUrl()}/${ROUTES[route]}`;
+    export const getUrl = (
+        route: ConstantRoutes,
+        options?: { params?: Array<{ name: string; value: string }>; hash?: string },
+    ): string => {
+        let url = `${getFrontendUrl()}/${ROUTES[route]}`;
+
+        if (options?.params?.length) url += `?${options.params.map(({ name, value }) => `${name}=${value}`).join('&')}`;
+
+        if (options?.hash) url += `#${options.hash}`;
+
+        return url;
     };
 }

@@ -3,7 +3,7 @@ import { Discord } from './Discord';
 import { Giphy } from './Giphy';
 import { Instagram } from './Instagram';
 import { Tenor } from './Tenor';
-import { TikTok } from './Tiktok';
+import { TikTok } from './TikTok';
 import { Twitter } from './Twitter';
 import { YouTube } from './YouTube';
 

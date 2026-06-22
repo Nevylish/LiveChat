@@ -1,5 +1,18 @@
 [
     {
+        "version": "v2.0.0",
+        "date": "22 Juin 2026",
+        "title": "LiveChat V2",
+        "changes": [
+            "Bienvenue sur LiveChat V2, nous avons repensé le fonctionnement de ce service pour le rendre encore plus agréable, flexible et sécurisé.",
+            "Vous pourrez découvrir le nouveau panel de configuration, ainsi que les commandes /réglages et /gérer-mes-overlays",
+            "L'overlay n'a pas changé esthétiquement et les commandes /livechat fonctionnent comme avant",
+            "Nous précisons que les anciens overlays continueront de fonctionner tant qu'ils ne causent pas de problèmes.",
+            "Vous pouvez dès maintenant configurer votre nouvel overlay sur le site web.",
+            "De nouvelles fonctionnalités sont prévues pour les prochains jours, restez à l'écoute !"
+        ]
+    },
+    {
         "version": "v1.6.5",
         "date": "20 Juin 2026",
         "title": "Séparation des élements",

@@ -1,12 +1,11 @@
 import { ChevronDown } from 'lucide-react';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
-
-// const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
+import ObsGuide from '../components/config/ObsGuide';
 
 const sections = [
     { id: 'commands', label: 'Commandes' },
@@ -18,11 +17,9 @@ const sections = [
 const platforms = [
     { name: 'Discord', desc: 'Fichiers envoyés directement sur Discord', icon: '💬' },
     { name: 'Giphy', desc: 'GIFs depuis Giphy', icon: '🎞️' },
-    // { name: 'Instagram', desc: 'Reels Instagram', icon: '📸' },
     { name: 'Tenor', desc: 'GIFs depuis Tenor', icon: '🎬' },
     { name: 'TikTok', desc: 'Vidéos TikTok', icon: '🎵' },
     { name: 'X (Twitter)', desc: 'Vidéos et images de Tweets', icon: '𝕏' },
-    // { name: 'YouTube', desc: 'Vidéos et Shorts YouTube', icon: '▶️' },
 ];
 
 const formats = [
@@ -45,6 +42,8 @@ const formats = [
 
 export default function Usage() {
     const { hash } = useLocation();
+    const [searchParams] = useSearchParams();
+    const showObsDefault = searchParams.get('obs') === 'true';
 
     useEffect(() => {
         if (hash) {
@@ -62,9 +61,6 @@ export default function Usage() {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // const [videoOpen, setVideoOpen] = useState(false);
-    // const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
-
     return (
         <div className="dark flex min-h-screen flex-col text-foreground">
             <Seo
@@ -72,16 +68,9 @@ export default function Usage() {
                 description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
                 path="/usage"
             />
-            <Header subtitle="Utilisation" />
-            {/* <VideoModal
-                open={videoOpen}
-                onClose={handleCloseVideo}
-                videoId={YOUTUBE_VIDEO_ID}
-                title="Démonstration LiveChat"
-            /> */}
+            <Header />
 
             <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                {/* Page intro */}
                 <ScrollReveal direction="up" delay={0}>
                     <div className="text-center">
                         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -93,15 +82,8 @@ export default function Usage() {
                     </div>
                 </ScrollReveal>
 
-                {/* Quick nav */}
                 <ScrollReveal direction="up" delay={100}>
                     <div className="mt-8 flex flex-col items-center gap-3">
-                        {/* <button
-                            onClick={() => setVideoOpen(true)}
-                            className="w-full max-w-md rounded-full border border-white/15 bg-white/5 px-7 pb-3.5 pt-3 text-center text-sm font-semibold transition-colors duration-200 hover:border-white/25 hover:bg-white/10"
-                        >
-                            Démonstration vidéo
-                        </button> */}
                         <nav className="flex flex-wrap justify-center gap-2">
                             {sections.map((s) => (
                                 <button
@@ -116,7 +98,10 @@ export default function Usage() {
                     </div>
                 </ScrollReveal>
 
-                {/* Commands section */}
+                <section id="setup" className="mt-16 scroll-mt-24">
+                    <ObsGuide showObsGuide={showObsDefault} />
+                </section>
+
                 <section id="commands" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Commandes Discord</h2>
@@ -125,7 +110,6 @@ export default function Usage() {
                         </p>
                     </ScrollReveal>
 
-                    {/* /livechat */}
                     <div className="mt-6 space-y-4">
                         <ScrollReveal direction="up" delay={30}>
                             <details
@@ -145,7 +129,6 @@ export default function Usage() {
                                 </summary>
                                 <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
                                     <div className="space-y-6">
-                                        {/* lancer-url */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -194,7 +177,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* lancer-fichier */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
@@ -243,7 +225,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* passer-au-suivant */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-blue-500/10 px-2 py-0.5 text-xs font-bold text-blue-300">
@@ -270,7 +251,6 @@ export default function Usage() {
 
                                         <div className="h-px bg-border/50" />
 
-                                        {/* stop-et-vider */}
                                         <div>
                                             <div className="flex items-center gap-2">
                                                 <code className="rounded bg-red-500/10 px-2 py-0.5 text-xs font-bold text-red-300">
@@ -299,7 +279,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /liste-des-plateformes */}
                         <ScrollReveal direction="up" delay={60}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -322,7 +301,6 @@ export default function Usage() {
                             </details>
                         </ScrollReveal>
 
-                        {/* /abonnement */}
                         <ScrollReveal direction="up" delay={90}>
                             <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
                                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
@@ -345,9 +323,120 @@ export default function Usage() {
                                 </div>
                             </details>
                         </ScrollReveal>
+
+                        <ScrollReveal direction="up" delay={100}>
+                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
+                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
+                                    <div className="flex items-center gap-3">
+                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
+                                            /gérer-mes-overlays
+                                        </code>
+                                        <span className="text-sm font-normal text-muted-foreground">
+                                            Créer et gérer vos overlays sur ce serveur
+                                        </span>
+                                    </div>
+                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                </summary>
+                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                    <p className="text-sm text-muted-foreground">
+                                        Permet aux membres autorisés de créer un nouvel overlay (avec un pseudo
+                                        d'affichage personnalisé) ou de gérer leurs overlays existants sur le serveur
+                                        (récupérer le lien OBS, régénérer la clé d'authentification ou supprimer
+                                        l'overlay).
+                                    </p>
+                                    <ul className="mt-3 space-y-1.5 pl-1">
+                                        <li className="flex items-start gap-2 text-sm">
+                                            <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                choix
+                                            </code>
+                                            <span className="text-muted-foreground">
+                                                Sélectionnez un overlay existant à gérer, ou choisissez d'en créer un
+                                                nouveau
+                                            </span>
+                                            <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                Requis
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </details>
+                        </ScrollReveal>
+
+                        <ScrollReveal direction="up" delay={110}>
+                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
+                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
+                                    <div className="flex items-center gap-3">
+                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
+                                            /réglages
+                                        </code>
+                                        <span className="text-sm font-normal text-muted-foreground">
+                                            Configurer les options de LiveChat pour ce serveur
+                                        </span>
+                                    </div>
+                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                </summary>
+                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        Permet aux administrateurs de configurer les règles d'utilisation de LiveChat
+                                        pour le serveur.
+                                    </p>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
+                                                    rôle-autorisé
+                                                </code>
+                                                <span className="text-sm text-muted-foreground">
+                                                    Définir un rôle requis pour créer ou configurer des overlays
+                                                </span>
+                                            </div>
+                                            <ul className="mt-2.5 space-y-1.5 pl-1">
+                                                <li className="flex items-start gap-2 text-sm">
+                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                        rôle
+                                                    </code>
+                                                    <span className="text-muted-foreground">
+                                                        Sélectionnez le rôle restreint (ou "none" pour retirer la
+                                                        restriction)
+                                                    </span>
+                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                        Requis
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div className="h-px bg-border/50" />
+
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
+                                                    overlays-max-par-personne
+                                                </code>
+                                                <span className="text-sm text-muted-foreground">
+                                                    Définir un nombre maximal d'overlays par personne
+                                                </span>
+                                            </div>
+                                            <ul className="mt-2.5 space-y-1.5 pl-1">
+                                                <li className="flex items-start gap-2 text-sm">
+                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
+                                                        nombre
+                                                    </code>
+                                                    <span className="text-muted-foreground">
+                                                        Le nombre maximum d'overlays par utilisateur (entre 1 et 20)
+                                                    </span>
+                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
+                                                        Requis
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </ScrollReveal>
                     </div>
 
-                    {/* Target info */}
                     <ScrollReveal direction="up" delay={120}>
                         <div className="mt-5 rounded-lg border border-border bg-white/3 px-4 py-3 text-sm text-muted-foreground">
                             <strong className="text-foreground">💡 L'option « cible »</strong> - L'autocomplétion vous
@@ -359,7 +448,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Platforms section */}
                 <section id="platforms" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Plateformes supportées</h2>
@@ -394,7 +482,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Formats section */}
                 <section id="formats" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Formats de fichiers acceptés</h2>
@@ -438,7 +525,6 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
-                {/* Features section */}
                 <section id="features" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Fonctionnalités</h2>
@@ -543,7 +629,6 @@ export default function Usage() {
                     </div>
                 </section>
 
-                {/* CTA */}
                 <ScrollReveal direction="up">
                     <div className="mt-16 text-center">
                         <p className="text-sm text-muted-foreground sm:text-base">

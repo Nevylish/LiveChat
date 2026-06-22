@@ -1,5 +1,6 @@
 {
     "rewrites": [
+        { "source": "/v2/:path*", "destination": "https://livechat-overlay.nevylish.fr/v2/:path*" },
         { "source": "/overlay.html", "destination": "https://livechat-overlay.nevylish.fr/overlay.html" },
         { "source": "/overlay.css", "destination": "https://livechat-overlay.nevylish.fr/overlay.css" },
         { "source": "/overlay.js", "destination": "https://livechat-overlay.nevylish.fr/overlay.js" },

@@ -1,10 +1,16 @@
-import { ApplicationCommandOptionType, AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    MessageFlags,
+} from 'discord.js';
 import DiscordClient from '../DiscordClient';
+import { Functions } from '../utils/Functions';
 import { TargetsManager } from '../utils/Targets';
-import Command from './classes/Command';
-import * as media from './subcommands/media';
-import * as skip from './subcommands/skip';
-import * as stop from './subcommands/stop';
+import Command from './Command';
+import * as media from './livechat_subcommands/Media';
+import * as skip from './livechat_subcommands/Skip';
+import * as stop from './livechat_subcommands/Stop';
 
 export default class LiveChatCommand extends Command {
     constructor(client: DiscordClient) {
@@ -139,6 +145,24 @@ export default class LiveChatCommand extends Command {
     }
 
     async onExecute(interaction: ChatInputCommandInteraction): Promise<void> {
+        const guildId = interaction.guildId;
+        const userId = interaction.user.id;
+
+        if (guildId) {
+            const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+            if (!isAuthorized) {
+                const embed = Functions.buildEmbed(
+                    "Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
+                    'Error',
+                );
+                await interaction.reply({
+                    embeds: [embed],
+                    flags: MessageFlags.Ephemeral,
+                });
+                return;
+            }
+        }
+
         const subcommand = interaction.options.getSubcommand();
 
         if (subcommand === 'lancer-url' || subcommand === 'lancer-fichier') {

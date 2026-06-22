@@ -10,13 +10,11 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
+        "@supabase/supabase-js": "^2.108.2",
         "lucide-react": "^1.17.0",
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
-        "react-router-dom": "^7.17.0",
-        "tailwind-merge": "^3.6.0"
+        "react-router-dom": "^7.17.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

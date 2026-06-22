@@ -1,5 +1,5 @@
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import Command from './interactions/classes/Command';
+import Command from './interactions/Command';
 import { LiveChatServer } from './LiveChatServer';
 import { Handlers } from './utils/Handlers';
 import { Logger } from './utils/Logger';

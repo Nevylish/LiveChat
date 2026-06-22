@@ -6,8 +6,7 @@
     src:
         local('ABCGinto'),
         local('ABCGinto-Regular'),
-        url('/assets/fonts/ABCGintoNormalVariable.woff2')
-            format('woff2');
+        url('/assets/fonts/ABCGintoNormalVariable.woff2') format('woff2');
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -252,6 +251,11 @@
         background-color 0.2s ease;
 }
 
+.config-input option {
+    background-color: #1e1c2e;
+    color: #fffffe;
+}
+
 .config-input::placeholder {
     color: var(--muted-foreground);
     opacity: 0.6;
@@ -278,7 +282,6 @@
     color: var(--foreground);
 }
 
-/* Video modal animations */
 @keyframes videoModalFadeIn {
     from {
         opacity: 0;
@@ -299,7 +302,6 @@
     }
 }
 
-/* Config step transition - desktop only */
 @media (min-width: 768px) {
     .config-step-enter-forward {
         animation: configStepForward 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -348,12 +350,13 @@
 }
 
 @keyframes pulse-discord {
-    0%, 100% {
-        background-color: #5865F2;
+    0%,
+    100% {
+        background-color: #5865f2;
         box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4);
     }
     50% {
-        background-color: #4752C4;
+        background-color: #4752c4;
         box-shadow: 0 0 0 8px rgba(88, 101, 242, 0);
     }
 }
@@ -361,4 +364,3 @@
 .animate-pulse-discord {
     animation: pulse-discord 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-

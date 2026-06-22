@@ -1,9 +1,9 @@
 packages:
-  - 'packages/*'
+    - 'packages/*'
 allowBuilds:
-  esbuild: false
-  sharp: true
-  workerd: true
+    esbuild: false
+    sharp: true
+    workerd: true
 minimumReleaseAgeExclude:
-  - miniflare@4.20260617.1
-  - wrangler@4.103.0
+    - miniflare@4.20260617.1
+    - wrangler@4.103.0

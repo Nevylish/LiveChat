@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 LiveChat by Nevylish
+ * Copyright (C) 2026 LiveChat by Nevylish
  */
 
 const SERVER_URL =
@@ -24,8 +24,6 @@ const elements = {
 };
 
 const params = new URLSearchParams(window.location.search);
-const USERNAME = params.get('username');
-const GUILD_ID = params.get('guildId');
 const TOKEN = params.get('token');
 const NO_SPLASH = params.get('noSplash');
 
@@ -58,19 +56,10 @@ function initializeSocket(serverUrl) {
 }
 
 function handleConnect() {
-    if (!USERNAME) {
+    if (!TOKEN) {
         updateConnectionStatus(
             false,
-            'Le paramètre ?username est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
-            300000,
-        );
-        return;
-    }
-
-    if (!GUILD_ID) {
-        updateConnectionStatus(
-            false,
-            'Le paramètre ?guildId est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
+            'Le paramètre ?token est vide, utilisez le site livechat.nevylish.fr pour obtenir votre URL.',
             300000,
         );
         return;
@@ -78,17 +67,14 @@ function handleConnect() {
 
     displaySplash = !NO_SPLASH;
 
-    socket.emit(
-        'register',
-        TOKEN ? { username: USERNAME, guildId: GUILD_ID, token: TOKEN } : { username: USERNAME, guildId: GUILD_ID },
-    );
+    socket.emit('register', { token: TOKEN });
 }
 
 function displaySplashScreen() {
     const splashContainer = elements.splashContainer;
     if (splashContainer) {
         const img = document.createElement('img');
-        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/splash_outdated.png';
+        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/splash.png';
         splashContainer.appendChild(img);
         img.classList.remove('fade-in', 'fade-out');
         img.classList.add('fade-in');
@@ -395,7 +381,6 @@ function handleUserInfos(from, fullscreen) {
 
     const usernameDiv = document.createElement('div');
     usernameDiv.className = 'user-username';
-    // TODO: displayname est toujours null, sûrement besoin du Server Members Intent
     usernameDiv.textContent = from.displayname ?? from.username;
     userInfoElement.appendChild(usernameDiv);
 
