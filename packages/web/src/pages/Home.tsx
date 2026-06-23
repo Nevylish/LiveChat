@@ -59,8 +59,11 @@ export default function Home() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
+    const isLocal = window.location.hostname === 'localhost';
+    const API_URL = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
+
     useEffect(() => {
-        fetch('https://livechat-api.nevylish.fr/api/stats')
+        fetch(`${API_URL}/api/stats`)
             .then((res) => res.json())
             .then((data) => setStats(data))
             .catch(() => {});

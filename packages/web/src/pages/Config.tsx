@@ -472,7 +472,7 @@ export default function Config() {
 
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (hasUnsavedChanges || hasUnsavedSettings) {
+            if (isEditing && hasUnsavedChanges) {
                 e.preventDefault();
                 e.returnValue = '';
                 return '';
@@ -482,7 +482,7 @@ export default function Config() {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [hasUnsavedChanges, hasUnsavedSettings]);
+    }, [isEditing, hasUnsavedChanges]);
 
     const handlePlaySound = (type: string, volume: number) => {
         setIsPlayingSoundWave(true);
@@ -941,7 +941,7 @@ export default function Config() {
                     <LoginView onLogin={handleLogin} />
                 ) : (
                     <div className="space-y-6">
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white/2 border border-border/40 rounded-2xl p-4 sm:px-6">
+                        <div className="sticky top-[80px] md:top-[72px] z-40 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-background/80 border border-border/40 backdrop-blur-md rounded-2xl p-4 sm:px-6 shadow-lg shadow-black/20 transition-all">
                             <div className="flex items-center gap-3.5">
                                 {selectedGuild ? (
                                     <>
