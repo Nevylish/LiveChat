@@ -36,10 +36,17 @@ function VerifiedAppTag() {
             className="inline-flex h-[15px] shrink-0 items-center gap-px rounded-[3px] bg-[#5865f2] pl-[3px] pr-[4px] text-[10px] font-bold uppercase leading-none tracking-wide text-white"
             aria-label="Application vérifiée"
         >
-            <svg className="h-2.5 w-2.5 shrink-0" viewBox="0 0 12 12" aria-hidden="true">
-                <path fill="currentColor" d="M9.6 3.2 5.1 7.7 3.4 6 2.3 7.1l2.8 2.8 5.3-5.3-1.8-1.4Z" />
+            <svg className="h-[10px] w-[10px] shrink-0" viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.25 8.25 6.25 11.25 12.75 4.75"
+                />
             </svg>
-            App
+            <span className="pb-px leading-none">App</span>
         </span>
     );
 }
