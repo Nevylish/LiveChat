@@ -61,7 +61,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="min-h-screen text-foreground">
+        <div className="min-h-screen overflow-x-clip text-foreground">
             <Seo
                 title="LiveChat - Laissez vos amis animer vos streams"
                 description="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
@@ -80,91 +80,93 @@ export default function Home() {
 
             <main>
                 {/* Hero */}
-                <section className="relative flex min-h-[calc(100vh-56px)] items-center py-16 md:py-0">
-                    <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-2 md:items-center md:gap-16">
-                        <div>
-                            <h1 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.75rem] md:text-5xl">
-                                Laissez vos amis
-                                <br />
-                                animer vos streams
-                            </h1>
-                            <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                                Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.
-                            </p>
+                <section className="relative flex min-h-[calc(100dvh-3.5rem)] items-center py-12 lg:h-[calc(100dvh-3.5rem)] lg:min-h-0 lg:py-0">
+                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+                        <div className="mx-auto grid w-full max-w-5xl gap-8 md:grid-cols-2 md:items-center md:gap-x-14 md:gap-y-10">
+                            <div>
+                                <h1 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.75rem] md:text-5xl">
+                                    Laissez vos amis
+                                    <br />
+                                    animer vos streams
+                                </h1>
+                                <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                                    Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.
+                                </p>
 
-                            <div className="mt-8 flex select-none flex-col gap-3 sm:flex-row sm:flex-wrap">
-                                <a
-                                    href="/config"
-                                    className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85"
-                                >
-                                    Configurer votre overlay
-                                </a>
-                                <button
-                                    onClick={() => setVideoOpen(true)}
-                                    className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors hover:bg-accent"
-                                >
-                                    Démonstration vidéo
-                                </button>
-                            </div>
+                                <div className="mt-8 flex select-none flex-col gap-3 sm:flex-row sm:flex-wrap">
+                                    <a
+                                        href="/config"
+                                        className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85"
+                                    >
+                                        Configurer votre overlay
+                                    </a>
+                                    <button
+                                        onClick={() => setVideoOpen(true)}
+                                        className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors hover:bg-accent"
+                                    >
+                                        Démonstration vidéo
+                                    </button>
+                                </div>
 
-                            <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                    </div>
-                                    <div className="flex flex-col text-left">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-lg font-bold leading-none tracking-tight">
-                                                {stats !== null ? stats.streamers : '—'}
-                                            </span>
-                                            <span className="relative flex h-2 w-2">
-                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                                                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                                <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
+                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <div className="flex flex-col text-left">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-lg font-bold leading-none tracking-tight">
+                                                    {stats !== null ? stats.streamers : '—'}
+                                                </span>
+                                                <span className="relative flex h-2 w-2 overflow-hidden rounded-full">
+                                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                                                </span>
+                                            </div>
+                                            <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                                {stats !== null && stats.streamers <= 1
+                                                    ? 'Streameur·euse en direct'
+                                                    : 'Streameurs·euses en direct'}
                                             </span>
                                         </div>
-                                        <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                            {stats !== null && stats.streamers <= 1
-                                                ? 'Streameur·euse en direct'
-                                                : 'Streameurs·euses en direct'}
-                                        </span>
                                     </div>
-                                </div>
-                                <div className="hidden h-8 w-px bg-border sm:block" />
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                        <Server className="h-4 w-4 text-muted-foreground" />
-                                    </div>
-                                    <div className="flex flex-col text-left">
-                                        <span className="text-lg font-bold leading-none tracking-tight">
-                                            {stats !== null ? stats.servers : '—'}
-                                        </span>
-                                        <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                            {stats !== null && stats.servers <= 1
-                                                ? 'Serveur Discord'
-                                                : 'Serveurs Discord'}
-                                        </span>
+                                    <div className="hidden h-8 w-px bg-border sm:block" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
+                                            <Server className="h-4 w-4 text-muted-foreground" />
+                                        </div>
+                                        <div className="flex flex-col text-left">
+                                            <span className="text-lg font-bold leading-none tracking-tight">
+                                                {stats !== null ? stats.servers : '—'}
+                                            </span>
+                                            <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                                                {stats !== null && stats.servers <= 1
+                                                    ? 'Serveur Discord'
+                                                    : 'Serveurs Discord'}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="max-md:flex max-md:justify-center">
-                            <img
-                                src="/assets/images/livechat_preview.png"
-                                alt="Prévisualisation de l'overlay LiveChat"
-                                className="w-full max-w-lg rounded-xl md:max-w-none"
-                                width={499}
-                                height={672}
-                                draggable={false}
-                                loading="eager"
-                                fetchPriority="high"
-                            />
+                            <div className="flex justify-center pb-2 md:justify-end md:pb-0">
+                                <img
+                                    src="/assets/images/livechat_preview.png"
+                                    alt="Prévisualisation de l'overlay LiveChat"
+                                    className="w-full max-w-[220px] rounded-xl sm:max-w-[280px] md:max-w-[340px]"
+                                    width={349}
+                                    height={518}
+                                    draggable={false}
+                                    loading="eager"
+                                    fetchPriority="high"
+                                />
+                            </div>
                         </div>
                     </div>
 
                     <button
                         onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-muted-foreground transition-colors hover:text-foreground"
+                        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 animate-bounce text-muted-foreground transition-colors hover:text-foreground md:block"
                         aria-label="Défiler vers le bas"
                     >
                         <ChevronDown className="h-6 w-6" />
@@ -349,9 +351,11 @@ export default function Home() {
 
                         {/* CTA bottom */}
                         <ScrollReveal direction="up">
-                            <div className="md:text-center">
-                                <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
-                                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            <div className="mx-auto max-w-2xl">
+                                <h2 className="text-center text-2xl font-bold sm:text-3xl">
+                                    En route vers le succès 🏆
+                                </h2>
+                                <p className="mt-4 text-left text-sm leading-relaxed text-muted-foreground sm:text-base">
                                     LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox
                                     (
                                     <a
@@ -363,10 +367,10 @@ export default function Home() {
                                     sur X). En ayant accès aux mêmes technologies qu'eux, vous pouvez agrandir votre
                                     audience à partir de contenus courts verticaux qui peut-être deviendront viraux.
                                 </p>
-                                <div className="mt-8">
+                                <div className="mt-8 text-center">
                                     <a
                                         href="/config"
-                                        className="block w-full select-none rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85 md:inline md:w-auto"
+                                        className="inline-block select-none rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
                                     >
                                         Passer à la configuration de votre overlay
                                     </a>

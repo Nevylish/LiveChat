@@ -12,7 +12,7 @@ interface PageShellProps {
 
 export default function PageShell({ title, description, path, children }: PageShellProps) {
     return (
-        <div className="flex min-h-screen flex-col bg-background text-foreground">
+        <div className="flex min-h-screen flex-col overflow-x-clip bg-background text-foreground">
             <Seo title={title} description={description} path={path} />
             <Header />
             {children}

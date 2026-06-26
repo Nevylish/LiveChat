@@ -138,6 +138,15 @@
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: clip;
+    }
+
+    html {
+        overflow-x: clip;
+    }
+
+    #root {
+        overflow-x: clip;
     }
 }
 
