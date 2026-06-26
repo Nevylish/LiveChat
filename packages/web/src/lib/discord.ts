@@ -6,6 +6,9 @@ const MANAGE_GUILD = 0x20;
 
 type GuildPermissions = Pick<DiscordGuild, 'owner' | 'permissions'>;
 
+export const DISCORD_DEFAULT_AVATAR = 'https://cdn.discordapp.com/embed/avatars/0.png';
+export const DISCORD_MOCKUP_FALLBACK_USERNAME = 'noobmaster69';
+
 function firstNonEmpty(...values: (string | null | undefined)[]): string | undefined {
     for (const value of values) {
         const trimmed = value?.trim();
@@ -51,6 +54,20 @@ export function getDiscordDisplayName(user: User | null | undefined): string {
             metadata?.preferred_username,
             user.email,
         ) ?? 'Utilisateur'
+    );
+}
+
+/** Discord avatar URL from Supabase user metadata. */
+export function getDiscordAvatarUrl(user: User | null | undefined): string {
+    const discordIdentity = user?.identities?.find((identity) => identity.provider === 'discord');
+    const identityData = (discordIdentity ?? user?.identities?.[0])?.identity_data as
+        | { avatar_url?: string; picture?: string }
+        | undefined;
+    const metadata = user?.user_metadata as { avatar_url?: string; picture?: string } | undefined;
+
+    return (
+        firstNonEmpty(metadata?.avatar_url, metadata?.picture, identityData?.avatar_url, identityData?.picture) ??
+        DISCORD_DEFAULT_AVATAR
     );
 }
 

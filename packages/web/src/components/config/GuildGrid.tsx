@@ -1,8 +1,8 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import type { DiscordGuild } from '@livechat/types';
 import { ChevronRight, ExternalLink, HelpCircle, Lock, RefreshCw, Search, ShieldAlert } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { isGuildAdmin } from '../../lib/discord';
 
 interface GuildGridProps {

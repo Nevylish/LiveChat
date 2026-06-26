@@ -108,10 +108,7 @@ export default function Updates() {
 
                             <ScrollReveal direction="up">
                                 <div className="mt-10 text-center">
-                                    <a
-                                        href="/"
-                                        className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-                                    >
+                                    <a href="/" className="btn-secondary gap-2">
                                         ← Retour à l'accueil
                                     </a>
                                 </div>

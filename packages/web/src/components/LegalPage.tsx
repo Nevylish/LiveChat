@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import PageShell from './PageShell';
+import TableOfContents, { type TocItem } from './TableOfContents';
 
 export interface LegalSection {
     id: string;
@@ -32,39 +32,7 @@ export default function LegalPage({
     sections,
     crossLink,
 }: LegalPageProps) {
-    const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? '');
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const visible = entries
-                    .filter((entry) => entry.isIntersecting)
-                    .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-                if (visible[0]) {
-                    setActiveId(visible[0].target.id);
-                }
-            },
-            { rootMargin: '-96px 0px -70% 0px', threshold: 0 },
-        );
-
-        sections.forEach((section) => {
-            const el = document.getElementById(section.id);
-            if (el) observer.observe(el);
-        });
-
-        return () => observer.disconnect();
-    }, [sections]);
-
-    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-        e.preventDefault();
-        const el = document.getElementById(id);
-        if (el) {
-            const top = el.getBoundingClientRect().top + window.scrollY - 88;
-            window.scrollTo({ top, behavior: 'smooth' });
-            setActiveId(id);
-            window.history.replaceState(null, '', `#${id}`);
-        }
-    };
+    const tocItems: TocItem[] = sections.map((section) => ({ id: section.id, label: slugLabel(section.title) }));
 
     return (
         <PageShell title={seoTitle} description={seoDescription} path={path}>
@@ -88,16 +56,10 @@ export default function LegalPage({
                         ))}
 
                         <div className="flex flex-wrap gap-3 border-t border-border pt-8">
-                            <a
-                                href={crossLink.href}
-                                className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-                            >
+                            <a href={crossLink.href} className="btn-secondary">
                                 {crossLink.label}
                             </a>
-                            <a
-                                href="/"
-                                className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-                            >
+                            <a href="/" className="btn-secondary">
                                 ← Retour à l'accueil
                             </a>
                         </div>
@@ -105,30 +67,7 @@ export default function LegalPage({
 
                     {/* Table of contents */}
                     <aside className="order-2 hidden lg:block">
-                        <div className="sticky top-24">
-                            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                Sur cette page
-                            </p>
-                            <nav className="flex flex-col gap-1 border-l border-border" aria-label="Sommaire">
-                                {sections.map((section) => {
-                                    const isActive = section.id === activeId;
-                                    return (
-                                        <a
-                                            key={section.id}
-                                            href={`#${section.id}`}
-                                            onClick={(e) => handleNavClick(e, section.id)}
-                                            className={`-ml-px border-l-2 py-1 pl-4 text-sm transition-colors ${
-                                                isActive
-                                                    ? 'border-foreground font-medium text-foreground'
-                                                    : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'
-                                            }`}
-                                        >
-                                            {slugLabel(section.title)}
-                                        </a>
-                                    );
-                                })}
-                            </nav>
-                        </div>
+                        <TableOfContents items={tocItems} />
                     </aside>
                 </div>
             </main>

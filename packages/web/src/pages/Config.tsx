@@ -1,3 +1,5 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type { DiscordGuild, DiscordRole, OverlayConfigAdminRow, OverlayConfigRow } from '@livechat/types';
 import { Play, RefreshCw, Settings2, ShieldAlert, Tv, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -15,15 +17,13 @@ import {
     saveOverlayConfig,
 } from '../api/configApi';
 import PageShell from '../components/PageShell';
+import VideoModal from '../components/VideoModal';
 import { useAuth } from '../hooks/useAuth';
 import { useGuildList } from '../hooks/useGuildList';
 import { buildOverlayLink } from '../lib/constants';
 import { isGuildAdmin } from '../lib/discord';
 import { getErrorMessage } from '../lib/errors';
 import { supabase } from '../lib/supabase';
-import VideoModal from '../components/VideoModal';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
 import ConfigBreadcrumb, { type BreadcrumbSegment } from '../components/config/ConfigBreadcrumb';
 import ConfigTabs, { type TabItem } from '../components/config/ConfigTabs';
@@ -222,10 +222,7 @@ export default function Config() {
 
             setLoadingAllConfigs(true);
             try {
-                const data = await fetchAllGuildOverlayConfigs(
-                    { accessToken: session.access_token },
-                    selectedGuild.id,
-                );
+                const data = await fetchAllGuildOverlayConfigs({ accessToken: session.access_token }, selectedGuild.id);
                 if (!active) return;
                 if (data.configs) {
                     setAllGuildConfigs(data.configs);
@@ -272,10 +269,7 @@ export default function Config() {
 
             setLoadingRoles(true);
             try {
-                const settingsData = await fetchGuildSettings(
-                    { accessToken: session.access_token },
-                    selectedGuild.id,
-                );
+                const settingsData = await fetchGuildSettings({ accessToken: session.access_token }, selectedGuild.id);
                 if (!active) return;
                 if (settingsData.settings) {
                     const roleId = settingsData.settings.required_role_id;
@@ -654,18 +648,18 @@ export default function Config() {
 
     if (authLoading) {
         return (
-        <PageShell
-            title="Configurer LiveChat - Dashboard Discord et overlay"
-            description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
-            path="/config"
-        >
-            <main className="flex flex-1 items-center justify-center">
-                <div className="flex flex-col items-center gap-3">
-                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">Chargement du dashboard...</p>
-                </div>
-            </main>
-        </PageShell>
+            <PageShell
+                title="Configurer LiveChat - Dashboard Discord et overlay"
+                description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
+                path="/config"
+            >
+                <main className="flex flex-1 items-center justify-center">
+                    <div className="flex flex-col items-center gap-3">
+                        <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">Chargement du dashboard...</p>
+                    </div>
+                </main>
+            </PageShell>
         );
     }
 
@@ -702,11 +696,7 @@ export default function Config() {
                 ) : (
                     (() => {
                         const isAdmin = selectedGuild ? isGuildAdmin(selectedGuild) : false;
-                        const roleLabel = selectedGuild?.owner
-                            ? 'Propriétaire'
-                            : isAdmin
-                              ? 'Administrateur'
-                              : 'Membre';
+                        const roleLabel = selectedGuild?.owner ? 'Propriétaire' : isAdmin ? 'Administrateur' : 'Membre';
 
                         const guildIcon = selectedGuild ? (
                             selectedGuild.icon ? (
@@ -735,7 +725,12 @@ export default function Config() {
                         }
 
                         const tabs: TabItem<ConfigTab>[] = [
-                            { id: 'overlays', label: 'Overlays', icon: <Tv className="h-4 w-4" />, count: configs.length },
+                            {
+                                id: 'overlays',
+                                label: 'Overlays',
+                                icon: <Tv className="h-4 w-4" />,
+                                count: configs.length,
+                            },
                             { id: 'members', label: 'Membres', icon: <Users className="h-4 w-4" /> },
                             { id: 'settings', label: 'Paramètres', icon: <Settings2 className="h-4 w-4" /> },
                         ];

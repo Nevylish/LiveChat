@@ -1,10 +1,11 @@
-import { CheckCircle, Copy, Eye, EyeOff, LinkIcon, ShieldAlert, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import ObsGuide from './ObsGuide';
+import { CheckCircle, Copy, Eye, EyeOff, LinkIcon, ShieldAlert, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import BrowserSourceGuide from './BrowserSourceGuide';
+import { obsGuide, streamlabsGuide } from './guidePresets';
 
 interface OverlayEditorProps {
     overlayName: string;
@@ -53,7 +54,11 @@ export default function OverlayEditor({
                     <p className="mt-0.5 text-sm text-muted-foreground">Configuration de l'overlay</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button onClick={onSave} disabled={!hasUnsavedChanges || isGenerating} className="flex-1 sm:flex-initial">
+                    <Button
+                        onClick={onSave}
+                        disabled={!hasUnsavedChanges || isGenerating}
+                        className="flex-1 sm:flex-initial"
+                    >
                         Sauvegarder
                     </Button>
                     <Button
@@ -141,9 +146,7 @@ export default function OverlayEditor({
                     <div className="flex-1">
                         <p
                             className={`flex items-center gap-1.5 text-sm font-semibold transition-colors duration-300 ${
-                                justRegenerated
-                                    ? 'text-emerald-700 dark:text-emerald-200'
-                                    : 'text-destructive'
+                                justRegenerated ? 'text-emerald-700 dark:text-emerald-200' : 'text-destructive'
                             }`}
                         >
                             {justRegenerated ? (
@@ -155,9 +158,7 @@ export default function OverlayEditor({
                         </p>
                         <p
                             className={`mt-0.5 text-xs leading-normal transition-colors duration-300 ${
-                                justRegenerated
-                                    ? 'text-emerald-600 dark:text-emerald-200/70'
-                                    : 'text-destructive/70'
+                                justRegenerated ? 'text-emerald-600 dark:text-emerald-200/70' : 'text-destructive/70'
                             }`}
                         >
                             {justRegenerated
@@ -179,7 +180,8 @@ export default function OverlayEditor({
                 </div>
             </div>
 
-            <ObsGuide />
+            <BrowserSourceGuide {...obsGuide} />
+            <BrowserSourceGuide {...streamlabsGuide} />
         </div>
     );
 }

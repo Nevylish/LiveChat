@@ -1,4 +1,4 @@
-import { ChevronDown, Server, Users } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import JsonLd from '../components/JsonLd';
 import PageShell from '../components/PageShell';
@@ -91,55 +91,46 @@ export default function Home() {
                                 <div className="mt-8 flex select-none flex-col gap-3 sm:flex-row sm:flex-wrap">
                                     <a
                                         href="/config"
-                                        className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85"
+                                        className="btn-secondary inline-flex w-full items-center justify-center px-7 text-center text-sm font-semibold sm:w-auto"
                                     >
                                         Configurer votre overlay
                                     </a>
                                     <button
                                         onClick={() => setVideoOpen(true)}
-                                        className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors hover:bg-accent"
+                                        className="btn-secondary w-full justify-center px-7 sm:w-auto"
                                     >
                                         Démonstration vidéo
                                     </button>
                                 </div>
 
-                                <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                            <Users className="h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                        <div className="flex flex-col text-left">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-lg font-bold leading-none tracking-tight">
-                                                    {stats !== null ? stats.streamers : '—'}
-                                                </span>
-                                                <span className="relative flex h-2 w-2 overflow-hidden rounded-full">
-                                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-                                                </span>
-                                            </div>
-                                            <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                                {stats !== null && stats.streamers <= 1
-                                                    ? 'Streameur·euse en direct'
-                                                    : 'Streameurs·euses en direct'}
+                                <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-border pt-8 sm:flex sm:gap-x-14">
+                                    <div>
+                                        <p className="flex items-baseline gap-2.5">
+                                            <span className="text-3xl font-bold tracking-tight tabular-nums">
+                                                {stats !== null ? stats.streamers : '—'}
                                             </span>
-                                        </div>
+                                            {stats !== null && stats.streamers > 0 && (
+                                                <span className="relative flex h-1.5 w-1.5 shrink-0 translate-y-[-3px]">
+                                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+                                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                                </span>
+                                            )}
+                                        </p>
+                                        <p className="mt-1.5 text-sm text-muted-foreground">
+                                            {stats !== null && stats.streamers <= 1
+                                                ? 'Streameur·euse en direct'
+                                                : 'Streameurs·euses en direct'}
+                                        </p>
                                     </div>
-                                    <div className="hidden h-8 w-px bg-border sm:block" />
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                            <Server className="h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                        <div className="flex flex-col text-left">
-                                            <span className="text-lg font-bold leading-none tracking-tight">
-                                                {stats !== null ? stats.servers : '—'}
-                                            </span>
-                                            <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                                                {stats !== null && stats.servers <= 1
-                                                    ? 'Serveur Discord'
-                                                    : 'Serveurs Discord'}
-                                            </span>
-                                        </div>
+                                    <div>
+                                        <p className="text-3xl font-bold tracking-tight tabular-nums">
+                                            {stats !== null ? stats.servers : '—'}
+                                        </p>
+                                        <p className="mt-1.5 text-sm text-muted-foreground">
+                                            {stats !== null && stats.servers <= 1
+                                                ? 'Serveur Discord'
+                                                : 'Serveurs Discord'}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -365,7 +356,7 @@ export default function Home() {
                                 <div className="mt-8 text-center">
                                     <a
                                         href="/config"
-                                        className="inline-block select-none rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
+                                        className="btn-secondary inline-block select-none px-7 text-sm font-semibold"
                                     >
                                         Passer à la configuration de votre overlay
                                     </a>
