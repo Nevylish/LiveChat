@@ -1,6 +1,7 @@
 import type { DiscordGuild } from '@livechat/types';
 import { ExternalLink, HelpCircle, RefreshCw, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { isGuildAdmin } from '../../lib/discord';
 
 interface GuildGridProps {
@@ -37,12 +38,9 @@ export default function GuildGrid({
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     Votre session a expiré. Veuillez vous reconnecter pour actualiser la liste de vos serveurs.
                 </p>
-                <button
-                    onClick={handleLogin}
-                    className="mt-4 cursor-pointer rounded-md border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-                >
+                <Button variant="outline" onClick={handleLogin} className="mt-4">
                     Se reconnecter avec Discord
-                </button>
+                </Button>
             </div>
         );
     }
@@ -52,12 +50,9 @@ export default function GuildGrid({
             <div className="mx-auto max-w-sm py-12 text-center">
                 <HelpCircle className="mx-auto mb-4 h-10 w-10 text-muted-foreground/40" />
                 <p className="text-sm text-muted-foreground">Aucun serveur Discord administré n'a été trouvé.</p>
-                <button
-                    onClick={() => loadGuilds(true)}
-                    className="mt-4 cursor-pointer rounded-md border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
-                >
+                <Button variant="outline" onClick={() => loadGuilds(true)} className="mt-4">
                     Actualiser la liste
-                </button>
+                </Button>
             </div>
         );
     }

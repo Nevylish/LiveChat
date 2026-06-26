@@ -1,4 +1,4 @@
-import { CheckCircle, Copy, Eye, EyeOff, LinkIcon, ShieldAlert } from 'lucide-react';
+import { CheckCircle, Copy, Eye, EyeOff, LinkIcon, ShieldAlert, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import ObsGuide from './ObsGuide';
 
 interface OverlayEditorProps {
+    overlayName: string;
     username: string;
     validateAndSetUsername: (val: string) => void;
     generatedLink: string;
@@ -15,9 +16,13 @@ interface OverlayEditorProps {
     justRegenerated: boolean;
     isGenerating: boolean;
     regenerateLink: () => void;
+    hasUnsavedChanges: boolean;
+    onSave: () => void;
+    onDelete: () => void;
 }
 
 export default function OverlayEditor({
+    overlayName,
     username,
     validateAndSetUsername,
     generatedLink,
@@ -26,6 +31,9 @@ export default function OverlayEditor({
     justRegenerated,
     isGenerating,
     regenerateLink,
+    hasUnsavedChanges,
+    onSave,
+    onDelete,
 }: OverlayEditorProps) {
     const [isLinkCopied, setIsLinkCopied] = useState(false);
 
@@ -38,6 +46,28 @@ export default function OverlayEditor({
 
     return (
         <div className="space-y-6">
+            {/* Editor header with actions */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                    <h1 className="truncate text-lg font-bold leading-tight">{overlayName}</h1>
+                    <p className="mt-0.5 text-sm text-muted-foreground">Configuration de l'overlay</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button onClick={onSave} disabled={!hasUnsavedChanges || isGenerating} className="flex-1 sm:flex-initial">
+                        Sauvegarder
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={onDelete}
+                        disabled={isGenerating}
+                        className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        Supprimer
+                    </Button>
+                </div>
+            </div>
+
             <div className="rounded-lg border border-border bg-card p-6 space-y-5">
                 <div>
                     <h3 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">

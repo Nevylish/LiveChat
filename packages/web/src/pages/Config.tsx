@@ -1,5 +1,5 @@
 import type { DiscordGuild, DiscordRole, OverlayConfigRow } from '@livechat/types';
-import { ArrowLeft, Play, RefreshCw, ShieldAlert, Trash2 } from 'lucide-react';
+import { Play, RefreshCw, Settings2, ShieldAlert, Tv, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -22,15 +22,24 @@ import { isGuildAdmin } from '../lib/discord';
 import { getErrorMessage } from '../lib/errors';
 import { supabase } from '../lib/supabase';
 import VideoModal from '../components/VideoModal';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
+import ConfigBreadcrumb, { type BreadcrumbSegment } from '../components/config/ConfigBreadcrumb';
+import ConfigTabs, { type TabItem } from '../components/config/ConfigTabs';
+import CreateOverlayDialog from '../components/config/CreateOverlayDialog';
 import GuildGrid from '../components/config/GuildGrid';
 import LoginView from '../components/config/LoginView';
+import MembersPanel from '../components/config/MembersPanel';
 import OnboardingView from '../components/config/OnboardingView';
 import OverlayEditor from '../components/config/OverlayEditor';
-import OverlaysDashboard from '../components/config/OverlaysDashboard';
+import OverlaysList from '../components/config/OverlaysList';
 import RestrictedView from '../components/config/RestrictedView';
+import ServerSettings from '../components/config/ServerSettings';
 
 const YOUTUBE_VIDEO_ID = 'iIK6me_W1BQ';
+
+type ConfigTab = 'overlays' | 'members' | 'settings';
 
 export default function Config() {
     const { guildId } = useParams<{ guildId?: string }>();
@@ -108,6 +117,9 @@ export default function Config() {
     const [maxOverlays, setMaxOverlays] = useState<number>(5);
     const [dbMaxOverlaysLimit, setDbMaxOverlaysLimit] = useState<number>(5);
     const [maxOverlaysInput, setMaxOverlaysInput] = useState<string>('5');
+
+    const [activeTab, setActiveTab] = useState<ConfigTab>('overlays');
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
     useEffect(() => {
         if (guildId && guilds.length > 0) {
@@ -295,6 +307,20 @@ export default function Config() {
         };
     }, [selectedGuild, session]);
 
+    useEffect(() => {
+        setActiveTab('overlays');
+    }, [selectedGuild?.id]);
+
+    useEffect(() => {
+        setCreateDialogOpen(false);
+    }, [configs.length]);
+
+    const openCreateDialog = () => {
+        setError(null);
+        setNewOverlayName((prev) => prev || username);
+        setCreateDialogOpen(true);
+    };
+
     const handleConfigureConfig = (config: OverlayConfigRow) => {
         setActiveConfig(config);
         setUsername(config.username);
@@ -379,6 +405,37 @@ export default function Config() {
     const hasUnsavedSettings =
         (isRoleRestrictionEnabled ? requiredRoleId : null) !== dbRequiredRoleId ||
         (parseInt(maxOverlaysInput) || 5) !== dbMaxOverlaysLimit;
+
+    const backToServers = () => {
+        if (hasUnsavedSettings) {
+            if (
+                !window.confirm(
+                    'Vous avez des modifications de paramètres serveur non sauvegardées. Voulez-vous vraiment les annuler ?',
+                )
+            ) {
+                return;
+            }
+        }
+        navigate('/config');
+    };
+
+    const backToOverlays = () => {
+        if (hasUnsavedChanges) {
+            if (
+                !window.confirm(
+                    'Vous avez des modifications non sauvegardées sur votre overlay. Voulez-vous vraiment les annuler ?',
+                )
+            ) {
+                return;
+            }
+        }
+        setIsEditing(false);
+        setActiveConfig(null);
+        setUsername('');
+        setDbUsername('');
+        setGeneratedLink('');
+        setError(null);
+    };
 
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -623,154 +680,116 @@ export default function Config() {
                 title="Tutoriel LiveChat"
             />
 
-            <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+            <CreateOverlayDialog
+                open={createDialogOpen}
+                onOpenChange={(open) => {
+                    setCreateDialogOpen(open);
+                    if (!open) setError(null);
+                }}
+                value={newOverlayName}
+                onChange={setNewOverlayName}
+                onCreate={() => handleCreateConfig(newOverlayName)}
+                isGenerating={isGenerating}
+                error={error}
+                title={hasExistingLink ? 'Créer un overlay' : 'Créer votre premier overlay'}
+            />
+
+            <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
                 {!session ? (
                     <LoginView onLogin={handleLogin} />
                 ) : (
-                    <div className="space-y-6">
-                        {/* Sticky toolbar */}
-                        <div className="sticky top-14 z-40 flex flex-col gap-3 rounded-lg border border-border bg-background/95 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                            <div className="flex items-center gap-3">
-                                {selectedGuild ? (
-                                    <>
-                                        <button
-                                            onClick={() => {
-                                                if (isEditing) {
-                                                    if (hasUnsavedChanges) {
-                                                        const confirm = window.confirm(
-                                                            'Vous avez des modifications non sauvegardées sur votre overlay. Voulez-vous vraiment les annuler ?',
-                                                        );
-                                                        if (!confirm) return;
-                                                    }
-                                                    setIsEditing(false);
-                                                    setActiveConfig(null);
-                                                    setUsername('');
-                                                    setDbUsername('');
-                                                    setGeneratedLink('');
-                                                    setError(null);
-                                                } else {
-                                                    if (hasUnsavedSettings) {
-                                                        const confirm = window.confirm(
-                                                            'Vous avez des modifications de paramètres serveur non sauvegardées. Voulez-vous vraiment les annuler ?',
-                                                        );
-                                                        if (!confirm) return;
-                                                    }
-                                                    navigate('/config');
-                                                }
-                                            }}
-                                            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                                            title={isEditing ? 'Retour à la liste des overlays' : 'Retour à la liste des serveurs'}
-                                        >
-                                            <ArrowLeft className="h-4 w-4" />
-                                        </button>
-                                        {selectedGuild.icon ? (
-                                            <img
-                                                src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
-                                                alt=""
-                                                className="h-8 w-8 shrink-0 rounded-md border border-border object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-bold uppercase text-muted-foreground">
-                                                {selectedGuild.name.substring(0, 2)}
-                                            </div>
-                                        )}
-                                        <div>
-                                            <p className="text-sm font-semibold leading-none">{selectedGuild.name}</p>
-                                            <p className="mt-0.5 text-xs text-muted-foreground">
-                                                {isEditing && activeConfig
-                                                    ? `Overlay : ${activeConfig.username}`
-                                                    : 'Sélectionnez ou créez un overlay'}
-                                            </p>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <img
-                                            src={user?.user_metadata?.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}
-                                            alt="Avatar"
-                                            className="h-8 w-8 shrink-0 rounded-full border border-border"
-                                        />
-                                        <div>
-                                            <p className="text-sm font-semibold leading-none">
-                                                Bonjour,{' '}
-                                                {user?.user_metadata?.global_name ||
-                                                    user?.user_metadata?.custom_claims?.global_name ||
-                                                    user?.user_metadata?.full_name ||
-                                                    user?.user_metadata?.name ||
-                                                    'Utilisateur Discord'}
-                                            </p>
-                                            <p className="mt-0.5 text-xs text-muted-foreground">Sélectionnez un serveur</p>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                            <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
-                                {selectedGuild && isEditing && activeConfig && (
-                                    <>
-                                        <button
-                                            onClick={handleSaveConfig}
-                                            disabled={!hasUnsavedChanges}
-                                            className={`flex h-8 w-full items-center justify-center rounded-md px-3 text-xs font-semibold transition-colors sm:w-auto ${
-                                                hasUnsavedChanges
-                                                    ? 'cursor-pointer bg-foreground text-background hover:opacity-90'
-                                                    : 'cursor-not-allowed border border-border text-muted-foreground opacity-50'
-                                            }`}
-                                        >
-                                            Sauvegarder
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteConfig(activeConfig.token)}
-                                            className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20 sm:w-auto"
-                                        >
-                                            <Trash2 className="h-3.5 w-3.5" />
-                                            Supprimer
-                                        </button>
-                                    </>
-                                )}
+                    (() => {
+                        const isAdmin = selectedGuild ? isGuildAdmin(selectedGuild) : false;
+                        const roleLabel = selectedGuild?.owner
+                            ? 'Propriétaire'
+                            : isAdmin
+                              ? 'Administrateur'
+                              : 'Membre';
+
+                        const guildIcon = selectedGuild ? (
+                            selectedGuild.icon ? (
+                                <img
+                                    src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
+                                    alt=""
+                                    className="h-4 w-4 shrink-0 rounded-sm object-cover"
+                                />
+                            ) : (
+                                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-sm bg-secondary text-[8px] font-bold uppercase text-muted-foreground">
+                                    {selectedGuild.name.substring(0, 1)}
+                                </span>
+                            )
+                        ) : undefined;
+
+                        const segments: BreadcrumbSegment[] = [{ label: 'Serveurs', onClick: backToServers }];
+                        if (selectedGuild) {
+                            segments.push({
+                                label: selectedGuild.name,
+                                icon: guildIcon,
+                                onClick: isEditing ? backToOverlays : undefined,
+                            });
+                        }
+                        if (isEditing && activeConfig) {
+                            segments.push({ label: activeConfig.username });
+                        }
+
+                        const tabs: TabItem<ConfigTab>[] = [
+                            { id: 'overlays', label: 'Overlays', icon: <Tv className="h-4 w-4" />, count: configs.length },
+                            { id: 'members', label: 'Membres', icon: <Users className="h-4 w-4" /> },
+                            { id: 'settings', label: 'Paramètres', icon: <Settings2 className="h-4 w-4" /> },
+                        ];
+
+                        const breadcrumbActions = (
+                            <>
                                 {!selectedGuild && (
-                                    <button
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                         onClick={() => loadGuilds(true)}
                                         disabled={fetchingGuilds}
-                                        className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50 sm:w-auto"
+                                        className="flex-1 sm:flex-initial"
                                     >
                                         <RefreshCw className={`h-3.5 w-3.5 ${fetchingGuilds ? 'animate-spin' : ''}`} />
                                         Actualiser
-                                    </button>
+                                    </Button>
                                 )}
-                                <button
+                                <Button
+                                    variant="outline"
+                                    size="sm"
                                     onClick={() => setVideoOpen(true)}
-                                    className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:w-auto"
+                                    className="flex-1 sm:flex-initial"
                                 >
                                     <Play className="h-3.5 w-3.5" />
                                     Tutoriel
-                                </button>
-                            </div>
-                        </div>
+                                </Button>
+                            </>
+                        );
 
-                        {error && !isRestricted && (
-                            <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-                                <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                                <div>{error}</div>
-                            </div>
-                        )}
+                        return (
+                            <>
+                                <ConfigBreadcrumb segments={segments} actions={breadcrumbActions} />
 
-                        {!guildId ? (
-                            <GuildGrid
-                                guilds={guilds}
-                                fetchingGuilds={fetchingGuilds}
-                                isSessionExpired={isSessionExpired}
-                                loadGuilds={loadGuilds}
-                                handleLogin={handleLogin}
-                                onSelectGuild={(id) => navigate(`/config/${id}`)}
-                            />
-                        ) : !selectedGuild ? (
-                            <div className="flex flex-col items-center justify-center gap-4 py-20">
-                                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-                                <span className="text-sm text-muted-foreground">Validation du serveur...</span>
-                            </div>
-                        ) : (
-                            <div className="space-y-6">
-                                {checkingLink ? (
+                                {error && !isRestricted && !createDialogOpen && (
+                                    <div className="mb-6 flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                        <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+                                        <div>{error}</div>
+                                    </div>
+                                )}
+
+                                {!guildId ? (
+                                    <GuildGrid
+                                        guilds={guilds}
+                                        fetchingGuilds={fetchingGuilds}
+                                        isSessionExpired={isSessionExpired}
+                                        loadGuilds={loadGuilds}
+                                        handleLogin={handleLogin}
+                                        onSelectGuild={(id) => navigate(`/config/${id}`)}
+                                    />
+                                ) : !selectedGuild ? (
+                                    <div className="flex flex-col items-center justify-center gap-4 py-20">
+                                        <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">Validation du serveur...</span>
+                                    </div>
+                                ) : checkingLink ? (
                                     <div className="flex flex-col items-center justify-center gap-4 py-20">
                                         <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
                                         <span className="text-sm text-muted-foreground">
@@ -779,44 +798,9 @@ export default function Config() {
                                     </div>
                                 ) : isRestricted ? (
                                     <RestrictedView error={error} />
-                                ) : !hasExistingLink ? (
-                                    <OnboardingView
-                                        selectedGuild={selectedGuild}
-                                        username={username}
-                                        validateAndSetUsername={validateAndSetUsername}
-                                        error={error}
-                                        isGenerating={isGenerating}
-                                        handleCreateConfig={handleCreateConfig}
-                                    />
-                                ) : !isEditing ? (
-                                    <OverlaysDashboard
-                                        selectedGuild={selectedGuild}
-                                        configs={configs}
-                                        maxOverlays={maxOverlays}
-                                        newOverlayName={newOverlayName}
-                                        setNewOverlayName={setNewOverlayName}
-                                        isGenerating={isGenerating}
-                                        handleCreateConfig={handleCreateConfig}
-                                        handleConfigureConfig={handleConfigureConfig}
-                                        handleDeleteConfig={handleDeleteConfig}
-                                        allGuildConfigs={allGuildConfigs}
-                                        loadingAllConfigs={loadingAllConfigs}
-                                        handleAdminDeleteConfig={handleAdminDeleteConfig}
-                                        isRoleRestrictionEnabled={isRoleRestrictionEnabled}
-                                        setIsRoleRestrictionEnabled={setIsRoleRestrictionEnabled}
-                                        requiredRoleId={requiredRoleId}
-                                        setRequiredRoleId={setRequiredRoleId}
-                                        guildRoles={guildRoles}
-                                        loadingRoles={loadingRoles}
-                                        maxOverlaysInput={maxOverlaysInput}
-                                        setMaxOverlaysInput={setMaxOverlaysInput}
-                                        savingSettings={savingSettings}
-                                        settingsSuccess={settingsSuccess}
-                                        handleSaveSettings={handleSaveSettings}
-                                        hasUnsavedSettings={hasUnsavedSettings}
-                                    />
-                                ) : (
+                                ) : isEditing ? (
                                     <OverlayEditor
+                                        overlayName={activeConfig?.username ?? ''}
                                         username={username}
                                         validateAndSetUsername={validateAndSetUsername}
                                         generatedLink={generatedLink}
@@ -825,11 +809,81 @@ export default function Config() {
                                         justRegenerated={justRegenerated}
                                         isGenerating={isGenerating}
                                         regenerateLink={regenerateLink}
+                                        hasUnsavedChanges={hasUnsavedChanges}
+                                        onSave={handleSaveConfig}
+                                        onDelete={() => activeConfig && handleDeleteConfig(activeConfig.token)}
                                     />
+                                ) : !hasExistingLink ? (
+                                    <OnboardingView selectedGuild={selectedGuild} onOpenCreate={openCreateDialog} />
+                                ) : (
+                                    <>
+                                        {/* Server header */}
+                                        <div className="mb-6 flex items-center gap-3">
+                                            {selectedGuild.icon ? (
+                                                <img
+                                                    src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
+                                                    alt=""
+                                                    className="h-11 w-11 shrink-0 rounded-lg border border-border object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-sm font-bold uppercase text-muted-foreground">
+                                                    {selectedGuild.name.substring(0, 2)}
+                                                </div>
+                                            )}
+                                            <div className="min-w-0">
+                                                <h1 className="truncate text-lg font-bold leading-tight">
+                                                    {selectedGuild.name}
+                                                </h1>
+                                                <div className="mt-1 flex items-center gap-2">
+                                                    <Badge variant="secondary" className="text-[10px]">
+                                                        {roleLabel}
+                                                    </Badge>
+                                                    <span className="text-xs text-muted-foreground">
+                                                        {configs.length} overlay{configs.length > 1 ? 's' : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {isAdmin && (
+                                            <ConfigTabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
+                                        )}
+
+                                        {activeTab === 'overlays' || !isAdmin ? (
+                                            <OverlaysList
+                                                configs={configs}
+                                                maxOverlays={maxOverlays}
+                                                onConfigure={handleConfigureConfig}
+                                                onDelete={handleDeleteConfig}
+                                                onOpenCreate={openCreateDialog}
+                                            />
+                                        ) : activeTab === 'members' ? (
+                                            <MembersPanel
+                                                allGuildConfigs={allGuildConfigs}
+                                                loadingAllConfigs={loadingAllConfigs}
+                                                handleAdminDeleteConfig={handleAdminDeleteConfig}
+                                            />
+                                        ) : (
+                                            <ServerSettings
+                                                isRoleRestrictionEnabled={isRoleRestrictionEnabled}
+                                                setIsRoleRestrictionEnabled={setIsRoleRestrictionEnabled}
+                                                requiredRoleId={requiredRoleId}
+                                                setRequiredRoleId={setRequiredRoleId}
+                                                guildRoles={guildRoles}
+                                                loadingRoles={loadingRoles}
+                                                maxOverlaysInput={maxOverlaysInput}
+                                                setMaxOverlaysInput={setMaxOverlaysInput}
+                                                savingSettings={savingSettings}
+                                                settingsSuccess={settingsSuccess}
+                                                handleSaveSettings={handleSaveSettings}
+                                                hasUnsavedSettings={hasUnsavedSettings}
+                                            />
+                                        )}
+                                    </>
                                 )}
-                            </div>
-                        )}
-                    </div>
+                            </>
+                        );
+                    })()
                 )}
             </main>
         </PageShell>
