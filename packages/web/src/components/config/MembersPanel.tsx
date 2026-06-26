@@ -1,6 +1,7 @@
 import type { OverlayConfigAdminRow } from '@livechat/types';
 import { RefreshCw, Trash2, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { compareUsernames } from '@/lib/utils';
 
 interface MembersPanelProps {
     allGuildConfigs: OverlayConfigAdminRow[];
@@ -50,7 +51,9 @@ export default function MembersPanel({
                 </div>
             ) : (
                 <div className="space-y-2">
-                    {allGuildConfigs.map((c) => (
+                    {[...allGuildConfigs]
+                        .sort((a, b) => compareUsernames(a.username, b.username))
+                        .map((c) => (
                         <div
                             key={c.username}
                             className="flex flex-col justify-between gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center"

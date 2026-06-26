@@ -12,7 +12,7 @@ const sections: LegalSection[] = [
         title: '2. Confidentialité et données',
         content:
             "L'utilisation du tableau de bord nécessite une connexion via Discord, gérée par Supabase. Certaines données sont stockées pour le fonctionnement du service (configurations d'overlay, réglages de serveur, identifiant Discord). Les commandes /livechat sur Discord sont traitées en temps réel sans conservation des messages ou médias.\n\n" +
-            'Pour le détail des données collectées, leur utilisation et vos droits, consultez notre politique de confidentialité à l\'adresse /privacy.',
+            "Pour le détail des données collectées, leur utilisation et vos droits, consultez notre politique de confidentialité à l'adresse /privacy.",
     },
     {
         id: 'compte',
@@ -46,8 +46,14 @@ const sections: LegalSection[] = [
             "LiveChat et tout son contenu (noms, logos, marques, etc.) sont la propriété intellectuelle de leurs propriétaires respectifs. Vous n'êtes pas autorisé à utiliser, copier ou reproduire le bot ou son contenu sans autorisation.",
     },
     {
+        id: 'marques-tiers',
+        title: '8. Marques, services et personnes cités',
+        content:
+            "LiveChat n'est affilié ni aux plateformes de streaming, réseaux sociaux et services tiers mentionnés sur le site (Discord, Twitch, YouTube, OBS Studio, etc.), ni aux personnes, groupes ou créateurs cités à titre d'exemple. Les noms, marques et identités mentionnés appartiennent à leurs propriétaires respectifs.",
+    },
+    {
         id: 'contact',
-        title: '8. Contact',
+        title: '9. Contact',
         content:
             "Pour toute question concernant ces conditions d'utilisation, vous pouvez nous contacter à l'adresse suivante : bonjour@nevylish.fr.",
     },

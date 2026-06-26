@@ -34,6 +34,7 @@ import MembersPanel from '../components/config/MembersPanel';
 import OnboardingView from '../components/config/OnboardingView';
 import OverlayEditor from '../components/config/OverlayEditor';
 import OverlaysList from '../components/config/OverlaysList';
+import PublicServerRoleReminder from '../components/config/PublicServerRoleReminder';
 import RestrictedView from '../components/config/RestrictedView';
 import ServerSettings from '../components/config/ServerSettings';
 
@@ -877,6 +878,7 @@ export default function Config() {
                                                 hasUnsavedSettings={hasUnsavedSettings}
                                             />
                                         )}
+                                        <PublicServerRoleReminder />
                                     </>
                                 )}
                             </>

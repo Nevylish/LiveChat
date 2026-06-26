@@ -1,6 +1,7 @@
 import type { OverlayConfigRow } from '@livechat/types';
 import { Plus, Settings2, Trash2, Tv } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { compareUsernames } from '@/lib/utils';
 
 interface OverlaysListProps {
     configs: OverlayConfigRow[];
@@ -54,7 +55,7 @@ export default function OverlaysList({
                 </div>
             ) : (
                 <div className="space-y-2">
-                    {configs.map((config) => (
+                    {[...configs].sort((a, b) => compareUsernames(a.username, b.username)).map((config) => (
                         <div
                             key={config.token}
                             className="flex flex-col justify-between gap-3 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-accent/50 sm:flex-row sm:items-center"

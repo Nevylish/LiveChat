@@ -306,7 +306,7 @@ export default function Home() {
                         {/* FAQ */}
                         <div className="mx-auto w-full max-w-2xl">
                             <ScrollReveal direction="up">
-                                <h2 className="text-center text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
+                                <h2 className="text-left text-2xl font-bold sm:text-center sm:text-3xl">Questions fréquentes</h2>
                             </ScrollReveal>
                             <div className="mt-10 divide-y divide-border border-y border-border">
                                 {faqs.map((faq, i) => {
@@ -348,7 +348,7 @@ export default function Home() {
                         {/* CTA bottom */}
                         <ScrollReveal direction="up">
                             <div className="mx-auto max-w-2xl">
-                                <h2 className="text-center text-2xl font-bold sm:text-3xl">
+                                <h2 className="text-left text-2xl font-bold sm:text-center sm:text-3xl">
                                     En route vers le succès 🏆
                                 </h2>
                                 <p className="mt-4 text-left text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -363,10 +363,10 @@ export default function Home() {
                                     sur X). En ayant accès aux mêmes technologies qu'eux, vous pouvez agrandir votre
                                     audience à partir de contenus courts verticaux qui peut-être deviendront viraux.
                                 </p>
-                                <div className="mt-8 text-center">
+                                <div className="mt-8 text-left sm:text-center">
                                     <a
                                         href="/config"
-                                        className="inline-block select-none rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
+                                        className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85 sm:w-auto"
                                     >
                                         Passer à la configuration de votre overlay
                                     </a>

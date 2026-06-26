@@ -4,6 +4,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import TableOfContents, { type TocItem } from '../components/TableOfContents';
 import BrowserSourceGuide from '../components/config/BrowserSourceGuide';
+import PublicServerRoleReminder from '../components/config/PublicServerRoleReminder';
 import { obsGuide, streamlabsGuide } from '../components/config/guidePresets';
 import { CommandFlowMockup } from '../components/usage/DiscordMockups';
 
@@ -115,6 +116,7 @@ export default function Usage() {
 
                             <p className="mb-3 mt-8 text-sm font-medium text-muted-foreground">Aperçu dans Discord</p>
                             <CommandFlowMockup />
+                            <PublicServerRoleReminder />
                         </section>
 
                         {/* Commandes */}
@@ -321,7 +323,7 @@ export default function Usage() {
                                                                 'Définir un rôle requis pour créer ou configurer des overlays',
                                                             opt: 'rôle',
                                                             optdesc:
-                                                                'Sélectionnez le rôle restreint (ou "none" pour retirer la restriction)',
+                                                                'Sélectionnez le rôle restreint (ou "Désactiver la restriction" pour retirer la restriction)',
                                                         },
                                                         {
                                                             sub: 'overlays-max-par-personne',
@@ -422,8 +424,8 @@ export default function Usage() {
                             </div>
 
                             <div className="mt-4 rounded-md border border-yellow-300 dark:border-yellow-500/20 bg-yellow-50 dark:bg-yellow-500/5 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-200/90">
-                                ⚠️ Les liens de plateformes non listées ci-dessus ne sont pas supportés directement.
-                                Téléchargez d'abord le média puis utilisez la sous-commande{' '}
+                                Les liens de plateformes non listées ci-dessus ne sont pas supportés directement. Vous
+                                devrez d'abord télécharger le média puis utilisez la sous-commande{' '}
                                 <strong>lancer-fichier</strong>.
                             </div>
                         </section>
@@ -579,18 +581,18 @@ export default function Usage() {
                             </div>
                         </section>
 
-                        <div className="border-t border-border pt-10 text-center">
+                        <div className="border-t border-border pt-10 text-left sm:text-center">
                             <p className="text-sm text-muted-foreground sm:text-base">
                                 Vous n'avez pas encore configuré LiveChat ?
                             </p>
-                            <div className="mt-4 flex flex-wrap justify-center gap-3">
+                            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
                                 <a
                                     href="/config"
-                                    className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
+                                    className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85 sm:w-auto"
                                 >
                                     Configurer votre overlay
                                 </a>
-                                <a href="/" className="btn-secondary px-7">
+                                <a href="/" className="btn-secondary w-full px-7 sm:w-auto">
                                     ← Retour à l'accueil
                                 </a>
                             </div>

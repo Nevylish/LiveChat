@@ -182,6 +182,11 @@ export default function OverlayEditor({
 
             <BrowserSourceGuide {...obsGuide} />
             <BrowserSourceGuide {...streamlabsGuide} />
+            <div className="flex justify-center">
+                <a href="/usage" className="btn-secondary inline-flex w-full justify-center px-7 sm:w-auto">
+                    Découvrir le guide d'utilisation
+                </a>
+            </div>
         </div>
     );
 }

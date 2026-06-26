@@ -134,7 +134,7 @@ export default function Account() {
                             </ul>
 
                             <div className="mt-5">
-                                <Button variant="destructive" disabled>
+                                <Button variant="destructive" disabled className="w-full sm:w-auto">
                                     <Trash2 className="h-4 w-4" />
                                     Supprimer mon compte
                                 </Button>

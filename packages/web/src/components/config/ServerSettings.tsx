@@ -46,9 +46,9 @@ export default function ServerSettings({
                 {/* Role restriction */}
                 <div className="space-y-4 p-5">
                     <div className="flex items-start justify-between gap-4">
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <p className="text-sm font-medium">Restreindre par rôle</p>
-                            <p className="mt-0.5 max-w-md text-xs leading-normal text-muted-foreground">
+                            <p className="mt-0.5 text-xs leading-normal text-muted-foreground">
                                 Exiger un rôle Discord spécifique pour créer des overlays et utiliser les commandes
                                 /livechat.
                             </p>

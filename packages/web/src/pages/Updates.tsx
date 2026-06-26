@@ -108,7 +108,7 @@ export default function Updates() {
 
                             <ScrollReveal direction="up">
                                 <div className="mt-10 text-center">
-                                    <a href="/" className="btn-secondary gap-2">
+                                    <a href="/" className="btn-secondary w-full gap-2 sm:w-auto">
                                         ← Retour à l'accueil
                                     </a>
                                 </div>

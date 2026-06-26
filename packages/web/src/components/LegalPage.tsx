@@ -55,11 +55,11 @@ export default function LegalPage({
                             </section>
                         ))}
 
-                        <div className="flex flex-wrap gap-3 border-t border-border pt-8">
-                            <a href={crossLink.href} className="btn-secondary">
+                        <div className="flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:flex-wrap">
+                            <a href={crossLink.href} className="btn-secondary w-full sm:w-auto">
                                 {crossLink.label}
                             </a>
-                            <a href="/" className="btn-secondary">
+                            <a href="/" className="btn-secondary w-full sm:w-auto">
                                 ← Retour à l'accueil
                             </a>
                         </div>
