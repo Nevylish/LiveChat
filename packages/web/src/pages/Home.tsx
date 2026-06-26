@@ -34,11 +34,7 @@ const softwareApplicationSchema = {
     description:
         "LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord.",
     url: 'https://livechat.nevylish.fr/',
-    offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'EUR',
-    },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
 };
 
 const faqPageSchema = {
@@ -47,10 +43,7 @@ const faqPageSchema = {
     mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
         name: faq.question,
-        acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer,
-        },
+        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
 };
 
@@ -68,7 +61,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="dark min-h-screen text-foreground">
+        <div className="min-h-screen text-foreground">
             <Seo
                 title="LiveChat - Laissez vos amis animer vos streams"
                 description="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
@@ -77,7 +70,6 @@ export default function Home() {
             <JsonLd data={softwareApplicationSchema} />
             <JsonLd data={faqPageSchema} />
 
-            <div className="bg-layer" />
             <Header />
             <VideoModal
                 open={videoOpen}
@@ -87,8 +79,9 @@ export default function Home() {
             />
 
             <main>
-                <section className="relative flex min-h-[calc(100vh-65px)] items-center py-16 md:py-0">
-                    <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-6 md:grid-cols-2 md:items-center md:gap-16">
+                {/* Hero */}
+                <section className="relative flex min-h-[calc(100vh-56px)] items-center py-16 md:py-0">
+                    <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-2 md:items-center md:gap-16">
                         <div>
                             <h1 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.75rem] md:text-5xl">
                                 Laissez vos amis
@@ -98,16 +91,17 @@ export default function Home() {
                             <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
                                 Avec LiveChat, vos amis peuvent ajouter une couche d'humour à vos lives.
                             </p>
-                            <div className="unselectable mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+
+                            <div className="mt-8 flex select-none flex-col gap-3 sm:flex-row sm:flex-wrap">
                                 <a
                                     href="/config"
-                                    className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                    className="rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85"
                                 >
                                     Configurer votre overlay
                                 </a>
                                 <button
                                     onClick={() => setVideoOpen(true)}
-                                    className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors duration-200 hover:border-foreground/25 hover:bg-white/5"
+                                    className="rounded-full border border-border px-7 py-3 text-center text-sm font-semibold transition-colors hover:bg-accent"
                                 >
                                     Démonstration vidéo
                                 </button>
@@ -115,17 +109,17 @@ export default function Home() {
 
                             <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
-                                        <Users className="h-4 w-4 text-foreground/80" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
+                                        <Users className="h-4 w-4 text-muted-foreground" />
                                     </div>
                                     <div className="flex flex-col text-left">
                                         <div className="flex items-center gap-2">
                                             <span className="text-lg font-bold leading-none tracking-tight">
-                                                {stats !== null ? stats.streamers : '...'}
+                                                {stats !== null ? stats.streamers : '—'}
                                             </span>
                                             <span className="relative flex h-2 w-2">
-                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                                                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                                                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
                                             </span>
                                         </div>
                                         <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -135,14 +129,14 @@ export default function Home() {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="hidden h-8 w-px bg-border sm:block"></div>
+                                <div className="hidden h-8 w-px bg-border sm:block" />
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5">
-                                        <Server className="h-4 w-4 text-foreground/80" />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
+                                        <Server className="h-4 w-4 text-muted-foreground" />
                                     </div>
                                     <div className="flex flex-col text-left">
                                         <span className="text-lg font-bold leading-none tracking-tight">
-                                            {stats !== null ? stats.servers : '...'}
+                                            {stats !== null ? stats.servers : '—'}
                                         </span>
                                         <span className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                                             {stats !== null && stats.servers <= 1
@@ -153,6 +147,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+
                         <div className="max-md:flex max-md:justify-center">
                             <img
                                 src="/assets/images/livechat_preview.png"
@@ -169,32 +164,22 @@ export default function Home() {
 
                     <button
                         onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                        className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-muted-foreground transition-colors hover:text-foreground"
                         aria-label="Défiler vers le bas"
                     >
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M7 6l5 5 5-5" />
-                        </svg>
+                        <ChevronDown className="h-6 w-6" />
                     </button>
                 </section>
 
+                {/* Features */}
                 <section id="features" className="py-20 sm:py-28">
-                    <div className="mx-auto max-w-6xl space-y-20 px-5 sm:space-y-28 sm:px-6">
-                        <ScrollReveal direction="up" delay={0}>
-                            <div className="max-w-3xl mx-auto text-left space-y-4 pb-12 sm:pb-16 border-b border-border/40">
-                                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                    <div className="mx-auto max-w-6xl space-y-20 px-4 sm:space-y-28 sm:px-6">
+                        <ScrollReveal direction="up">
+                            <div className="max-w-3xl space-y-4 border-b border-border pb-12 sm:pb-16">
+                                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                                     Une nouvelle manière d'intégrer vos proches à vos streams.
                                 </h2>
-                                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                                <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
                                     LiveChat réinvente l'interaction avec vos spectateurs. En associant un bot Discord à
                                     un overlay de stream, cette solution open-source gratuite permet à vos amis
                                     d'afficher des images, de lancer des vidéos ou de jouer des sons en direct sur vos
@@ -202,7 +187,7 @@ export default function Home() {
                                     faire des blagues, montrer une photo de vacances ou juste mettre un cri effrayant à
                                     3 heures du matin, LiveChat est là et prêt à être utilisé.
                                 </p>
-                                <p className="text-xs sm:text-sm text-muted-foreground/60 leading-relaxed">
+                                <p className="text-xs leading-relaxed text-muted-foreground/60 sm:text-sm">
                                     Faites défiler la page pour découvrir quelques-unes des fonctionnalités que nous
                                     proposons.
                                 </p>
@@ -210,7 +195,7 @@ export default function Home() {
                         </ScrollReveal>
 
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <ScrollReveal direction="up" delay={0}>
+                            <ScrollReveal direction="up">
                                 <div>
                                     <h2 className="text-2xl font-bold sm:text-3xl">
                                         Prise en charge de plusieurs plateformes
@@ -238,7 +223,7 @@ export default function Home() {
                                 <img
                                     src="/assets/images/card_tiktok.png"
                                     alt="Prise en charge TikTok"
-                                    className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    className="w-full max-w-sm rounded-xl border border-border transition-transform duration-300 md:max-w-none"
                                     width={540}
                                     height={304}
                                     draggable={false}
@@ -256,14 +241,14 @@ export default function Home() {
                                 <img
                                     src="/assets/images/card_streamtogether.png"
                                     alt="Streamez à plusieurs"
-                                    className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    className="w-full max-w-sm rounded-xl border border-border transition-transform duration-300 md:max-w-none"
                                     width={540}
                                     height={304}
                                     draggable={false}
                                     loading="lazy"
                                 />
                             </ScrollReveal>
-                            <ScrollReveal direction="up" delay={0} className="order-1 md:order-2">
+                            <ScrollReveal direction="up" className="order-1 md:order-2">
                                 <div>
                                     <h2 className="text-2xl font-bold sm:text-3xl">Streamez à plusieurs</h2>
                                     <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -275,7 +260,7 @@ export default function Home() {
                         </div>
 
                         <div className="grid items-center gap-8 sm:gap-12 md:grid-cols-2">
-                            <ScrollReveal direction="up" delay={0}>
+                            <ScrollReveal direction="up">
                                 <div>
                                     <h2 className="text-2xl font-bold sm:text-3xl">
                                         Compatible avec toutes les applications de streaming
@@ -311,7 +296,7 @@ export default function Home() {
                                 <img
                                     src="/assets/images/card_platforms.png"
                                     alt="Compatible avec toutes les applications de streaming"
-                                    className="feature-visual-img w-full max-w-sm rounded-xl md:max-w-none"
+                                    className="w-full max-w-sm rounded-xl border border-border transition-transform duration-300 md:max-w-none"
                                     width={540}
                                     height={304}
                                     draggable={false}
@@ -320,21 +305,20 @@ export default function Home() {
                             </ScrollReveal>
                         </div>
 
+                        {/* FAQ */}
                         <div className="mx-auto w-full max-w-2xl">
                             <ScrollReveal direction="up">
-                                <div className="text-center">
-                                    <h2 className="text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
-                                </div>
+                                <h2 className="text-center text-2xl font-bold sm:text-3xl">Questions fréquentes</h2>
                             </ScrollReveal>
                             <div className="mt-10 divide-y divide-border border-y border-border">
                                 {faqs.map((faq, i) => {
                                     const isOpen = openFaq === i;
                                     return (
-                                        <ScrollReveal key={i} direction="up" delay={i * 100}>
+                                        <ScrollReveal key={i} direction="up" delay={i * 80}>
                                             <div className="py-5">
                                                 <button
                                                     onClick={() => setOpenFaq(isOpen ? null : i)}
-                                                    className="unselectable flex w-full items-center justify-between gap-4 text-left text-base font-semibold outline-none transition-colors hover:text-muted-foreground"
+                                                    className="flex w-full select-none items-center justify-between gap-4 text-left text-base font-semibold outline-none transition-colors hover:text-muted-foreground"
                                                 >
                                                     {faq.question}
                                                     <ChevronDown
@@ -344,10 +328,10 @@ export default function Home() {
                                                     />
                                                 </button>
                                                 <div
-                                                    className={`grid transition-[grid-template-rows,opacity,filter] duration-300 ease-in-out ${
+                                                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
                                                         isOpen
-                                                            ? 'grid-rows-[1fr] opacity-100 blur-none'
-                                                            : 'grid-rows-[0fr] opacity-0 blur-sm'
+                                                            ? 'grid-rows-[1fr] opacity-100'
+                                                            : 'grid-rows-[0fr] opacity-0'
                                                     }`}
                                                 >
                                                     <div className="overflow-hidden">
@@ -363,10 +347,11 @@ export default function Home() {
                             </div>
                         </div>
 
+                        {/* CTA bottom */}
                         <ScrollReveal direction="up">
                             <div className="md:text-center">
                                 <h2 className="text-2xl font-bold sm:text-3xl">En route vers le succès 🏆</h2>
-                                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-left">
+                                <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                                     LiveChat est une fonctionnalité rendue populaire par le groupe de streameurs Cacabox
                                     (
                                     <a
@@ -381,7 +366,7 @@ export default function Home() {
                                 <div className="mt-8">
                                     <a
                                         href="/config"
-                                        className="unselectable block w-full rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85 md:inline md:w-auto"
+                                        className="block w-full select-none rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85 md:inline md:w-auto"
                                     >
                                         Passer à la configuration de votre overlay
                                     </a>

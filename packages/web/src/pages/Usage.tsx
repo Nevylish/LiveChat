@@ -26,17 +26,17 @@ const formats = [
     {
         category: 'Vidéo',
         extensions: ['.mp4', '.webm', '.mkv', '.mov'],
-        color: 'bg-purple-500/10 text-purple-300 border-purple-500/20',
+        color: 'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-500/20',
     },
     {
         category: 'Audio',
         extensions: ['.mp3', '.wav', '.ogg', '.flac'],
-        color: 'bg-blue-500/10 text-blue-300 border-blue-500/20',
+        color: 'bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/20',
     },
     {
         category: 'Image',
         extensions: ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
-        color: 'bg-green-500/10 text-green-300 border-green-500/20',
+        color: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/20',
     },
 ];
 
@@ -49,10 +49,7 @@ export default function Usage() {
         if (hash) {
             const id = hash.replace('#', '');
             setTimeout(() => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
         }
     }, [hash]);
@@ -62,7 +59,7 @@ export default function Usage() {
     }
 
     return (
-        <div className="dark flex min-h-screen flex-col text-foreground">
+        <div className="flex min-h-screen flex-col text-foreground">
             <Seo
                 title="Comment utiliser LiveChat ? Guide complet"
                 description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
@@ -70,8 +67,8 @@ export default function Usage() {
             />
             <Header />
 
-            <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                <ScrollReveal direction="up" delay={0}>
+            <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+                <ScrollReveal direction="up">
                     <div className="text-center">
                         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
                             Comment utiliser LiveChat ?
@@ -83,25 +80,24 @@ export default function Usage() {
                 </ScrollReveal>
 
                 <ScrollReveal direction="up" delay={100}>
-                    <div className="mt-8 flex flex-col items-center gap-3">
-                        <nav className="flex flex-wrap justify-center gap-2">
-                            {sections.map((s) => (
-                                <button
-                                    key={s.id}
-                                    onClick={() => scrollTo(s.id)}
-                                    className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition-all duration-200 hover:border-foreground/25 hover:bg-white/5 hover:text-foreground"
-                                >
-                                    {s.label}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
+                    <nav className="mt-8 flex flex-wrap justify-center gap-2" aria-label="Sections">
+                        {sections.map((s) => (
+                            <button
+                                key={s.id}
+                                onClick={() => scrollTo(s.id)}
+                                className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                            >
+                                {s.label}
+                            </button>
+                        ))}
+                    </nav>
                 </ScrollReveal>
 
                 <section id="setup" className="mt-16 scroll-mt-24">
                     <ObsGuide showObsGuide={showObsDefault} />
                 </section>
 
+                {/* Commandes */}
                 <section id="commands" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Commandes Discord</h2>
@@ -111,335 +107,209 @@ export default function Usage() {
                     </ScrollReveal>
 
                     <div className="mt-6 space-y-4">
-                        <ScrollReveal direction="up" delay={30}>
-                            <details
-                                className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden"
-                                open
-                            >
-                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
-                                    <div className="flex items-center gap-3">
-                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
-                                            /livechat
-                                        </code>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            Commande principale - contient 4 sous-commandes
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                </summary>
-                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                        {[
+                            {
+                                cmd: '/livechat',
+                                desc: 'Commande principale - contient 4 sous-commandes',
+                                defaultOpen: true,
+                                content: (
                                     <div className="space-y-6">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
-                                                    lancer-url
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Lancer un LiveChat via un lien
-                                                </span>
-                                            </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                {[
-                                                    {
-                                                        name: 'cible',
-                                                        desc: 'Choisissez sur quel stream envoyer le LiveChat',
-                                                        required: true,
-                                                    },
-                                                    {
-                                                        name: 'url',
-                                                        desc: 'Lien du média (plateforme supportée ou lien direct)',
-                                                        required: true,
-                                                    },
+                                        {[
+                                            {
+                                                name: 'lancer-url',
+                                                color: 'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300',
+                                                desc: 'Lancer un LiveChat via un lien',
+                                                opts: [
+                                                    { name: 'cible', desc: 'Choisissez sur quel stream envoyer le LiveChat', required: true },
+                                                    { name: 'url', desc: 'Lien du média (plateforme supportée ou lien direct)', required: true },
                                                     { name: 'texte', desc: 'Texte à afficher en dessous du média' },
-                                                    {
-                                                        name: 'fullscreen',
-                                                        desc: "Afficher le média sur tout l'écran du stream (16:9)",
-                                                    },
-                                                    {
-                                                        name: 'anonyme',
-                                                        desc: "Masquer votre pseudo et photo de profil sur l'overlay",
-                                                    },
-                                                ].map((opt) => (
-                                                    <li key={opt.name} className="flex items-start gap-2 text-sm">
-                                                        <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                            {opt.name}
-                                                        </code>
-                                                        <span className="text-muted-foreground">{opt.desc}</span>
-                                                        {opt.required && (
-                                                            <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                                Requis
-                                                            </span>
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-
-                                        <div className="h-px bg-border/50" />
-
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
-                                                    lancer-fichier
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Lancer un LiveChat via un fichier uploadé
-                                                </span>
-                                            </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                {[
-                                                    {
-                                                        name: 'cible',
-                                                        desc: 'Choisissez sur quel stream envoyer le LiveChat',
-                                                        required: true,
-                                                    },
-                                                    {
-                                                        name: 'fichier',
-                                                        desc: 'Fichier à afficher (image, vidéo ou audio)',
-                                                        required: true,
-                                                    },
+                                                    { name: 'fullscreen', desc: "Afficher le média sur tout l'écran du stream (16:9)" },
+                                                    { name: 'anonyme', desc: "Masquer votre pseudo et photo de profil sur l'overlay" },
+                                                ],
+                                            },
+                                            {
+                                                name: 'lancer-fichier',
+                                                color: 'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300',
+                                                desc: 'Lancer un LiveChat via un fichier uploadé',
+                                                opts: [
+                                                    { name: 'cible', desc: 'Choisissez sur quel stream envoyer le LiveChat', required: true },
+                                                    { name: 'fichier', desc: 'Fichier à afficher (image, vidéo ou audio)', required: true },
                                                     { name: 'texte', desc: 'Texte à afficher en dessous du média' },
-                                                    {
-                                                        name: 'fullscreen',
-                                                        desc: "Afficher le média sur tout l'écran du stream (16:9)",
-                                                    },
-                                                    {
-                                                        name: 'anonyme',
-                                                        desc: "Masquer votre pseudo et photo de profil sur l'overlay",
-                                                    },
-                                                ].map((opt) => (
-                                                    <li key={opt.name} className="flex items-start gap-2 text-sm">
-                                                        <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                            {opt.name}
+                                                    { name: 'fullscreen', desc: "Afficher le média sur tout l'écran du stream (16:9)" },
+                                                    { name: 'anonyme', desc: "Masquer votre pseudo et photo de profil sur l'overlay" },
+                                                ],
+                                            },
+                                            {
+                                                name: 'passer-au-suivant',
+                                                color: 'bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300',
+                                                desc: "Passer au LiveChat suivant dans la file d'attente",
+                                                opts: [{ name: 'cible', desc: 'Choisissez sur quel stream passer au suivant', required: true }],
+                                            },
+                                            {
+                                                name: 'stop-et-vider',
+                                                color: 'bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-300',
+                                                desc: "Arrêter le LiveChat et vider la file d'attente",
+                                                opts: [{ name: 'cible', desc: 'Choisissez sur quel stream arrêter le LiveChat', required: true }],
+                                            },
+                                        ].map((sub, si) => (
+                                            <div key={sub.name}>
+                                                {si > 0 && <div className="h-px bg-border/50" />}
+                                                <div className={si > 0 ? 'pt-6' : ''}>
+                                                    <div className="flex items-center gap-2">
+                                                        <code className={`rounded px-2 py-0.5 text-xs font-bold ${sub.color}`}>
+                                                            {sub.name}
                                                         </code>
-                                                        <span className="text-muted-foreground">{opt.desc}</span>
-                                                        {opt.required && (
-                                                            <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                                Requis
-                                                            </span>
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-
-                                        <div className="h-px bg-border/50" />
-
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-blue-500/10 px-2 py-0.5 text-xs font-bold text-blue-300">
-                                                    passer-au-suivant
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Passer au LiveChat suivant dans la file d'attente
-                                                </span>
+                                                        <span className="text-sm text-muted-foreground">{sub.desc}</span>
+                                                    </div>
+                                                    <ul className="mt-2.5 space-y-1.5 pl-1">
+                                                        {sub.opts.map((opt) => (
+                                                            <li key={opt.name} className="flex items-start gap-2 text-sm">
+                                                                <code className="mt-0.5 shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">
+                                                                    {opt.name}
+                                                                </code>
+                                                                <span className="text-muted-foreground">{opt.desc}</span>
+                                                                {opt.required && (
+                                                                    <span className="mt-0.5 shrink-0 rounded bg-red-100 dark:bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-600 dark:text-red-400">
+                                                                        Requis
+                                                                    </span>
+                                                                )}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
                                             </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                <li className="flex items-start gap-2 text-sm">
-                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                        cible
-                                                    </code>
-                                                    <span className="text-muted-foreground">
-                                                        Choisissez sur quel stream passer au suivant
-                                                    </span>
-                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                        Requis
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        <div className="h-px bg-border/50" />
-
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-red-500/10 px-2 py-0.5 text-xs font-bold text-red-300">
-                                                    stop-et-vider
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Arrêter le LiveChat et vider la file d'attente
-                                                </span>
-                                            </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                <li className="flex items-start gap-2 text-sm">
-                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                        cible
-                                                    </code>
-                                                    <span className="text-muted-foreground">
-                                                        Choisissez sur quel stream arrêter le LiveChat
-                                                    </span>
-                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                        Requis
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        ))}
                                     </div>
-                                </div>
-                            </details>
-                        </ScrollReveal>
-
-                        <ScrollReveal direction="up" delay={60}>
-                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
-                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
-                                    <div className="flex items-center gap-3">
-                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
-                                            /liste-des-plateformes
-                                        </code>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            Affiche les plateformes et formats supportés
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                </summary>
-                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                ),
+                            },
+                            {
+                                cmd: '/liste-des-plateformes',
+                                desc: 'Affiche les plateformes et formats supportés',
+                                content: (
                                     <p className="text-sm text-muted-foreground">
                                         Affiche un embed récapitulatif de toutes les plateformes acceptées ainsi que les
                                         formats de fichiers supportés. Aucune option requise.
                                     </p>
-                                </div>
-                            </details>
-                        </ScrollReveal>
-
-                        <ScrollReveal direction="up" delay={90}>
-                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
-                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
-                                    <div className="flex items-center gap-3">
-                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
-                                            /abonnement
-                                        </code>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            Découvrez LiveChat Plus et soutenez le projet
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                </summary>
-                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                ),
+                            },
+                            {
+                                cmd: '/abonnement',
+                                desc: 'Découvrez LiveChat Plus et soutenez le projet',
+                                content: (
                                     <p className="text-sm text-muted-foreground">
                                         Affiche les informations sur l'abonnement LiveChat Plus (1,99$/mois). Cet
                                         abonnement optionnel permet de soutenir le projet et augmente le nombre
                                         d'emplacements de streameurs de 10 à 20 par serveur Discord.
                                     </p>
-                                </div>
-                            </details>
-                        </ScrollReveal>
-
-                        <ScrollReveal direction="up" delay={100}>
-                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
-                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
-                                    <div className="flex items-center gap-3">
-                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
-                                            /gérer-mes-overlays
-                                        </code>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            Créer et gérer vos overlays sur ce serveur
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                </summary>
-                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
-                                    <p className="text-sm text-muted-foreground">
-                                        Permet aux membres autorisés de créer un nouvel overlay (avec un pseudo
-                                        d'affichage personnalisé) ou de gérer leurs overlays existants sur le serveur
-                                        (récupérer le lien OBS, régénérer la clé d'authentification ou supprimer
-                                        l'overlay).
-                                    </p>
-                                    <ul className="mt-3 space-y-1.5 pl-1">
-                                        <li className="flex items-start gap-2 text-sm">
-                                            <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                choix
+                                ),
+                            },
+                            {
+                                cmd: '/gérer-mes-overlays',
+                                desc: 'Créer et gérer vos overlays sur ce serveur',
+                                content: (
+                                    <>
+                                        <p className="text-sm text-muted-foreground">
+                                            Permet aux membres autorisés de créer un nouvel overlay (avec un pseudo
+                                            d'affichage personnalisé) ou de gérer leurs overlays existants sur le serveur
+                                            (récupérer le lien OBS, régénérer la clé d'authentification ou supprimer
+                                            l'overlay).
+                                        </p>
+                                        <ul className="mt-3 space-y-1.5 pl-1">
+                                            <li className="flex items-start gap-2 text-sm">
+                                                <code className="mt-0.5 shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">
+                                                    choix
+                                                </code>
+                                                <span className="text-muted-foreground">
+                                                    Sélectionnez un overlay existant à gérer, ou choisissez d'en créer un
+                                                    nouveau
+                                                </span>
+                                                <span className="mt-0.5 shrink-0 rounded bg-red-100 dark:bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-600 dark:text-red-400">
+                                                    Requis
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </>
+                                ),
+                            },
+                            {
+                                cmd: '/réglages',
+                                desc: 'Configurer les options de LiveChat pour ce serveur',
+                                content: (
+                                    <>
+                                        <p className="text-sm text-muted-foreground mb-4">
+                                            Permet aux administrateurs de configurer les règles d'utilisation de LiveChat
+                                            pour le serveur.
+                                        </p>
+                                        <div className="space-y-4">
+                                            {[
+                                                {
+                                                    sub: 'rôle-autorisé',
+                                                    subdesc: 'Définir un rôle requis pour créer ou configurer des overlays',
+                                                    opt: 'rôle',
+                                                    optdesc: 'Sélectionnez le rôle restreint (ou "none" pour retirer la restriction)',
+                                                },
+                                                {
+                                                    sub: 'overlays-max-par-personne',
+                                                    subdesc: "Définir un nombre maximal d'overlays par personne",
+                                                    opt: 'nombre',
+                                                    optdesc: "Le nombre maximum d'overlays par utilisateur (entre 1 et 20)",
+                                                },
+                                            ].map((item, ii) => (
+                                                <div key={item.sub}>
+                                                    {ii > 0 && <div className="h-px bg-border/50" />}
+                                                    <div className={ii > 0 ? 'pt-4' : ''}>
+                                                        <div className="flex items-center gap-2">
+                                                            <code className="rounded bg-violet-100 dark:bg-violet-500/10 px-2 py-0.5 text-xs font-bold text-violet-700 dark:text-violet-300">
+                                                                {item.sub}
+                                                            </code>
+                                                            <span className="text-sm text-muted-foreground">{item.subdesc}</span>
+                                                        </div>
+                                                        <ul className="mt-2.5 pl-1">
+                                                            <li className="flex items-start gap-2 text-sm">
+                                                                <code className="mt-0.5 shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs">
+                                                                    {item.opt}
+                                                                </code>
+                                                                <span className="text-muted-foreground">{item.optdesc}</span>
+                                                                <span className="mt-0.5 shrink-0 rounded bg-red-100 dark:bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-600 dark:text-red-400">
+                                                                    Requis
+                                                                </span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                ),
+                            },
+                        ].map((item, idx) => (
+                            <ScrollReveal key={item.cmd} direction="up" delay={idx * 30}>
+                                <details
+                                    className="group rounded-lg border border-border bg-card [&_summary::-webkit-details-marker]:hidden"
+                                    open={item.defaultOpen}
+                                >
+                                    <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
+                                        <div className="flex items-center gap-3">
+                                            <code className="rounded-md bg-muted px-2.5 py-1 text-sm font-bold">
+                                                {item.cmd}
                                             </code>
-                                            <span className="text-muted-foreground">
-                                                Sélectionnez un overlay existant à gérer, ou choisissez d'en créer un
-                                                nouveau
+                                            <span className="text-sm font-normal text-muted-foreground">
+                                                {item.desc}
                                             </span>
-                                            <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                Requis
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </details>
-                        </ScrollReveal>
-
-                        <ScrollReveal direction="up" delay={110}>
-                            <details className="group rounded-xl border border-border bg-white/2 [&_summary::-webkit-details-marker]:hidden">
-                                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 outline-none transition-colors hover:text-muted-foreground sm:px-6">
-                                    <div className="flex items-center gap-3">
-                                        <code className="rounded-md bg-white/5 px-2.5 py-1 text-sm font-bold">
-                                            /réglages
-                                        </code>
-                                        <span className="text-sm font-normal text-muted-foreground">
-                                            Configurer les options de LiveChat pour ce serveur
-                                        </span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
-                                </summary>
-                                <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
-                                    <p className="text-sm text-muted-foreground mb-4">
-                                        Permet aux administrateurs de configurer les règles d'utilisation de LiveChat
-                                        pour le serveur.
-                                    </p>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
-                                                    rôle-autorisé
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Définir un rôle requis pour créer ou configurer des overlays
-                                                </span>
-                                            </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                <li className="flex items-start gap-2 text-sm">
-                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                        rôle
-                                                    </code>
-                                                    <span className="text-muted-foreground">
-                                                        Sélectionnez le rôle restreint (ou "none" pour retirer la
-                                                        restriction)
-                                                    </span>
-                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                        Requis
-                                                    </span>
-                                                </li>
-                                            </ul>
                                         </div>
-
-                                        <div className="h-px bg-border/50" />
-
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <code className="rounded bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-300">
-                                                    overlays-max-par-personne
-                                                </code>
-                                                <span className="text-sm text-muted-foreground">
-                                                    Définir un nombre maximal d'overlays par personne
-                                                </span>
-                                            </div>
-                                            <ul className="mt-2.5 space-y-1.5 pl-1">
-                                                <li className="flex items-start gap-2 text-sm">
-                                                    <code className="mt-0.5 shrink-0 rounded bg-white/5 px-1.5 py-0.5 text-xs">
-                                                        nombre
-                                                    </code>
-                                                    <span className="text-muted-foreground">
-                                                        Le nombre maximum d'overlays par utilisateur (entre 1 et 20)
-                                                    </span>
-                                                    <span className="mt-0.5 shrink-0 rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase text-red-400">
-                                                        Requis
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 group-open:-rotate-180" />
+                                    </summary>
+                                    <div className="border-t border-border/50 px-5 pb-5 pt-4 sm:px-6">
+                                        {item.content}
                                     </div>
-                                </div>
-                            </details>
-                        </ScrollReveal>
+                                </details>
+                            </ScrollReveal>
+                        ))}
                     </div>
 
                     <ScrollReveal direction="up" delay={120}>
-                        <div className="mt-5 rounded-lg border border-border bg-white/3 px-4 py-3 text-sm text-muted-foreground">
-                            <strong className="text-foreground">💡 L'option « cible »</strong> - L'autocomplétion vous
+                        <div className="mt-5 rounded-md border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                            <strong className="text-foreground">💡 L'option « cible »</strong> — L'autocomplétion vous
                             propose la liste des streameurs actuellement connectés. Si deux streameurs ou plus sont
                             connectés, l'option{' '}
                             <strong className="text-foreground">📌 Envoyer à tous les streameurs connectés</strong>{' '}
@@ -448,12 +318,13 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
+                {/* Plateformes */}
                 <section id="platforms" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Plateformes supportées</h2>
                         <p className="mt-3 text-sm text-muted-foreground sm:text-base">
                             Collez directement un lien de ces plateformes dans l'option{' '}
-                            <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">url</code>,
+                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">url</code>,
                             LiveChat récupère automatiquement le média via son proxy intégré.
                         </p>
                     </ScrollReveal>
@@ -461,8 +332,8 @@ export default function Usage() {
                     <div className="mt-6 grid gap-3 sm:grid-cols-2">
                         {platforms.map((p, i) => (
                             <ScrollReveal key={p.name} direction="up" delay={i * 25}>
-                                <div className="flex items-center gap-4 rounded-xl border border-border bg-white/2 px-5 py-4 h-full">
-                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5 text-lg">
+                                <div className="flex h-full items-center gap-4 rounded-lg border border-border bg-card px-5 py-4">
+                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-lg">
                                         {p.icon}
                                     </span>
                                     <div>
@@ -475,31 +346,29 @@ export default function Usage() {
                     </div>
 
                     <ScrollReveal direction="up" delay={60}>
-                        <div className="mt-4 rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-200/90">
+                        <div className="mt-4 rounded-md border border-yellow-300 dark:border-yellow-500/20 bg-yellow-50 dark:bg-yellow-500/5 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-200/90">
                             ⚠️ Les liens de plateformes non listées ci-dessus ne sont pas supportés directement.
                             Téléchargez d'abord le média puis utilisez la sous-commande <strong>lancer-fichier</strong>.
                         </div>
                     </ScrollReveal>
                 </section>
 
+                {/* Formats */}
                 <section id="formats" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Formats de fichiers acceptés</h2>
                         <p className="mt-3 text-sm text-muted-foreground sm:text-base">
                             Tous les formats que vous pouvez envoyer via la sous-commande{' '}
-                            <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">
-                                lancer-fichier
-                            </code>{' '}
+                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">lancer-fichier</code>{' '}
                             ou via un lien direct avec{' '}
-                            <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">lancer-url</code>
-                            .
+                            <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">lancer-url</code>.
                         </p>
                     </ScrollReveal>
 
                     <div className="mt-6 space-y-3">
                         {formats.map((f, i) => (
                             <ScrollReveal key={f.category} direction="up" delay={i * 25}>
-                                <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-white/2 px-4 py-3">
+                                <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card px-4 py-3">
                                     <span className="text-sm font-semibold">{f.category}</span>
                                     <div className="flex flex-wrap gap-1.5">
                                         {f.extensions.map((ext) => (
@@ -517,7 +386,7 @@ export default function Usage() {
                     </div>
 
                     <ScrollReveal direction="up" delay={60}>
-                        <div className="mt-4 rounded-lg border border-border bg-white/3 px-4 py-3 text-sm text-muted-foreground">
+                        <div className="mt-4 rounded-md border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
                             <strong className="text-foreground">Durée d'affichage :</strong> Les vidéos et audios sont
                             joués en intégralité. Les images s'affichent pendant{' '}
                             <strong className="text-foreground">8 secondes</strong> automatiquement.
@@ -525,6 +394,7 @@ export default function Usage() {
                     </ScrollReveal>
                 </section>
 
+                {/* Fonctionnalités */}
                 <section id="features" className="mt-16 scroll-mt-24">
                     <ScrollReveal direction="up">
                         <h2 className="text-2xl font-bold sm:text-3xl">Fonctionnalités</h2>
@@ -543,7 +413,7 @@ export default function Usage() {
                                         Après l'envoi d'un média, un bouton interactif apparaît sous le message Discord
                                         avec un compte à rebours affichant le temps restant. Il suffit de cliquer dessus
                                         pour passer au média suivant sans avoir besoin d'utiliser la sous-commande{' '}
-                                        <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">
+                                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">
                                             passer-au-suivant
                                         </code>
                                         .
@@ -570,7 +440,7 @@ export default function Usage() {
                                 desc: (
                                     <>
                                         L'option{' '}
-                                        <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">
+                                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">
                                             texte
                                         </code>{' '}
                                         ajoute un texte en dessous du média sur l'overlay, style mème. Parfait pour
@@ -584,40 +454,29 @@ export default function Usage() {
                                 desc: (
                                     <>
                                         L'option{' '}
-                                        <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-foreground">
+                                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">
                                             fullscreen
                                         </code>{' '}
-                                        affiche le média sur tout l'écran du stream en 16:9 horizontal. Pour les
-                                        fichiers audio, le mode plein écran est activé automatiquement.
+                                        affiche le média sur tout l'écran du stream en 16:9 horizontal. Pour les fichiers
+                                        audio, le mode plein écran est activé automatiquement.
                                     </>
                                 ),
                             },
                             {
                                 icon: '🔒',
                                 title: 'Proxy intégré',
-                                desc: (
-                                    <>
-                                        Tous les médias sont servis via le serveur LiveChat grâce au proxy intégré.
-                                        L'adresse IP des streameurs n'est jamais exposée aux services tiers.
-                                    </>
-                                ),
+                                desc: "Tous les médias sont servis via le serveur LiveChat grâce au proxy intégré. L'adresse IP des streameurs n'est jamais exposée aux services tiers.",
                             },
                             {
                                 icon: '📋',
                                 title: "File d'attente",
-                                desc: (
-                                    <>
-                                        Les médias sont mis en file d'attente et joués les uns après les autres. Si
-                                        plusieurs personnes envoient des médias en même temps, ils se suivent dans
-                                        l'ordre d'envoi.
-                                    </>
-                                ),
+                                desc: "Les médias sont mis en file d'attente et joués les uns après les autres. Si plusieurs personnes envoient des médias en même temps, ils se suivent dans l'ordre d'envoi.",
                             },
                         ].map((feat, i) => (
                             <ScrollReveal key={i} direction="up" delay={(i % 3) * 20}>
-                                <div className="rounded-xl border border-border bg-white/2 px-5 py-4 sm:px-6">
+                                <div className="rounded-lg border border-border bg-card px-5 py-4 sm:px-6">
                                     <div className="flex items-center gap-3">
-                                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5 text-sm">
+                                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-sm">
                                             {feat.icon}
                                         </span>
                                         <p className="font-semibold">{feat.title}</p>
@@ -637,13 +496,13 @@ export default function Usage() {
                         <div className="mt-4 flex flex-wrap justify-center gap-3">
                             <a
                                 href="/config"
-                                className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity duration-200 hover:opacity-85"
+                                className="rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
                             >
                                 Configurer votre overlay
                             </a>
                             <a
                                 href="/"
-                                className="rounded-full border border-border px-7 py-3 text-sm font-semibold transition-colors duration-200 hover:border-foreground/25 hover:bg-white/5"
+                                className="rounded-full border border-border px-7 py-3 text-sm font-semibold transition-colors hover:bg-accent"
                             >
                                 ← Retour à l'accueil
                             </a>

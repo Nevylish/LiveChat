@@ -1,251 +1,187 @@
-import { LogOut, Sliders, User as UserIcon } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { LogOut, Menu, Moon, Sliders, Sun } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 
-const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
+const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/config', label: 'Configuration' },
     { href: '/usage', label: 'Utilisation' },
     { href: '/updates', label: 'Patch Notes' },
 ];
 
+function useTheme() {
+    const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+    const toggle = useCallback(() => {
+        const next = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark', next);
+        document.documentElement.style.backgroundColor = '';
+        localStorage.setItem('livechat-theme', next ? 'dark' : 'light');
+        setIsDark(next);
+    }, []);
+
+    return { isDark, toggle };
+}
+
 export default function Header() {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const { user } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const { isDark, toggle } = useTheme();
+    const [sheetOpen, setSheetOpen] = useState(false);
 
-    const closeMenu = useCallback(() => {
-        setMenuOpen(false);
-        document.body.style.overflow = '';
-    }, []);
-
-    useEffect(() => {
-        closeMenu();
-    }, [location.pathname, closeMenu]);
-
-    useEffect(() => {
-        function onKeyDown(e: KeyboardEvent) {
-            if (e.key === 'Escape' && menuOpen) closeMenu();
-        }
-        document.addEventListener('keydown', onKeyDown);
-        return () => document.removeEventListener('keydown', onKeyDown);
-    }, [menuOpen, closeMenu]);
-
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setDropdownOpen(false);
-            }
-        }
-        if (dropdownOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [dropdownOpen]);
-
-    function toggleMenu() {
-        if (menuOpen) {
-            closeMenu();
-        } else {
-            setMenuOpen(true);
-            document.body.style.overflow = 'hidden';
-        }
-    }
+    const isActive = (href: string) =>
+        href === '/' ? location.pathname === '/' : location.pathname.startsWith(href);
 
     const handleLogout = async () => {
-        setDropdownOpen(false);
         await supabase.auth.signOut();
         window.location.href = '/';
     };
 
+    const displayName =
+        user?.user_metadata?.global_name ??
+        user?.user_metadata?.custom_claims?.global_name ??
+        user?.user_metadata?.full_name ??
+        user?.user_metadata?.name ??
+        'Utilisateur';
+
     return (
-        <>
-            <header
-                className={`sticky z-50 transition-all duration-300 w-full ${
-                    menuOpen
-                        ? 'top-0 px-0 bg-transparent border-b border-transparent backdrop-blur-none'
-                        : 'top-4 px-4 sm:px-6 bg-transparent border-b border-transparent backdrop-blur-none'
-                }`}
-            >
-                <div
-                    className={`mx-auto flex w-full max-w-6xl items-center justify-between transition-all duration-300 ${
-                        menuOpen
-                            ? 'rounded-none border border-transparent bg-transparent shadow-none px-5 py-4'
-                            : 'rounded-2xl border border-border bg-background/70 backdrop-blur-md shadow-lg shadow-black/10 px-5 py-3'
-                    }`}
-                >
-                    <div className="flex items-center gap-8">
-                        <a href="/" className="flex items-center gap-2.5 text-lg font-bold shrink-0">
-                            <img
-                                src="/assets/images/livechat_transparent.png"
-                                alt="LiveChat"
-                                className="h-8 w-8"
-                                width={32}
-                                height={32}
-                                draggable={false}
-                            />
-                            <span>LiveChat</span>
-                        </a>
+        <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-sm">
+            <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+                {/* Logo */}
+                <a href="/" className="flex shrink-0 items-center gap-2 text-sm font-semibold">
+                    <img
+                        src="/assets/images/livechat_transparent.png"
+                        alt="LiveChat"
+                        className="h-6 w-6 invert dark:invert-0"
+                        width={24}
+                        height={24}
+                        draggable={false}
+                    />
+                    <span>LiveChat</span>
+                </a>
 
-                        <nav className="hidden md:block">
-                            <ul className="flex items-center gap-6 text-sm font-semibold text-muted-foreground">
-                                {NAV_LINKS.map((link) => (
-                                    <li key={link.href}>
-                                        <a
-                                            href={link.href}
-                                            target={link.external ? '_blank' : undefined}
-                                            rel={link.external ? 'noopener noreferrer' : undefined}
-                                            className={`transition-colors duration-200 hover:text-foreground ${
-                                                !link.external &&
-                                                (link.href === '/'
-                                                    ? location.pathname === '/'
-                                                    : location.pathname.startsWith(link.href))
-                                                    ? 'text-foreground'
-                                                    : ''
-                                            }`}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </div>
-
-                    <div className="relative flex items-center gap-4" ref={dropdownRef}>
-                        {user ? (
-                            <button
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 cursor-pointer ${
-                                    menuOpen ? 'hidden' : 'flex'
-                                }`}
-                                aria-expanded={dropdownOpen}
-                                aria-haspopup="true"
-                            >
-                                <img
-                                    src={
-                                        user.user_metadata?.avatar_url ||
-                                        'https://cdn.discordapp.com/embed/avatars/0.png'
-                                    }
-                                    alt="Avatar"
-                                    className="h-full w-8 rounded-full object-cover shrink-0"
-                                />
-                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors truncate max-w-[120px]">
-                                    {user.user_metadata?.global_name ||
-                                        user.user_metadata?.custom_claims?.global_name ||
-                                        user.user_metadata?.full_name ||
-                                        user.user_metadata?.name ||
-                                        'Utilisateur'}
-                                </span>
-                            </button>
-                        ) : (
-                            <a
-                                href="/config"
-                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 ${
-                                    menuOpen ? 'hidden' : 'flex'
-                                }`}
-                            >
-                                <div className="flex h-full w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground group-hover:bg-white/10 group-hover:text-foreground transition-colors duration-200">
-                                    <UserIcon className="h-4 w-4" />
-                                </div>
-                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
-                                    Se connecter
-                                </span>
-                            </a>
-                        )}
-
-                        {user && dropdownOpen && (
-                            <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
-                                <button
-                                    onClick={() => {
-                                        setDropdownOpen(false);
-                                        navigate('/config');
-                                    }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors cursor-pointer"
-                                >
-                                    <Sliders className="h-4 w-4" />
-                                    Configuration
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                                >
-                                    <LogOut className="h-4 w-4" />
-                                    Se déconnecter
-                                </button>
-                            </div>
-                        )}
-
-                        <button
-                            className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden hover:bg-white/5 transition-colors cursor-pointer shrink-0"
-                            onClick={toggleMenu}
-                            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-                            aria-expanded={menuOpen}
-                        >
-                            <div className="flex h-[18px] w-[22px] flex-col justify-between">
-                                <span
-                                    className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                                        menuOpen ? 'translate-y-[8px] rotate-45' : ''
-                                    }`}
-                                />
-                                <span
-                                    className={`block h-[2px] w-full rounded-full bg-foreground transition-opacity duration-200 ${
-                                        menuOpen ? 'opacity-0' : ''
-                                    }`}
-                                />
-                                <span
-                                    className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                                        menuOpen ? 'translate-y-[-8px] -rotate-45' : ''
-                                    }`}
-                                />
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <div
-                className={`fixed inset-0 z-40 flex flex-col bg-background transition-opacity duration-300 md:pointer-events-none md:hidden md:opacity-0 ${
-                    menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
-                }`}
-                aria-hidden={!menuOpen}
-            >
-                <nav className="flex flex-1 flex-col items-center justify-center gap-8">
-                    {NAV_LINKS.map((link, i) => (
+                {/* Desktop nav */}
+                <nav className="hidden lg:flex items-center gap-6" aria-label="Navigation principale">
+                    {NAV_LINKS.map((link) => (
                         <a
                             key={link.href}
                             href={link.href}
-                            target={link.external ? '_blank' : undefined}
-                            rel={link.external ? 'noopener noreferrer' : undefined}
-                            onClick={link.external ? undefined : closeMenu}
-                            tabIndex={menuOpen ? 0 : -1}
-                            className={`text-2xl font-bold transition-colors duration-200 hover:text-foreground ${
-                                !link.external &&
-                                (link.href === '/'
-                                    ? location.pathname === '/'
-                                    : location.pathname.startsWith(link.href))
-                                    ? 'text-foreground'
+                            className={`text-sm transition-colors hover:text-foreground ${
+                                isActive(link.href)
+                                    ? 'text-foreground font-medium'
                                     : 'text-muted-foreground'
                             }`}
-                            style={{
-                                transitionDelay: menuOpen ? `${80 + i * 60}ms` : '0ms',
-                                transform: menuOpen ? 'translateY(0)' : 'translateY(16px)',
-                                opacity: menuOpen ? 1 : 0,
-                                transitionProperty: 'transform, opacity, color',
-                                transitionDuration: '300ms, 300ms, 200ms',
-                            }}
                         >
                             {link.label}
                         </a>
                     ))}
                 </nav>
+
+                {/* Right side */}
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggle}
+                        aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+                    >
+                        {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                    </Button>
+
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="group flex h-8 shrink-0 cursor-pointer items-center gap-0 rounded-full border border-border bg-background p-0 transition-colors hover:bg-accent sm:gap-2 sm:pr-3">
+                                    <img
+                                        src={
+                                            user.user_metadata?.avatar_url ||
+                                            'https://cdn.discordapp.com/embed/avatars/0.png'
+                                        }
+                                        alt="Avatar"
+                                        className="h-full w-8 shrink-0 rounded-full object-cover"
+                                    />
+                                    <span className="hidden max-w-[120px] truncate text-xs font-semibold text-muted-foreground transition-colors group-hover:text-foreground sm:inline">
+                                        {displayName}
+                                    </span>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuItem onClick={() => navigate('/config')}>
+                                    <Sliders className="h-4 w-4" />
+                                    Configuration
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={handleLogout}
+                                    className="text-destructive focus:text-destructive"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Se déconnecter
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button asChild size="sm" variant="outline" className="hidden sm:flex">
+                            <a href="/config">Se connecter</a>
+                        </Button>
+                    )}
+
+                    {/* Mobile sheet */}
+                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="lg:hidden"
+                                aria-label="Ouvrir le menu"
+                            >
+                                <Menu className="h-4 w-4" />
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="w-64">
+                            <div className="mt-6 flex flex-col gap-1">
+                                <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Navigation
+                                </p>
+                                {NAV_LINKS.map((link) => (
+                                    <a
+                                        key={link.href}
+                                        href={link.href}
+                                        onClick={() => setSheetOpen(false)}
+                                        className={`rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-foreground ${
+                                            isActive(link.href)
+                                                ? 'bg-accent text-foreground font-medium'
+                                                : 'text-muted-foreground'
+                                        }`}
+                                    >
+                                        {link.label}
+                                    </a>
+                                ))}
+                                {!user && (
+                                    <a
+                                        href="/config"
+                                        onClick={() => setSheetOpen(false)}
+                                        className="mt-4 rounded-md border border-border px-3 py-2 text-center text-sm font-medium transition-colors hover:bg-accent"
+                                    >
+                                        Se connecter
+                                    </a>
+                                )}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
+                </div>
             </div>
-        </>
+        </header>
     );
 }

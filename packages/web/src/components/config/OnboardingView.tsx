@@ -1,5 +1,8 @@
 import type { DiscordGuild } from '@livechat/types';
 import { ShieldAlert, Sliders } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface OnboardingViewProps {
     selectedGuild: DiscordGuild;
@@ -19,51 +22,48 @@ export default function OnboardingView({
     handleCreateConfig,
 }: OnboardingViewProps) {
     return (
-        <div className="max-w-xl mx-auto py-8">
-            <div className="config-card flex flex-col items-start text-left space-y-6">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-white">
-                    <Sliders className="h-8 w-8" />
+        <div className="mx-auto max-w-md py-8">
+            <div className="rounded-lg border border-border bg-card p-8">
+                <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-muted-foreground">
+                    <Sliders className="h-5 w-5" />
                 </div>
-                <div className="space-y-2">
-                    <h3 className="text-xl font-bold sm:text-2xl">Activer votre premier overlay</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                        Choisissez votre pseudo d'affichage ci-dessous pour générer le lien de votre overlay pour le
-                        serveur {selectedGuild.name}.
-                    </p>
-                </div>
+                <h3 className="text-xl font-bold">Activer votre premier overlay</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    Choisissez votre pseudo d'affichage pour générer le lien de votre overlay sur{' '}
+                    <strong className="text-foreground">{selectedGuild.name}</strong>.
+                </p>
 
-                <div className="w-full text-left space-y-4 pt-2">
-                    <div>
-                        <label htmlFor="username" className="config-label text-sm text-muted-foreground font-semibold">
+                <div className="mt-6 space-y-4">
+                    <div className="space-y-1.5">
+                        <Label htmlFor="username" className="text-xs font-semibold text-muted-foreground">
                             Pseudo d'affichage
-                        </label>
-                        <input
-                            type="text"
+                        </Label>
+                        <Input
                             id="username"
                             placeholder="noobmaster69"
                             value={username}
                             onChange={(e) => validateAndSetUsername(e.target.value)}
-                            className="config-input mt-1.5 py-3 px-4 text-base"
                         />
-                        <p className="mt-2 text-xs text-muted-foreground leading-normal">
-                            Ce pseudo permet d'identifier votre overlay. Vous pourrez le modifier plus tard.
+                        <p className="text-xs text-muted-foreground">
+                            Ce pseudo identifie votre overlay. Vous pourrez le modifier plus tard.
                         </p>
                     </div>
 
                     {error && (
-                        <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3.5 text-sm text-red-200">
-                            <ShieldAlert className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-2.5 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
+                            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
                             <div>{error}</div>
                         </div>
                     )}
 
-                    <button
+                    <Button
                         onClick={() => handleCreateConfig()}
                         disabled={isGenerating || !username}
-                        className="w-full flex items-center justify-center gap-2 rounded-full bg-white hover:bg-white/90 px-8 py-3.5 text-sm font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        className="w-full"
+                        size="lg"
                     >
                         {isGenerating ? "Génération de l'overlay..." : "Créer et générer votre lien d'overlay"}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

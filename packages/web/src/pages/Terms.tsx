@@ -42,7 +42,7 @@ const sections = [
 
 export default function Terms() {
     return (
-        <div className="dark flex min-h-screen flex-col text-foreground">
+        <div className="flex min-h-screen flex-col text-foreground">
             <Seo
                 title="Conditions d'utilisation - LiveChat"
                 description="Conditions d'utilisation de LiveChat, le bot Discord et l'overlay de streaming. Lisez les règles d'usage avant d'utiliser le service."
@@ -50,22 +50,20 @@ export default function Terms() {
             />
             <Header />
 
-            <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                <div className="mb-8">
+            <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+                <div className="mb-8 border-b border-border pb-8">
                     <h1 className="text-2xl font-bold sm:text-3xl">Conditions d'utilisation</h1>
-                    <p className="mt-3 text-sm text-muted-foreground sm:text-base">
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
                         En utilisant LiveChat, vous reconnaissez avoir lu, compris et accepté les conditions
                         d'utilisation ci-dessous.
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 8 juin 2026
-                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground/60">Dernière mise à jour : 8 juin 2026</p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     {sections.map((section) => (
-                        <div key={section.title} className="rounded-xl border border-border bg-white/2 p-5 sm:p-6">
-                            <h2 className="text-base font-semibold sm:text-lg">{section.title}</h2>
+                        <div key={section.title} className="rounded-lg border border-border bg-card p-5 sm:p-6">
+                            <h2 className="text-sm font-semibold sm:text-base">{section.title}</h2>
                             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{section.content}</p>
                         </div>
                     ))}
@@ -74,13 +72,13 @@ export default function Terms() {
                 <div className="mt-10 flex flex-wrap justify-center gap-3">
                     <a
                         href="/privacy"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
                     >
                         Voir la politique de confidentialité
                     </a>
                     <a
                         href="/"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
                     >
                         ← Retour à l'accueil
                     </a>

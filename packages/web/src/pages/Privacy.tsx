@@ -52,7 +52,7 @@ const sections = [
 
 export default function Privacy() {
     return (
-        <div className="dark flex min-h-screen flex-col text-foreground">
+        <div className="flex min-h-screen flex-col text-foreground">
             <Seo
                 title="Politique de confidentialité - LiveChat"
                 description="LiveChat et son site web ne collectent aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur."
@@ -60,22 +60,20 @@ export default function Privacy() {
             />
             <Header />
 
-            <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                <div className="mb-8">
+            <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+                <div className="mb-8 border-b border-border pb-8">
                     <h1 className="text-2xl font-bold sm:text-3xl">Politique de confidentialité</h1>
-                    <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-                        Nous accordons une grande importance à la protection de vos données, en utilisant LiveChat, vous
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                        Nous accordons une grande importance à la protection de vos données. En utilisant LiveChat, vous
                         acceptez cette politique de confidentialité.
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 16 juin 2026
-                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground/60">Dernière mise à jour : 16 juin 2026</p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     {sections.map((section) => (
-                        <div key={section.title} className="rounded-xl border border-border bg-white/2 p-5 sm:p-6">
-                            <h2 className="text-base font-semibold sm:text-lg">{section.title}</h2>
+                        <div key={section.title} className="rounded-lg border border-border bg-card p-5 sm:p-6">
+                            <h2 className="text-sm font-semibold sm:text-base">{section.title}</h2>
                             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                                 {section.content}
                             </p>
@@ -86,13 +84,13 @@ export default function Privacy() {
                 <div className="mt-10 flex flex-wrap justify-center gap-3">
                     <a
                         href="/terms"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
                     >
                         Voir les conditions d'utilisation
                     </a>
                     <a
                         href="/"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
+                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors hover:bg-accent"
                     >
                         ← Retour à l'accueil
                     </a>

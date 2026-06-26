@@ -1,5 +1,9 @@
 import type { DiscordGuild, DiscordRole, OverlayConfigRow } from '@livechat/types';
 import { CheckCircle, RefreshCw, ShieldAlert, Sliders, Trash2, Tv } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { isGuildAdmin } from '../../lib/discord';
 
 interface OverlaysDashboardProps {
@@ -12,7 +16,6 @@ interface OverlaysDashboardProps {
     handleCreateConfig: (customName: string) => void;
     handleConfigureConfig: (config: OverlayConfigRow) => void;
     handleDeleteConfig: (token: string) => void;
-
     allGuildConfigs: OverlayConfigRow[];
     loadingAllConfigs: boolean;
     handleAdminDeleteConfig: (targetUsername: string) => void;
@@ -59,57 +62,56 @@ export default function OverlaysDashboard({
     const isUserAdmin = isGuildAdmin(selectedGuild);
 
     return (
-        <div className="space-y-8 max-w-6xl mx-auto animate-fade-in">
-            <div className="flex flex-col md:flex-row gap-8">
-                <div className="flex-1 space-y-4">
-                    <div className="flex items-center justify-between pb-2">
-                        <div>
-                            <h3 className="text-lg font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                <Tv className="h-5 w-5" />
-                                Vos Overlays ({configs.length}/{maxOverlays})
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                                Sélectionnez l'overlay que vous souhaitez configurer.
-                            </p>
-                        </div>
+        <div className="space-y-8">
+            {/* Overlays list + create form */}
+            <div className="flex flex-col gap-6 md:flex-row">
+                {/* List */}
+                <div className="flex-1 space-y-3">
+                    <div>
+                        <h3 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                            <Tv className="h-4 w-4" />
+                            Vos overlays ({configs.length}/{maxOverlays})
+                        </h3>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                            Sélectionnez l'overlay que vous souhaitez configurer.
+                        </p>
                     </div>
 
-                    <div className="grid gap-4">
+                    <div className="space-y-2">
                         {configs.length === 0 ? (
-                            <div className="config-card py-10 text-center text-sm text-muted-foreground">
-                                Aucun overlay créé sur ce serveur. Utilisez le formulaire ci-contre pour en créer un.
+                            <div className="rounded-lg border border-border bg-card py-10 text-center text-sm text-muted-foreground">
+                                Aucun overlay créé. Utilisez le formulaire pour en créer un.
                             </div>
                         ) : (
                             configs.map((config) => (
                                 <div
                                     key={config.token}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors"
+                                    className="flex flex-col justify-between gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center"
                                 >
-                                    <div className="flex items-center gap-4 min-w-0">
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/5 text-white">
-                                            <Tv className="h-5 w-5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary">
+                                            <Tv className="h-4 w-4 text-muted-foreground" />
                                         </div>
-                                        <div className="min-w-0">
-                                            <p className="font-bold text-base text-foreground truncate">
-                                                {config.username}
-                                            </p>
-                                        </div>
+                                        <p className="font-semibold">{config.username}</p>
                                     </div>
-                                    <div className="flex items-center gap-2 shrink-0 sm:justify-end">
-                                        <button
+                                    <div className="flex shrink-0 items-center gap-2 sm:justify-end">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
                                             onClick={() => handleConfigureConfig(config)}
-                                            className="flex items-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 h-10 text-xs font-bold text-foreground transition-colors cursor-pointer"
                                         >
                                             <Sliders className="h-3.5 w-3.5" />
                                             Configurer
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
                                             onClick={() => handleDeleteConfig(config.token)}
-                                            className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 px-4 h-10 text-xs font-bold text-red-200 transition-colors cursor-pointer"
+                                            className="border-destructive/30 text-destructive hover:bg-destructive/10"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                             Supprimer
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))
@@ -117,25 +119,22 @@ export default function OverlaysDashboard({
                     </div>
                 </div>
 
-                <div className="w-full md:w-80 shrink-0">
+                {/* Create form */}
+                <div className="w-full shrink-0 md:w-72">
                     {configs.length < maxOverlays ? (
-                        <div className="config-card flex flex-col items-start text-left space-y-4">
-                            <div className="space-y-1">
-                                <h4 className="font-bold text-base text-foreground">Créer un overlay</h4>
-                                <p className="text-xs text-muted-foreground leading-normal">
-                                    Ajoutez un nouvel overlay indépendant pour ce serveur Discord.
+                        <div className="rounded-lg border border-border bg-card p-5 space-y-4">
+                            <div>
+                                <h4 className="text-sm font-semibold">Créer un overlay</h4>
+                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                    Ajoutez un nouvel overlay indépendant pour ce serveur.
                                 </p>
                             </div>
-                            <div className="w-full space-y-3 pt-2">
-                                <div>
-                                    <label
-                                        htmlFor="newOverlayName"
-                                        className="config-label text-xs text-muted-foreground font-semibold"
-                                    >
+                            <div className="space-y-3">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="newOverlayName" className="text-xs text-muted-foreground">
                                         Pseudo d'affichage
-                                    </label>
-                                    <input
-                                        type="text"
+                                    </Label>
+                                    <Input
                                         id="newOverlayName"
                                         placeholder="noobmaster69"
                                         value={newOverlayName}
@@ -144,196 +143,180 @@ export default function OverlaysDashboard({
                                             if (clean.startsWith('_')) clean = clean.substring(1);
                                             setNewOverlayName(clean);
                                         }}
-                                        className="config-input py-2 px-3 text-sm"
                                     />
                                 </div>
-                                <button
+                                <Button
                                     onClick={() => handleCreateConfig(newOverlayName)}
                                     disabled={isGenerating || !newOverlayName}
-                                    className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-white hover:bg-white/90 px-4 py-2.5 text-xs font-semibold text-black transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="w-full"
+                                    size="sm"
                                 >
                                     {isGenerating ? 'Création...' : 'Créer mon nouvel overlay'}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     ) : (
-                        <div className="config-card border-amber-500/20 bg-amber-500/5 flex flex-col items-start text-left space-y-4">
-                            <div className="space-y-1">
-                                <h4 className="font-bold text-base text-amber-200">Limite atteinte</h4>
-                                <p className="text-xs text-amber-200/70 leading-normal">
-                                    Vous avez atteint la limite maximale de {maxOverlays} overlay
-                                    {maxOverlays > 1 ? 's' : ''} par personne sur ce serveur.
-                                </p>
-                            </div>
-                            <p className="text-xs text-muted-foreground leading-normal pt-1">
-                                Pour créer un nouvel overlay, veuillez d'abord en supprimer un parmi vos configurations
-                                actives sur ce serveur.
+                        <div className="rounded-lg border border-amber-300 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/5 p-5">
+                            <h4 className="text-sm font-semibold text-amber-800 dark:text-amber-200">Limite atteinte</h4>
+                            <p className="mt-1 text-xs leading-normal text-amber-700 dark:text-amber-200/70">
+                                Vous avez atteint la limite de {maxOverlays} overlay{maxOverlays > 1 ? 's' : ''} sur ce
+                                serveur. Supprimez-en un pour en créer un nouveau.
                             </p>
                         </div>
                     )}
                 </div>
             </div>
 
+            {/* Admin section */}
             {isUserAdmin && (
-                <div className="border-t border-white/5 pt-8 space-y-6">
-                    <div>
-                        <h3 className="text-lg font-bold uppercase tracking-wider text-red-400 flex items-center gap-2">
-                            <ShieldAlert className="h-5 w-5" />
-                            Administration du serveur
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            Gérez les overlays des membres et configurez les autorisations d'utilisation de LiveChat
-                            pour ce serveur.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                <Tv className="h-4.5 w-4.5" />
-                                Overlays des membres ({allGuildConfigs.length})
-                            </h4>
-
-                            {loadingAllConfigs ? (
-                                <div className="py-8 flex items-center gap-3">
-                                    <RefreshCw className="h-5 w-5 animate-spin text-white/40" />
-                                    <span className="text-xs text-muted-foreground font-semibold">
-                                        Chargement des configurations...
-                                    </span>
-                                </div>
-                            ) : allGuildConfigs.length === 0 ? (
-                                <div className="config-card py-6 text-center text-xs text-muted-foreground">
-                                    Aucune configuration active d'overlay sur ce serveur.
-                                </div>
-                            ) : (
-                                <div className="grid gap-3 max-h-[350px] overflow-y-auto pr-2 scrollbar-thin">
-                                    {allGuildConfigs.map((c) => (
-                                        <div
-                                            key={c.username}
-                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-white/5 bg-white/1"
-                                        >
-                                            <div className="min-w-0 flex-1">
-                                                <p className="font-bold text-sm text-foreground truncate">
-                                                    {c.username}
-                                                </p>
-                                                <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                                    Créateur: <span className="font-mono text-[10px]">{c.user_id}</span>
-                                                </p>
-                                                <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                                    Dernière modification:{' '}
-                                                    <span className="font-mono text-[10px]">
-                                                        {c.updated_at
-                                                            ? new Date(c.updated_at).toLocaleString()
-                                                            : '—'}
-                                                    </span>
-                                                </p>
-                                            </div>
-                                            <button
-                                                onClick={() => handleAdminDeleteConfig(c.username)}
-                                                className="flex items-center justify-center gap-2 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/20 px-3 h-8.5 text-xs font-bold text-red-200 transition-colors cursor-pointer shrink-0 w-full sm:w-auto"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5" />
-                                                Révoquer
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                <>
+                    <Separator />
+                    <div className="space-y-6">
+                        <div>
+                            <h3 className="flex items-center gap-2 text-sm font-semibold text-destructive">
+                                <ShieldAlert className="h-4 w-4" />
+                                Administration du serveur
+                            </h3>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                Gérez les overlays des membres et configurez les autorisations pour ce serveur.
+                            </p>
                         </div>
 
-                        <div className="space-y-4">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                <Sliders className="h-4.5 w-4.5" />
-                                Configuration du Serveur
-                            </h4>
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            {/* All overlays list */}
+                            <div className="space-y-3">
+                                <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    <Tv className="h-3.5 w-3.5" />
+                                    Overlays des membres ({allGuildConfigs.length})
+                                </h4>
 
-                            <div className="config-card space-y-5">
-                                <div className="flex items-center justify-between">
-                                    <div className="space-y-0.5">
-                                        <p className="text-sm font-semibold text-foreground">Restreindre par rôle</p>
-                                        <p className="text-xs text-muted-foreground max-w-xs leading-normal">
-                                            Exiger un rôle Discord spécifique pour créer ou utiliser des overlays et les
-                                            commandes /livechat.
-                                        </p>
+                                {loadingAllConfigs ? (
+                                    <div className="flex items-center gap-2 py-4">
+                                        <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
+                                        <span className="text-xs text-muted-foreground">Chargement...</span>
                                     </div>
-                                    <button
-                                        onClick={() => {
-                                            const nextState = !isRoleRestrictionEnabled;
-                                            setIsRoleRestrictionEnabled(nextState);
-                                            if (nextState && !requiredRoleId && guildRoles.length > 0) {
-                                                setRequiredRoleId(guildRoles[0].id);
-                                            }
-                                        }}
-                                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isRoleRestrictionEnabled ? 'bg-white' : 'bg-white/10'}`}
-                                    >
-                                        <span
-                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${isRoleRestrictionEnabled ? 'bg-black translate-x-5' : 'bg-white translate-x-0'}`}
-                                        />
-                                    </button>
-                                </div>
-
-                                {isRoleRestrictionEnabled && (
-                                    <div className="space-y-3 pt-2 border-t border-white/5">
-                                        <label className="text-xs font-semibold text-muted-foreground block">
-                                            Rôle requis
-                                        </label>
-                                        {loadingRoles ? (
-                                            <div className="py-2 flex items-center gap-2">
-                                                <RefreshCw className="h-3.5 w-3.5 animate-spin text-white/40" />
-                                                <span className="text-xs text-muted-foreground">
-                                                    Chargement des rôles...
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <select
-                                                value={requiredRoleId || ''}
-                                                onChange={(e) => setRequiredRoleId(e.target.value || null)}
-                                                className="config-input w-full py-2 px-3 text-sm rounded-lg"
+                                ) : allGuildConfigs.length === 0 ? (
+                                    <div className="rounded-lg border border-border bg-card py-5 text-center text-xs text-muted-foreground">
+                                        Aucune configuration active sur ce serveur.
+                                    </div>
+                                ) : (
+                                    <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
+                                        {allGuildConfigs.map((c) => (
+                                            <div
+                                                key={c.username}
+                                                className="flex flex-col justify-between gap-3 rounded-lg border border-border bg-card p-3 sm:flex-row sm:items-center"
                                             >
-                                                {guildRoles.length === 0 ? (
-                                                    <option value="">Aucun rôle disponible</option>
-                                                ) : (
-                                                    guildRoles.map((role) => (
-                                                        <option key={role.id} value={role.id}>
-                                                            {role.name}
-                                                        </option>
-                                                    ))
-                                                )}
-                                            </select>
-                                        )}
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-semibold">{c.username}</p>
+                                                    <p className="truncate text-xs text-muted-foreground">
+                                                        ID:{' '}
+                                                        <span className="font-mono text-[10px]">{c.user_id}</span>
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {c.updated_at
+                                                            ? new Date(c.updated_at).toLocaleDateString()
+                                                            : '—'}
+                                                    </p>
+                                                </div>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => handleAdminDeleteConfig(c.username)}
+                                                    className="w-full border-destructive/30 text-destructive hover:bg-destructive/10 sm:w-auto"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                    Révoquer
+                                                </Button>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
+                            </div>
 
-                                <div className="space-y-3 pt-4 border-t border-white/5">
-                                    <div className="space-y-0.5">
-                                        <p className="text-sm font-semibold text-foreground">
-                                            Limite d'overlays par personne
-                                        </p>
-                                        <p className="text-xs text-muted-foreground leading-normal">
-                                            Nombre maximum d'overlays que chaque membre peut créer (min 1, max 20).
-                                        </p>
+                            {/* Server settings */}
+                            <div className="space-y-3">
+                                <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    <Sliders className="h-3.5 w-3.5" />
+                                    Configuration du serveur
+                                </h4>
+
+                                <div className="rounded-lg border border-border bg-card p-5 space-y-5">
+                                    {/* Role restriction toggle */}
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <p className="text-sm font-semibold">Restreindre par rôle</p>
+                                            <p className="mt-0.5 text-xs leading-normal text-muted-foreground">
+                                                Exiger un rôle Discord pour créer des overlays et utiliser /livechat.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                const nextState = !isRoleRestrictionEnabled;
+                                                setIsRoleRestrictionEnabled(nextState);
+                                                if (nextState && !requiredRoleId && guildRoles.length > 0) {
+                                                    setRequiredRoleId(guildRoles[0].id);
+                                                }
+                                            }}
+                                            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${isRoleRestrictionEnabled ? 'bg-foreground' : 'bg-border'}`}
+                                        >
+                                            <span
+                                                className={`inline-block h-4 w-4 transform rounded-full shadow transition duration-200 ${isRoleRestrictionEnabled ? 'translate-x-4 bg-background' : 'translate-x-0 bg-background'}`}
+                                            />
+                                        </button>
                                     </div>
-                                    <input
-                                        type="text"
-                                        placeholder="5"
-                                        value={maxOverlaysInput}
-                                        onChange={(e) => {
-                                            const clean = e.target.value.replace(/[^0-9]/g, '');
-                                            setMaxOverlaysInput(clean);
-                                        }}
-                                        className="config-input w-full py-2 px-3 text-sm rounded-lg"
-                                    />
-                                </div>
 
-                                <div className="pt-2">
-                                    <button
+                                    {isRoleRestrictionEnabled && (
+                                        <div className="space-y-1.5 border-t border-border pt-4">
+                                            <Label className="text-xs text-muted-foreground">Rôle requis</Label>
+                                            {loadingRoles ? (
+                                                <div className="flex items-center gap-2 py-2">
+                                                    <RefreshCw className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                                                    <span className="text-xs text-muted-foreground">
+                                                        Chargement des rôles...
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <select
+                                                    value={requiredRoleId || ''}
+                                                    onChange={(e) => setRequiredRoleId(e.target.value || null)}
+                                                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-1 focus:ring-ring"
+                                                >
+                                                    {guildRoles.length === 0 ? (
+                                                        <option value="">Aucun rôle disponible</option>
+                                                    ) : (
+                                                        guildRoles.map((role) => (
+                                                            <option key={role.id} value={role.id}>
+                                                                {role.name}
+                                                            </option>
+                                                        ))
+                                                    )}
+                                                </select>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Max overlays */}
+                                    <div className="space-y-1.5 border-t border-border pt-4">
+                                        <div>
+                                            <p className="text-sm font-semibold">Limite d'overlays par personne</p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                                Maximum d'overlays par membre (1 à 20).
+                                            </p>
+                                        </div>
+                                        <Input
+                                            placeholder="5"
+                                            value={maxOverlaysInput}
+                                            onChange={(e) =>
+                                                setMaxOverlaysInput(e.target.value.replace(/[^0-9]/g, ''))
+                                            }
+                                        />
+                                    </div>
+
+                                    <Button
                                         onClick={handleSaveSettings}
                                         disabled={savingSettings || !hasUnsavedSettings}
-                                        className={`w-full flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-xs font-bold transition-all ${
-                                            hasUnsavedSettings
-                                                ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
-                                                : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
-                                        }`}
+                                        className="w-full"
+                                        size="sm"
                                     >
                                         {savingSettings ? (
                                             <>
@@ -348,12 +331,12 @@ export default function OverlaysDashboard({
                                         ) : (
                                             'Enregistrer la configuration'
                                         )}
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </div>
     );

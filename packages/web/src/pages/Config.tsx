@@ -595,18 +595,18 @@ export default function Config() {
 
     if (authLoading) {
         return (
-            <PageShell
-                title="Configurer LiveChat - Dashboard Discord et overlay"
-                description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
-                path="/config"
-            >
-                <main className="flex-1 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                        <RefreshCw className="h-10 w-10 animate-spin text-white/60" />
-                        <p className="text-sm font-semibold text-muted-foreground">Chargement du dashboard...</p>
-                    </div>
-                </main>
-            </PageShell>
+        <PageShell
+            title="Configurer LiveChat - Dashboard Discord et overlay"
+            description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
+            path="/config"
+        >
+            <main className="flex flex-1 items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">Chargement du dashboard...</p>
+                </div>
+            </main>
+        </PageShell>
         );
     }
 
@@ -623,13 +623,14 @@ export default function Config() {
                 title="Tutoriel LiveChat"
             />
 
-            <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8 sm:px-10 sm:py-12">
+            <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
                 {!session ? (
                     <LoginView onLogin={handleLogin} />
                 ) : (
                     <div className="space-y-6">
-                        <div className="sticky top-[80px] md:top-[72px] z-40 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-background/80 border border-border/40 backdrop-blur-md rounded-2xl p-4 sm:px-6 shadow-lg shadow-black/20 transition-all">
-                            <div className="flex items-center gap-3.5">
+                        {/* Sticky toolbar */}
+                        <div className="sticky top-14 z-40 flex flex-col gap-3 rounded-lg border border-border bg-background/95 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                            <div className="flex items-center gap-3">
                                 {selectedGuild ? (
                                     <>
                                         <button
@@ -657,31 +658,27 @@ export default function Config() {
                                                     navigate('/config');
                                                 }
                                             }}
-                                            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white/3 hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
-                                            title={
-                                                isEditing
-                                                    ? 'Retour à la liste des overlays'
-                                                    : 'Retour à la liste des serveurs'
-                                            }
+                                            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                                            title={isEditing ? 'Retour à la liste des overlays' : 'Retour à la liste des serveurs'}
                                         >
-                                            <ArrowLeft className="h-4.5 w-4.5" />
+                                            <ArrowLeft className="h-4 w-4" />
                                         </button>
                                         {selectedGuild.icon ? (
                                             <img
                                                 src={`https://cdn.discordapp.com/icons/${selectedGuild.id}/${selectedGuild.icon}.png`}
                                                 alt=""
-                                                className="h-10 w-10 rounded-xl object-cover border border-white/10 shrink-0"
+                                                className="h-8 w-8 shrink-0 rounded-md border border-border object-cover"
                                             />
                                         ) : (
-                                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-base font-bold text-muted-foreground uppercase">
+                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-bold uppercase text-muted-foreground">
                                                 {selectedGuild.name.substring(0, 2)}
                                             </div>
                                         )}
                                         <div>
-                                            <p className="font-semibold text-sm">{selectedGuild.name}</p>
-                                            <p className="text-xs text-muted-foreground">
+                                            <p className="text-sm font-semibold leading-none">{selectedGuild.name}</p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">
                                                 {isEditing && activeConfig
-                                                    ? `Configuration de l'overlay : ${activeConfig.username}`
+                                                    ? `Overlay : ${activeConfig.username}`
                                                     : 'Sélectionnez ou créez un overlay'}
                                             </p>
                                         </div>
@@ -689,15 +686,12 @@ export default function Config() {
                                 ) : (
                                     <>
                                         <img
-                                            src={
-                                                user?.user_metadata?.avatar_url ||
-                                                'https://cdn.discordapp.com/embed/avatars/0.png'
-                                            }
+                                            src={user?.user_metadata?.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png'}
                                             alt="Avatar"
-                                            className="h-10 w-10 rounded-full border border-white/10"
+                                            className="h-8 w-8 shrink-0 rounded-full border border-border"
                                         />
                                         <div>
-                                            <p className="font-semibold text-sm">
+                                            <p className="text-sm font-semibold leading-none">
                                                 Bonjour,{' '}
                                                 {user?.user_metadata?.global_name ||
                                                     user?.user_metadata?.custom_claims?.global_name ||
@@ -705,28 +699,28 @@ export default function Config() {
                                                     user?.user_metadata?.name ||
                                                     'Utilisateur Discord'}
                                             </p>
-                                            <p className="text-xs text-muted-foreground">Sélectionnez un serveur</p>
+                                            <p className="mt-0.5 text-xs text-muted-foreground">Sélectionnez un serveur</p>
                                         </div>
                                     </>
                                 )}
                             </div>
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                            <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
                                 {selectedGuild && isEditing && activeConfig && (
                                     <>
                                         <button
                                             onClick={handleSaveConfig}
                                             disabled={!hasUnsavedChanges}
-                                            className={`flex items-center justify-center rounded-lg px-4 h-9 text-xs font-bold transition-colors w-full sm:w-auto ${
+                                            className={`flex h-8 w-full items-center justify-center rounded-md px-3 text-xs font-semibold transition-colors sm:w-auto ${
                                                 hasUnsavedChanges
-                                                    ? 'bg-white text-black hover:bg-white/95 cursor-pointer shadow-md'
-                                                    : 'bg-white/5 border border-border text-muted-foreground cursor-not-allowed opacity-50'
+                                                    ? 'cursor-pointer bg-foreground text-background hover:opacity-90'
+                                                    : 'cursor-not-allowed border border-border text-muted-foreground opacity-50'
                                             }`}
                                         >
                                             Sauvegarder
                                         </button>
                                         <button
                                             onClick={() => handleDeleteConfig(activeConfig.token)}
-                                            className="flex h-9 items-center justify-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 px-4 py-1.5 text-xs font-bold text-red-200 transition-colors duration-200 cursor-pointer w-full sm:w-auto"
+                                            className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/10 px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/20 sm:w-auto"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
                                             Supprimer
@@ -737,8 +731,7 @@ export default function Config() {
                                     <button
                                         onClick={() => loadGuilds(true)}
                                         disabled={fetchingGuilds}
-                                        title="Actualiser la liste des serveurs"
-                                        className="flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 disabled:opacity-50 hover:text-foreground cursor-pointer w-full sm:w-auto"
+                                        className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50 sm:w-auto"
                                     >
                                         <RefreshCw className={`h-3.5 w-3.5 ${fetchingGuilds ? 'animate-spin' : ''}`} />
                                         Actualiser
@@ -746,17 +739,17 @@ export default function Config() {
                                 )}
                                 <button
                                     onClick={() => setVideoOpen(true)}
-                                    className="flex h-9 items-center justify-center gap-2 rounded-lg border border-border bg-white/3 hover:bg-white/5 px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors duration-200 hover:text-foreground cursor-pointer w-full sm:w-auto"
+                                    className="flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border px-3 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:w-auto"
                                 >
                                     <Play className="h-3.5 w-3.5" />
-                                    Tutoriel vidéo
+                                    Tutoriel
                                 </button>
                             </div>
                         </div>
 
                         {error && !isRestricted && (
-                            <div className="flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3.5 text-sm text-red-200">
-                                <ShieldAlert className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                            <div className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                                <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
                                 <div>{error}</div>
                             </div>
                         )}
@@ -771,18 +764,16 @@ export default function Config() {
                                 onSelectGuild={(id) => navigate(`/config/${id}`)}
                             />
                         ) : !selectedGuild ? (
-                            <div className="py-20 flex flex-col items-center justify-center gap-4">
-                                <RefreshCw className="h-10 w-10 animate-spin text-white/60" />
-                                <span className="text-sm font-semibold text-muted-foreground">
-                                    Validation du serveur...
-                                </span>
+                            <div className="flex flex-col items-center justify-center gap-4 py-20">
+                                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                                <span className="text-sm text-muted-foreground">Validation du serveur...</span>
                             </div>
                         ) : (
                             <div className="space-y-6">
                                 {checkingLink ? (
-                                    <div className="py-20 flex flex-col items-center justify-center gap-4">
-                                        <RefreshCw className="h-8 w-8 animate-spin text-white/60" />
-                                        <span className="text-sm font-semibold text-muted-foreground">
+                                    <div className="flex flex-col items-center justify-center gap-4 py-20">
+                                        <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
                                             Vérification de la configuration...
                                         </span>
                                     </div>
