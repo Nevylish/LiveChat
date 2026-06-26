@@ -1,4 +1,5 @@
 {
+    "installCommand": "cd ../.. && pnpm install",
     "rewrites": [
         { "source": "/v2/:path*", "destination": "https://livechat-overlay.nevylish.fr/v2/:path*" },
         { "source": "/overlay.html", "destination": "https://livechat-overlay.nevylish.fr/overlay.html" },
