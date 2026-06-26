@@ -91,7 +91,7 @@ export default function Home() {
                                 <div className="mt-8 flex select-none flex-col gap-3 sm:flex-row sm:flex-wrap">
                                     <a
                                         href="/config"
-                                        className="btn-secondary inline-flex w-full items-center justify-center px-7 text-center text-sm font-semibold sm:w-auto"
+                                        className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-7 py-3 text-center text-sm font-semibold text-background transition-opacity hover:opacity-85 sm:w-auto"
                                     >
                                         Configurer votre overlay
                                     </a>
@@ -356,7 +356,7 @@ export default function Home() {
                                 <div className="mt-8 text-center">
                                     <a
                                         href="/config"
-                                        className="btn-secondary inline-block select-none px-7 text-sm font-semibold"
+                                        className="inline-block select-none rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-opacity hover:opacity-85"
                                     >
                                         Passer à la configuration de votre overlay
                                     </a>

@@ -9,9 +9,10 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { ChevronRight, LogOut, Moon, Sun, User, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../hooks/useTheme';
 import { getDiscordDisplayName } from '../lib/discord';
 import { supabase } from '../lib/supabase';
 
@@ -20,23 +21,6 @@ const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/usage', label: 'Utilisation' },
     { href: '/updates', label: 'Patch Notes' },
 ];
-
-function useTheme() {
-    const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
-
-    const setTheme = useCallback((dark: boolean) => {
-        document.documentElement.classList.toggle('dark', dark);
-        document.documentElement.style.backgroundColor = '';
-        localStorage.setItem('livechat-theme', dark ? 'dark' : 'light');
-        setIsDark(dark);
-    }, []);
-
-    const toggle = useCallback(() => {
-        setTheme(!document.documentElement.classList.contains('dark'));
-    }, [setTheme]);
-
-    return { isDark, toggle, setTheme };
-}
 
 function BurgerIcon() {
     return (
@@ -87,7 +71,7 @@ export default function Header() {
                         <img
                             src="/assets/images/livechat_transparent.png"
                             alt="LiveChat"
-                            className="h-6 w-6 invert dark:invert-0"
+                            className={cn('h-6 w-6', !isDark && 'invert')}
                             width={24}
                             height={24}
                             draggable={false}
@@ -182,7 +166,7 @@ export default function Header() {
                                         <img
                                             src="/assets/images/livechat_transparent.png"
                                             alt="LiveChat"
-                                            className="h-6 w-6 invert dark:invert-0"
+                                            className={cn('h-6 w-6', !isDark && 'invert')}
                                             width={24}
                                             height={24}
                                             draggable={false}

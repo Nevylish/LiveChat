@@ -167,6 +167,37 @@
     background: #0070f3;
 }
 
+/* Theme toggle — diagonal wipe via View Transitions API (mask gradient, no blur) */
+@supports (view-transition-name: root) {
+    @media (prefers-reduced-motion: no-preference) {
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            mix-blend-mode: normal;
+        }
+
+        ::view-transition-old(root) {
+            animation: none;
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            z-index: 2;
+            mask-image: linear-gradient(105deg, black 40%, transparent 60%);
+            mask-size: 300% 100%;
+            animation: theme-sweep-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes theme-sweep-in {
+            from {
+                mask-position: 100% 0%;
+            }
+            to {
+                mask-position: 0% 0%;
+            }
+        }
+    }
+}
+
 /* Config step transition animations */
 @media (min-width: 768px) {
     .config-step-enter-forward {
