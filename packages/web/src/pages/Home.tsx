@@ -15,7 +15,7 @@ const faqs = [
     },
     {
         question: 'Est-ce sécurisé ?',
-        answer: 'Complètement, le code est libre et tout le monde peut le regarder, le système est prévu pour maîtriser les risques, notamment grâce au fait de créer un serveur Discord uniquement pour ça. De plus, vos informations personnelles sont protégées grâce à notre système de proxy, il est impossible de récupérer votre adresse IP par exemple.',
+        answer: "Complètement, le code est libre et tout le monde peut le regarder, le système est prévu pour maîtriser les risques, notamment grâce au fait de créer un serveur Discord uniquement pour ça. De plus, vos informations personnelles sont protégées grâce à notre système de proxy, il est impossible de récupérer votre adresse IP par exemple.Vous pouvez consulter notre politique de confidentialité pour plus d'informations.",
     },
     {
         question: 'Est-ce autorisé par Twitch ?',
@@ -76,7 +76,7 @@ export default function Home() {
             <main>
                 {/* Hero */}
                 <section className="relative flex min-h-[calc(100dvh-3.5rem)] items-center py-12 lg:h-[calc(100dvh-3.5rem)] lg:min-h-0 lg:py-0">
-                    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+                    <div className="mx-auto w-full max-w-6xl -translate-y-3 px-4 sm:-translate-y-4 sm:px-6">
                         <div className="mx-auto grid w-full max-w-5xl gap-8 md:grid-cols-2 md:items-center md:gap-x-14 md:gap-y-10">
                             <div>
                                 <h1 className="text-[2.25rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.75rem] md:text-5xl">

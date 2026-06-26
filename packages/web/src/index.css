@@ -158,13 +158,23 @@
 }
 
 ::selection {
-    color: #fff;
-    background: #0070f3;
+    color: #0a0a0a;
+    background: #d4d4d8;
 }
 
 ::-moz-selection {
-    color: #fff;
-    background: #0070f3;
+    color: #0a0a0a;
+    background: #d4d4d8;
+}
+
+.dark ::selection {
+    color: #ededed;
+    background: #52525b;
+}
+
+.dark ::-moz-selection {
+    color: #ededed;
+    background: #52525b;
 }
 
 /* Theme toggle — diagonal wipe via View Transitions API (mask gradient, no blur) */

@@ -61,7 +61,7 @@ export default function Header() {
         <>
             <header
                 className={cn(
-                    'fixed inset-x-0 top-0 z-50 w-full border-b bg-background/70 backdrop-blur-md transition-colors duration-200 supports-[backdrop-filter]:bg-background/60 lg:sticky lg:top-0',
+                    'fixed inset-x-0 top-0 z-50 w-full border-b bg-background/70 backdrop-blur-md transition-colors duration-200 supports-[backdrop-filter]:bg-background/60',
                     scrolled ? 'border-border' : 'border-transparent',
                 )}
             >
@@ -107,7 +107,7 @@ export default function Header() {
                         </Button>
 
                         {user ? (
-                            <DropdownMenu>
+                            <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <button className="group hidden h-8 shrink-0 cursor-pointer items-center gap-0 rounded-full border border-border bg-background p-0 transition-colors hover:bg-accent sm:gap-2 sm:pr-3 lg:flex">
                                         <img
@@ -329,7 +329,7 @@ export default function Header() {
                     </div>
                 </div>
             </header>
-            <div className="h-14 shrink-0 lg:hidden" aria-hidden="true" />
+            <div className="h-14 shrink-0" aria-hidden="true" />
         </>
     );
 }
