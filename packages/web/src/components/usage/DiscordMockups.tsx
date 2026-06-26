@@ -77,7 +77,13 @@ function SlashCommandHeader({ user, avatar, command }: { user: string; avatar: s
                 {user}
             </span>
             <span>a utilisé</span>
-            <span className="font-medium" style={{ color: theme.link }}>
+            <span
+                className="rounded-[3px] px-1 py-0.5 font-medium"
+                style={{
+                    color: theme.link,
+                    backgroundColor: `color-mix(in srgb, ${theme.link} 12%, transparent)`,
+                }}
+            >
                 {command}
             </span>
         </div>
@@ -117,7 +123,7 @@ function BotMessage({
                     </div>
                     <div className="mt-0.5">{children}</div>
                     {ephemeral && (
-                        <p className="mt-1 flex items-center gap-1.5 text-xs" style={{ color: theme.textMuted }}>
+                        <p className="mt-2.5 flex items-center gap-1.5 text-xs" style={{ color: theme.textMuted }}>
                             <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                             <span>
                                 Toi seul(e) peux voir celui-ci —{' '}
