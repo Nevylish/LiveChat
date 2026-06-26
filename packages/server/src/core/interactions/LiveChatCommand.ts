@@ -148,17 +148,21 @@ export default class LiveChatCommand extends Command {
         const guildId = interaction.guildId;
         const userId = interaction.user.id;
 
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
         if (guildId) {
-            const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+            const isAuthorized = await Functions.checkRoleRestriction(
+                this.client,
+                guildId,
+                userId,
+                interaction.member,
+            );
             if (!isAuthorized) {
                 const embed = Functions.buildEmbed(
                     "Vous n'avez pas le rôle requis sur ce serveur pour utiliser les commandes `/livechat`.",
                     'Error',
                 );
-                await interaction.reply({
-                    embeds: [embed],
-                    flags: MessageFlags.Ephemeral,
-                });
+                await interaction.editReply({ embeds: [embed] });
                 return;
             }
         }

@@ -1,12 +1,26 @@
-import type { Session, User } from '@supabase/supabase-js';
+import type { DiscordGuild, DiscordRole, OverlayConfigRow } from '@livechat/types';
 import { ArrowLeft, Play, RefreshCw, ShieldAlert, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+    adminDeleteOverlayConfig,
+    createOverlayConfig,
+    deleteOverlayConfig,
+    fetchAllGuildOverlayConfigs,
+    fetchGuildRoles,
+    fetchGuildSettings,
+    fetchUserOverlayConfigs,
+    regenerateOverlayToken,
+    saveGuildSettings,
+    saveOverlayConfig,
+} from '../api/configApi';
+import PageShell from '../components/PageShell';
+import { useAuth } from '../hooks/useAuth';
+import { useGuildList } from '../hooks/useGuildList';
+import { buildOverlayLink } from '../lib/constants';
+import { isGuildAdmin } from '../lib/discord';
+import { getErrorMessage } from '../lib/errors';
 import { supabase } from '../lib/supabase';
-
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 
 import GuildGrid from '../components/config/GuildGrid';
@@ -16,53 +30,50 @@ import OverlayEditor from '../components/config/OverlayEditor';
 import OverlaysDashboard from '../components/config/OverlaysDashboard';
 import RestrictedView from '../components/config/RestrictedView';
 
-import { playSynthSound } from '../utils/audio';
-
-interface ServerConfig {
-    soundEnabled: boolean;
-    soundType: string;
-    soundVolume: number;
-}
-
-interface OverlayConfigRow {
-    guild_id: string;
-    username: string;
-    token: string;
-    user_id: string;
-    updated_at?: string;
-}
-
-const DEFAULT_CONFIG: ServerConfig = {
-    soundEnabled: true,
-    soundType: 'chime',
-    soundVolume: 50,
-};
-
 const YOUTUBE_VIDEO_ID = 'iIK6me_W1BQ';
-
-interface DiscordGuild {
-    id: string;
-    name: string;
-    icon: string | null;
-    owner: boolean;
-    permissions: string;
-    hasBot?: boolean;
-    overlayCount?: number;
-}
 
 export default function Config() {
     const { guildId } = useParams<{ guildId?: string }>();
     const navigate = useNavigate();
+    const { session, user, authLoading, refreshSession } = useAuth();
+    const [error, setError] = useState<string | null>(null);
+    const setErrorMessage = useCallback((message: string | null) => setError(message), []);
 
-    const [session, setSession] = useState<Session | null>(null);
-    const [user, setUser] = useState<User | null>(null);
-    const [authLoading, setAuthLoading] = useState(true);
+    const handleLogin = useCallback(async () => {
+        try {
+            const { data, error: authError } = await supabase.auth.signInWithOAuth({
+                provider: 'discord',
+                options: {
+                    redirectTo: window.location.origin + '/config',
+                    scopes: 'identify guilds',
+                    skipBrowserRedirect: true,
+                },
+            });
 
-    const lastFetchedToken = useRef<string | null>(null);
-    const fetchInProgressToken = useRef<string | null>(null);
+            if (authError) throw authError;
+            if (data?.url) {
+                const width = 600;
+                const height = 800;
+                const left = window.screen.width / 2 - width / 2;
+                const top = window.screen.height / 2 - height / 2;
+                window.open(
+                    data.url,
+                    'discord-login',
+                    `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=no`,
+                );
+            }
+        } catch (err: unknown) {
+            console.error('Login error', err);
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la connexion avec Discord.'));
+        }
+    }, []);
 
-    const [guilds, setGuilds] = useState<DiscordGuild[]>([]);
-    const [fetchingGuilds, setFetchingGuilds] = useState(false);
+    const { guilds, fetchingGuilds, isSessionExpired, loadGuilds } = useGuildList({
+        session,
+        onError: setErrorMessage,
+        onReauthenticate: handleLogin,
+    });
+
     const [selectedGuild, setSelectedGuild] = useState<DiscordGuild | null>(null);
 
     const [configs, setConfigs] = useState<OverlayConfigRow[]>([]);
@@ -70,7 +81,7 @@ export default function Config() {
     const [isEditing, setIsEditing] = useState(false);
     const [newOverlayName, setNewOverlayName] = useState('');
 
-    const [allGuildConfigs, setAllGuildConfigs] = useState<any[]>([]);
+    const [allGuildConfigs, setAllGuildConfigs] = useState<OverlayConfigRow[]>([]);
     const [loadingAllConfigs, setLoadingAllConfigs] = useState(false);
 
     const [username, setUsername] = useState('');
@@ -79,34 +90,24 @@ export default function Config() {
     const [isLinkBlurred, setIsLinkBlurred] = useState(true);
     const [isGenerating, setIsGenerating] = useState(false);
     const [justRegenerated, setJustRegenerated] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     const [videoOpen, setVideoOpen] = useState(false);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
-
-    const [isPlayingSoundWave, setIsPlayingSoundWave] = useState(false);
-    const [serverConfig, setServerConfig] = useState<ServerConfig>(DEFAULT_CONFIG);
-    const [draftConfig, setDraftConfig] = useState<ServerConfig>(DEFAULT_CONFIG);
 
     const [hasExistingLink, setHasExistingLink] = useState<boolean | null>(null);
     const [checkingLink, setCheckingLink] = useState(false);
 
     const [isRestricted, setIsRestricted] = useState(false);
-    const [guildRoles, setGuildRoles] = useState<any[]>([]);
+    const [guildRoles, setGuildRoles] = useState<DiscordRole[]>([]);
     const [loadingRoles, setLoadingRoles] = useState(false);
     const [requiredRoleId, setRequiredRoleId] = useState<string | null>(null);
     const [dbRequiredRoleId, setDbRequiredRoleId] = useState<string | null>(null);
     const [isRoleRestrictionEnabled, setIsRoleRestrictionEnabled] = useState(false);
     const [savingSettings, setSavingSettings] = useState(false);
     const [settingsSuccess, setSettingsSuccess] = useState(false);
-    const [isSessionExpired, setIsSessionExpired] = useState(false);
     const [maxOverlays, setMaxOverlays] = useState<number>(5);
     const [dbMaxOverlaysLimit, setDbMaxOverlaysLimit] = useState<number>(5);
     const [maxOverlaysInput, setMaxOverlaysInput] = useState<string>('5');
-
-    const isLocal = window.location.hostname === 'localhost';
-    const apiBase = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
-    const overlayBase = isLocal ? 'http://localhost:4000/v2/overlay' : 'https://livechat.nevylish.fr/v2/overlay.html';
 
     useEffect(() => {
         if (guildId && guilds.length > 0) {
@@ -124,32 +125,6 @@ export default function Config() {
             setSelectedGuild(null);
         }
     }, [guildId, guilds, navigate]);
-
-    useEffect(() => {
-        if (activeConfig && selectedGuild) {
-            const savedToken = localStorage.getItem(`livechat_settings_${activeConfig.token}`);
-            let loaded = DEFAULT_CONFIG;
-            if (savedToken) {
-                try {
-                    loaded = JSON.parse(savedToken);
-                } catch {
-                    loaded = DEFAULT_CONFIG;
-                }
-            } else {
-                const savedGuild = localStorage.getItem(`livechat_settings_${selectedGuild.id}`);
-                if (savedGuild) {
-                    try {
-                        loaded = JSON.parse(savedGuild);
-                        localStorage.setItem(`livechat_settings_${activeConfig.token}`, savedGuild);
-                    } catch {
-                        loaded = DEFAULT_CONFIG;
-                    }
-                }
-            }
-            setServerConfig(loaded);
-            setDraftConfig(loaded);
-        }
-    }, [activeConfig, selectedGuild]);
 
     useEffect(() => {
         let active = true;
@@ -174,27 +149,19 @@ export default function Config() {
             setError(null);
             setIsRestricted(false);
             try {
-                const response = await fetch(
-                    `${apiBase}/api/config/get?guildId=${encodeURIComponent(selectedGuild.id)}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
-                    },
+                const { ok, status, data } = await fetchUserOverlayConfigs(
+                    { accessToken: session.access_token },
+                    selectedGuild.id,
                 );
                 if (!active) return;
-                if (response.status === 403) {
-                    const data = await response.json();
-                    if (!active) return;
+                if (status === 403) {
                     setError(data.error || "Vous n'avez pas l'autorisation d'utiliser LiveChat sur ce serveur.");
                     setIsRestricted(true);
                     setConfigs([]);
                     setHasExistingLink(null);
                     return;
                 }
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!active) return;
+                if (ok) {
                     if (data.exists && data.configs && data.configs.length > 0) {
                         setConfigs(data.configs);
                         setHasExistingLink(true);
@@ -204,11 +171,10 @@ export default function Config() {
                     }
                     setMaxOverlays(data.maxOverlays ?? 5);
                 } else {
-                    if (!active) return;
                     setConfigs([]);
                     setHasExistingLink(false);
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 if (!active) return;
                 console.error(err);
                 setError('Impossible de vérifier la configuration de ce serveur.');
@@ -225,7 +191,7 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, session, apiBase]);
+    }, [selectedGuild, session]);
 
     useEffect(() => {
         let active = true;
@@ -234,8 +200,7 @@ export default function Config() {
                 setAllGuildConfigs([]);
                 return;
             }
-            const perms = parseInt(selectedGuild.permissions);
-            const isUserAdmin = selectedGuild.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+            const isUserAdmin = isGuildAdmin(selectedGuild);
             if (!isUserAdmin) {
                 setAllGuildConfigs([]);
                 return;
@@ -243,21 +208,13 @@ export default function Config() {
 
             setLoadingAllConfigs(true);
             try {
-                const response = await fetch(
-                    `${apiBase}/api/config/all?guildId=${encodeURIComponent(selectedGuild.id)}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
-                    },
+                const data = await fetchAllGuildOverlayConfigs(
+                    { accessToken: session.access_token },
+                    selectedGuild.id,
                 );
                 if (!active) return;
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!active) return;
-                    if (data.configs) {
-                        setAllGuildConfigs(data.configs);
-                    }
+                if (data.configs) {
+                    setAllGuildConfigs(data.configs);
                 }
             } catch (err) {
                 if (!active) return;
@@ -273,7 +230,7 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, isEditing, session, apiBase]);
+    }, [selectedGuild, isEditing, session]);
 
     useEffect(() => {
         let active = true;
@@ -288,8 +245,7 @@ export default function Config() {
                 return;
             }
 
-            const perms = parseInt(selectedGuild.permissions);
-            const isUserAdmin = selectedGuild.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+            const isUserAdmin = isGuildAdmin(selectedGuild);
             if (!isUserAdmin) {
                 setGuildRoles([]);
                 setRequiredRoleId(null);
@@ -302,45 +258,26 @@ export default function Config() {
 
             setLoadingRoles(true);
             try {
-                const settingsRes = await fetch(
-                    `${apiBase}/api/guild/settings?guildId=${encodeURIComponent(selectedGuild.id)}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
-                    },
+                const settingsData = await fetchGuildSettings(
+                    { accessToken: session.access_token },
+                    selectedGuild.id,
                 );
                 if (!active) return;
-                if (settingsRes.ok) {
-                    const data = await settingsRes.json();
-                    if (!active) return;
-                    if (data.settings) {
-                        const roleId = data.settings.required_role_id;
-                        setRequiredRoleId(roleId);
-                        setDbRequiredRoleId(roleId);
-                        setIsRoleRestrictionEnabled(roleId !== null && roleId !== '');
+                if (settingsData.settings) {
+                    const roleId = settingsData.settings.required_role_id;
+                    setRequiredRoleId(roleId);
+                    setDbRequiredRoleId(roleId);
+                    setIsRoleRestrictionEnabled(roleId !== null && roleId !== '');
 
-                        const limit = data.settings.max_overlays_per_user ?? 5;
-                        setDbMaxOverlaysLimit(limit);
-                        setMaxOverlaysInput(String(limit));
-                    }
+                    const limit = settingsData.settings.max_overlays_per_user ?? 5;
+                    setDbMaxOverlaysLimit(limit);
+                    setMaxOverlaysInput(String(limit));
                 }
 
-                const rolesRes = await fetch(
-                    `${apiBase}/api/guild/roles?guildId=${encodeURIComponent(selectedGuild.id)}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${session.access_token}`,
-                        },
-                    },
-                );
+                const rolesData = await fetchGuildRoles({ accessToken: session.access_token }, selectedGuild.id);
                 if (!active) return;
-                if (rolesRes.ok) {
-                    const data = await rolesRes.json();
-                    if (!active) return;
-                    if (data.roles) {
-                        setGuildRoles(data.roles);
-                    }
+                if (rolesData.roles) {
+                    setGuildRoles(rolesData.roles);
                 }
             } catch (err) {
                 if (!active) return;
@@ -356,17 +293,13 @@ export default function Config() {
         return () => {
             active = false;
         };
-    }, [selectedGuild, session, apiBase]);
-
-    const updateDraftConfig = <K extends keyof ServerConfig>(key: K, value: ServerConfig[K]) => {
-        setDraftConfig((prev) => ({ ...prev, [key]: value }));
-    };
+    }, [selectedGuild, session]);
 
     const handleConfigureConfig = (config: OverlayConfigRow) => {
         setActiveConfig(config);
         setUsername(config.username);
         setDbUsername(config.username);
-        setGeneratedLink(`${overlayBase}?token=${config.token}`);
+        setGeneratedLink(buildOverlayLink(config.token));
         setIsEditing(true);
         setError(null);
     };
@@ -378,50 +311,36 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            localStorage.setItem(`livechat_settings_${activeConfig.token}`, JSON.stringify(draftConfig));
-            setServerConfig(draftConfig);
-
             if (username !== dbUsername) {
                 if (!username || username.length < 4 || username.length > 25) {
                     throw new Error("Le nom d'utilisateur doit faire entre 4 et 25 caractères.");
                 }
 
-                const response = await fetch(`${apiBase}/api/config/save`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${session.access_token}`,
-                    },
-                    body: JSON.stringify({
-                        username: username,
+                const data = await saveOverlayConfig(
+                    { accessToken: session.access_token },
+                    {
+                        username,
                         guildId: selectedGuild.id,
                         token: activeConfig.token,
-                    }),
-                });
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.error || "Impossible d'enregistrer le nouveau pseudo.");
-                }
-
-                const data = await response.json();
+                    },
+                );
                 if (data.success) {
                     setDbUsername(username);
-                    const updatedConfig = { ...activeConfig, username: username };
+                    const updatedConfig = { ...activeConfig, username };
                     setActiveConfig(updatedConfig);
                     setConfigs((prev) => prev.map((c) => (c.token === activeConfig.token ? updatedConfig : c)));
                 } else {
                     throw new Error("Impossible d'enregistrer le nouveau pseudo.");
                 }
             }
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la sauvegarde.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la sauvegarde.'));
         } finally {
             setIsGenerating(false);
         }
     };
 
-    const hasUnsavedChanges = JSON.stringify(draftConfig) !== JSON.stringify(serverConfig) || username !== dbUsername;
+    const hasUnsavedChanges = username !== dbUsername;
 
     const handleSaveSettings = async () => {
         if (!selectedGuild || !session) return;
@@ -435,23 +354,14 @@ export default function Config() {
         if (parsedLimit > 20) parsedLimit = 20;
 
         try {
-            const response = await fetch(`${apiBase}/api/guild/settings/save`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({
+            await saveGuildSettings(
+                { accessToken: session.access_token },
+                {
                     guildId: selectedGuild.id,
                     requiredRoleId: targetRoleId,
                     maxOverlaysPerUser: parsedLimit,
-                }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Impossible de sauvegarder les paramètres du serveur.');
-            }
+                },
+            );
 
             setDbRequiredRoleId(targetRoleId);
             setDbMaxOverlaysLimit(parsedLimit);
@@ -459,8 +369,8 @@ export default function Config() {
             setMaxOverlays(parsedLimit);
             setSettingsSuccess(true);
             setTimeout(() => setSettingsSuccess(false), 3000);
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la sauvegarde.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la sauvegarde.'));
         } finally {
             setSavingSettings(false);
         }
@@ -484,43 +394,17 @@ export default function Config() {
         };
     }, [isEditing, hasUnsavedChanges]);
 
-    const handlePlaySound = (type: string, volume: number) => {
-        setIsPlayingSoundWave(true);
-        playSynthSound(type, volume);
-        setTimeout(() => setIsPlayingSoundWave(false), 800);
-    };
-
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setAuthLoading(false);
-        });
-
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-        });
-
         const handleMessage = (event: MessageEvent) => {
             if (event.origin !== window.location.origin) return;
             if (event.data?.type === 'supabase-auth-success') {
-                supabase.auth.getSession().then(({ data: { session } }) => {
-                    setSession(session);
-                    setUser(session?.user ?? null);
-                });
+                void refreshSession();
             }
         };
 
         window.addEventListener('message', handleMessage);
-
-        return () => {
-            subscription.unsubscribe();
-            window.removeEventListener('message', handleMessage);
-        };
-    }, []);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [refreshSession]);
 
     useEffect(() => {
         if (session && window.name === 'discord-login' && window.opener) {
@@ -533,120 +417,6 @@ export default function Config() {
         }
     }, [session]);
 
-    const loadGuilds = useCallback(
-        async (force = false) => {
-            if (!session) return;
-            const providerToken = session.provider_token;
-            if (!providerToken) {
-                console.warn('No Discord provider token found in session.');
-                const hasTriedOAuth = sessionStorage.getItem('livechat_oauth_retry');
-                if (!hasTriedOAuth) {
-                    sessionStorage.setItem('livechat_oauth_retry', 'true');
-                    handleLogin();
-                } else {
-                    setIsSessionExpired(true);
-                }
-                return;
-            }
-            sessionStorage.removeItem('livechat_oauth_retry');
-            setIsSessionExpired(false);
-
-            if (
-                !force &&
-                (lastFetchedToken.current === providerToken || fetchInProgressToken.current === providerToken)
-            ) {
-                return;
-            }
-
-            fetchInProgressToken.current = providerToken;
-            setFetchingGuilds(true);
-            setError(null);
-            try {
-                const res = await fetch('https://discord.com/api/users/@me/guilds', {
-                    headers: {
-                        Authorization: `Bearer ${providerToken}`,
-                    },
-                });
-                if (!res.ok) throw new Error("Impossible de récupérer vos serveurs Discord depuis l'API Discord.");
-
-                const userGuilds: DiscordGuild[] = await res.json();
-
-                const chunkArray = (arr: any[], size: number): any[][] => {
-                    const chunked: any[][] = [];
-                    for (let i = 0; i < arr.length; i += size) {
-                        chunked.push(arr.slice(i, i + size));
-                    }
-                    return chunked;
-                };
-
-                const guildChunks = chunkArray(userGuilds, 80);
-                const botPresenceMap: Record<string, { hasBot: boolean; overlayCount: number }> = {};
-
-                await Promise.all(
-                    guildChunks.map(async (chunk) => {
-                        try {
-                            const ids = chunk.map((g) => g.id).join(',');
-                            const botRes = await fetch(
-                                `${apiBase}/api/guild/check?guildId=${encodeURIComponent(ids)}`,
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${session.access_token}`,
-                                    },
-                                },
-                            );
-                            if (botRes.ok) {
-                                const data = await botRes.json();
-                                if (data.results) {
-                                    Object.assign(botPresenceMap, data.results);
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Failed to batch check guilds', e);
-                        }
-                    }),
-                );
-
-                const checkedGuilds = userGuilds
-                    .map((g) => {
-                        const status = botPresenceMap[g.id] || { hasBot: false, overlayCount: 0 };
-                        return {
-                            ...g,
-                            hasBot: status.hasBot,
-                            overlayCount: status.overlayCount,
-                        };
-                    })
-                    .filter((g) => {
-                        const perms = parseInt(g.permissions);
-                        const isAdmin = g.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
-                        return isAdmin || g.hasBot;
-                    });
-
-                checkedGuilds.sort((a, b) => {
-                    if (a.hasBot && !b.hasBot) return -1;
-                    if (!a.hasBot && b.hasBot) return 1;
-                    return a.name.localeCompare(b.name);
-                });
-
-                lastFetchedToken.current = providerToken;
-                setGuilds(checkedGuilds);
-            } catch (err: any) {
-                console.error(err);
-                setError(err.message || 'Erreur lors du chargement de vos serveurs.');
-                lastFetchedToken.current = null;
-            } finally {
-                fetchInProgressToken.current = null;
-                setFetchingGuilds(false);
-            }
-        },
-        [session, apiBase],
-    );
-
-    useEffect(() => {
-        if (session) {
-            loadGuilds(false);
-        }
-    }, [session, loadGuilds]);
-
     useEffect(() => {
         if (session && user) {
             const discordUsername = user?.user_metadata?.preferred_username || user?.user_metadata?.name || '';
@@ -655,42 +425,13 @@ export default function Config() {
         }
     }, [session, user]);
 
-    const handleLogin = async () => {
-        try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'discord',
-                options: {
-                    redirectTo: window.location.origin + '/config',
-                    scopes: 'identify guilds',
-                    skipBrowserRedirect: true,
-                },
-            });
-
-            if (error) throw error;
-            if (data?.url) {
-                const width = 600;
-                const height = 800;
-                const left = window.screen.width / 2 - width / 2;
-                const top = window.screen.height / 2 - height / 2;
-                window.open(
-                    data.url,
-                    'discord-login',
-                    `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=no`,
-                );
-            }
-        } catch (err: any) {
-            console.error('Login error', err);
-            setError(err.message || 'Une erreur est survenue lors de la connexion avec Discord.');
-        }
-    };
-
     const validateAndSetUsername = (val: string) => {
         let clean = val.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
         if (clean.startsWith('_')) clean = clean.substring(1);
         setUsername(clean);
     };
 
-    const handleCreateConfig = async (customName?: any) => {
+    const handleCreateConfig = async (customName?: string) => {
         if (!selectedGuild || !session) return;
         const nameToCreate = typeof customName === 'string' ? customName : username;
         if (!nameToCreate || nameToCreate.length < 4 || nameToCreate.length > 25) {
@@ -705,25 +446,15 @@ export default function Config() {
             if (!userId) {
                 throw new Error("Impossible d'identifier votre compte Discord.");
             }
-            const response = await fetch(`${apiBase}/api/config/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({
+            const data = await createOverlayConfig(
+                { accessToken: session.access_token },
+                {
                     username: nameToCreate,
                     guildId: selectedGuild.id,
-                }),
-            });
+                },
+            );
 
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || "Impossible de créer la configuration de l'overlay.");
-            }
-
-            const data = await response.json();
-            if (data.exists && data.token) {
+            if (data.token) {
                 const newConfig: OverlayConfigRow = {
                     guild_id: selectedGuild.id,
                     username: nameToCreate,
@@ -743,8 +474,8 @@ export default function Config() {
 
                 setNewOverlayName('');
             }
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la création.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la création.'));
         } finally {
             setIsGenerating(false);
         }
@@ -766,23 +497,7 @@ export default function Config() {
             if (!session) {
                 throw new Error("Vous n'êtes pas connecté.");
             }
-            const response = await fetch(`${apiBase}/api/config/delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({
-                    token: configToken,
-                }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Impossible de supprimer la configuration.');
-            }
-
-            localStorage.removeItem(`livechat_settings_${configToken}`);
+            await deleteOverlayConfig({ accessToken: session.access_token }, configToken);
 
             const updatedConfigs = configs.filter((c) => c.token !== configToken);
             setConfigs(updatedConfigs);
@@ -798,8 +513,8 @@ export default function Config() {
             if (updatedConfigs.length === 0) {
                 setHasExistingLink(false);
             }
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la suppression.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la suppression.'));
         } finally {
             setIsGenerating(false);
         }
@@ -821,22 +536,13 @@ export default function Config() {
             if (!session) {
                 throw new Error("Vous n'êtes pas connecté.");
             }
-            const response = await fetch(`${apiBase}/api/config/admin/delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({
-                    guildId: selectedGuild?.id,
+            await adminDeleteOverlayConfig(
+                { accessToken: session.access_token },
+                {
+                    guildId: selectedGuild!.id,
                     username: targetUsername,
-                }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Impossible de supprimer la configuration.');
-            }
+                },
+            );
 
             const updatedAll = allGuildConfigs.filter((c) => c.username !== targetUsername);
             setAllGuildConfigs(updatedAll);
@@ -846,8 +552,8 @@ export default function Config() {
             if (updatedConfigs.length === 0) {
                 setHasExistingLink(false);
             }
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la suppression.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la suppression.'));
         } finally {
             setIsGenerating(false);
         }
@@ -866,41 +572,22 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const response = await fetch(`${apiBase}/api/config/regenerate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${session.access_token}`,
-                },
-                body: JSON.stringify({
-                    token: activeConfig.token,
-                }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Impossible de régénérer la clé.');
-            }
-
-            const { token: newToken } = await response.json();
-
-            const savedSettings = localStorage.getItem(`livechat_settings_${activeConfig.token}`);
-            if (savedSettings) {
-                localStorage.setItem(`livechat_settings_${newToken}`, savedSettings);
-                localStorage.removeItem(`livechat_settings_${activeConfig.token}`);
-            }
+            const { token: newToken } = await regenerateOverlayToken(
+                { accessToken: session.access_token },
+                activeConfig.token,
+            );
 
             const updatedConfig = { ...activeConfig, token: newToken };
             setActiveConfig(updatedConfig);
             setConfigs((prev) => prev.map((c) => (c.token === activeConfig.token ? updatedConfig : c)));
-            setGeneratedLink(`${overlayBase}?token=${newToken}`);
+            setGeneratedLink(buildOverlayLink(newToken));
             setIsLinkBlurred(true);
             setJustRegenerated(true);
             setTimeout(() => {
                 setJustRegenerated(false);
             }, 4000);
-        } catch (err: any) {
-            setError(err.message || 'Une erreur est survenue lors de la régénération.');
+        } catch (err: unknown) {
+            setError(getErrorMessage(err, 'Une erreur est survenue lors de la régénération.'));
         } finally {
             setIsGenerating(false);
         }
@@ -908,27 +595,27 @@ export default function Config() {
 
     if (authLoading) {
         return (
-            <div className="dark flex min-h-screen flex-col text-foreground bg-background">
-                <Header />
+            <PageShell
+                title="Configurer LiveChat - Dashboard Discord et overlay"
+                description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
+                path="/config"
+            >
                 <main className="flex-1 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
                         <RefreshCw className="h-10 w-10 animate-spin text-white/60" />
                         <p className="text-sm font-semibold text-muted-foreground">Chargement du dashboard...</p>
                     </div>
                 </main>
-                <Footer />
-            </div>
+            </PageShell>
         );
     }
 
     return (
-        <div className="dark flex min-h-screen flex-col text-foreground bg-background">
-            <Seo
-                title="Configurer LiveChat - Dashboard Discord et overlay"
-                description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
-                path="/config"
-            />
-            <Header />
+        <PageShell
+            title="Configurer LiveChat - Dashboard Discord et overlay"
+            description="Connectez-vous avec Discord, configurez vos liens d'overlay et intégrez-les directement dans OBS Studio."
+            path="/config"
+        >
             <VideoModal
                 open={videoOpen}
                 onClose={handleCloseVideo}
@@ -1112,7 +799,7 @@ export default function Config() {
                                     />
                                 ) : !isEditing ? (
                                     <OverlaysDashboard
-                                        selectedGuild={selectedGuild as any}
+                                        selectedGuild={selectedGuild}
                                         configs={configs}
                                         maxOverlays={maxOverlays}
                                         newOverlayName={newOverlayName}
@@ -1147,10 +834,6 @@ export default function Config() {
                                         justRegenerated={justRegenerated}
                                         isGenerating={isGenerating}
                                         regenerateLink={regenerateLink}
-                                        draftConfig={draftConfig}
-                                        updateDraftConfig={updateDraftConfig}
-                                        isPlayingSoundWave={isPlayingSoundWave}
-                                        handlePlaySound={handlePlaySound}
                                     />
                                 )}
                             </div>
@@ -1158,8 +841,6 @@ export default function Config() {
                     </div>
                 )}
             </main>
-
-            <Footer />
-        </div>
+        </PageShell>
     );
 }

@@ -1,14 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
 import { CacheManager } from './CacheManager';
 import { Logger } from './Logger';
 
-export interface OverlayConfigRow {
-    guild_id: string;
-    username: string;
-    token: string;
-    user_id: string;
-    updated_at?: string;
-}
+export type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
 
 export class SupabaseService {
     private static client: SupabaseClient | null = null;
@@ -396,11 +391,4 @@ export class SupabaseService {
             return false;
         }
     }
-}
-
-export interface GuildSettingsRow {
-    guild_id: string;
-    required_role_id: string | null;
-    max_overlays_per_user?: number | null;
-    updated_at?: string;
 }

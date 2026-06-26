@@ -1,6 +1,14 @@
-import { ColorResolvable, EmbedBuilder } from 'discord.js';
-import { version } from '../../../package.json';
+import {
+    APIInteractionGuildMember,
+    ColorResolvable,
+    EmbedBuilder,
+    GuildMember,
+    PermissionFlagsBits,
+    PermissionsBitField,
+} from 'discord.js';
+import { getMediaKindFromProxyType, getMediaKindFromUrl } from '@livechat/types';
 import DiscordClient from '../DiscordClient';
+import { version } from '../../version';
 import { Giphy } from '../modules/Giphy';
 import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
@@ -73,35 +81,28 @@ export namespace Functions {
         }
 
         const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase() || '';
+        const mediaKind = getMediaKindFromUrl(url);
 
-        if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
-            display = 'Image';
+        if (mediaKind === 'image') {
+            display = extension === 'gif' ? 'Image animée' : 'Image';
             param = 'image';
-        } else if (extension === 'gif') {
-            display = 'Image animée';
-            param = 'image';
-        } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
+        } else if (mediaKind === 'video') {
             display = 'Vidéo';
             param = 'video';
-        } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
+        } else if (mediaKind === 'audio') {
             display = 'Audio';
             param = 'audio';
         } else if (ProxyService.isProxyUrl(url)) {
-            switch (parsedUrl.searchParams.get('type')) {
-                case 'image':
-                    display = 'Image';
-                    param = 'image';
-                    break;
-                case 'video':
-                    display = 'Vidéo';
-                    param = 'video';
-                    break;
-                case 'audio':
-                    display = 'Audio';
-                    param = 'audio';
-                    break;
-                default:
-                    break;
+            const proxyKind = getMediaKindFromProxyType(parsedUrl.searchParams.get('type'));
+            if (proxyKind === 'image') {
+                display = 'Image';
+                param = 'image';
+            } else if (proxyKind === 'video') {
+                display = 'Vidéo';
+                param = 'video';
+            } else if (proxyKind === 'audio') {
+                display = 'Audio';
+                param = 'audio';
             }
         }
 
@@ -154,26 +155,53 @@ export namespace Functions {
         return escaped;
     };
 
+    export const isMemberAdmin = (
+        member: GuildMember | APIInteractionGuildMember,
+        ownerId: string,
+        userId: string,
+    ): boolean => {
+        if (ownerId === userId) return true;
+
+        const permissions =
+            member instanceof GuildMember
+                ? member.permissions
+                : new PermissionsBitField(BigInt(member.permissions));
+
+        return (
+            permissions.has(PermissionFlagsBits.Administrator) || permissions.has(PermissionFlagsBits.ManageGuild)
+        );
+    };
+
+    export const memberHasRole = (member: GuildMember | APIInteractionGuildMember, roleId: string): boolean => {
+        if (member instanceof GuildMember) {
+            return member.roles.cache.has(roleId);
+        }
+
+        return member.roles.includes(roleId);
+    };
+
     export const checkRoleRestriction = async (
         client: DiscordClient,
         guildId: string,
         userId: string,
+        interactionMember?: GuildMember | APIInteractionGuildMember | null,
     ): Promise<boolean> => {
         try {
-            const guild = client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId).catch(() => null));
+            const guild =
+                client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId).catch(() => null));
             if (!guild) return true;
 
-            const member = guild.members.cache.get(userId) || (await guild.members.fetch(userId).catch(() => null));
+            const member =
+                interactionMember ??
+                guild.members.cache.get(userId) ??
+                (await guild.members.fetch(userId).catch(() => null));
             if (!member) return true;
 
-            const isOwner = guild.ownerId === userId;
-            const isAdmin = member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
-
-            if (isOwner || isAdmin) return true;
+            if (isMemberAdmin(member, guild.ownerId, userId)) return true;
 
             const settings = await SupabaseService.getGuildSettings(guildId);
-            if (settings && settings.required_role_id) {
-                return member.roles.cache.has(settings.required_role_id);
+            if (settings?.required_role_id) {
+                return memberHasRole(member, settings.required_role_id);
             }
         } catch (err) {
             console.error('Error checking role restriction:', err);

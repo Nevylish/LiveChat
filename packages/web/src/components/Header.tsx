@@ -1,7 +1,7 @@
-import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { LogOut, Sliders, User as UserIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
@@ -13,7 +13,7 @@ const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [user, setUser] = useState<SupabaseUser | null>(null);
+    const { user } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -34,20 +34,6 @@ export default function Header() {
         document.addEventListener('keydown', onKeyDown);
         return () => document.removeEventListener('keydown', onKeyDown);
     }, [menuOpen, closeMenu]);
-
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-        });
-
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

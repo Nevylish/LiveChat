@@ -6,6 +6,7 @@ import JsonLd from '../components/JsonLd';
 import ScrollReveal from '../components/ScrollReveal';
 import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
+import { API_BASE_URL } from '../lib/constants';
 
 const YOUTUBE_VIDEO_ID = '50IjxVbd9Ew';
 
@@ -59,11 +60,8 @@ export default function Home() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const handleCloseVideo = useCallback(() => setVideoOpen(false), []);
 
-    const isLocal = window.location.hostname === 'localhost';
-    const API_URL = isLocal ? 'http://localhost:3000' : 'https://livechat-api.nevylish.fr';
-
     useEffect(() => {
-        fetch(`${API_URL}/api/stats`)
+        fetch(`${API_BASE_URL}/api/stats`)
             .then((res) => res.json())
             .then((data) => setStats(data))
             .catch(() => {});

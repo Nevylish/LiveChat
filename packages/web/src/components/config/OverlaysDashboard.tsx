@@ -1,19 +1,6 @@
+import type { DiscordGuild, DiscordRole, OverlayConfigRow } from '@livechat/types';
 import { CheckCircle, RefreshCw, ShieldAlert, Sliders, Trash2, Tv } from 'lucide-react';
-
-interface DiscordGuild {
-    id: string;
-    name: string;
-    permissions: string;
-    owner: boolean;
-}
-
-interface OverlayConfigRow {
-    guild_id: string;
-    username: string;
-    token: string;
-    user_id: string;
-    updated_at?: string;
-}
+import { isGuildAdmin } from '../../lib/discord';
 
 interface OverlaysDashboardProps {
     selectedGuild: DiscordGuild;
@@ -26,14 +13,14 @@ interface OverlaysDashboardProps {
     handleConfigureConfig: (config: OverlayConfigRow) => void;
     handleDeleteConfig: (token: string) => void;
 
-    allGuildConfigs: any[];
+    allGuildConfigs: OverlayConfigRow[];
     loadingAllConfigs: boolean;
     handleAdminDeleteConfig: (targetUsername: string) => void;
     isRoleRestrictionEnabled: boolean;
     setIsRoleRestrictionEnabled: (val: boolean) => void;
     requiredRoleId: string | null;
     setRequiredRoleId: (val: string | null) => void;
-    guildRoles: any[];
+    guildRoles: DiscordRole[];
     loadingRoles: boolean;
     maxOverlaysInput: string;
     setMaxOverlaysInput: (val: string) => void;
@@ -69,8 +56,7 @@ export default function OverlaysDashboard({
     handleSaveSettings,
     hasUnsavedSettings,
 }: OverlaysDashboardProps) {
-    const perms = parseInt(selectedGuild.permissions);
-    const isUserAdmin = selectedGuild.owner || (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+    const isUserAdmin = isGuildAdmin(selectedGuild);
 
     return (
         <div className="space-y-8 max-w-6xl mx-auto animate-fade-in">
@@ -236,7 +222,9 @@ export default function OverlaysDashboard({
                                                 <p className="text-xs text-muted-foreground truncate mt-0.5">
                                                     Dernière modification:{' '}
                                                     <span className="font-mono text-[10px]">
-                                                        {new Date(c.updated_at).toLocaleString()}
+                                                        {c.updated_at
+                                                            ? new Date(c.updated_at).toLocaleString()
+                                                            : '—'}
                                                     </span>
                                                 </p>
                                             </div>

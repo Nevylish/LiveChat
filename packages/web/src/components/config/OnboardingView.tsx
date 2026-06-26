@@ -1,9 +1,5 @@
+import type { DiscordGuild } from '@livechat/types';
 import { ShieldAlert, Sliders } from 'lucide-react';
-
-interface DiscordGuild {
-    id: string;
-    name: string;
-}
 
 interface OnboardingViewProps {
     selectedGuild: DiscordGuild;

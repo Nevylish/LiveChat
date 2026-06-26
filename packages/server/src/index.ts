@@ -20,6 +20,8 @@ const requiredEnvVars = [
     'VITE_SUPABASE_URL',
     'VITE_SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
+    'PROXY_SECRET',
+    'PROXY_URL',
 ];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 

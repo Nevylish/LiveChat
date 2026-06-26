@@ -44,7 +44,12 @@ export default class ManageOverlaysCommand extends Command {
         const userId = interaction.user.id;
         const focusedValue = interaction.options.getFocused().toLowerCase();
 
-        const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+        const isAuthorized = await Functions.checkRoleRestriction(
+            this.client,
+            guildId,
+            userId,
+            interaction.member,
+        );
 
         if (!isAuthorized) {
             await interaction.respond([
@@ -57,9 +62,11 @@ export default class ManageOverlaysCommand extends Command {
         }
 
         try {
-            const settings = await SupabaseService.getGuildSettings(guildId);
+            const [settings, userConfigs] = await Promise.all([
+                SupabaseService.getGuildSettings(guildId),
+                SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId),
+            ]);
             const maxOverlays = settings?.max_overlays_per_user ?? 5;
-            const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, userId);
 
             const choices = [];
 
@@ -100,7 +107,12 @@ export default class ManageOverlaysCommand extends Command {
         if (!guildId) return;
         const userId = interaction.user.id;
 
-        const isAuthorized = await Functions.checkRoleRestriction(this.client, guildId, userId);
+        const isAuthorized = await Functions.checkRoleRestriction(
+            this.client,
+            guildId,
+            userId,
+            interaction.member,
+        );
         if (!isAuthorized) {
             const embed = Functions.buildEmbed(
                 "Vous n'avez pas le rôle requis sur ce serveur pour utiliser cette commande.",
@@ -290,7 +302,12 @@ export default class ManageOverlaysCommand extends Command {
 
             if (!guildId) return;
 
-            const isAuthorized = await Functions.checkRoleRestriction(client, guildId, user.id);
+            const isAuthorized = await Functions.checkRoleRestriction(
+                client,
+                guildId,
+                user.id,
+                interaction.member,
+            );
             if (!isAuthorized) {
                 const embed = Functions.buildEmbed(
                     "Vous n'avez pas le rôle requis sur ce serveur pour configurer des overlays.",
@@ -312,9 +329,11 @@ export default class ManageOverlaysCommand extends Command {
                 return;
             }
 
-            const settings = await SupabaseService.getGuildSettings(guildId);
+            const [settings, userConfigs] = await Promise.all([
+                SupabaseService.getGuildSettings(guildId),
+                SupabaseService.getOverlayConfigsByGuildAndUser(guildId, user.id),
+            ]);
             const maxOverlays = settings?.max_overlays_per_user ?? 5;
-            const userConfigs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId, user.id);
 
             if (userConfigs.length >= maxOverlays) {
                 const embed = Functions.buildEmbed(

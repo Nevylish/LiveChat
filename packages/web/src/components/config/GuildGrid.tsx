@@ -1,14 +1,6 @@
+import type { DiscordGuild } from '@livechat/types';
 import { ExternalLink, HelpCircle, RefreshCw, ShieldAlert } from 'lucide-react';
-
-interface DiscordGuild {
-    id: string;
-    name: string;
-    icon: string | null;
-    owner: boolean;
-    permissions: string;
-    hasBot?: boolean;
-    overlayCount?: number;
-}
+import { isGuildAdmin } from '../../lib/discord';
 
 interface GuildGridProps {
     guilds: DiscordGuild[];
@@ -74,9 +66,8 @@ export default function GuildGrid({
     const otherGuilds = guilds.filter((g) => !g.hasBot);
 
     const renderGuildCard = (g: DiscordGuild) => {
-        const perms = parseInt(g.permissions) || 0;
         const isOwner = g.owner;
-        const isAdmin = (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
+        const isAdmin = isGuildAdmin(g);
         const roleLabel = isOwner ? 'Propriétaire' : isAdmin ? 'Administrateur' : 'Utilisateur';
 
         return (

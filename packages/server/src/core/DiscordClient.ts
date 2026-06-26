@@ -27,7 +27,7 @@ export default class DiscordClient extends Client {
         this.start(token);
     }
 
-    public async hasGuildPremiumSubscription(guildId: string): Promise<Boolean> {
+    public async hasGuildPremiumSubscription(guildId: string): Promise<boolean> {
         try {
             const SKU_PLUS = process.env.SKU_PLUS_ID!;
             if (!this.application) return false;

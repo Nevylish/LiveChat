@@ -1,13 +1,10 @@
-import { ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../../DiscordClient';
-import { Functions } from '../../utils/Functions';
-import { Logger } from '../../utils/Logger';
 import { TargetsManager } from '../../utils/Targets';
+import { executeOverlayQueueAction } from './overlayQueueAction';
 
 export const execute = async (client: DiscordClient, interaction: ChatInputCommandInteraction): Promise<void> => {
-    const target = interaction.options.getString('cible', true) as string;
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+    const target = interaction.options.getString('cible', true);
 
     const targets = await TargetsManager.validateAndGetTargets(
         client,
@@ -17,43 +14,13 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
     );
     if (!targets) return;
 
-    await emitStop(client, interaction, targets);
-};
-
-const emitStop = async (
-    client: DiscordClient,
-    interaction: ChatInputCommandInteraction,
-    targets: TargetsManager.ConnectedStreamer[],
-): Promise<void> => {
-    try {
-        const isEveryone = targets.length > 1;
-
-        if (isEveryone) {
-            client.livechat.io.to(interaction.guildId!).emit('clear');
-        } else {
-            client.livechat.io.to(targets[0].socketId).emit('clear');
-        }
-
-        const streamsList = TargetsManager.buildStreamersList(targets);
-        const targetUsername = Functions.escapeMarkdown(targets[0].username);
-        const embed = Functions.buildEmbed(
-            isEveryone
-                ? `### LiveChat arrêté et file d'attente vidée sur tous les streams\n${streamsList}`
-                : `### LiveChat arrêté et file d'attente vidée sur le stream de ${targetUsername}` +
-                      `\n\n➜ [**Rejoindre le stream de ${targets[0].username}**](https://twitch.tv/${targets[0].username})`,
-            'Good',
-        );
-
-        await interaction.editReply({ embeds: [embed] });
-    } catch (err) {
-        const errorObj = err instanceof Error ? err : new Error(String(err));
-        Logger.error('StopCommand', 'Error while stopping LiveChat', {
-            from: interaction.user.tag,
-            guildId: interaction.guildId,
-            guild: interaction.guild?.name,
-            error: err,
-        });
-        const embed = Functions.buildEmbed(`${errorObj.message}`, 'Error');
-        await interaction.editReply({ embeds: [embed] });
-    }
+    await executeOverlayQueueAction(client, interaction, targets, {
+        event: 'clear',
+        logSource: 'StopCommand',
+        logMessage: 'Error while stopping LiveChat',
+        everyoneTitle: "### LiveChat arrêté et file d'attente vidée sur tous les streams",
+        singleTitle: (targetUsername, twitchUsername) =>
+            `### LiveChat arrêté et file d'attente vidée sur le stream de ${targetUsername}` +
+            `\n\n➜ [**Rejoindre le stream de ${twitchUsername}**](https://twitch.tv/${twitchUsername})`,
+    });
 };

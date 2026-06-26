@@ -3,6 +3,11 @@
         "target": "ES2020",
         "skipLibCheck": true
     },
-    "references": [{ "path": "./packages/server" }, { "path": "./packages/web" }, { "path": "./packages/proxy" }],
+    "references": [
+        { "path": "./packages/types" },
+        { "path": "./packages/server" },
+        { "path": "./packages/web" },
+        { "path": "./packages/proxy" }
+    ],
     "files": []
 }
