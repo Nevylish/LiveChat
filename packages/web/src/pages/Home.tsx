@@ -227,9 +227,19 @@ export default function Home() {
                                 className="order-2 max-md:flex max-md:justify-center md:order-1"
                             >
                                 <img
-                                    src="/assets/images/card_streamtogether.png"
+                                    src="/assets/images/card_streamtogether_white.png"
                                     alt="Streamez à plusieurs"
-                                    className="w-full max-w-sm rounded-xl border border-border transition-transform duration-300 md:max-w-none"
+                                    className="w-full max-w-sm rounded-xl border border-border transition-transform duration-300 dark:hidden md:max-w-none"
+                                    width={540}
+                                    height={304}
+                                    draggable={false}
+                                    loading="lazy"
+                                />
+                                <img
+                                    src="/assets/images/card_streamtogether.png"
+                                    alt=""
+                                    aria-hidden
+                                    className="hidden w-full max-w-sm rounded-xl border border-border transition-transform duration-300 dark:block md:max-w-none"
                                     width={540}
                                     height={304}
                                     draggable={false}

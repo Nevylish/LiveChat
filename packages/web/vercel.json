@@ -6,6 +6,7 @@
         { "source": "/overlay.css", "destination": "https://livechat-overlay.nevylish.fr/overlay.css" },
         { "source": "/overlay.js", "destination": "https://livechat-overlay.nevylish.fr/overlay.js" },
         { "source": "/overlay/:path*", "destination": "https://livechat-overlay.nevylish.fr/:path*" },
+        { "source": "/shared/:path*", "destination": "https://livechat-overlay.nevylish.fr/shared/:path*" },
         { "source": "/(.*)", "destination": "/index.html" }
     ]
 }
