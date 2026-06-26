@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import PageShell from '../components/PageShell';
 import ScrollReveal from '../components/ScrollReveal';
-import Seo from '../components/Seo';
 
 const GIST_URL = 'https://raw.githubusercontent.com/Nevylish/LiveChat/refs/heads/main/patchnotes.json';
 
@@ -35,14 +33,11 @@ export default function Updates() {
     }, []);
 
     return (
-        <div className="flex min-h-screen flex-col text-foreground">
-            <Seo
-                title="Notes de mise à jour - LiveChat"
-                description="Consultez l'historique des mises à jour de LiveChat : nouvelles fonctionnalités, corrections et améliorations."
-                path="/updates"
-            />
-            <Header />
-
+        <PageShell
+            title="Notes de mise à jour - LiveChat"
+            description="Consultez l'historique des mises à jour de LiveChat : nouvelles fonctionnalités, corrections et améliorations."
+            path="/updates"
+        >
             <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
                 <ScrollReveal direction="up">
                     <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Notes de mise à jour</h1>
@@ -125,8 +120,6 @@ export default function Updates() {
                     )}
                 </div>
             </main>
-
-            <Footer />
-        </div>
+        </PageShell>
     );
 }

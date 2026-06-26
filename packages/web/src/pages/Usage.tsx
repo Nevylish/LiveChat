@@ -1,10 +1,8 @@
 import { ChevronDown } from 'lucide-react';
 import { useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import PageShell from '../components/PageShell';
 import ScrollReveal from '../components/ScrollReveal';
-import Seo from '../components/Seo';
 import ObsGuide from '../components/config/ObsGuide';
 
 const sections = [
@@ -59,14 +57,11 @@ export default function Usage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col text-foreground">
-            <Seo
-                title="Comment utiliser LiveChat ? Guide complet"
-                description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
-                path="/usage"
-            />
-            <Header />
-
+        <PageShell
+            title="Comment utiliser LiveChat ? Guide complet"
+            description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
+            path="/usage"
+        >
             <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
                 <ScrollReveal direction="up">
                     <div className="text-center">
@@ -510,8 +505,6 @@ export default function Usage() {
                     </div>
                 </ScrollReveal>
             </main>
-
-            <Footer />
-        </div>
+        </PageShell>
     );
 }

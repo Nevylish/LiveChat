@@ -8,10 +8,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { ChevronRight, LogOut, Moon, Sliders, Sun, X } from 'lucide-react';
+import { ChevronRight, LogOut, Moon, Sun, User, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { getDiscordDisplayName } from '../lib/discord';
 import { supabase } from '../lib/supabase';
 
 const NAV_LINKS: { label: string; href: string }[] = [
@@ -68,12 +69,7 @@ export default function Header() {
         window.location.href = '/';
     };
 
-    const displayName =
-        user?.user_metadata?.global_name ??
-        user?.user_metadata?.custom_claims?.global_name ??
-        user?.user_metadata?.full_name ??
-        user?.user_metadata?.name ??
-        'Utilisateur';
+    const displayName = getDiscordDisplayName(user);
 
     const userEmail = user?.email ?? user?.user_metadata?.email ?? '';
 
@@ -144,9 +140,9 @@ export default function Header() {
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" className="w-44">
-                                    <DropdownMenuItem onClick={() => navigate('/config')}>
-                                        <Sliders className="h-4 w-4" />
-                                        Configuration
+                                    <DropdownMenuItem onClick={() => navigate('/account')}>
+                                        <User className="h-4 w-4" />
+                                        Mon compte
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
@@ -226,13 +222,13 @@ export default function Header() {
                                             <div className="mt-4 divide-y divide-border">
                                                 <button
                                                     onClick={() => {
-                                                        navigate('/config');
+                                                        navigate('/account');
                                                         setSheetOpen(false);
                                                     }}
                                                     className="flex w-full cursor-pointer items-center justify-between py-3 text-sm transition-colors hover:text-muted-foreground"
                                                 >
-                                                    Configuration
-                                                    <Sliders className="h-4 w-4 text-muted-foreground" />
+                                                    Mon compte
+                                                    <User className="h-4 w-4 text-muted-foreground" />
                                                 </button>
                                                 <div className="flex items-center justify-between py-3">
                                                     <span className="text-sm">Thème</span>

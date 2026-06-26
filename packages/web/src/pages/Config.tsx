@@ -1,4 +1,4 @@
-import type { DiscordGuild, DiscordRole, OverlayConfigRow } from '@livechat/types';
+import type { DiscordGuild, DiscordRole, OverlayConfigAdminRow, OverlayConfigRow } from '@livechat/types';
 import { Play, RefreshCw, Settings2, ShieldAlert, Tv, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -90,7 +90,7 @@ export default function Config() {
     const [isEditing, setIsEditing] = useState(false);
     const [newOverlayName, setNewOverlayName] = useState('');
 
-    const [allGuildConfigs, setAllGuildConfigs] = useState<OverlayConfigRow[]>([]);
+    const [allGuildConfigs, setAllGuildConfigs] = useState<OverlayConfigAdminRow[]>([]);
     const [loadingAllConfigs, setLoadingAllConfigs] = useState(false);
 
     const [username, setUsername] = useState('');
@@ -107,6 +107,7 @@ export default function Config() {
     const [checkingLink, setCheckingLink] = useState(false);
 
     const [isRestricted, setIsRestricted] = useState(false);
+    const [restrictedGuildIds, setRestrictedGuildIds] = useState<Set<string>>(new Set());
     const [guildRoles, setGuildRoles] = useState<DiscordRole[]>([]);
     const [loadingRoles, setLoadingRoles] = useState(false);
     const [requiredRoleId, setRequiredRoleId] = useState<string | null>(null);
@@ -169,6 +170,7 @@ export default function Config() {
                 if (status === 403) {
                     setError(data.error || "Vous n'avez pas l'autorisation d'utiliser LiveChat sur ce serveur.");
                     setIsRestricted(true);
+                    setRestrictedGuildIds((prev) => new Set([...prev, selectedGuild.id]));
                     setConfigs([]);
                     setHasExistingLink(null);
                     return;
@@ -783,6 +785,7 @@ export default function Config() {
                                         loadGuilds={loadGuilds}
                                         handleLogin={handleLogin}
                                         onSelectGuild={(id) => navigate(`/config/${id}`)}
+                                        restrictedGuildIds={restrictedGuildIds}
                                     />
                                 ) : !selectedGuild ? (
                                     <div className="flex flex-col items-center justify-center gap-4 py-20">

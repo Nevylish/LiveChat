@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import DiscordClient from '../DiscordClient';
 import { createAuthMiddlewares } from '../middlewares/auth';
 import { isOverlayNameTaken } from '../services/overlayNames';
+import { resolveGuildMemberLabels } from '../services/guildMembers';
 import { StreamerRegistry } from '../services/StreamerRegistry';
 import { SupabaseService } from '../utils/SupabaseService';
 import { Validations } from '../utils/Validations';
@@ -210,12 +211,23 @@ export function registerApiRoutes({ app, discordClient, streamerRegistry }: ApiR
         const { guildId } = req.query;
         try {
             const configs = await SupabaseService.getOverlayConfigsByGuild(guildId as string);
-            const publicConfigs = configs.map((c) => ({
-                guild_id: c.guild_id,
-                username: c.username,
-                user_id: c.user_id,
-                updated_at: c.updated_at,
-            }));
+            const memberLabels = await resolveGuildMemberLabels(
+                discordClient,
+                guildId as string,
+                configs.map((c) => c.user_id),
+            );
+
+            const publicConfigs = configs.map((c) => {
+                const label = memberLabels.get(c.user_id);
+                return {
+                    guild_id: c.guild_id,
+                    username: c.username,
+                    user_id: c.user_id,
+                    updated_at: c.updated_at,
+                    discord_username: label?.username ?? null,
+                    discord_display_name: label?.displayName ?? null,
+                };
+            });
 
             res.json({ configs: publicConfigs });
         } catch {

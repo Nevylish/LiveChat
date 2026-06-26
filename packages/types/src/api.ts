@@ -1,6 +1,12 @@
 import type { DiscordRole } from './discord.js';
 import type { GuildSettingsRow, OverlayConfigRow } from './database.js';
 
+/** Overlay config enriched with Discord member info (admin list). */
+export interface OverlayConfigAdminRow extends OverlayConfigRow {
+    discord_username?: string | null;
+    discord_display_name?: string | null;
+}
+
 export interface ApiSuccessResponse {
     success: true;
 }
@@ -16,7 +22,7 @@ export interface GetOverlayConfigsResponse {
 }
 
 export interface GetAllOverlayConfigsResponse {
-    configs: OverlayConfigRow[];
+    configs: OverlayConfigAdminRow[];
 }
 
 export interface CreateOverlayConfigResponse {

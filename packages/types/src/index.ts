@@ -6,6 +6,7 @@ export type {
     GetGuildRolesResponse,
     GetGuildSettingsResponse,
     GetOverlayConfigsResponse,
+    OverlayConfigAdminRow,
     RegenerateOverlayTokenResponse,
     SaveGuildSettingsResponse,
     SaveOverlayConfigResponse,

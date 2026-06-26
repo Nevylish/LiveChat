@@ -1,11 +1,25 @@
-import type { OverlayConfigRow } from '@livechat/types';
+import type { OverlayConfigAdminRow } from '@livechat/types';
 import { RefreshCw, Trash2, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface MembersPanelProps {
-    allGuildConfigs: OverlayConfigRow[];
+    allGuildConfigs: OverlayConfigAdminRow[];
     loadingAllConfigs: boolean;
     handleAdminDeleteConfig: (targetUsername: string) => void;
+}
+
+function memberLabel(config: OverlayConfigAdminRow): string {
+    if (config.discord_username) {
+        const handle = `@${config.discord_username}`;
+        if (
+            config.discord_display_name &&
+            config.discord_display_name.toLowerCase() !== config.discord_username.toLowerCase()
+        ) {
+            return `${config.discord_display_name} · ${handle}`;
+        }
+        return handle;
+    }
+    return 'Membre introuvable';
 }
 
 export default function MembersPanel({
@@ -44,7 +58,9 @@ export default function MembersPanel({
                             <div className="min-w-0 flex-1 space-y-0.5">
                                 <p className="truncate font-medium">{c.username}</p>
                                 <p className="truncate text-xs text-muted-foreground">
-                                    ID : <span className="font-mono text-[10px]">{c.user_id}</span>
+                                    {memberLabel(c)}
+                                    <span className="text-muted-foreground/60"> · </span>
+                                    <span className="font-mono text-[10px]">{c.user_id}</span>
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                     Modifié :{' '}

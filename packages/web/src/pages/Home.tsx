@@ -1,10 +1,8 @@
 import { ChevronDown, Server, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
 import JsonLd from '../components/JsonLd';
+import PageShell from '../components/PageShell';
 import ScrollReveal from '../components/ScrollReveal';
-import Seo from '../components/Seo';
 import VideoModal from '../components/VideoModal';
 import { API_BASE_URL } from '../lib/constants';
 
@@ -61,16 +59,13 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="min-h-screen overflow-x-clip text-foreground">
-            <Seo
-                title="LiveChat - Laissez vos amis animer vos streams"
-                description="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
-                path="/"
-            />
+        <PageShell
+            title="LiveChat - Laissez vos amis animer vos streams"
+            description="LiveChat est un bot Discord et un overlay pour streameurs qui permet d'afficher une image, une vidéo ou jouer un son sur un flux en direct, depuis une simple commande Discord."
+            path="/"
+        >
             <JsonLd data={softwareApplicationSchema} />
             <JsonLd data={faqPageSchema} />
-
-            <Header />
             <VideoModal
                 open={videoOpen}
                 onClose={handleCloseVideo}
@@ -177,7 +172,7 @@ export default function Home() {
                 <section id="features" className="py-20 sm:py-28">
                     <div className="mx-auto max-w-6xl space-y-20 px-4 sm:space-y-28 sm:px-6">
                         <ScrollReveal direction="up">
-                            <div className="max-w-3xl space-y-4 border-b border-border pb-12 sm:pb-16">
+                            <div className="mx-auto max-w-4xl space-y-4 border-b border-border pb-12 text-left sm:pb-16">
                                 <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                                     Une nouvelle manière d'intégrer vos proches à vos streams.
                                 </h2>
@@ -380,8 +375,6 @@ export default function Home() {
                     </div>
                 </section>
             </main>
-
-            <Footer />
-        </div>
+        </PageShell>
     );
 }

@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 const Home = lazy(() => import('./pages/Home'));
 const Config = lazy(() => import('./pages/Config'));
+const Account = lazy(() => import('./pages/Account'));
 const Usage = lazy(() => import('./pages/Usage'));
 const Updates = lazy(() => import('./pages/Updates'));
 const Privacy = lazy(() => import('./pages/Privacy'));
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/config" element={<Config />} />
                 <Route path="/config/:guildId" element={<Config />} />
+                <Route path="/account" element={<Account />} />
                 <Route path="/usage" element={<Usage />} />
                 <Route path="/updates" element={<Updates />} />
                 <Route path="/privacy" element={<Privacy />} />
