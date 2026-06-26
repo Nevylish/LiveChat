@@ -10,7 +10,7 @@ export default function Footer() {
         <footer className="border-t border-border">
             <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-6 sm:px-6 md:flex-row md:items-center md:justify-between">
                 <p className="text-xs text-muted-foreground">
-                    © {new Date().getFullYear()} Strachamia Studios - Nevylish.{' '}
+                    © {new Date().getFullYear()} Strachamia Studios par Nevylish.{' '}
                     <span className="hidden sm:inline">
                         Non affilié aux plateformes de streaming, réseaux sociaux et services tiers cités.
                     </span>
