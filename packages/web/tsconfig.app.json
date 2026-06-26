@@ -18,9 +18,9 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@livechat/types": ["../types/src/index.ts"]
         }
     },
-    "include": ["src"],
-    "references": [{ "path": "../types" }]
+    "include": ["src"]
 }
