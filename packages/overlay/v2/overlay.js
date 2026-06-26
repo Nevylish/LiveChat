@@ -71,25 +71,10 @@ function handleConnect() {
 }
 
 function displaySplashScreen() {
-    const splashContainer = elements.splashContainer;
-    if (splashContainer) {
-        const img = document.createElement('img');
-        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/splash.png?v=2.0.0';
-        splashContainer.appendChild(img);
-        img.classList.remove('fade-in', 'fade-out');
-        img.classList.add('fade-in');
-        splashScreenDisplayed = true;
-
-        setTimeout(() => {
-            img.classList.add('fade-out');
-            img.classList.remove('fade-in');
-            setTimeout(() => {
-                if (img.parentNode) {
-                    img.parentNode.removeChild(img);
-                }
-            }, 500);
-        }, 5000);
-    }
+    mountSplashScreen(elements.splashContainer, {
+        message: 'Vous êtes sur la dernière version.',
+    });
+    splashScreenDisplayed = true;
 }
 
 function handleDisconnect() {
