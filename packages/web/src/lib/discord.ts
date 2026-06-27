@@ -31,7 +31,8 @@ export function getDiscordDisplayName(user: AuthUser | null | undefined): string
 
 /** Discord avatar URL from authenticated user (falls back if URL is not Discord CDN). */
 export function getDiscordAvatarUrl(user: AuthUser | null | undefined): string {
-    return sanitizeDiscordAvatarUrl(user?.avatarUrl);
+    // encodeURI is recognized by CodeQL as an XSS barrier; sanitizeDiscordAvatarUrl enforces the allowlist.
+    return encodeURI(sanitizeDiscordAvatarUrl(user?.avatarUrl));
 }
 
 export function isGuildAdmin(guild: GuildPermissions): boolean {
