@@ -150,8 +150,8 @@ interface LiveChatEmbedProps {
 function LiveChatEmbed({
     streamerUsername = 'noobmaster69',
     fileType = 'Vidéo TikTok',
-    version = '2.0.0',
-    lastUpdated = '22/06/2026',
+    version = '2.1.0',
+    lastUpdated = '27/06/2026',
 }: LiveChatEmbedProps) {
     const theme = useDiscordTheme();
     const [videoOpen, setVideoOpen] = useState(false);

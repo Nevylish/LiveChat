@@ -18,7 +18,7 @@ import { SupabaseService } from './SupabaseService';
 
 export namespace Functions {
     const addVersionFooter = (embed: EmbedBuilder): void => {
-        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 22/06/2026` });
+        embed.setFooter({ text: `LiveChat v${version} - Dernière mise à jour: 27/06/2026` });
     };
 
     export const buildEmbed = (
