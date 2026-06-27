@@ -1,4 +1,4 @@
-import { Attachment, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../../DiscordClient';
 import { Discord } from '../../modules/Discord';
 import { Giphy } from '../../modules/Giphy';
@@ -18,8 +18,6 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
     const text = (interaction.options.getString('texte') as string) ?? null;
     const fullscreen = (interaction.options.getBoolean('fullscreen') as boolean) ?? false;
     const anonymous = (interaction.options.getBoolean('anonyme') as boolean) ?? false;
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     if (!url && !file) {
         const embed = Functions.buildEmbed('Vous devez fournir un lien ou un fichier.', 'Alert');
@@ -58,15 +56,16 @@ export const execute = async (client: DiscordClient, interaction: ChatInputComma
         return;
     }
 
-    const targets = await TargetsManager.validateAndGetTargets(
-        client,
-        interaction,
-        target,
-        TargetsManager.EVERYONE_OPTION_LABEL,
-    );
+    const [targets, platformResult] = await Promise.all([
+        TargetsManager.validateAndGetTargets(
+            client,
+            interaction,
+            target,
+            TargetsManager.EVERYONE_OPTION_LABEL,
+        ),
+        Router.route(url),
+    ]);
     if (!targets) return;
-
-    const platformResult = await Router.route(url);
     if (platformResult.error) {
         const embed = Functions.buildEmbed(platformResult.error, 'Alert');
         await interaction.editReply({ embeds: [embed] });

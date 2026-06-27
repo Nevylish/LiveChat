@@ -1,265 +1,324 @@
-import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { LogOut, Sliders, User as UserIcon } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
+import { ChevronRight, LogOut, Moon, Sun, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { DiscordAvatar } from './DiscordAvatar';
+import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../hooks/useTheme';
+import { getDiscordDisplayName } from '../lib/discord';
 
-const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
+const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/config', label: 'Configuration' },
     { href: '/usage', label: 'Utilisation' },
     { href: '/updates', label: 'Patch Notes' },
 ];
 
+function BurgerIcon() {
+    return (
+        <span className="flex w-4 flex-col gap-[5px]" aria-hidden="true">
+            <span className="h-px w-full bg-foreground" />
+            <span className="h-px w-full bg-foreground" />
+        </span>
+    );
+}
+
 export default function Header() {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [user, setUser] = useState<SupabaseUser | null>(null);
+    const { user, signOut } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const closeMenu = useCallback(() => {
-        setMenuOpen(false);
-        document.body.style.overflow = '';
-    }, []);
+    const { isDark, toggle, setTheme } = useTheme();
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        closeMenu();
-    }, [location.pathname, closeMenu]);
+        const onScroll = () => setScrolled(window.scrollY > 0);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, [location.pathname]);
 
-    useEffect(() => {
-        function onKeyDown(e: KeyboardEvent) {
-            if (e.key === 'Escape' && menuOpen) closeMenu();
-        }
-        document.addEventListener('keydown', onKeyDown);
-        return () => document.removeEventListener('keydown', onKeyDown);
-    }, [menuOpen, closeMenu]);
+    const isActive = (href: string) => (href === '/' ? location.pathname === '/' : location.pathname.startsWith(href));
 
-    useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-        });
-
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setDropdownOpen(false);
-            }
-        }
-        if (dropdownOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [dropdownOpen]);
-
-    function toggleMenu() {
-        if (menuOpen) {
-            closeMenu();
-        } else {
-            setMenuOpen(true);
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    const handleLogout = async () => {
-        setDropdownOpen(false);
-        await supabase.auth.signOut();
+    const handleLogout = () => {
+        signOut();
         window.location.href = '/';
     };
+
+    const displayName = getDiscordDisplayName(user);
 
     return (
         <>
             <header
-                className={`sticky z-50 transition-all duration-300 w-full ${
-                    menuOpen
-                        ? 'top-0 px-0 bg-transparent border-b border-transparent backdrop-blur-none'
-                        : 'top-4 px-4 sm:px-6 bg-transparent border-b border-transparent backdrop-blur-none'
-                }`}
+                className={cn(
+                    'fixed inset-x-0 top-0 z-50 w-full border-b bg-background/70 backdrop-blur-md transition-colors duration-200 supports-[backdrop-filter]:bg-background/60',
+                    scrolled ? 'border-border' : 'border-transparent',
+                )}
             >
-                <div
-                    className={`mx-auto flex w-full max-w-6xl items-center justify-between transition-all duration-300 ${
-                        menuOpen
-                            ? 'rounded-none border border-transparent bg-transparent shadow-none px-5 py-4'
-                            : 'rounded-2xl border border-border bg-background/70 backdrop-blur-md shadow-lg shadow-black/10 px-5 py-3'
-                    }`}
-                >
-                    <div className="flex items-center gap-8">
-                        <a href="/" className="flex items-center gap-2.5 text-lg font-bold shrink-0">
-                            <img
-                                src="/assets/images/livechat_transparent.png"
-                                alt="LiveChat"
-                                className="h-8 w-8"
-                                width={32}
-                                height={32}
-                                draggable={false}
-                            />
-                            <span>LiveChat</span>
-                        </a>
+                <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+                    {/* Logo */}
+                    <a href="/" className="flex shrink-0 items-center gap-2 text-base font-semibold">
+                        <img
+                            src="/assets/images/livechat_transparent.png"
+                            alt="LiveChat"
+                            className={cn('h-6 w-6', !isDark && 'invert')}
+                            width={24}
+                            height={24}
+                            draggable={false}
+                        />
+                        <span>LiveChat</span>
+                    </a>
 
-                        <nav className="hidden md:block">
-                            <ul className="flex items-center gap-6 text-sm font-semibold text-muted-foreground">
-                                {NAV_LINKS.map((link) => (
-                                    <li key={link.href}>
-                                        <a
-                                            href={link.href}
-                                            target={link.external ? '_blank' : undefined}
-                                            rel={link.external ? 'noopener noreferrer' : undefined}
-                                            className={`transition-colors duration-200 hover:text-foreground ${
-                                                !link.external &&
-                                                (link.href === '/'
-                                                    ? location.pathname === '/'
-                                                    : location.pathname.startsWith(link.href))
-                                                    ? 'text-foreground'
-                                                    : ''
-                                            }`}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </div>
-
-                    <div className="relative flex items-center gap-4" ref={dropdownRef}>
-                        {user ? (
-                            <button
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 cursor-pointer ${
-                                    menuOpen ? 'hidden' : 'flex'
-                                }`}
-                                aria-expanded={dropdownOpen}
-                                aria-haspopup="true"
-                            >
-                                <img
-                                    src={
-                                        user.user_metadata?.avatar_url ||
-                                        'https://cdn.discordapp.com/embed/avatars/0.png'
-                                    }
-                                    alt="Avatar"
-                                    className="h-full w-8 rounded-full object-cover shrink-0"
-                                />
-                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors truncate max-w-[120px]">
-                                    {user.user_metadata?.global_name ||
-                                        user.user_metadata?.custom_claims?.global_name ||
-                                        user.user_metadata?.full_name ||
-                                        user.user_metadata?.name ||
-                                        'Utilisateur'}
-                                </span>
-                            </button>
-                        ) : (
+                    {/* Desktop nav */}
+                    <nav className="hidden lg:flex items-center gap-6" aria-label="Navigation principale">
+                        {NAV_LINKS.map((link) => (
                             <a
-                                href="/config"
-                                className={`flex items-center gap-0 sm:gap-2 h-8 rounded-full border border-border bg-white/3 hover:bg-white/5 p-0 sm:pr-3 transition-all duration-200 group shrink-0 ${
-                                    menuOpen ? 'hidden' : 'flex'
+                                key={link.href}
+                                href={link.href}
+                                className={`text-sm transition-colors hover:text-foreground ${
+                                    isActive(link.href) ? 'text-foreground font-medium' : 'text-muted-foreground'
                                 }`}
                             >
-                                <div className="flex h-full w-8 items-center justify-center rounded-full bg-white/5 text-muted-foreground group-hover:bg-white/10 group-hover:text-foreground transition-colors duration-200">
-                                    <UserIcon className="h-4 w-4" />
-                                </div>
-                                <span className="hidden sm:inline text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
-                                    Se connecter
-                                </span>
+                                {link.label}
                             </a>
-                        )}
+                        ))}
+                    </nav>
 
-                        {user && dropdownOpen && (
-                            <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
-                                <button
-                                    onClick={() => {
-                                        setDropdownOpen(false);
-                                        navigate('/config');
-                                    }}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-muted-foreground hover:bg-white/5 hover:text-foreground transition-colors cursor-pointer"
-                                >
-                                    <Sliders className="h-4 w-4" />
-                                    Configuration
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                                >
-                                    <LogOut className="h-4 w-4" />
-                                    Se déconnecter
-                                </button>
-                            </div>
-                        )}
-
-                        <button
-                            className="flex h-10 w-10 items-center justify-center rounded-lg md:hidden hover:bg-white/5 transition-colors cursor-pointer shrink-0"
-                            onClick={toggleMenu}
-                            aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-                            aria-expanded={menuOpen}
+                    {/* Right side */}
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={toggle}
+                            aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
+                            className="hidden lg:flex"
                         >
-                            <div className="flex h-[18px] w-[22px] flex-col justify-between">
-                                <span
-                                    className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                                        menuOpen ? 'translate-y-[8px] rotate-45' : ''
-                                    }`}
-                                />
-                                <span
-                                    className={`block h-[2px] w-full rounded-full bg-foreground transition-opacity duration-200 ${
-                                        menuOpen ? 'opacity-0' : ''
-                                    }`}
-                                />
-                                <span
-                                    className={`block h-[2px] w-full origin-center rounded-full bg-foreground transition-transform duration-300 ${
-                                        menuOpen ? 'translate-y-[-8px] -rotate-45' : ''
-                                    }`}
-                                />
-                            </div>
-                        </button>
+                            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                        </Button>
+
+                        {user ? (
+                            <DropdownMenu modal={false}>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="group hidden h-8 shrink-0 cursor-pointer items-center gap-0 rounded-full border border-border bg-background p-0 transition-colors hover:bg-accent sm:gap-2 sm:pr-3 lg:flex">
+                                        <DiscordAvatar
+                                            user={user}
+                                            className="h-full w-8 shrink-0 rounded-full object-cover"
+                                        />
+                                        <span className="hidden max-w-[120px] truncate text-xs font-semibold text-muted-foreground transition-colors group-hover:text-foreground sm:inline">
+                                            {displayName}
+                                        </span>
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-44">
+                                    <DropdownMenuItem onClick={() => navigate('/account')}>
+                                        <User className="h-4 w-4" />
+                                        Mon compte
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        onClick={handleLogout}
+                                        className="text-destructive focus:text-destructive"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        Se déconnecter
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Button asChild size="sm" variant="outline" className="hidden lg:flex">
+                                <a href="/config">Se connecter</a>
+                            </Button>
+                        )}
+
+                        {/* Mobile full-screen menu */}
+                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Ouvrir le menu">
+                                    <BurgerIcon />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent
+                                side="fullscreen"
+                                overlayClassName="bg-background"
+                                className="flex flex-col p-0 duration-200 [&>button]:hidden"
+                            >
+                                {/* Menu header */}
+                                <div className="flex h-14 shrink-0 items-center justify-between border-b border-border/50 px-4 sm:px-6">
+                                    <a
+                                        href="/"
+                                        className="flex items-center gap-2 text-base font-semibold"
+                                        onClick={() => setSheetOpen(false)}
+                                    >
+                                        <img
+                                            src="/assets/images/livechat_transparent.png"
+                                            alt="LiveChat"
+                                            className={cn('h-6 w-6', !isDark && 'invert')}
+                                            width={24}
+                                            height={24}
+                                            draggable={false}
+                                        />
+                                        <span>LiveChat</span>
+                                    </a>
+                                    <SheetClose asChild>
+                                        <Button variant="ghost" size="icon" aria-label="Fermer le menu">
+                                            <X className="h-5 w-5" />
+                                        </Button>
+                                    </SheetClose>
+                                </div>
+
+                                <div className="flex flex-1 flex-col overflow-y-auto">
+                                    {/* User section */}
+                                    {user && (
+                                        <div className="border-b border-border px-4 py-5 sm:px-6">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="min-w-0">
+                                                    <p className="truncate font-semibold">{displayName}</p>
+                                                    <p className="truncate font-mono text-xs text-muted-foreground">
+                                                        {user.id}
+                                                    </p>
+                                                </div>
+                                                <DiscordAvatar
+                                                    user={user}
+                                                    alt=""
+                                                    className="h-10 w-10 shrink-0 rounded-full object-cover"
+                                                />
+                                            </div>
+
+                                            <div className="mt-4 divide-y divide-border">
+                                                <button
+                                                    onClick={() => {
+                                                        navigate('/account');
+                                                        setSheetOpen(false);
+                                                    }}
+                                                    className="flex w-full cursor-pointer items-center justify-between py-3 text-sm transition-colors hover:text-muted-foreground"
+                                                >
+                                                    Mon compte
+                                                    <User className="h-4 w-4 text-muted-foreground" />
+                                                </button>
+                                                <div className="flex items-center justify-between py-3">
+                                                    <span className="text-sm">Thème</span>
+                                                    <div className="flex rounded-md border border-border p-0.5">
+                                                        <button
+                                                            onClick={() => setTheme(false)}
+                                                            className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm transition-colors ${
+                                                                !isDark
+                                                                    ? 'bg-foreground text-background'
+                                                                    : 'text-muted-foreground hover:text-foreground'
+                                                            }`}
+                                                            aria-label="Mode clair"
+                                                        >
+                                                            <Sun className="h-3.5 w-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setTheme(true)}
+                                                            className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm transition-colors ${
+                                                                isDark
+                                                                    ? 'bg-foreground text-background'
+                                                                    : 'text-muted-foreground hover:text-foreground'
+                                                            }`}
+                                                            aria-label="Mode sombre"
+                                                        >
+                                                            <Moon className="h-3.5 w-3.5" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        void handleLogout();
+                                                        setSheetOpen(false);
+                                                    }}
+                                                    className="flex w-full cursor-pointer items-center justify-between py-3 text-sm transition-colors hover:text-muted-foreground"
+                                                >
+                                                    Se déconnecter
+                                                    <LogOut className="h-4 w-4 text-muted-foreground" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Main navigation */}
+                                    <nav className="flex flex-col px-4 py-6 sm:px-6" aria-label="Navigation mobile">
+                                        {NAV_LINKS.map((link) => (
+                                            <a
+                                                key={link.href}
+                                                href={link.href}
+                                                onClick={() => setSheetOpen(false)}
+                                                className={`flex items-center justify-between border-b border-border py-4 text-lg font-medium transition-colors hover:text-muted-foreground ${
+                                                    isActive(link.href) ? 'text-foreground' : 'text-foreground/80'
+                                                }`}
+                                            >
+                                                {link.label}
+                                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                            </a>
+                                        ))}
+                                    </nav>
+
+                                    {/* Theme for guests */}
+                                    {!user && (
+                                        <div className="flex items-center justify-between border-t border-border px-4 py-4 sm:px-6">
+                                            <span className="text-sm">Thème</span>
+                                            <div className="flex rounded-md border border-border p-0.5">
+                                                <button
+                                                    onClick={() => setTheme(false)}
+                                                    className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm transition-colors ${
+                                                        !isDark
+                                                            ? 'bg-foreground text-background'
+                                                            : 'text-muted-foreground hover:text-foreground'
+                                                    }`}
+                                                    aria-label="Mode clair"
+                                                >
+                                                    <Sun className="h-3.5 w-3.5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => setTheme(true)}
+                                                    className={`flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm transition-colors ${
+                                                        isDark
+                                                            ? 'bg-foreground text-background'
+                                                            : 'text-muted-foreground hover:text-foreground'
+                                                    }`}
+                                                    aria-label="Mode sombre"
+                                                >
+                                                    <Moon className="h-3.5 w-3.5" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Bottom CTA */}
+                                    <div className="mt-auto px-4 pb-8 pt-4 sm:px-6">
+                                        {!user ? (
+                                            <a
+                                                href="/config"
+                                                onClick={() => setSheetOpen(false)}
+                                                className="block w-full rounded-md border border-border py-3 text-center text-sm font-medium transition-colors hover:bg-accent"
+                                            >
+                                                Se connecter
+                                            </a>
+                                        ) : (
+                                            <a
+                                                href="/config"
+                                                onClick={() => setSheetOpen(false)}
+                                                className="block w-full rounded-md border border-border py-3 text-center text-sm font-medium transition-colors hover:bg-accent"
+                                            >
+                                                Configurer votre overlay
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
             </header>
-
-            <div
-                className={`fixed inset-0 z-40 flex flex-col bg-background transition-opacity duration-300 md:pointer-events-none md:hidden md:opacity-0 ${
-                    menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
-                }`}
-                aria-hidden={!menuOpen}
-            >
-                <nav className="flex flex-1 flex-col items-center justify-center gap-8">
-                    {NAV_LINKS.map((link, i) => (
-                        <a
-                            key={link.href}
-                            href={link.href}
-                            target={link.external ? '_blank' : undefined}
-                            rel={link.external ? 'noopener noreferrer' : undefined}
-                            onClick={link.external ? undefined : closeMenu}
-                            tabIndex={menuOpen ? 0 : -1}
-                            className={`text-2xl font-bold transition-colors duration-200 hover:text-foreground ${
-                                !link.external &&
-                                (link.href === '/'
-                                    ? location.pathname === '/'
-                                    : location.pathname.startsWith(link.href))
-                                    ? 'text-foreground'
-                                    : 'text-muted-foreground'
-                            }`}
-                            style={{
-                                transitionDelay: menuOpen ? `${80 + i * 60}ms` : '0ms',
-                                transform: menuOpen ? 'translateY(0)' : 'translateY(16px)',
-                                opacity: menuOpen ? 1 : 0,
-                                transitionProperty: 'transform, opacity, color',
-                                transitionDuration: '300ms, 300ms, 200ms',
-                            }}
-                        >
-                            {link.label}
-                        </a>
-                    ))}
-                </nav>
-            </div>
+            <div className="h-14 shrink-0" aria-hidden="true" />
         </>
     );
 }

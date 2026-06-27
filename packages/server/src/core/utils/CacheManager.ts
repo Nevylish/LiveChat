@@ -6,18 +6,6 @@ interface CacheEntry<T> {
     isNegative: boolean;
 }
 
-export interface CacheManagerStats {
-    size: number;
-    maxSize: number;
-    hits: number;
-    misses: number;
-    negativeHits: number;
-    dedupedRequests: number;
-    evictions: number;
-    expirations: number;
-    hitRate: number;
-}
-
 export interface GetOrFetchOptions {
     /** Durée de vie en ms pour un résultat trouvé (par défaut: 1 heure). */
     ttlMs?: number;
@@ -193,26 +181,5 @@ export class CacheManager {
 
     public static delete(key: string): boolean {
         return this.cache.delete(key);
-    }
-
-    public static clear(): void {
-        const size = this.cache.size;
-        this.cache.clear();
-        Logger.debug('CacheManager', 'Cache cleared', { entriesRemoved: size });
-    }
-
-    public static getStats(): CacheManagerStats {
-        const total = this.stats.hits + this.stats.negativeHits + this.stats.misses;
-        return {
-            size: this.cache.size,
-            maxSize: this.maxSize,
-            hits: this.stats.hits,
-            misses: this.stats.misses,
-            negativeHits: this.stats.negativeHits,
-            dedupedRequests: this.stats.dedupedRequests,
-            evictions: this.stats.evictions,
-            expirations: this.stats.expirations,
-            hitRate: total > 0 ? (this.stats.hits + this.stats.negativeHits) / total : 0,
-        };
     }
 }

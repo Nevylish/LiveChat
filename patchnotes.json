@@ -1,5 +1,15 @@
 [
     {
+        "version": "v2.1.0",
+        "date": "27 Juin 2026",
+        "title": "Compatibilité 2K, 4K, 8K & 720p",
+        "changes": [
+            "L'overlay est maintenant compatible avec toutes les résolutions 16:9, du 720p au 8K.",
+            "Nous avons changé le système d'authentification du site web, nous ne récupérons plus votre adresse e-mail.",
+            "Correction de bugs et amélioration des performances."
+        ]
+    },
+    {
         "version": "v2.0.0",
         "date": "22 Juin 2026",
         "title": "LiveChat V2",

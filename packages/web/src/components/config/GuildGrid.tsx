@@ -1,14 +1,11 @@
-import { ExternalLink, HelpCircle, RefreshCw, ShieldAlert } from 'lucide-react';
-
-interface DiscordGuild {
-    id: string;
-    name: string;
-    icon: string | null;
-    owner: boolean;
-    permissions: string;
-    hasBot?: boolean;
-    overlayCount?: number;
-}
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import type { DiscordGuild } from '@livechat/types';
+import { ChevronRight, ExternalLink, HelpCircle, Lock, RefreshCw, Search, ShieldAlert } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { buildBotInviteUrl } from '../../lib/constants';
+import { isGuildAdmin } from '../../lib/discord';
 
 interface GuildGridProps {
     guilds: DiscordGuild[];
@@ -17,6 +14,31 @@ interface GuildGridProps {
     loadGuilds: (force: boolean) => void;
     handleLogin: () => void;
     onSelectGuild: (guildId: string) => void;
+    restrictedGuildIds?: Set<string>;
+}
+
+function GuildIcon({ guild, muted = false }: { guild: DiscordGuild; muted?: boolean }) {
+    if (guild.icon) {
+        return (
+            <img
+                src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
+                alt=""
+                className={`h-10 w-10 shrink-0 rounded-lg border border-border object-cover ${
+                    muted ? 'opacity-60 grayscale' : ''
+                }`}
+            />
+        );
+    }
+    return (
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold uppercase text-muted-foreground">
+            {guild.name.substring(0, 2)}
+        </div>
+    );
+}
+
+function roleOf(g: DiscordGuild): string {
+    if (g.owner) return 'Propriétaire';
+    return isGuildAdmin(g) ? 'Administrateur' : 'Membre';
 }
 
 export default function GuildGrid({
@@ -26,142 +48,173 @@ export default function GuildGrid({
     loadGuilds,
     handleLogin,
     onSelectGuild,
+    restrictedGuildIds = new Set(),
 }: GuildGridProps) {
+    const [query, setQuery] = useState('');
+
+    const { installed, others } = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        const filtered = q ? guilds.filter((g) => g.name.toLowerCase().includes(q)) : guilds;
+        return {
+            installed: filtered.filter((g) => g.hasBot),
+            others: filtered.filter((g) => !g.hasBot),
+        };
+    }, [guilds, query]);
+
     if (fetchingGuilds) {
         return (
-            <div className="py-20 flex flex-col items-center justify-center gap-4">
-                <RefreshCw className="h-10 w-10 animate-spin text-white/60" />
-                <span className="text-sm font-semibold text-muted-foreground">Chargement de vos serveurs...</span>
+            <div className="flex flex-col items-center justify-center gap-4 py-20">
+                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Chargement de vos serveurs...</span>
             </div>
         );
     }
 
     if (isSessionExpired) {
         return (
-            <div className="config-card py-16 text-center max-w-md mx-auto space-y-4">
-                <ShieldAlert className="h-12 w-12 opacity-80 mx-auto text-amber-500" />
-                <h3 className="font-bold text-lg text-foreground">Session Discord expirée</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                    Votre session Discord a expiré ou a été réinitialisée. Veuillez vous reconnecter pour actualiser la
-                    liste de vos serveurs de stream.
+            <div className="mx-auto max-w-sm py-12 text-center">
+                <ShieldAlert className="mx-auto mb-4 h-10 w-10 text-amber-500" />
+                <h3 className="font-bold">Session Discord expirée</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    Votre session a expiré. Veuillez vous reconnecter pour actualiser la liste de vos serveurs.
                 </p>
-                <button
-                    onClick={handleLogin}
-                    className="rounded-lg bg-white hover:bg-white/90 text-black px-6 py-2.5 text-xs font-bold transition-colors cursor-pointer"
-                >
-                    Se connecter avec Discord
-                </button>
+                <Button variant="outline" onClick={handleLogin} className="mt-4">
+                    Se reconnecter avec Discord
+                </Button>
             </div>
         );
     }
 
     if (guilds.length === 0) {
         return (
-            <div className="config-card py-16 text-center max-w-md mx-auto space-y-4">
-                <HelpCircle className="h-12 w-12 opacity-40 mx-auto text-muted-foreground" />
-                <p className="text-base text-muted-foreground">Aucun serveur Discord administré n'a été trouvé.</p>
-                <button
-                    onClick={() => loadGuilds(true)}
-                    className="rounded-full bg-white/10 hover:bg-white/15 px-6 py-2 text-sm font-semibold transition-colors cursor-pointer"
-                >
+            <div className="mx-auto max-w-sm py-12 text-center">
+                <HelpCircle className="mx-auto mb-4 h-10 w-10 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">Aucun serveur Discord administré n'a été trouvé.</p>
+                <Button variant="outline" onClick={() => loadGuilds(true)} className="mt-4">
                     Actualiser la liste
-                </button>
+                </Button>
             </div>
         );
     }
 
-    const installedGuilds = guilds.filter((g) => g.hasBot);
-    const otherGuilds = guilds.filter((g) => !g.hasBot);
+    const showSearch = guilds.length > 6;
+    const noResults = query.trim() !== '' && installed.length === 0 && others.length === 0;
 
-    const renderGuildCard = (g: DiscordGuild) => {
-        const perms = parseInt(g.permissions) || 0;
-        const isOwner = g.owner;
-        const isAdmin = (perms & 0x8) === 0x8 || (perms & 0x20) === 0x20;
-        const roleLabel = isOwner ? 'Propriétaire' : isAdmin ? 'Administrateur' : 'Utilisateur';
-
-        return (
-            <div
-                key={g.id}
-                onClick={() => g.hasBot && onSelectGuild(g.id)}
-                className={`config-card flex flex-col justify-between h-full p-6 transition-colors group border ${
-                    g.hasBot
-                        ? 'cursor-pointer'
-                        : 'bg-white/1 border-white/5 opacity-70'
-                }`}
-            >
-                <div className="flex items-start gap-4">
-                    {g.icon ? (
-                        <img
-                            src={`https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png`}
-                            alt=""
-                            className="h-14 w-14 rounded-2xl shrink-0 object-cover border border-white/10"
-                        />
-                    ) : (
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-lg font-bold text-muted-foreground uppercase">
-                            {g.name.substring(0, 2)}
-                        </div>
-                    )}
-                    <div className="space-y-1 min-w-0 flex-1">
-                        <h3 className="font-bold text-base sm:text-lg truncate transition-colors">{g.name}</h3>
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-muted-foreground">{roleLabel}</span>
-                            </div>
-                            {g.hasBot && (
-                                <p className="text-xs text-muted-foreground">
-                                    {g.overlayCount && g.overlayCount > 0
-                                        ? `${g.overlayCount} overlay${g.overlayCount > 1 ? 's' : ''} configuré${g.overlayCount > 1 ? 's' : ''}`
-                                        : 'Aucun overlay créé'}
-                                </p>
-                            )}
-                        </div>
-                    </div>
+    return (
+        <div className="space-y-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 className="text-lg font-bold leading-tight">Vos serveurs</h1>
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                        Sélectionnez un serveur pour gérer vos overlays.
+                    </p>
                 </div>
-
-                {!g.hasBot ? (
-                    <a
-                        href={`https://discord.com/oauth2/authorize?client_id=1379921658109890610&permissions=1049600&scope=bot&guild_id=${g.id}&disable_guild_select=true`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2.5 text-sm font-bold text-white transition-colors cursor-pointer text-center"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        Inviter le bot
-                        <ExternalLink className="h-4 w-4" />
-                    </a>
-                ) : (
-                    <div className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white hover:bg-white/90 px-4 py-2.5 text-sm font-bold text-black transition-colors">
-                        {g.overlayCount && g.overlayCount > 0 ? 'Gérer mes overlays' : 'Créer mon overlay'}
+                {showSearch && (
+                    <div className="relative w-full sm:w-64">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Rechercher un serveur..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="pl-9"
+                        />
                     </div>
                 )}
             </div>
-        );
-    };
 
-    return (
-        <div className="space-y-10">
-            {installedGuilds.length > 0 && (
-                <div className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                        Serveurs avec LiveChat ({installedGuilds.length})
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {installedGuilds.map(renderGuildCard)}
-                    </div>
+            {noResults ? (
+                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border py-14 text-center">
+                    <Search className="h-6 w-6 text-muted-foreground/50" />
+                    <p className="text-sm text-muted-foreground">
+                        Aucun serveur ne correspond à «&nbsp;{query}&nbsp;».
+                    </p>
                 </div>
-            )}
+            ) : (
+                <>
+                    {installed.length > 0 && (
+                        <section className="space-y-3">
+                            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Avec LiveChat ({installed.length})
+                            </h2>
+                            <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+                                {installed.map((g) => {
+                                    const count = g.overlayCount ?? 0;
+                                    const isRestricted = restrictedGuildIds.has(g.id);
+                                    return (
+                                        <button
+                                            key={g.id}
+                                            onClick={() => onSelectGuild(g.id)}
+                                            className="group flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-accent"
+                                        >
+                                            <div className="relative shrink-0">
+                                                <GuildIcon guild={g} />
+                                                {isRestricted && (
+                                                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 ring-2 ring-card">
+                                                        <Lock className="h-2.5 w-2.5 text-white" />
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex min-w-0 items-center gap-1.5">
+                                                    <p className="truncate font-medium">{g.name}</p>
+                                                    {g.hasPlusSubscription && (
+                                                        <Badge
+                                                            variant="secondary"
+                                                            className="shrink-0 px-1.5 py-0 text-[10px] leading-4"
+                                                        >
+                                                            Plus
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                                <p className="truncate text-xs text-muted-foreground">
+                                                    {isRestricted ? (
+                                                        <span className="text-amber-600 dark:text-amber-400">
+                                                            Accès restreint · rôle requis
+                                                        </span>
+                                                    ) : (
+                                                        <>
+                                                            {roleOf(g)} ·{' '}
+                                                            {count > 0
+                                                                ? `${count} overlay${count > 1 ? 's' : ''}`
+                                                                : 'Aucun overlay'}
+                                                        </>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                    )}
 
-            {installedGuilds.length > 0 && otherGuilds.length > 0 && <div className="border-t border-white/5 my-8" />}
-
-            {otherGuilds.length > 0 && (
-                <div className="space-y-4">
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                        Vos serveurs ({otherGuilds.length})
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {otherGuilds.map(renderGuildCard)}
-                    </div>
-                </div>
+                    {others.length > 0 && (
+                        <section className="space-y-3">
+                            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Ajouter LiveChat ({others.length})
+                            </h2>
+                            <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+                                {others.map((g) => (
+                                    <div key={g.id} className="flex items-center gap-3 px-4 py-3.5">
+                                        <GuildIcon guild={g} muted />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate font-medium text-muted-foreground">{g.name}</p>
+                                            <p className="truncate text-xs text-muted-foreground/70">{roleOf(g)}</p>
+                                        </div>
+                                        <Button asChild variant="outline" size="sm" className="shrink-0">
+                                            <a href={buildBotInviteUrl(g.id)} target="_blank" rel="noopener noreferrer">
+                                                Ajouter
+                                                <ExternalLink className="h-3.5 w-3.5" />
+                                            </a>
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                </>
             )}
         </div>
     );

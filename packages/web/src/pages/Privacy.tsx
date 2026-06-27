@@ -1,105 +1,96 @@
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import Seo from '../components/Seo';
+import LegalPage, { type LegalSection } from '../components/LegalPage';
 
-const sections = [
+const sections: LegalSection[] = [
     {
+        id: 'donnees-collectees',
         title: '1. Données collectées',
         content:
-            "Le bot LiveChat et le site web ne collectent aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur. Le bot traite uniquement les commandes en temps réel sans stockage, et aucune donnée de navigation n'est enregistrée.",
+            "Lorsque vous utilisez le tableau de bord sur livechat.nevylish.fr, vous vous connectez via Discord (OAuth). LiveChat reçoit de Discord votre identifiant utilisateur, votre pseudo, votre nom d'affichage et votre avatar. Nous ne collectons ni ne stockons votre adresse e-mail.\n\n" +
+            "Pour le fonctionnement du service, nous enregistrons dans notre base de données (Supabase Postgres) : vos configurations d'overlay (pseudo choisi, jeton d'accès, identifiant du serveur Discord, identifiant utilisateur Discord, dates de création et de modification) et, pour les administrateurs de serveur, les réglages du serveur (rôle requis, limite d'overlays par membre).\n\n" +
+            "Le bot Discord traite les commandes /livechat en temps réel : les messages, médias et fichiers envoyés via Discord ne sont pas stockés par LiveChat. Les médias sont relayés temporairement via notre proxy pour les afficher sur l'overlay, sans conservation durable du contenu.\n\n" +
+            "Nous n'utilisons pas de cookies publicitaires ni d'outils d'analyse comportementale sur ce site.",
     },
     {
+        id: 'utilisation',
         title: '2. Utilisation des données',
         content:
-            'Les données relatives au bot et au site web ne sont ni stockées, ni revendues. Nous respectons votre vie privée dans sa totalité.',
+            'Les données collectées servent uniquement à fournir et sécuriser le service LiveChat : authentifier les utilisateurs, créer et gérer les overlays, appliquer les restrictions par rôle sur les serveurs Discord, et permettre aux administrateurs de gérer les configurations de leur communauté.\n\n' +
+            'Vos données ne sont ni vendues, ni louées, ni utilisées à des fins publicitaires.',
     },
     {
-        title: '3. Cookies et technologies similaires',
+        id: 'cookies',
+        title: '3. Cookies et stockage local',
         content:
-            "Ce site n'utilise aucun cookie de suivi publicitaire ou analytique. Votre navigation est totalement libre et sans pistage.",
+            "La connexion au tableau de bord utilise un stockage local dans votre navigateur (session JWT LiveChat) afin de maintenir votre connexion entre les visites. Il s'agit d'un stockage technique nécessaire au fonctionnement du tableau de bord.\n\n" +
+            "Nous n'utilisons pas de cookies de suivi publicitaire ou analytique. Aucun pistage de navigation à des fins marketing n'est effectué.",
     },
     {
-        title: '4. Données de tiers',
+        id: 'sous-traitants',
+        title: '4. Sous-traitants et services tiers',
         content:
-            "LiveChat fonctionne via Discord et est soumis à la politique de confidentialité de Discord concernant les données des serveurs et des utilisateurs. Nous vous invitons à consulter la politique de confidentialité de Discord pour plus d'informations.",
+            "LiveChat s'appuie sur les services suivants, chacun soumis à sa propre politique de confidentialité :\n\n" +
+            '• Discord — authentification OAuth et fonctionnement du bot (discord.com/privacy)\n' +
+            '• Supabase — hébergement de la base de données Postgres (supabase.com/privacy)\n' +
+            '• Cloudflare — relais des médias via le proxy (cloudflare.com/privacypolicy)\n' +
+            '• Vercel — hébergement du site web (vercel.com/legal/privacy-policy)\n\n' +
+            "En vous connectant avec Discord, vous acceptez que les données nécessaires à l'authentification soient transmises à ces services dans le cadre du fonctionnement de LiveChat.",
     },
     {
+        id: 'securite',
         title: '5. Sécurité',
         content:
-            "Bien qu'aucune donnée ne soit stockée, nous appliquons des pratiques de sécurité appropriées pour protéger l'intégrité du bot.",
+            "Nous appliquons des mesures techniques pour protéger l'intégrité du service : authentification OAuth Discord avec jetons de session signés, jetons d'accès pour les overlays, accès base de données restreint côté serveur, et relais des médias via un proxy afin de limiter l'exposition des adresses IP des streameurs.\n\n" +
+            "Aucun système n'est totalement invulnérable ; nous vous invitons à ne partager vos liens d'overlay qu'avec des personnes de confiance.",
     },
     {
-        title: '6. Droits des utilisateurs',
+        id: 'conservation',
+        title: '6. Conservation des données',
         content:
-            "Puisque nous ne collectons aucune donnée, il n'y a aucune donnée à consulter, modifier ou supprimer. Cependant, vous pouvez retirer LiveChat de votre serveur Discord et de votre logiciel de streaming à tout moment.",
+            "Vos configurations d'overlay et les réglages de serveur sont conservés tant que vous les utilisez activement ou que le bot reste présent sur le serveur concerné.\n\n" +
+            "Vous pouvez supprimer un overlay individuellement depuis le tableau de bord. La suppression de l'ensemble de votre compte et de toutes vos données associées sera proposée depuis la page Mon compte (fonctionnalité en cours de déploiement). En attendant, vous pouvez nous contacter à bonjour@nevylish.fr pour toute demande de suppression.",
     },
     {
-        title: '7. Hébergement',
+        id: 'vos-droits',
+        title: '7. Vos droits',
         content:
-            'Le bot Discord et le site internet de LiveChat sont hébergés en France chez OVH SAS, dont le siège social est situé au 2 rue Kellermann - 59100 Roubaix - France (contact : +33 9 72 10 10 07).',
+            "Conformément au Règlement général sur la protection des données (RGPD), vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition concernant vos données personnelles.\n\n" +
+            'Pour exercer ces droits, contactez-nous à bonjour@nevylish.fr. Vous pouvez également retirer LiveChat de votre serveur Discord à tout moment, ou vous déconnecter du tableau de bord pour mettre fin à votre session.\n\n' +
+            "Vous avez le droit d'introduire une réclamation auprès de la CNIL (cnil.fr) si vous estimez que le traitement de vos données n'est pas conforme.",
     },
     {
-        title: '8. Éditeur',
+        id: 'hebergement',
+        title: '8. Hébergement',
         content:
-            'Le site internet et le bot Discord LiveChat sont édités par EI STRASS CHAT MIAOU, entreprise individuelle immatriculée sous le numéro SIRET 99933061600023, dont le siège est situé au 173 rue de Courcelles, 75017 Paris, France. (contact: bonjour@nevylish.fr).',
+            '• Bot Discord et API : OVH SAS, 2 rue Kellermann, 59100 Roubaix, France\n' +
+            '• Site web : Vercel Inc., États-Unis\n' +
+            '• Authentification et base de données : Supabase Inc. (Postgres)\n' +
+            '• Proxy média : Cloudflare Inc.',
     },
     {
-        title: '9. Modifications de la politique',
+        id: 'editeur',
+        title: '9. Éditeur',
         content:
-            'Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications seront publiées sur ce site web et il est de votre responsabilité de consulter régulièrement cette politique.',
+            'Le site internet et le bot Discord LiveChat sont édités par Nevylish agissant sous pseudonyme pour STRASS CHAT MIAOU, entreprise individuelle immatriculée sous le numéro SIRET 99933061600023, dont le siège est situé au 173 rue de Courcelles, 75017 Paris, France (contact : bonjour@nevylish.fr).',
+    },
+    {
+        id: 'modifications',
+        title: '10. Modifications de la politique',
+        content:
+            'Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications seront publiées sur cette page avec une date de mise à jour révisée. Il est de votre responsabilité de consulter régulièrement cette politique.',
     },
 ];
 
 export default function Privacy() {
     return (
-        <div className="dark flex min-h-screen flex-col text-foreground">
-            <Seo
-                title="Politique de confidentialité - LiveChat"
-                description="LiveChat et son site web ne collectent aucune donnée personnelle, aucun message d'utilisateur ni aucune information de serveur."
-                path="/privacy"
-            />
-            <Header />
-
-            <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-8 sm:px-6 sm:py-12">
-                <div className="mb-8">
-                    <h1 className="text-2xl font-bold sm:text-3xl">Politique de confidentialité</h1>
-                    <p className="mt-3 text-sm text-muted-foreground sm:text-base">
-                        Nous accordons une grande importance à la protection de vos données, en utilisant LiveChat, vous
-                        acceptez cette politique de confidentialité.
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground opacity-60 sm:text-sm">
-                        Dernière mise à jour : 16 juin 2026
-                    </p>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                    {sections.map((section) => (
-                        <div key={section.title} className="rounded-xl border border-border bg-white/2 p-5 sm:p-6">
-                            <h2 className="text-base font-semibold sm:text-lg">{section.title}</h2>
-                            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                                {section.content}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="mt-10 flex flex-wrap justify-center gap-3">
-                    <a
-                        href="/terms"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
-                    >
-                        Voir les conditions d'utilisation
-                    </a>
-                    <a
-                        href="/"
-                        className="rounded-full border border-border px-5 py-2 text-sm font-semibold transition-colors duration-200 hover:bg-white/5"
-                    >
-                        ← Retour à l'accueil
-                    </a>
-                </div>
-            </main>
-
-            <Footer />
-        </div>
+        <LegalPage
+            seoTitle="Politique de confidentialité - LiveChat"
+            seoDescription="Politique de confidentialité de LiveChat : données collectées via Discord OAuth, utilisation, conservation et vos droits RGPD."
+            path="/privacy"
+            heading="Politique de confidentialité"
+            intro="Nous accordons une grande importance à la protection de vos données. En utilisant LiveChat, vous acceptez cette politique de confidentialité."
+            lastUpdated="26 juin 2026"
+            sections={sections}
+            crossLink={{ href: '/terms', label: "Voir les conditions d'utilisation" }}
+        />
     );
 }

@@ -71,25 +71,10 @@ function handleConnect() {
 }
 
 function displaySplashScreen() {
-    const splashContainer = elements.splashContainer;
-    if (splashContainer) {
-        const img = document.createElement('img');
-        img.src = 'https://cdn.jsdelivr.net/gh/Nevylish/LiveChat@main/shared/assets/images/splash.png?v=2.0.0';
-        splashContainer.appendChild(img);
-        img.classList.remove('fade-in', 'fade-out');
-        img.classList.add('fade-in');
-        splashScreenDisplayed = true;
-
-        setTimeout(() => {
-            img.classList.add('fade-out');
-            img.classList.remove('fade-in');
-            setTimeout(() => {
-                if (img.parentNode) {
-                    img.parentNode.removeChild(img);
-                }
-            }, 500);
-        }, 5000);
-    }
+    mountSplashScreen(elements.splashContainer, {
+        message: 'Vous êtes sur la dernière version.',
+    });
+    splashScreenDisplayed = true;
 }
 
 function handleDisconnect() {
@@ -243,6 +228,7 @@ function createContentElement(content, interactionId, from, anonymous, fullscree
                 void element.offsetWidth;
                 adjustMediaSize(element, fullscreen);
                 element.classList.add('fade-in');
+                revealContentText();
                 element.play().catch(console.error);
                 socket.emit('started', interactionId, element.duration * 1000);
                 if (!anonymous) handleUserInfos(from, fullscreen);
@@ -273,6 +259,7 @@ function createContentElement(content, interactionId, from, anonymous, fullscree
                 void element.offsetWidth;
                 adjustMediaSize(element, fullscreen);
                 element.classList.add('fade-in');
+                revealContentText();
                 socket.emit('started', interactionId);
                 if (!anonymous) handleUserInfos(from, fullscreen);
             };
@@ -337,6 +324,11 @@ function createTextElement(text, fullscreen) {
     }
 
     elements.contentContainer.appendChild(textElement);
+}
+
+function revealContentText() {
+    const textElement = document.querySelector('.content-text');
+    if (!textElement) return;
 
     void textElement.offsetWidth;
     textElement.classList.add('fade-in');
@@ -474,20 +466,15 @@ function adjustMediaSize(element, fullscreen) {
 
     const targetMin = 600;
 
-    let width = naturalWidth;
-    let height = naturalHeight;
-
-    if (width < targetMin && height < targetMin) {
-        const ratio = width / height;
-        if (width >= height) {
-            width = targetMin;
-            height = Math.round(targetMin / ratio);
+    if (naturalWidth < targetMin && naturalHeight < targetMin) {
+        const ratio = naturalWidth / naturalHeight;
+        if (naturalWidth >= naturalHeight) {
+            element.style.width = `${targetMin}px`;
+            element.style.height = `${Math.round(targetMin / ratio)}px`;
         } else {
-            height = targetMin;
-            width = Math.round(targetMin * ratio);
+            element.style.height = `${targetMin}px`;
+            element.style.width = `${Math.round(targetMin * ratio)}px`;
         }
-        element.style.width = `${width}px`;
-        element.style.height = `${height}px`;
     } else {
         element.style.width = '';
         element.style.height = '';

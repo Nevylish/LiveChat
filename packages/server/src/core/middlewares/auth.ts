@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import DiscordClient from '../DiscordClient';
+import { AuthService } from '../services/AuthService';
 import { SupabaseService, OverlayConfigRow } from '../utils/SupabaseService';
 
 declare global {
@@ -79,21 +80,14 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 return;
             }
 
-            SupabaseService.getAnonClient()
-                .auth.getUser(token)
-                .then(({ data, error }) => {
-                    if (error || !data.user) {
+            AuthService.verifyAccessToken(token)
+                .then((user) => {
+                    if (!user) {
                         res.status(401).json({ error: 'Session invalide ou expirée.' });
                         return;
                     }
 
-                    const userId = data.user.user_metadata?.provider_id || data.user.user_metadata?.sub;
-                    if (!userId) {
-                        res.status(401).json({ error: 'Impossible de récupérer votre identifiant Discord.' });
-                        return;
-                    }
-
-                    req.userId = userId;
+                    req.userId = user.id;
                     next();
                 })
                 .catch((err) => {

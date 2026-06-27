@@ -1,22 +1,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
 import { CacheManager } from './CacheManager';
 import { Logger } from './Logger';
 
-export interface OverlayConfigRow {
-    guild_id: string;
-    username: string;
-    token: string;
-    user_id: string;
-    updated_at?: string;
-}
+export type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
 
 export class SupabaseService {
     private static client: SupabaseClient | null = null;
-    private static anonClient: SupabaseClient | null = null;
 
     private static getClient(): SupabaseClient {
         if (!this.client) {
-            const url = process.env.VITE_SUPABASE_URL!;
+            const url = process.env.SUPABASE_URL!;
             const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
             this.client = createClient(url, serviceKey, {
@@ -27,21 +21,6 @@ export class SupabaseService {
             Logger.success('SupabaseService', 'Supabase client successfully initialized');
         }
         return this.client;
-    }
-
-    public static getAnonClient(): SupabaseClient {
-        if (!this.anonClient) {
-            const url = process.env.VITE_SUPABASE_URL!;
-            const anonKey = process.env.VITE_SUPABASE_ANON_KEY!;
-
-            this.anonClient = createClient(url, anonKey, {
-                auth: {
-                    persistSession: false,
-                },
-            });
-            Logger.success('SupabaseService', 'Supabase anon client successfully initialized');
-        }
-        return this.anonClient;
     }
 
     public static async getOverlayConfig(guildId: string, username: string): Promise<OverlayConfigRow | null> {
@@ -396,11 +375,4 @@ export class SupabaseService {
             return false;
         }
     }
-}
-
-export interface GuildSettingsRow {
-    guild_id: string;
-    required_role_id: string | null;
-    max_overlays_per_user?: number | null;
-    updated_at?: string;
 }

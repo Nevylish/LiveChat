@@ -21,8 +21,6 @@ export const setupSkipButton = async (
         .setDisabled(true);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(skipButton);
-    // const premiumButton = await Functions.buildPremiumButton(client, interaction.guildId);
-    // if (premiumButton) row.addComponents(premiumButton);
 
     await interaction.editReply({ embeds: [embed], components: [row] });
 

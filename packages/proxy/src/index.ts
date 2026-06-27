@@ -11,21 +11,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_BODY_SIZE = 650 * 1024 * 1024; // 650 MB
 
-function getMediaType(url: string): string {
-    try {
-        const parsedUrl = new URL(url);
-        const extension = parsedUrl.pathname.split('.').pop()?.toLowerCase() || '';
-        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(extension)) {
-            return 'image';
-        } else if (['mp4', 'webm', 'mkv', 'mov'].includes(extension)) {
-            return 'video';
-        } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
-            return 'audio';
-        }
-    } catch (_) {}
-    return 'null';
-}
-
 app.options('*', (c) => {
     return new Response(null, {
         status: 204,
@@ -36,30 +21,6 @@ app.options('*', (c) => {
             'Access-Control-Max-Age': '86400',
         },
     });
-});
-
-app.get('/proxy/generate', (c) => {
-    const url = c.req.query('url');
-    const source = c.req.query('source') || 'Unknown';
-    const forceFileType = c.req.query('forceFileType') || 'false';
-
-    if (!url) return c.text('Missing URL', 400);
-
-    const expires = Math.floor(Date.now() / 1000) + 900;
-    if (!c.env.PROXY_SECRET) {
-        console.error('ProxyService: PROXY_SECRET environment variable is not defined in the Worker!');
-        return c.text('Configuration error: PROXY_SECRET is not set', 500);
-    }
-
-    const token = crypto
-        .createHmac('sha256', c.env.PROXY_SECRET)
-        .update(url + expires)
-        .digest('hex');
-
-    const fileType = forceFileType === 'false' ? getMediaType(url) : forceFileType;
-
-    const proxyUrl = `${c.env.API_URL}/proxy?url=${encodeURIComponent(url)}&token=${token}&expires=${expires}&type=${fileType}&source=${source}`;
-    return c.json({ proxyUrl });
 });
 
 const handleProxy = async (c: any) => {

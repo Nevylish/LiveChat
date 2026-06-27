@@ -56,18 +56,13 @@ export default class SettingsCommand extends Command {
 
         const guildId = interaction.guildId;
         const userId = interaction.user.id;
-        if (!guildId) return;
+        if (!guildId || !interaction.inGuild()) return;
 
-        const guild = interaction.guild || (await this.client.guilds.fetch(guildId).catch(() => null));
-        if (!guild) return;
+        const guild = interaction.guild;
+        const member = interaction.member;
+        if (!guild || !member) return;
 
-        const member = await guild.members.fetch(userId).catch(() => null);
-        if (!member) return;
-
-        const isOwner = guild.ownerId === userId;
-        const isAdmin = member.permissions.has('Administrator') || member.permissions.has('ManageGuild');
-
-        if (!isOwner && !isAdmin) {
+        if (!Functions.isMemberAdmin(member, guild.ownerId, userId)) {
             const embed = Functions.buildEmbed(
                 "Vous n'avez pas les permissions pour exécuter cette commande.\nVous devez avoir la permission Administrateur ou Gérer le serveur.",
                 'Error',

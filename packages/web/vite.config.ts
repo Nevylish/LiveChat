@@ -53,6 +53,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
+            '@livechat/types': path.resolve(__dirname, '../types/src/index.ts'),
         },
     },
 });

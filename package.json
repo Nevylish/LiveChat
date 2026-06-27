@@ -1,7 +1,7 @@
 {
     "name": "livechat",
     "description": "Un overlay OBS qui permet à vos amis d'afficher des médias sur votre stream",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "license": "GPL-3.0-only",
     "private": true,
     "homepage": "https://livechat.nevylish.fr/",
@@ -12,7 +12,7 @@
     },
     "scripts": {
         "clean:modules": "node -e \"const fs=require('fs'); ['node_modules', 'packages/server/node_modules', 'packages/web/node_modules', 'packages/overlay/node_modules'].forEach(p => fs.rmSync(p, {recursive:true,force:true}))\"",
-        "build": "pnpm --filter @livechat/server build && pnpm --filter @livechat/web build",
+        "build": "pnpm --filter @livechat/types build && pnpm --filter @livechat/server build && pnpm --filter @livechat/proxy exec tsc --noEmit && pnpm --filter @livechat/web build",
         "build:server": "pnpm --filter @livechat/server build",
         "build:web": "pnpm --filter @livechat/web build",
         "dev:server": "pnpm --filter @livechat/server dev",
@@ -20,7 +20,7 @@
         "dev:overlay": "pnpm --filter @livechat/overlay dev",
         "dev:proxy": "pnpm --filter @livechat/proxy dev",
         "deploy:proxy": "pnpm --filter @livechat/proxy run deploy",
-        "dev": "concurrently -n SERVER,WEB,OVERLAY,PROXY -c blue,green,yellow,cyan \"pnpm dev:server\" \"pnpm dev:web\" \"pnpm dev:overlay\" \"pnpm dev:proxy\"",
+        "dev": "pnpm --filter @livechat/types build && concurrently -n SERVER,WEB,OVERLAY,PROXY -c blue,green,yellow,cyan \"pnpm dev:server\" \"pnpm dev:web\" \"pnpm dev:overlay\" \"pnpm dev:proxy\"",
         "start": "pnpm --filter @livechat/server start",
         "clean": "pnpm --filter @livechat/server exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && pnpm --filter @livechat/web exec node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
         "format": "prettier --write ."

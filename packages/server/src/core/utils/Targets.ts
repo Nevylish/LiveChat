@@ -26,7 +26,8 @@ export namespace TargetsManager {
 
         let filtered = streamers
             .map((streamer) => streamer.username)
-            .filter((username) => username.toLowerCase().includes(focusedValue));
+            .filter((username) => username.toLowerCase().includes(focusedValue))
+            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
         if (streamers.length >= 2 && focusedValue === '') {
             filtered = [everyoneLabel, ...filtered.filter((s) => s.toLowerCase() !== everyoneLabel.toLowerCase())];

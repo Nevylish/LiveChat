@@ -1,10 +1,12 @@
 {
+    "installCommand": "cd ../.. && pnpm install",
     "rewrites": [
         { "source": "/v2/:path*", "destination": "https://livechat-overlay.nevylish.fr/v2/:path*" },
         { "source": "/overlay.html", "destination": "https://livechat-overlay.nevylish.fr/overlay.html" },
         { "source": "/overlay.css", "destination": "https://livechat-overlay.nevylish.fr/overlay.css" },
         { "source": "/overlay.js", "destination": "https://livechat-overlay.nevylish.fr/overlay.js" },
         { "source": "/overlay/:path*", "destination": "https://livechat-overlay.nevylish.fr/:path*" },
+        { "source": "/shared/:path*", "destination": "https://livechat-overlay.nevylish.fr/shared/:path*" },
         { "source": "/(.*)", "destination": "/index.html" }
     ]
 }
