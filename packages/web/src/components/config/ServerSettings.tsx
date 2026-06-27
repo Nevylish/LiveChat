@@ -1,8 +1,8 @@
-import type { DiscordRole } from '@livechat/types';
-import { CheckCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import type { DiscordRole } from '@livechat/types';
+import { CheckCircle, RefreshCw } from 'lucide-react';
 
 interface ServerSettingsProps {
     isRoleRestrictionEnabled: boolean;
@@ -38,7 +38,7 @@ export default function ServerSettings({
             <div>
                 <h2 className="text-base font-semibold">Paramètres du serveur</h2>
                 <p className="mt-0.5 text-sm text-muted-foreground">
-                    Configurez les autorisations d'utilisation de LiveChat sur ce serveur.
+                    Configurez les restrictions d'utilisation de LiveChat sur ce serveur.
                 </p>
             </div>
 
@@ -110,7 +110,7 @@ export default function ServerSettings({
                     <div>
                         <p className="text-sm font-medium">Limite d'overlays par personne</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                            Nombre maximum d'overlays que chaque membre peut créer (1 à 20).
+                            Nombre maximum d'overlays que chaque membre peut créer (de 1 à 20).
                         </p>
                     </div>
                     <Input
@@ -130,11 +130,7 @@ export default function ServerSettings({
                             Enregistré
                         </span>
                     )}
-                    <Button
-                        onClick={handleSaveSettings}
-                        disabled={savingSettings || !hasUnsavedSettings}
-                        size="sm"
-                    >
+                    <Button onClick={handleSaveSettings} disabled={savingSettings || !hasUnsavedSettings} size="sm">
                         {savingSettings ? (
                             <>
                                 <RefreshCw className="h-3.5 w-3.5 animate-spin" />

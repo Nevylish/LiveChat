@@ -18,10 +18,12 @@ const requiredEnvVars = [
     'GIPHY_API_KEY',
     'SKU_PLUS_ID',
     'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
     'PROXY_SECRET',
     'PROXY_URL',
+    'AUTH_JWT_SECRET',
+    'DISCORD_CLIENT_ID',
+    'DISCORD_CLIENT_SECRET',
 ];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 

@@ -11,6 +11,7 @@ export type {
     SaveGuildSettingsResponse,
     SaveOverlayConfigResponse,
 } from './api';
+export type { AuthSession, AuthUser } from './auth';
 export type { GuildSettingsRow, OverlayConfigRow } from './database';
 export type { DiscordGuild, DiscordRole } from './discord';
 export {

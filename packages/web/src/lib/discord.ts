@@ -1,4 +1,4 @@
-import type { User } from '@supabase/supabase-js';
+import type { AuthUser } from '@livechat/types';
 import type { DiscordGuild } from '@livechat/types';
 
 const ADMINISTRATOR = 0x8;
@@ -17,58 +17,20 @@ function firstNonEmpty(...values: (string | null | undefined)[]): string | undef
     return undefined;
 }
 
-/** Discord display name from Supabase user (skips empty global_name, falls back to @username). */
-export function getDiscordDisplayName(user: User | null | undefined): string {
+/** Discord display name from authenticated user (skips empty global name, falls back to @username). */
+export function getDiscordDisplayName(user: AuthUser | null | undefined): string {
     if (!user) return 'Utilisateur';
 
-    const discordIdentity = user.identities?.find((identity) => identity.provider === 'discord');
-    const identityData = (discordIdentity ?? user.identities?.[0])?.identity_data as
-        | {
-              global_name?: string;
-              full_name?: string;
-              name?: string;
-              preferred_username?: string;
-              custom_claims?: { global_name?: string };
-          }
-        | undefined;
+    if (user.globalName && user.username && user.globalName.toLowerCase() !== user.username.toLowerCase()) {
+        return user.globalName;
+    }
 
-    const metadata = user.user_metadata as {
-        global_name?: string;
-        full_name?: string;
-        name?: string;
-        preferred_username?: string;
-        custom_claims?: { global_name?: string };
-    };
-
-    return (
-        firstNonEmpty(
-            identityData?.custom_claims?.global_name,
-            identityData?.global_name,
-            identityData?.full_name,
-            identityData?.name,
-            identityData?.preferred_username,
-            metadata?.global_name,
-            metadata?.custom_claims?.global_name,
-            metadata?.full_name,
-            metadata?.name,
-            metadata?.preferred_username,
-            user.email,
-        ) ?? 'Utilisateur'
-    );
+    return firstNonEmpty(user.globalName, user.username) ?? 'Utilisateur';
 }
 
-/** Discord avatar URL from Supabase user metadata. */
-export function getDiscordAvatarUrl(user: User | null | undefined): string {
-    const discordIdentity = user?.identities?.find((identity) => identity.provider === 'discord');
-    const identityData = (discordIdentity ?? user?.identities?.[0])?.identity_data as
-        | { avatar_url?: string; picture?: string }
-        | undefined;
-    const metadata = user?.user_metadata as { avatar_url?: string; picture?: string } | undefined;
-
-    return (
-        firstNonEmpty(metadata?.avatar_url, metadata?.picture, identityData?.avatar_url, identityData?.picture) ??
-        DISCORD_DEFAULT_AVATAR
-    );
+/** Discord avatar URL from authenticated user. */
+export function getDiscordAvatarUrl(user: AuthUser | null | undefined): string {
+    return user?.avatarUrl ?? DISCORD_DEFAULT_AVATAR;
 }
 
 export function isGuildAdmin(guild: GuildPermissions): boolean {

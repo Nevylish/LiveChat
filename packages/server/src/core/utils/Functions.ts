@@ -1,3 +1,4 @@
+import { getMediaKindFromProxyType, getMediaKindFromUrl } from '@livechat/types';
 import {
     APIInteractionGuildMember,
     ColorResolvable,
@@ -6,9 +7,8 @@ import {
     PermissionFlagsBits,
     PermissionsBitField,
 } from 'discord.js';
-import { getMediaKindFromProxyType, getMediaKindFromUrl } from '@livechat/types';
-import DiscordClient from '../DiscordClient';
 import { version } from '../../version';
+import DiscordClient from '../DiscordClient';
 import { Giphy } from '../modules/Giphy';
 import { Instagram } from '../modules/Instagram';
 import { Tenor } from '../modules/Tenor';
@@ -32,7 +32,7 @@ export namespace Functions {
             (color === 'Error'
                 ? `\n\n-# Si vous pensez qu'il s'agit d'un bug, contactez moi sur Twitter [@Nevylish](https://x.com/Nevylish) ou créez une [issue sur GitHub](https://github.com/Nevylish/LiveChat/issues).`
                 : '') +
-            `\n\n-# [**Installer LiveChat**](${Constants.getBaseUrl()})\u2005\u2005•\u2005\u2005[**Voir les patch notes**](${Constants.getUrl('updates')})`;
+            `\n\n-# [**Ajouter LiveChat**](${Constants.getBaseUrl()})\u2005\u2005•\u2005\u2005[**Voir les patch notes**](${Constants.getUrl('updates')})`;
 
         switch (color) {
             case 'Error':
@@ -163,13 +163,9 @@ export namespace Functions {
         if (ownerId === userId) return true;
 
         const permissions =
-            member instanceof GuildMember
-                ? member.permissions
-                : new PermissionsBitField(BigInt(member.permissions));
+            member instanceof GuildMember ? member.permissions : new PermissionsBitField(BigInt(member.permissions));
 
-        return (
-            permissions.has(PermissionFlagsBits.Administrator) || permissions.has(PermissionFlagsBits.ManageGuild)
-        );
+        return permissions.has(PermissionFlagsBits.Administrator) || permissions.has(PermissionFlagsBits.ManageGuild);
     };
 
     export const memberHasRole = (member: GuildMember | APIInteractionGuildMember, roleId: string): boolean => {
@@ -187,8 +183,7 @@ export namespace Functions {
         interactionMember?: GuildMember | APIInteractionGuildMember | null,
     ): Promise<boolean> => {
         try {
-            const guild =
-                client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId).catch(() => null));
+            const guild = client.guilds.cache.get(guildId) || (await client.guilds.fetch(guildId).catch(() => null));
             if (!guild) return true;
 
             const member =

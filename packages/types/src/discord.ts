@@ -8,7 +8,7 @@ export interface DiscordRole {
 
 /**
  * Discord guild from OAuth, enriched by the config dashboard
- * (`hasBot`, `overlayCount` are computed client-side).
+ * (`hasBot`, `overlayCount`, `hasPlusSubscription` are enriched by the config dashboard).
  */
 export interface DiscordGuild {
     id: string;
@@ -18,4 +18,5 @@ export interface DiscordGuild {
     permissions: string;
     hasBot?: boolean;
     overlayCount?: number;
+    hasPlusSubscription?: boolean;
 }

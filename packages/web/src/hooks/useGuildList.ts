@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import type { AuthSession } from '@livechat/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DiscordGuild } from '@livechat/types';
 import { fetchDiscordGuilds, fetchGuildBotStatus } from '../api/configApi';
@@ -18,7 +18,7 @@ interface UseGuildListResult {
 }
 
 interface UseGuildListOptions {
-    session: Session | null;
+    session: AuthSession | null;
     onError: (message: string | null) => void;
 }
 
@@ -73,7 +73,10 @@ export function useGuildList({ session, onError }: UseGuildListOptions): UseGuil
                     throw error;
                 }
                 const guildChunks = chunkArray(userGuilds, 80);
-                const botPresenceMap: Record<string, { hasBot: boolean; overlayCount: number }> = {};
+                const botPresenceMap: Record<
+                    string,
+                    { hasBot: boolean; overlayCount: number; hasPlusSubscription?: boolean }
+                > = {};
 
                 await Promise.all(
                     guildChunks.map(async (chunk) => {
@@ -96,6 +99,7 @@ export function useGuildList({ session, onError }: UseGuildListOptions): UseGuil
                             ...guild,
                             hasBot: status.hasBot,
                             overlayCount: status.overlayCount,
+                            hasPlusSubscription: status.hasPlusSubscription ?? false,
                         };
                     })
                     .filter((guild) => isGuildAdmin(guild) || guild.hasBot);

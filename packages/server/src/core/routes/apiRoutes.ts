@@ -42,7 +42,8 @@ export function registerApiRoutes({ app, discordClient, streamerRegistry }: ApiR
             const configs = await SupabaseService.getOverlayConfigsByGuildAndUser(guildId as string, userId);
             const settings = await SupabaseService.getGuildSettings(guildId as string);
             const maxOverlays = settings?.max_overlays_per_user ?? 5;
-            res.json({ configs, exists: configs.length > 0, maxOverlays });
+            const hasPlusSubscription = await discordClient.hasGuildPremiumSubscription(guildId as string);
+            res.json({ configs, exists: configs.length > 0, maxOverlays, hasPlusSubscription });
         } catch {
             res.status(500).json({ error: 'Failed to fetch config' });
         }
@@ -184,13 +185,17 @@ export function registerApiRoutes({ app, discordClient, streamerRegistry }: ApiR
             }
 
             const overlayCounts = await SupabaseService.getOverlayCountsByGuildsAndUser(ids, userId);
+            await discordClient.guildPremiumCache.ensureReady();
 
             if (guildId.includes(',')) {
-                const results: Record<string, { hasBot: boolean; overlayCount: number }> = {};
+                const results: Record<string, { hasBot: boolean; overlayCount: number; hasPlusSubscription: boolean }> =
+                    {};
                 for (const id of ids) {
                     results[id] = {
                         hasBot: botPresence[id],
                         overlayCount: overlayCounts[id] || 0,
+                        hasPlusSubscription:
+                            botPresence[id] && discordClient.guildPremiumCache.has(id),
                     };
                 }
                 res.json({ results });
@@ -199,6 +204,8 @@ export function registerApiRoutes({ app, discordClient, streamerRegistry }: ApiR
                 res.json({
                     hasBot: botPresence[id],
                     overlayCount: overlayCounts[id] || 0,
+                    hasPlusSubscription:
+                        botPresence[id] && discordClient.guildPremiumCache.has(id),
                 });
             }
         } catch (err) {

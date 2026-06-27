@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { DiscordGuild } from '@livechat/types';
@@ -107,7 +108,7 @@ export default function GuildGrid({
                 <div>
                     <h1 className="text-lg font-bold leading-tight">Vos serveurs</h1>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                        Sélectionnez un serveur pour gérer ses overlays.
+                        Sélectionnez un serveur pour gérer vos overlays.
                     </p>
                 </div>
                 {showSearch && (
@@ -135,12 +136,9 @@ export default function GuildGrid({
                 <>
                     {installed.length > 0 && (
                         <section className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                    Avec LiveChat ({installed.length})
-                                </h2>
-                            </div>
+                            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Avec LiveChat ({installed.length})
+                            </h2>
                             <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
                                 {installed.map((g) => {
                                     const count = g.overlayCount ?? 0;
@@ -160,7 +158,17 @@ export default function GuildGrid({
                                                 )}
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <p className="truncate font-medium">{g.name}</p>
+                                                <div className="flex min-w-0 items-center gap-1.5">
+                                                    <p className="truncate font-medium">{g.name}</p>
+                                                    {g.hasPlusSubscription && (
+                                                        <Badge
+                                                            variant="secondary"
+                                                            className="shrink-0 px-1.5 py-0 text-[10px] leading-4"
+                                                        >
+                                                            Plus
+                                                        </Badge>
+                                                    )}
+                                                </div>
                                                 <p className="truncate text-xs text-muted-foreground">
                                                     {isRestricted ? (
                                                         <span className="text-amber-600 dark:text-amber-400">
@@ -187,7 +195,7 @@ export default function GuildGrid({
                     {others.length > 0 && (
                         <section className="space-y-3">
                             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                Inviter LiveChat ({others.length})
+                                Ajouter LiveChat ({others.length})
                             </h2>
                             <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
                                 {others.map((g) => (
@@ -199,7 +207,7 @@ export default function GuildGrid({
                                         </div>
                                         <Button asChild variant="outline" size="sm" className="shrink-0">
                                             <a href={INVITE_URL(g.id)} target="_blank" rel="noopener noreferrer">
-                                                Inviter
+                                                Ajouter
                                                 <ExternalLink className="h-3.5 w-3.5" />
                                             </a>
                                         </Button>

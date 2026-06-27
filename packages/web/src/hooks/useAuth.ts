@@ -1,57 +1,64 @@
-import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import type { AuthSession } from '@livechat/types';
 import { useCallback, useEffect, useState } from 'react';
+import { clearAuthSession, loadAuthSession } from '../lib/authSession';
 import { clearDiscordProviderToken, persistDiscordProviderToken } from '../lib/discordAuth';
-import { supabase } from '../lib/supabase';
 
-function syncDiscordProviderToken(event: AuthChangeEvent, nextSession: Session | null): void {
-    if (event === 'SIGNED_OUT' || !nextSession?.user) {
-        clearDiscordProviderToken(nextSession?.user?.id);
+interface AuthState {
+    session: AuthSession | null;
+    user: AuthSession['user'] | null;
+    authLoading: boolean;
+    refreshSession: () => Promise<void>;
+    signOut: () => void;
+}
+
+function syncProviderToken(session: AuthSession | null): void {
+    if (!session?.user?.id) {
+        clearDiscordProviderToken();
         return;
     }
 
-    if (nextSession.provider_token) {
-        persistDiscordProviderToken(nextSession.user.id, nextSession.provider_token);
+    if (session.provider_token) {
+        persistDiscordProviderToken(session.user.id, session.provider_token);
     }
 }
 
-interface AuthState {
-    session: Session | null;
-    user: User | null;
-    authLoading: boolean;
-    refreshSession: () => Promise<void>;
-}
-
 export function useAuth(): AuthState {
-    const [session, setSession] = useState<Session | null>(null);
-    const [user, setUser] = useState<User | null>(null);
+    const [session, setSession] = useState<AuthSession | null>(null);
     const [authLoading, setAuthLoading] = useState(true);
 
     const refreshSession = useCallback(async () => {
-        const {
-            data: { session: currentSession },
-        } = await supabase.auth.getSession();
-        if (currentSession?.provider_token && currentSession.user) {
-            persistDiscordProviderToken(currentSession.user.id, currentSession.provider_token);
-        }
+        const currentSession = loadAuthSession();
+        syncProviderToken(currentSession);
         setSession(currentSession);
-        setUser(currentSession?.user ?? null);
         setAuthLoading(false);
     }, []);
+
+    const signOut = useCallback(() => {
+        const userId = session?.user?.id;
+        clearAuthSession();
+        clearDiscordProviderToken(userId);
+        setSession(null);
+    }, [session?.user?.id]);
 
     useEffect(() => {
         void refreshSession();
 
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, nextSession: Session | null) => {
-            syncDiscordProviderToken(event, nextSession);
-            setSession(nextSession);
-            setUser(nextSession?.user ?? null);
-            setAuthLoading(false);
-        });
+        const handleMessage = (event: MessageEvent) => {
+            if (event.origin !== window.location.origin) return;
+            if (event.data?.type === 'livechat-auth-success') {
+                void refreshSession();
+            }
+        };
 
-        return () => subscription.unsubscribe();
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
     }, [refreshSession]);
 
-    return { session, user, authLoading, refreshSession };
+    return {
+        session,
+        user: session?.user ?? null,
+        authLoading,
+        refreshSession,
+        signOut,
+    };
 }

@@ -11,10 +11,32 @@ import { Functions } from './Functions';
 
 export namespace Handlers {
     export const setupEventListeners = (client: DiscordClient) => {
+        client.on(Events.EntitlementCreate, (entitlement) => {
+            client.guildPremiumCache.handleEntitlementChange(entitlement);
+        });
+
+        client.on(Events.EntitlementUpdate, (_oldEntitlement, entitlement) => {
+            client.guildPremiumCache.handleEntitlementChange(entitlement);
+        });
+
+        client.on(Events.EntitlementDelete, (entitlement) => {
+            client.guildPremiumCache.handleEntitlementDelete(entitlement);
+        });
+
         client.on(Events.ClientReady, async () => {
+            try {
+                await client.guildPremiumCache.warmUp();
+            } catch (err) {
+                Logger.error('Handlers', 'Failed to warm up Plus entitlement cache', { err });
+            }
+
             setInterval(() => {
                 client.updateActivity();
             }, 30 * 1000);
+        });
+
+        client.on(Events.ShardResume, () => {
+            void client.guildPremiumCache.refresh();
         });
 
         client.on(Events.InteractionCreate, async (interaction) => {

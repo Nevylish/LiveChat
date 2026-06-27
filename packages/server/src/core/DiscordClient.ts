@@ -1,11 +1,13 @@
 import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
-import Command from './interactions/Command';
 import { LiveChatServer } from './LiveChatServer';
+import Command from './interactions/Command';
+import { GuildPremiumCache } from './services/GuildPremiumCache';
 import { Handlers } from './utils/Handlers';
 import { Logger } from './utils/Logger';
 
 export default class DiscordClient extends Client {
     public readonly commands: Collection<string, Command> = new Collection();
+    public readonly guildPremiumCache: GuildPremiumCache;
     public livechat!: LiveChatServer;
 
     constructor() {
@@ -18,6 +20,8 @@ export default class DiscordClient extends Client {
             partials: [Partials.Channel, Partials.User],
         });
 
+        this.guildPremiumCache = new GuildPremiumCache(this);
+
         const token = process.env.TOKEN;
         if (!token) {
             Logger.error('Client', 'TOKEN is not defined in environment variables');
@@ -28,29 +32,8 @@ export default class DiscordClient extends Client {
     }
 
     public async hasGuildPremiumSubscription(guildId: string): Promise<boolean> {
-        try {
-            const SKU_PLUS = process.env.SKU_PLUS_ID!;
-            if (!this.application) return false;
-
-            const entitlements = await this.application.entitlements.fetch({
-                guild: guildId,
-                skus: [SKU_PLUS],
-                excludeDeleted: true,
-                excludeEnded: true,
-            });
-
-            if (entitlements) {
-                return true;
-            }
-
-            return false;
-        } catch (err) {
-            Logger.error('Client', 'Error while checking premium subscription', {
-                guildId: guildId,
-                err,
-            });
-            return false;
-        }
+        await this.guildPremiumCache.ensureReady();
+        return this.guildPremiumCache.has(guildId);
     }
 
     private lastActivitySize: number | null = null;

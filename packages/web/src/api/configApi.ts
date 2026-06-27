@@ -50,7 +50,7 @@ export async function fetchDiscordGuilds(providerToken: string): Promise<Discord
 export async function fetchGuildBotStatus(
     accessToken: string,
     guildIds: string[],
-): Promise<Record<string, { hasBot: boolean; overlayCount: number }>> {
+): Promise<Record<string, { hasBot: boolean; overlayCount: number; hasPlusSubscription?: boolean }>> {
     const ids = guildIds.join(',');
     const response = await authFetch(`/api/guild/check?guildId=${encodeURIComponent(ids)}`, accessToken);
 
@@ -59,14 +59,20 @@ export async function fetchGuildBotStatus(
     }
 
     const data = (await response.json()) as
-        | { results: Record<string, { hasBot: boolean; overlayCount: number }> }
-        | { hasBot: boolean; overlayCount: number };
+        | { results: Record<string, { hasBot: boolean; overlayCount: number; hasPlusSubscription?: boolean }> }
+        | { hasBot: boolean; overlayCount: number; hasPlusSubscription?: boolean };
 
     if ('results' in data) {
         return data.results;
     }
 
-    return { [guildIds[0]]: { hasBot: data.hasBot, overlayCount: data.overlayCount } };
+    return {
+        [guildIds[0]]: {
+            hasBot: data.hasBot,
+            overlayCount: data.overlayCount,
+            hasPlusSubscription: data.hasPlusSubscription,
+        },
+    };
 }
 
 export async function fetchUserOverlayConfigs(

@@ -1,5 +1,8 @@
 import { ChevronDown, MessageSquareText, MonitorPlay, Send } from 'lucide-react';
 import { useEffect } from 'react';
+import type { IconType } from 'react-icons';
+import { RiFilmLine } from 'react-icons/ri';
+import { SiDiscord, SiGiphy, SiTiktok, SiX } from 'react-icons/si';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import TableOfContents, { type TocItem } from '../components/TableOfContents';
@@ -35,12 +38,12 @@ const steps = [
     },
 ];
 
-const platforms = [
-    { name: 'Discord', desc: 'Fichiers envoyés directement sur Discord', icon: '💬' },
-    { name: 'Giphy', desc: 'GIFs depuis Giphy', icon: '🎞️' },
-    { name: 'Tenor', desc: 'GIFs depuis Tenor', icon: '🎬' },
-    { name: 'TikTok', desc: 'Vidéos TikTok', icon: '🎵' },
-    { name: 'X (Twitter)', desc: 'Vidéos et images de Tweets', icon: '𝕏' },
+const platforms: { name: string; desc: string; icon: IconType }[] = [
+    { name: 'Discord', desc: 'Fichiers envoyés directement sur Discord', icon: SiDiscord },
+    { name: 'Giphy', desc: 'GIFs depuis Giphy', icon: SiGiphy },
+    { name: 'Tenor', desc: 'GIFs depuis Tenor', icon: RiFilmLine },
+    { name: 'TikTok', desc: 'Vidéos TikTok', icon: SiTiktok },
+    { name: 'X (Twitter)', desc: 'Vidéos et images de Tweets', icon: SiX },
 ];
 
 const formats = [
@@ -412,8 +415,8 @@ export default function Usage() {
                                         key={p.name}
                                         className="flex h-full items-center gap-4 rounded-lg border border-border bg-card px-5 py-4"
                                     >
-                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-lg">
-                                            {p.icon}
+                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-lg text-foreground">
+                                            <p.icon className="h-5 w-5" aria-hidden />
                                         </span>
                                         <div>
                                             <p className="text-sm font-semibold">{p.name}</p>

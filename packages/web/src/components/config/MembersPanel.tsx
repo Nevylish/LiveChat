@@ -1,7 +1,9 @@
-import type { OverlayConfigAdminRow } from '@livechat/types';
-import { RefreshCw, Trash2, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { compareUsernames } from '@/lib/utils';
+import type { OverlayConfigAdminRow } from '@livechat/types';
+import { RefreshCw, Search, Trash2, Users } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 interface MembersPanelProps {
     allGuildConfigs: OverlayConfigAdminRow[];
@@ -23,18 +25,56 @@ function memberLabel(config: OverlayConfigAdminRow): string {
     return 'Membre introuvable';
 }
 
+function matchesMemberSearch(config: OverlayConfigAdminRow, query: string): boolean {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+
+    if (config.user_id.includes(q)) return true;
+    if (config.username.toLowerCase().includes(q)) return true;
+    if (config.discord_username?.toLowerCase().includes(q)) return true;
+    if (config.discord_display_name?.toLowerCase().includes(q)) return true;
+
+    return false;
+}
+
 export default function MembersPanel({
     allGuildConfigs,
     loadingAllConfigs,
     handleAdminDeleteConfig,
 }: MembersPanelProps) {
+    const [query, setQuery] = useState('');
+
+    const sortedConfigs = useMemo(
+        () => [...allGuildConfigs].sort((a, b) => compareUsernames(a.username, b.username)),
+        [allGuildConfigs],
+    );
+
+    const filteredConfigs = useMemo(
+        () => sortedConfigs.filter((config) => matchesMemberSearch(config, query)),
+        [sortedConfigs, query],
+    );
+
+    const noResults = query.trim() !== '' && filteredConfigs.length === 0;
+
     return (
         <div className="space-y-4">
-            <div>
-                <h2 className="text-base font-semibold">Overlays des membres</h2>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                    Gérez et révoquez les overlays créés par les membres de ce serveur.
-                </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 className="text-base font-semibold">Overlays des membres</h2>
+                    <p className="mt-0.5 text-sm text-muted-foreground">Liste des overlays créés sur ce serveur.</p>
+                </div>
+                {!loadingAllConfigs && allGuildConfigs.length > 0 && (
+                    <div className="relative w-full sm:w-72">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Rechercher un membre/overlay..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
+                )}
             </div>
 
             {loadingAllConfigs ? (
@@ -49,11 +89,14 @@ export default function MembersPanel({
                     </div>
                     <p className="text-sm text-muted-foreground">Aucun overlay actif sur ce serveur.</p>
                 </div>
+            ) : noResults ? (
+                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border py-14 text-center">
+                    <Search className="h-6 w-6 text-muted-foreground/50" />
+                    <p className="text-sm text-muted-foreground">Aucun membre ne correspond à «&nbsp;{query}&nbsp;».</p>
+                </div>
             ) : (
                 <div className="space-y-2">
-                    {[...allGuildConfigs]
-                        .sort((a, b) => compareUsernames(a.username, b.username))
-                        .map((c) => (
+                    {filteredConfigs.map((c) => (
                         <div
                             key={c.username}
                             className="flex flex-col justify-between gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center"

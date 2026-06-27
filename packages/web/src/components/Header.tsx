@@ -13,8 +13,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
-import { getDiscordDisplayName } from '../lib/discord';
-import { supabase } from '../lib/supabase';
+import { getDiscordAvatarUrl, getDiscordDisplayName } from '../lib/discord';
 
 const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/config', label: 'Configuration' },
@@ -32,7 +31,7 @@ function BurgerIcon() {
 }
 
 export default function Header() {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggle, setTheme } = useTheme();
@@ -48,14 +47,13 @@ export default function Header() {
 
     const isActive = (href: string) => (href === '/' ? location.pathname === '/' : location.pathname.startsWith(href));
 
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
+    const handleLogout = () => {
+        signOut();
         window.location.href = '/';
     };
 
     const displayName = getDiscordDisplayName(user);
-
-    const userEmail = user?.email ?? user?.user_metadata?.email ?? '';
+    const avatarUrl = getDiscordAvatarUrl(user);
 
     return (
         <>
@@ -111,10 +109,7 @@ export default function Header() {
                                 <DropdownMenuTrigger asChild>
                                     <button className="group hidden h-8 shrink-0 cursor-pointer items-center gap-0 rounded-full border border-border bg-background p-0 transition-colors hover:bg-accent sm:gap-2 sm:pr-3 lg:flex">
                                         <img
-                                            src={
-                                                user.user_metadata?.avatar_url ||
-                                                'https://cdn.discordapp.com/embed/avatars/0.png'
-                                            }
+                                            src={avatarUrl}
                                             alt="Avatar"
                                             className="h-full w-8 shrink-0 rounded-full object-cover"
                                         />
@@ -187,17 +182,12 @@ export default function Header() {
                                             <div className="flex items-center justify-between gap-4">
                                                 <div className="min-w-0">
                                                     <p className="truncate font-semibold">{displayName}</p>
-                                                    {userEmail && (
-                                                        <p className="truncate text-sm text-muted-foreground">
-                                                            {userEmail}
-                                                        </p>
-                                                    )}
+                                                    <p className="truncate font-mono text-xs text-muted-foreground">
+                                                        {user.id}
+                                                    </p>
                                                 </div>
                                                 <img
-                                                    src={
-                                                        user.user_metadata?.avatar_url ||
-                                                        'https://cdn.discordapp.com/embed/avatars/0.png'
-                                                    }
+                                                    src={avatarUrl}
                                                     alt=""
                                                     className="h-10 w-10 shrink-0 rounded-full object-cover"
                                                 />

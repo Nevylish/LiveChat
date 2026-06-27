@@ -7,7 +7,6 @@ export type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
 
 export class SupabaseService {
     private static client: SupabaseClient | null = null;
-    private static anonClient: SupabaseClient | null = null;
 
     private static getClient(): SupabaseClient {
         if (!this.client) {
@@ -22,21 +21,6 @@ export class SupabaseService {
             Logger.success('SupabaseService', 'Supabase client successfully initialized');
         }
         return this.client;
-    }
-
-    public static getAnonClient(): SupabaseClient {
-        if (!this.anonClient) {
-            const url = process.env.VITE_SUPABASE_URL!;
-            const anonKey = process.env.VITE_SUPABASE_ANON_KEY!;
-
-            this.anonClient = createClient(url, anonKey, {
-                auth: {
-                    persistSession: false,
-                },
-            });
-            Logger.success('SupabaseService', 'Supabase anon client successfully initialized');
-        }
-        return this.anonClient;
     }
 
     public static async getOverlayConfig(guildId: string, username: string): Promise<OverlayConfigRow | null> {

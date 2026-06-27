@@ -19,6 +19,7 @@ export interface GetOverlayConfigsResponse {
     configs: OverlayConfigRow[];
     exists: boolean;
     maxOverlays?: number;
+    hasPlusSubscription?: boolean;
 }
 
 export interface GetAllOverlayConfigsResponse {

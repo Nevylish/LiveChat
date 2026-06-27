@@ -4,6 +4,7 @@ import { createServer, Server as HttpServer } from 'http';
 import { Server } from 'socket.io';
 import DiscordClient from './DiscordClient';
 import { registerApiRoutes } from './routes/apiRoutes';
+import { registerAuthRoutes } from './routes/authRoutes';
 import { registerOverlaySocket } from './socket/overlaySocket';
 import { StreamerRegistry } from './services/StreamerRegistry';
 import { Constants } from './utils/Constants';
@@ -38,6 +39,7 @@ export class LiveChatServer extends EventEmitter {
         });
 
         this.setupHttpMiddleware();
+        registerAuthRoutes({ app: this.app });
         registerApiRoutes({
             app: this.app,
             discordClient: this.discordClient,

@@ -194,7 +194,7 @@ function LiveChatEmbed({
                     </p>
                     <p className="text-xs" style={{ color: theme.link }}>
                         <Link to="/config" className="font-medium hover:underline">
-                            Installer LiveChat
+                            Ajouter LiveChat
                         </Link>
                         <span className="mx-1.5" style={{ color: theme.textMuted }}>
                             •

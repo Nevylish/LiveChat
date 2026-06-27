@@ -23,7 +23,7 @@ import { useGuildList } from '../hooks/useGuildList';
 import { buildOverlayLink } from '../lib/constants';
 import { isGuildAdmin } from '../lib/discord';
 import { getErrorMessage } from '../lib/errors';
-import { supabase } from '../lib/supabase';
+import { openDiscordLoginPopup } from '../lib/authApi';
 
 import ConfigBreadcrumb, { type BreadcrumbSegment } from '../components/config/ConfigBreadcrumb';
 import ConfigTabs, { type TabItem } from '../components/config/ConfigTabs';
@@ -51,27 +51,7 @@ export default function Config() {
 
     const handleLogin = useCallback(async () => {
         try {
-            const { data, error: authError } = await supabase.auth.signInWithOAuth({
-                provider: 'discord',
-                options: {
-                    redirectTo: window.location.origin + '/config',
-                    scopes: 'identify guilds',
-                    skipBrowserRedirect: true,
-                },
-            });
-
-            if (authError) throw authError;
-            if (data?.url) {
-                const width = 600;
-                const height = 800;
-                const left = window.screen.width / 2 - width / 2;
-                const top = window.screen.height / 2 - height / 2;
-                window.open(
-                    data.url,
-                    'discord-login',
-                    `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,status=no`,
-                );
-            }
+            openDiscordLoginPopup();
         } catch (err: unknown) {
             console.error('Login error', err);
             setError(getErrorMessage(err, 'Une erreur est survenue lors de la connexion avec Discord.'));
@@ -118,6 +98,7 @@ export default function Config() {
     const [maxOverlays, setMaxOverlays] = useState<number>(5);
     const [dbMaxOverlaysLimit, setDbMaxOverlaysLimit] = useState<number>(5);
     const [maxOverlaysInput, setMaxOverlaysInput] = useState<string>('5');
+    const [hasPlusSubscription, setHasPlusSubscription] = useState(false);
 
     const [activeTab, setActiveTab] = useState<ConfigTab>('overlays');
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -152,6 +133,7 @@ export default function Config() {
                 setGeneratedLink('');
                 setIsRestricted(false);
                 setMaxOverlays(5);
+                setHasPlusSubscription(false);
                 setError(null);
                 return;
             }
@@ -184,6 +166,7 @@ export default function Config() {
                         setHasExistingLink(false);
                     }
                     setMaxOverlays(data.maxOverlays ?? 5);
+                    setHasPlusSubscription(data.hasPlusSubscription ?? false);
                 } else {
                     setConfigs([]);
                     setHasExistingLink(false);
@@ -450,7 +433,7 @@ export default function Config() {
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             if (event.origin !== window.location.origin) return;
-            if (event.data?.type === 'supabase-auth-success') {
+            if (event.data?.type === 'livechat-auth-success') {
                 void refreshSession();
             }
         };
@@ -460,19 +443,8 @@ export default function Config() {
     }, [refreshSession]);
 
     useEffect(() => {
-        if (session && window.name === 'discord-login' && window.opener) {
-            try {
-                window.opener.postMessage({ type: 'supabase-auth-success' }, window.location.origin);
-                window.close();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    }, [session]);
-
-    useEffect(() => {
         if (session && user) {
-            const discordUsername = user?.user_metadata?.preferred_username || user?.user_metadata?.name || '';
+            const discordUsername = user.username ?? '';
             const formattedName = discordUsername.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
             setUsername((prev) => prev || formattedName);
         }
@@ -495,10 +467,7 @@ export default function Config() {
         setIsGenerating(true);
 
         try {
-            const userId = session.user?.user_metadata?.provider_id || session.user?.user_metadata?.sub;
-            if (!userId) {
-                throw new Error("Impossible d'identifier votre compte Discord.");
-            }
+            const userId = session.user.id;
             const data = await createOverlayConfig(
                 { accessToken: session.access_token },
                 {
@@ -576,7 +545,7 @@ export default function Config() {
     const handleAdminDeleteConfig = async (targetUsername: string) => {
         if (
             !confirm(
-                `ATTENTION : En tant qu'administrateur, vous allez supprimer définitivement l'overlay de "${targetUsername}". Cette action est irréversible. Voulez-vous continuer ?`,
+                `En tant qu'administrateur, vous allez supprimer définitivement l'overlay de ${targetUsername}. Cette action est irréversible. Voulez-vous continuer ?`,
             )
         ) {
             return;
@@ -729,7 +698,6 @@ export default function Config() {
                                 id: 'overlays',
                                 label: 'Overlays',
                                 icon: <Tv className="h-4 w-4" />,
-                                count: configs.length,
                             },
                             { id: 'members', label: 'Membres', icon: <Users className="h-4 w-4" /> },
                             { id: 'settings', label: 'Paramètres', icon: <Settings2 className="h-4 w-4" /> },
@@ -833,12 +801,12 @@ export default function Config() {
                                                     {selectedGuild.name}
                                                 </h1>
                                                 <div className="mt-1 flex items-center gap-2">
-                                                    <Badge variant="secondary" className="text-[10px]">
-                                                        {roleLabel}
-                                                    </Badge>
-                                                    <span className="text-xs text-muted-foreground">
-                                                        {configs.length} overlay{configs.length > 1 ? 's' : ''}
-                                                    </span>
+                                                    <span className="text-xs text-muted-foreground">{roleLabel}</span>
+                                                    {hasPlusSubscription && (
+                                                        <Badge variant="secondary" className="text-[10px]">
+                                                            LiveChat Plus
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
