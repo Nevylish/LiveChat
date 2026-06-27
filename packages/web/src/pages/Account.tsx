@@ -1,11 +1,12 @@
 import { AlertTriangle } from 'lucide-react';
 import { useCallback } from 'react';
+import { DiscordAvatar } from '../components/DiscordAvatar';
 import PageShell from '../components/PageShell';
 import LoginView from '../components/config/LoginView';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../hooks/useAuth';
 import { openDiscordLoginPopup } from '../lib/authApi';
-import { getDiscordAvatarUrl, getDiscordDisplayName } from '../lib/discord';
+import { getDiscordDisplayName } from '../lib/discord';
 import { getErrorMessage } from '../lib/errors';
 
 export default function Account() {
@@ -20,7 +21,6 @@ export default function Account() {
     }, []);
 
     const displayName = getDiscordDisplayName(user);
-    const avatarUrl = getDiscordAvatarUrl(user);
 
     return (
         <PageShell
@@ -38,8 +38,8 @@ export default function Account() {
                 ) : (
                     <div className="space-y-8">
                         <div className="flex items-center gap-4 border-b border-border pb-8">
-                            <img
-                                src={avatarUrl}
+                            <DiscordAvatar
+                                user={user}
                                 alt=""
                                 className="h-14 w-14 shrink-0 rounded-full border border-border object-cover"
                             />

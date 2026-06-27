@@ -14,6 +14,7 @@ export type {
 export type { AuthSession, AuthUser } from './auth';
 export type { GuildSettingsRow, OverlayConfigRow } from './database';
 export type { DiscordGuild, DiscordRole } from './discord';
+export { DISCORD_DEFAULT_AVATAR_URL, sanitizeDiscordAvatarUrl } from './discord';
 export {
     AUDIO_EXTENSIONS,
     getMediaKindFromExtension,

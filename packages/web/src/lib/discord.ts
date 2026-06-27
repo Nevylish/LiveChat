@@ -1,12 +1,13 @@
 import type { AuthUser } from '@livechat/types';
 import type { DiscordGuild } from '@livechat/types';
+import { DISCORD_DEFAULT_AVATAR_URL, sanitizeDiscordAvatarUrl } from '@livechat/types';
 
 const ADMINISTRATOR = 0x8;
 const MANAGE_GUILD = 0x20;
 
 type GuildPermissions = Pick<DiscordGuild, 'owner' | 'permissions'>;
 
-export const DISCORD_DEFAULT_AVATAR = 'https://cdn.discordapp.com/embed/avatars/0.png';
+export const DISCORD_DEFAULT_AVATAR = DISCORD_DEFAULT_AVATAR_URL;
 export const DISCORD_MOCKUP_FALLBACK_USERNAME = 'noobmaster69';
 
 function firstNonEmpty(...values: (string | null | undefined)[]): string | undefined {
@@ -28,9 +29,9 @@ export function getDiscordDisplayName(user: AuthUser | null | undefined): string
     return firstNonEmpty(user.globalName, user.username) ?? 'Utilisateur';
 }
 
-/** Discord avatar URL from authenticated user. */
+/** Discord avatar URL from authenticated user (falls back if URL is not Discord CDN). */
 export function getDiscordAvatarUrl(user: AuthUser | null | undefined): string {
-    return user?.avatarUrl ?? DISCORD_DEFAULT_AVATAR;
+    return sanitizeDiscordAvatarUrl(user?.avatarUrl);
 }
 
 export function isGuildAdmin(guild: GuildPermissions): boolean {

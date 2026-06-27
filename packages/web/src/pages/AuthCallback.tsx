@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import { saveAuthSession } from '../lib/authSession';
 import { persistDiscordProviderToken } from '../lib/discordAuth';
+import { sanitizeDiscordAvatarUrl } from '@livechat/types';
 
 export default function AuthCallback() {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function AuthCallback() {
                     id: payload.sub,
                     username: payload.username,
                     globalName: payload.globalName,
-                    avatarUrl: payload.avatarUrl,
+                    avatarUrl: sanitizeDiscordAvatarUrl(payload.avatarUrl),
                 },
             };
 

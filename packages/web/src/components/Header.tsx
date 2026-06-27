@@ -11,9 +11,10 @@ import { cn } from '@/lib/utils';
 import { ChevronRight, LogOut, Moon, Sun, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DiscordAvatar } from './DiscordAvatar';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
-import { getDiscordAvatarUrl, getDiscordDisplayName } from '../lib/discord';
+import { getDiscordDisplayName } from '../lib/discord';
 
 const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/config', label: 'Configuration' },
@@ -53,7 +54,6 @@ export default function Header() {
     };
 
     const displayName = getDiscordDisplayName(user);
-    const avatarUrl = getDiscordAvatarUrl(user);
 
     return (
         <>
@@ -108,9 +108,8 @@ export default function Header() {
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <button className="group hidden h-8 shrink-0 cursor-pointer items-center gap-0 rounded-full border border-border bg-background p-0 transition-colors hover:bg-accent sm:gap-2 sm:pr-3 lg:flex">
-                                        <img
-                                            src={avatarUrl}
-                                            alt="Avatar"
+                                        <DiscordAvatar
+                                            user={user}
                                             className="h-full w-8 shrink-0 rounded-full object-cover"
                                         />
                                         <span className="hidden max-w-[120px] truncate text-xs font-semibold text-muted-foreground transition-colors group-hover:text-foreground sm:inline">
@@ -186,8 +185,8 @@ export default function Header() {
                                                         {user.id}
                                                     </p>
                                                 </div>
-                                                <img
-                                                    src={avatarUrl}
+                                                <DiscordAvatar
+                                                    user={user}
                                                     alt=""
                                                     className="h-10 w-10 shrink-0 rounded-full object-cover"
                                                 />

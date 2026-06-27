@@ -1,3 +1,4 @@
+import { sanitizeDiscordAvatarUrl } from '@livechat/types';
 import { SignJWT, jwtVerify } from 'jose';
 import { randomUUID } from 'crypto';
 import fetch from 'node-fetch';
@@ -147,7 +148,9 @@ export class AuthService {
 
         const discordUser = (await userResponse.json()) as DiscordUserResponse;
         const avatarUrl = discordUser.avatar
-            ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+            ? sanitizeDiscordAvatarUrl(
+                  `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
+              )
             : undefined;
 
         return {
@@ -184,7 +187,7 @@ export class AuthService {
                 id: sub,
                 username: typeof payload.username === 'string' ? payload.username : undefined,
                 globalName: typeof payload.globalName === 'string' ? payload.globalName : undefined,
-                avatarUrl: typeof payload.avatarUrl === 'string' ? payload.avatarUrl : undefined,
+                avatarUrl: typeof payload.avatarUrl === 'string' ? sanitizeDiscordAvatarUrl(payload.avatarUrl) : undefined,
             };
         } catch {
             return null;
