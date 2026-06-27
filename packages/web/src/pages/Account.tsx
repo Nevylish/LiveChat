@@ -10,7 +10,7 @@ import { getDiscordDisplayName } from '../lib/discord';
 import { getErrorMessage } from '../lib/errors';
 
 export default function Account() {
-    const { session, user, authLoading, signOut } = useAuth();
+    const { session, user, authLoading } = useAuth();
 
     const handleLogin = useCallback(async () => {
         try {
@@ -70,12 +70,9 @@ export default function Account() {
                                 </li>
                             </ul>
 
-                            <div className="mt-5 flex flex-wrap gap-3">
+                            <div className="mt-5">
                                 <Button variant="destructive" disabled className="w-full sm:w-auto">
                                     Supprimer mon compte
-                                </Button>
-                                <Button variant="outline" onClick={signOut} className="w-full sm:w-auto">
-                                    Se déconnecter
                                 </Button>
                             </div>
                         </section>
