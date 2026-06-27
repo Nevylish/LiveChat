@@ -81,7 +81,6 @@ export default function Config() {
     const { guilds, fetchingGuilds, isSessionExpired, loadGuilds } = useGuildList({
         session,
         onError: setErrorMessage,
-        onReauthenticate: handleLogin,
     });
 
     const [selectedGuild, setSelectedGuild] = useState<DiscordGuild | null>(null);

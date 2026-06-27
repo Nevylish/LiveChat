@@ -2,6 +2,11 @@ import type { Session } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DiscordGuild } from '@livechat/types';
 import { fetchDiscordGuilds, fetchGuildBotStatus } from '../api/configApi';
+import {
+    clearDiscordProviderToken,
+    getPersistedDiscordProviderToken,
+    persistDiscordProviderToken,
+} from '../lib/discordAuth';
 import { isGuildAdmin } from '../lib/discord';
 import { chunkArray, getErrorMessage } from '../lib/errors';
 
@@ -15,10 +20,9 @@ interface UseGuildListResult {
 interface UseGuildListOptions {
     session: Session | null;
     onError: (message: string | null) => void;
-    onReauthenticate: () => void;
 }
 
-export function useGuildList({ session, onError, onReauthenticate }: UseGuildListOptions): UseGuildListResult {
+export function useGuildList({ session, onError }: UseGuildListOptions): UseGuildListResult {
     const [guilds, setGuilds] = useState<DiscordGuild[]>([]);
     const [fetchingGuilds, setFetchingGuilds] = useState(false);
     const [isSessionExpired, setIsSessionExpired] = useState(false);
@@ -28,22 +32,21 @@ export function useGuildList({ session, onError, onReauthenticate }: UseGuildLis
 
     const loadGuilds = useCallback(
         async (force: boolean) => {
-            if (!session) return;
+            if (!session?.user) return;
 
-            const providerToken = session.provider_token;
+            const userId = session.user.id;
+            const providerToken =
+                session.provider_token ?? getPersistedDiscordProviderToken(userId);
             if (!providerToken) {
-                console.warn('No Discord provider token found in session.');
-                const hasTriedOAuth = sessionStorage.getItem('livechat_oauth_retry');
-                if (!hasTriedOAuth) {
-                    sessionStorage.setItem('livechat_oauth_retry', 'true');
-                    onReauthenticate();
-                } else {
-                    setIsSessionExpired(true);
-                }
+                console.warn('No Discord provider token found in session or storage.');
+                setIsSessionExpired(true);
                 return;
             }
 
-            sessionStorage.removeItem('livechat_oauth_retry');
+            if (session.provider_token) {
+                persistDiscordProviderToken(userId, session.provider_token);
+            }
+
             setIsSessionExpired(false);
 
             if (
@@ -58,7 +61,17 @@ export function useGuildList({ session, onError, onReauthenticate }: UseGuildLis
             onError(null);
 
             try {
-                const userGuilds = await fetchDiscordGuilds(providerToken);
+                let userGuilds: DiscordGuild[];
+                try {
+                    userGuilds = await fetchDiscordGuilds(providerToken);
+                } catch (error) {
+                    if (error instanceof Error && error.message === 'DISCORD_PROVIDER_TOKEN_EXPIRED') {
+                        clearDiscordProviderToken(userId);
+                        setIsSessionExpired(true);
+                        return;
+                    }
+                    throw error;
+                }
                 const guildChunks = chunkArray(userGuilds, 80);
                 const botPresenceMap: Record<string, { hasBot: boolean; overlayCount: number }> = {};
 
@@ -104,14 +117,16 @@ export function useGuildList({ session, onError, onReauthenticate }: UseGuildLis
                 setFetchingGuilds(false);
             }
         },
-        [session, onError, onReauthenticate],
+        [session, onError],
     );
 
+    const sessionUserId = session?.user?.id ?? null;
+
     useEffect(() => {
-        if (session) {
+        if (sessionUserId) {
             void loadGuilds(false);
         }
-    }, [session, loadGuilds]);
+    }, [sessionUserId, loadGuilds]);
 
     return {
         guilds,

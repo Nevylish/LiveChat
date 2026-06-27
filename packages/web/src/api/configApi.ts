@@ -36,6 +36,10 @@ export async function fetchDiscordGuilds(providerToken: string): Promise<Discord
         },
     });
 
+    if (response.status === 401) {
+        throw new Error('DISCORD_PROVIDER_TOKEN_EXPIRED');
+    }
+
     if (!response.ok) {
         throw new Error("Impossible de récupérer vos serveurs Discord depuis l'API Discord.");
     }
