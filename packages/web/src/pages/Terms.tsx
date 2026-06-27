@@ -11,14 +11,14 @@ const sections: LegalSection[] = [
         id: 'confidentialite',
         title: '2. Confidentialité et données',
         content:
-            "L'utilisation du tableau de bord nécessite une connexion via Discord, gérée par Supabase. Certaines données sont stockées pour le fonctionnement du service (configurations d'overlay, réglages de serveur, identifiant Discord). Les commandes /livechat sur Discord sont traitées en temps réel sans conservation des messages ou médias.\n\n" +
+            "L'utilisation du tableau de bord nécessite une connexion via Discord (OAuth). Certaines données sont stockées pour le fonctionnement du service (configurations d'overlay, réglages de serveur, identifiant Discord). Les commandes /livechat sur Discord sont traitées en temps réel sans conservation des messages ou médias.\n\n" +
             "Pour le détail des données collectées, leur utilisation et vos droits, consultez notre politique de confidentialité à l'adresse /privacy.",
     },
     {
         id: 'compte',
         title: '3. Compte et authentification',
         content:
-            "L'accès au tableau de bord (gestion des overlays, réglages administrateur) requiert un compte Discord. Votre adresse e-mail est celle associée à votre compte Discord et ne peut être modifiée que depuis Discord.\n\n" +
+            "L'accès au tableau de bord (gestion des overlays, réglages administrateur) requiert un compte Discord. Vous êtes identifié par votre identifiant Discord et les informations de profil transmises par Discord (pseudo, nom d'affichage, avatar).\n\n" +
             "Vous êtes responsable de la confidentialité de vos liens d'overlay et de l'usage qui en est fait sur votre stream. Ne partagez vos liens qu'avec des personnes de confiance.",
     },
     {

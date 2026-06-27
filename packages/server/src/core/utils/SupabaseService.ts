@@ -10,7 +10,7 @@ export class SupabaseService {
 
     private static getClient(): SupabaseClient {
         if (!this.client) {
-            const url = process.env.VITE_SUPABASE_URL!;
+            const url = process.env.SUPABASE_URL!;
             const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
             this.client = createClient(url, serviceKey, {

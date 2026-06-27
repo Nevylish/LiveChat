@@ -46,7 +46,7 @@ export class AuthService {
     }
 
     private static getDiscordClientId(): string {
-        return process.env.DISCORD_CLIENT_ID!;
+        return process.env.VITE_DISCORD_CLIENT_ID!;
     }
 
     private static getDiscordClientSecret(): string {

@@ -163,7 +163,7 @@ export default function OverlayEditor({
                         >
                             {justRegenerated
                                 ? 'Le nouveau lien a été généré et est prêt à être copié.'
-                                : "Régénérez le lien — l'ancien sera désactivé définitivement."}
+                                : "Régénérez le lien immédiatement, l'ancien sera désactivé définitivement."}
                         </p>
                     </div>
                     <button

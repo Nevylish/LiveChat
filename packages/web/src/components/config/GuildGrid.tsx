@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import type { DiscordGuild } from '@livechat/types';
 import { ChevronRight, ExternalLink, HelpCircle, Lock, RefreshCw, Search, ShieldAlert } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { buildBotInviteUrl } from '../../lib/constants';
 import { isGuildAdmin } from '../../lib/discord';
 
 interface GuildGridProps {
@@ -15,9 +16,6 @@ interface GuildGridProps {
     onSelectGuild: (guildId: string) => void;
     restrictedGuildIds?: Set<string>;
 }
-
-const INVITE_URL = (guildId: string) =>
-    `https://discord.com/oauth2/authorize?client_id=1379921658109890610&permissions=1049600&scope=bot&guild_id=${guildId}&disable_guild_select=true`;
 
 function GuildIcon({ guild, muted = false }: { guild: DiscordGuild; muted?: boolean }) {
     if (guild.icon) {
@@ -206,7 +204,7 @@ export default function GuildGrid({
                                             <p className="truncate text-xs text-muted-foreground/70">{roleOf(g)}</p>
                                         </div>
                                         <Button asChild variant="outline" size="sm" className="shrink-0">
-                                            <a href={INVITE_URL(g.id)} target="_blank" rel="noopener noreferrer">
+                                            <a href={buildBotInviteUrl(g.id)} target="_blank" rel="noopener noreferrer">
                                                 Ajouter
                                                 <ExternalLink className="h-3.5 w-3.5" />
                                             </a>

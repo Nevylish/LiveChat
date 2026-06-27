@@ -35,7 +35,7 @@ https://github.com/user-attachments/assets/9ce415c4-f99e-4041-8c8e-b504fc0dd6fa
 - [pnpm](https://pnpm.io/) ≥ 9
 - Un [bot Discord](https://discord.com/developers/applications) avec son token
 - Clés API [Tenor](https://developers.google.com/tenor) et [Giphy](https://developers.giphy.com/)
-- Un projet [Supabase](https://supabase.com/) (auth Discord + stockage des configs overlay)
+- Un projet [Supabase](https://supabase.com/) (base de données Postgres — schéma dans `supabase/schema.sql`)
 - (Optionnel) Compte [Cloudflare](https://www.cloudflare.com/) pour le worker proxy
 
 ### Installation
@@ -55,8 +55,9 @@ Créez un fichier `.env` à la racine en vous basant sur [`.env.example`](.env.e
 | `TOKEN` | Token du bot Discord |
 | `LIVECHAT_PORT` | Port du serveur API + Socket.IO |
 | `DOMAIN`, `FRONTEND_URI`, `OVERLAY_URI` | Domaines (prod ou localhost) |
-| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Supabase (web + server) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé service Supabase (server) |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Supabase Postgres (server uniquement) |
+| `AUTH_JWT_SECRET` | JWT de session dashboard |
+| `VITE_DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | OAuth Discord (server + web) |
 | `PROXY_URL`, `PROXY_SECRET` | Worker proxy (relay média) |
 | `TENOR_API_KEY`, `GIPHY_API_KEY` | APIs plateformes |
 | `OVERLAY_SECRET` | Tokens overlay legacy (v1) |

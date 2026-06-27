@@ -17,12 +17,12 @@ const requiredEnvVars = [
     'TENOR_API_KEY',
     'GIPHY_API_KEY',
     'SKU_PLUS_ID',
-    'VITE_SUPABASE_URL',
+    'SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
     'PROXY_SECRET',
     'PROXY_URL',
     'AUTH_JWT_SECRET',
-    'DISCORD_CLIENT_ID',
+    'VITE_DISCORD_CLIENT_ID',
     'DISCORD_CLIENT_SECRET',
 ];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);

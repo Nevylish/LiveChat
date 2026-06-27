@@ -138,10 +138,12 @@ Types dans `@livechat/types` → `src/socket.ts`.
 
 ### REST API principale (server)
 
-Préfixe `/api/`. Auth : `Authorization: Bearer <supabase_jwt>`.
+Préfixe `/api/`. Auth dashboard : `Authorization: Bearer <jwt>` (Discord OAuth + `AuthService`).
 
 | Route | Usage |
 |-------|-------|
+| `GET /api/auth/discord` | Démarre OAuth Discord |
+| `GET /api/auth/discord/callback` | Callback OAuth (server) |
 | `GET /api/stats` | Stats publiques (home) |
 | `GET/POST /api/config/*` | CRUD overlays (dashboard) |
 | `GET /api/guild/check` | Présence bot + count overlays |
@@ -150,9 +152,11 @@ Préfixe `/api/`. Auth : `Authorization: Bearer <supabase_jwt>`.
 
 Client typé côté web : `packages/web/src/api/configApi.ts`.
 
-### Supabase
+### Supabase (base de données uniquement)
 
-Tables principales (via `SupabaseService`) :
+Schéma SQL : `supabase/schema.sql`, RLS : `supabase/policies.sql`. Accès **server-side** via `SUPABASE_SERVICE_ROLE_KEY` (`SupabaseService`). Le web n'utilise pas le client Supabase.
+
+Tables principales :
 
 - `overlay_configs` → `OverlayConfigRow`
 - `guild_settings` → `GuildSettingsRow`
@@ -178,7 +182,8 @@ Fichier racine `.env` (voir `.env.example`). Clés critiques :
 |----------|------------|
 | `TOKEN` | server (bot Discord) |
 | `LIVECHAT_PORT` | server |
-| `VITE_SUPABASE_*`, `SUPABASE_SERVICE_ROLE_KEY` | web + server |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | server (DB) |
+| `AUTH_JWT_SECRET`, `VITE_DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET` | server + web (OAuth dashboard, invite bot) |
 | `PROXY_URL`, `PROXY_SECRET` | server + proxy |
 | `GIPHY_API_KEY`, `TENOR_API_KEY` | server |
 | `OVERLAY_SECRET` | server (tokens legacy v1) |

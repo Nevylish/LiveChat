@@ -5,7 +5,8 @@
         "title": "Compatibilité 2K, 4K, 8K & 720p",
         "changes": [
             "L'overlay est maintenant compatible avec toutes les résolutions 16:9, du 720p au 8K.",
-            "Correction de bugs mineurs et amélioration des performances."
+            "Nous avons changé le système d'authentification du site web, nous ne récupérons plus votre adresse e-mail.",
+            "Correction de bugs et amélioration des performances."
         ]
     },
     {
