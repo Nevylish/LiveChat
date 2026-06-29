@@ -1,7 +1,7 @@
-export const DEFAULT_PAGE_SIZE = 20;
-export const MAX_PAGE_SIZE = 100;
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
 
-export interface PaginationMeta {
+interface PaginationMeta {
     page: number;
     pageSize: number;
     total: number;
@@ -11,14 +11,13 @@ export interface PaginationMeta {
 export function parsePaginationQuery(query: {
     page?: unknown;
     pageSize?: unknown;
-}): { page: number; pageSize: number; offset: number } {
+}): { page: number; pageSize: number } {
     const page = Math.max(1, Number.parseInt(String(query.page ?? '1'), 10) || 1);
     const pageSize = Math.min(
         MAX_PAGE_SIZE,
         Math.max(1, Number.parseInt(String(query.pageSize ?? String(DEFAULT_PAGE_SIZE)), 10) || DEFAULT_PAGE_SIZE),
     );
-    const offset = (page - 1) * pageSize;
-    return { page, pageSize, offset };
+    return { page, pageSize };
 }
 
 export function buildPaginationMeta(total: number, page: number, pageSize: number): PaginationMeta {

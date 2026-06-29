@@ -62,7 +62,6 @@ export function registerDevRoutes({ app, discordClient, streamerRegistry }: DevR
                     size: cacheStats.size,
                     hits: cacheStats.hits,
                     misses: cacheStats.misses,
-                    evictions: cacheStats.evictions,
                 },
                 premium: {
                     plusGuildCount: discordClient.guildPremiumCache.getCount(),
@@ -186,7 +185,13 @@ export function registerDevRoutes({ app, discordClient, streamerRegistry }: DevR
     });
 
     app.get('/api/dev/cache', limiter, requireAuth, requireDevAdmin, (_req, res) => {
-        res.json(CacheManager.getStats());
+        const stats = CacheManager.getStats();
+        res.json({
+            size: stats.size,
+            hits: stats.hits,
+            misses: stats.misses,
+            evictions: stats.evictions,
+        });
     });
 
     app.post('/api/dev/cache/clear', limiter, requireAuth, requireDevAdmin, (_req, res) => {

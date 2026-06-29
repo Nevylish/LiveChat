@@ -43,7 +43,7 @@ export namespace Logger {
         }
     };
 
-    export const COLORS = {
+    const COLORS = {
         RESET: '\x1b[0m',
         REVERSE: '\x1b[7m',
         UNDERSCORE: '\x1b[4m',
@@ -179,9 +179,9 @@ export namespace Logger {
     const devLogBuffer: DevLogRecord[] = [];
     const devLogListeners = new Set<(entry: DevLogRecord) => void>();
 
-    export type DevLogLevelName = 'debug' | 'info' | 'success' | 'warn' | 'error';
+    type DevLogLevelName = 'debug' | 'info' | 'success' | 'warn' | 'error';
 
-    export interface DevLogRecord {
+    interface DevLogRecord {
         id: number;
         level: DevLogLevelName;
         source: string;
@@ -241,11 +241,6 @@ export namespace Logger {
 
     export const clearDevLogs = (): void => {
         devLogBuffer.length = 0;
-    };
-
-    export const setMinLogLevel = (level: LogLevel): void => {
-        minLogLevel = level;
-        debug('Logger', 'Level set to ' + level);
     };
 
     const shouldLog = (level: LogLevel): boolean => {

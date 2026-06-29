@@ -16,7 +16,7 @@ import type {
 } from '@livechat/types';
 import { API_BASE_URL } from '../lib/constants';
 
-export const DEV_LIST_PAGE_SIZE = 20;
+const DEV_LIST_PAGE_SIZE = 20;
 
 async function authFetch(path: string, accessToken: string, init?: RequestInit): Promise<Response> {
     return fetch(`${API_BASE_URL}${path}`, {

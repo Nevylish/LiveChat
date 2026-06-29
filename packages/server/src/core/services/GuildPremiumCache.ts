@@ -12,12 +12,7 @@ export class GuildPremiumCache {
     }
 
     public has(guildId: string): boolean {
-        const hit = this.plusGuildIds.has(guildId);
-        Logger.debug('GuildPremiumCache', hit ? 'Cache hit' : 'Cache miss', {
-            guildId,
-            plusGuildCount: this.plusGuildIds.size,
-        });
-        return hit;
+        return this.plusGuildIds.has(guildId);
     }
 
     public getCount(): number {

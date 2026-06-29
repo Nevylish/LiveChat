@@ -95,7 +95,6 @@ export interface DevOverviewResponse {
         size: number;
         hits: number;
         misses: number;
-        evictions: number;
     };
     premium: {
         plusGuildCount: number;
@@ -136,10 +135,7 @@ export interface DevCacheStatsResponse {
     size: number;
     hits: number;
     misses: number;
-    negativeHits: number;
-    dedupedRequests: number;
     evictions: number;
-    expirations: number;
 }
 
 export interface DevCacheClearResponse {

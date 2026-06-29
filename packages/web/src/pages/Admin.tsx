@@ -6,6 +6,7 @@ import type {
     DevCacheStatsResponse,
     DevConnectedStreamer,
     DevGuildRow,
+    DevMediaResolveResponse,
     DevOverviewResponse,
     DevPaginationMeta,
     OverlayConfigRow,
@@ -33,7 +34,6 @@ import {
     deleteDevOverlay,
     fetchDevCacheStats,
     fetchDevGuilds,
-    fetchDevMe,
     fetchDevOverview,
     fetchDevStreamers,
     resolveDevMediaUrl,
@@ -46,6 +46,7 @@ import ListPagination from '../components/admin/ListPagination';
 import ConfigTabs, { type TabItem } from '../components/config/ConfigTabs';
 import LoginView from '../components/config/LoginView';
 import { useAuth } from '../hooks/useAuth';
+import { useDevAdmin } from '../hooks/useDevAdmin';
 import { openDiscordLoginPopup } from '../lib/authApi';
 import { buildOverlayLink } from '../lib/constants';
 import { getErrorMessage } from '../lib/errors';
@@ -132,9 +133,8 @@ function DataTable({ headers, rows }: { headers: string[]; rows: ReactNode[][] }
 export default function Admin() {
     const { session, authLoading } = useAuth();
     const accessToken = session?.access_token;
+    const { isDevAdmin, accessChecked } = useDevAdmin(accessToken);
 
-    const [accessChecked, setAccessChecked] = useState(false);
-    const [isDevAdmin, setIsDevAdmin] = useState(false);
     const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 
     const [overview, setOverview] = useState<DevOverviewResponse | null>(null);
@@ -157,11 +157,7 @@ export default function Admin() {
     const [revealedTokens, setRevealedTokens] = useState<Set<string>>(new Set());
 
     const [mediaUrl, setMediaUrl] = useState('');
-    const [mediaResult, setMediaResult] = useState<{
-        url?: string | null;
-        bypassProxy?: boolean;
-        error?: string;
-    } | null>(null);
+    const [mediaResult, setMediaResult] = useState<DevMediaResolveResponse | null>(null);
 
     const [loading, setLoading] = useState(false);
     const [sectionError, setSectionError] = useState<string | null>(null);
@@ -268,34 +264,6 @@ export default function Admin() {
         searchOverlays,
         overlaysPage,
     ]);
-
-    useEffect(() => {
-        if (!accessToken) {
-            setAccessChecked(true);
-            setIsDevAdmin(false);
-            return;
-        }
-
-        let cancelled = false;
-
-        fetchDevMe(accessToken)
-            .then((data) => {
-                if (!cancelled) {
-                    setIsDevAdmin(data.isDevAdmin);
-                    setAccessChecked(true);
-                }
-            })
-            .catch(() => {
-                if (!cancelled) {
-                    setIsDevAdmin(false);
-                    setAccessChecked(true);
-                }
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [accessToken]);
 
     useEffect(() => {
         if (!isDevAdmin || !accessToken) return;

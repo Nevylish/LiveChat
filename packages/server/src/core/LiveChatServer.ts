@@ -11,7 +11,6 @@ import { StreamerRegistry } from './services/StreamerRegistry';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { TargetsManager } from './utils/Targets';
-import type { OverlayVersion } from '@livechat/types';
 
 export class LiveChatServer extends EventEmitter {
     public readonly io: Server;
@@ -87,20 +86,8 @@ export class LiveChatServer extends EventEmitter {
         });
     }
 
-    addStreamer(socketId: string, username: string, guildId: string, overlayVersion: OverlayVersion = 'v1'): void {
-        this.streamerRegistry.add(socketId, username, guildId, overlayVersion);
-    }
-
-    removeStreamer(username: string, guildId: string): void {
-        this.streamerRegistry.remove(username, guildId);
-    }
-
     getStreamerData(username: string, guildId: string): TargetsManager.ConnectedStreamer | undefined {
         return this.streamerRegistry.get(username, guildId);
-    }
-
-    isStreamerConnected(username: string, guildId: string): boolean {
-        return this.streamerRegistry.has(username, guildId);
     }
 
     getConnectedStreamersByGuild(guildId: string): TargetsManager.ConnectedStreamer[] {
@@ -109,9 +96,5 @@ export class LiveChatServer extends EventEmitter {
 
     getConnectedStreamersCount(): number {
         return this.streamerRegistry.count();
-    }
-
-    getConnectedStreamersCountByGuild(guildId: string): number {
-        return this.streamerRegistry.countByGuild(guildId);
     }
 }

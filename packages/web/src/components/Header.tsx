@@ -34,7 +34,7 @@ function BurgerIcon() {
 
 export default function Header() {
     const { session, user, signOut } = useAuth();
-    const isDevAdmin = useDevAdmin(session?.access_token);
+    const { isDevAdmin } = useDevAdmin(session?.access_token);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggle, setTheme } = useTheme();

@@ -443,11 +443,10 @@ export class SupabaseService {
             token?: string;
             userId?: string;
         },
-        options?: { page?: number; pageSize?: number },
+        options: { page: number; pageSize: number },
     ): Promise<{ overlays: OverlayConfigRow[]; total: number }> {
         try {
-            const page = options?.page ?? 1;
-            const pageSize = options?.pageSize ?? 20;
+            const { page, pageSize } = options;
             const from = (page - 1) * pageSize;
             const to = from + pageSize - 1;
 
