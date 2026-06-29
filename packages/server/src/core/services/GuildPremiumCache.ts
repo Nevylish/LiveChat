@@ -20,9 +20,12 @@ export class GuildPremiumCache {
         return hit;
     }
 
+    public getCount(): number {
+        return this.plusGuildIds.size;
+    }
+
     public async ensureReady(): Promise<void> {
         if (this.initialized) {
-            Logger.debug('GuildPremiumCache', 'Already initialized, skipping ensureReady');
             return;
         }
 
@@ -179,10 +182,6 @@ export class GuildPremiumCache {
     }
 
     private isActivePlusGuildEntitlement(entitlement: Entitlement): boolean {
-        return (
-            entitlement.skuId === this.skuPlusId &&
-            entitlement.isGuildSubscription() &&
-            entitlement.isActive()
-        );
+        return entitlement.skuId === this.skuPlusId && entitlement.isGuildSubscription() && entitlement.isActive();
     }
 }

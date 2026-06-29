@@ -5,11 +5,13 @@ import { Server } from 'socket.io';
 import DiscordClient from './DiscordClient';
 import { registerApiRoutes } from './routes/apiRoutes';
 import { registerAuthRoutes } from './routes/authRoutes';
+import { registerDevRoutes } from './routes/devRoutes';
 import { registerOverlaySocket } from './socket/overlaySocket';
 import { StreamerRegistry } from './services/StreamerRegistry';
 import { Constants } from './utils/Constants';
 import { Logger } from './utils/Logger';
 import { TargetsManager } from './utils/Targets';
+import type { OverlayVersion } from '@livechat/types';
 
 export class LiveChatServer extends EventEmitter {
     public readonly io: Server;
@@ -41,6 +43,11 @@ export class LiveChatServer extends EventEmitter {
         this.setupHttpMiddleware();
         registerAuthRoutes({ app: this.app });
         registerApiRoutes({
+            app: this.app,
+            discordClient: this.discordClient,
+            streamerRegistry: this.streamerRegistry,
+        });
+        registerDevRoutes({
             app: this.app,
             discordClient: this.discordClient,
             streamerRegistry: this.streamerRegistry,
@@ -80,8 +87,8 @@ export class LiveChatServer extends EventEmitter {
         });
     }
 
-    addStreamer(socketId: string, username: string, guildId: string): void {
-        this.streamerRegistry.add(socketId, username, guildId);
+    addStreamer(socketId: string, username: string, guildId: string, overlayVersion: OverlayVersion = 'v1'): void {
+        this.streamerRegistry.add(socketId, username, guildId, overlayVersion);
     }
 
     removeStreamer(username: string, guildId: string): void {

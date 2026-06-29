@@ -8,13 +8,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { ChevronRight, LogOut, Moon, Sun, User, X } from 'lucide-react';
+import { ChevronRight, LogOut, Moon, Settings, Sun, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DiscordAvatar } from './DiscordAvatar';
 import { useAuth } from '../hooks/useAuth';
+import { useDevAdmin } from '../hooks/useDevAdmin';
 import { useTheme } from '../hooks/useTheme';
 import { getDiscordDisplayName } from '../lib/discord';
+import { DiscordAvatar } from './DiscordAvatar';
 
 const NAV_LINKS: { label: string; href: string }[] = [
     { href: '/config', label: 'Configuration' },
@@ -32,7 +33,8 @@ function BurgerIcon() {
 }
 
 export default function Header() {
-    const { user, signOut } = useAuth();
+    const { session, user, signOut } = useAuth();
+    const isDevAdmin = useDevAdmin(session?.access_token);
     const location = useLocation();
     const navigate = useNavigate();
     const { isDark, toggle, setTheme } = useTheme();
@@ -122,6 +124,12 @@ export default function Header() {
                                         <User className="h-4 w-4" />
                                         Mon compte
                                     </DropdownMenuItem>
+                                    {isDevAdmin ? (
+                                        <DropdownMenuItem onClick={() => navigate('/admin')}>
+                                            <Settings className="h-4 w-4" />
+                                            Développeur
+                                        </DropdownMenuItem>
+                                    ) : null}
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem
                                         onClick={handleLogout}
@@ -203,6 +211,18 @@ export default function Header() {
                                                     Mon compte
                                                     <User className="h-4 w-4 text-muted-foreground" />
                                                 </button>
+                                                {isDevAdmin ? (
+                                                    <button
+                                                        onClick={() => {
+                                                            navigate('/admin');
+                                                            setSheetOpen(false);
+                                                        }}
+                                                        className="flex w-full cursor-pointer items-center justify-between py-3 text-sm transition-colors hover:text-muted-foreground"
+                                                    >
+                                                        Développeur
+                                                        <Settings className="h-4 w-4 text-muted-foreground" />
+                                                    </button>
+                                                ) : null}
                                                 <div className="flex items-center justify-between py-3">
                                                     <span className="text-sm">Thème</span>
                                                     <div className="flex rounded-md border border-border p-0.5">

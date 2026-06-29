@@ -182,4 +182,24 @@ export class CacheManager {
     public static delete(key: string): boolean {
         return this.cache.delete(key);
     }
+
+    public static getStats(): {
+        size: number;
+        hits: number;
+        misses: number;
+        negativeHits: number;
+        dedupedRequests: number;
+        evictions: number;
+        expirations: number;
+    } {
+        return {
+            size: this.cache.size,
+            ...this.stats,
+        };
+    }
+
+    public static clear(): void {
+        this.cache.clear();
+        this.pendingPromises.clear();
+    }
 }

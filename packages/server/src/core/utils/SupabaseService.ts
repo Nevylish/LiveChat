@@ -375,4 +375,111 @@ export class SupabaseService {
             return false;
         }
     }
+
+    public static async countOverlayConfigs(): Promise<number> {
+        try {
+            const supabase = this.getClient();
+            const { count, error } = await supabase
+                .from('overlay_configs')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error counting overlay configs', error);
+                return 0;
+            }
+
+            return count ?? 0;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error counting overlay configs', err);
+            return 0;
+        }
+    }
+
+    public static async countGuildSettings(): Promise<number> {
+        try {
+            const supabase = this.getClient();
+            const { count, error } = await supabase
+                .from('guild_settings')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error counting guild settings', error);
+                return 0;
+            }
+
+            return count ?? 0;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error counting guild settings', err);
+            return 0;
+        }
+    }
+
+    public static async getOverlayCountsByGuild(): Promise<Record<string, number>> {
+        try {
+            const supabase = this.getClient();
+            const { data, error } = await supabase.from('overlay_configs').select('guild_id');
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error fetching overlay counts by guild', error);
+                return {};
+            }
+
+            const counts: Record<string, number> = {};
+            for (const row of data ?? []) {
+                const guildId = row.guild_id as string;
+                counts[guildId] = (counts[guildId] ?? 0) + 1;
+            }
+            return counts;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error fetching overlay counts by guild', err);
+            return {};
+        }
+    }
+
+    public static async searchOverlayConfigs(
+        filters: {
+            guildId?: string;
+            username?: string;
+            token?: string;
+            userId?: string;
+        },
+        options?: { page?: number; pageSize?: number },
+    ): Promise<{ overlays: OverlayConfigRow[]; total: number }> {
+        try {
+            const page = options?.page ?? 1;
+            const pageSize = options?.pageSize ?? 20;
+            const from = (page - 1) * pageSize;
+            const to = from + pageSize - 1;
+
+            const supabase = this.getClient();
+            let query = supabase.from('overlay_configs').select('*', { count: 'exact' });
+
+            if (filters.guildId) {
+                query = query.eq('guild_id', filters.guildId);
+            }
+            if (filters.username) {
+                query = query.eq('username', filters.username.toLowerCase());
+            }
+            if (filters.token) {
+                query = query.eq('token', filters.token);
+            }
+            if (filters.userId) {
+                query = query.eq('user_id', filters.userId);
+            }
+
+            const { data, error, count } = await query
+                .order('updated_at', { ascending: false })
+                .range(from, to);
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error searching overlay configs', error);
+                return { overlays: [], total: 0 };
+            }
+
+            return { overlays: (data as OverlayConfigRow[]) ?? [], total: count ?? 0 };
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error searching overlay configs', err);
+            return { overlays: [], total: 0 };
+        }
+    }
 }
