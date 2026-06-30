@@ -203,7 +203,7 @@ export function registerDevRoutes({ app, discordClient, streamerRegistry }: DevR
         res.json({ logs: Logger.getDevLogs(after) });
     });
 
-    app.get('/api/dev/logs/stream', requireAuth, requireDevAdmin, (req, res) => {
+    app.get('/api/dev/logs/stream', limiter, requireAuth, requireDevAdmin, (req, res) => {
         const after = Math.max(0, Number.parseInt(String(req.query.after ?? '0'), 10) || 0);
 
         res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
