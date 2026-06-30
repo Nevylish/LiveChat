@@ -12,6 +12,18 @@ declare global {
     }
 }
 
+function getDevAdminDiscordIds(): string[] {
+    return (process.env.DEV_ADMIN_DISCORD_IDS ?? '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+}
+
+export function isDevAdmin(userId: string | undefined): boolean {
+    if (!userId) return false;
+    return getDevAdminDiscordIds().includes(userId);
+}
+
 export async function checkAdminAccess(
     discordClient: DiscordClient,
     guildId: string,
@@ -150,6 +162,22 @@ export function createAuthMiddlewares(discordClient: DiscordClient) {
                 .catch(() => {
                     res.status(500).json({ error: 'Internal server error checking permissions' });
                 });
+        },
+
+        requireDevAdmin: (req: Request, res: Response, next: NextFunction): void => {
+            const userId = req.userId;
+
+            if (!userId) {
+                res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+                return;
+            }
+
+            if (isDevAdmin(userId)) {
+                next();
+                return;
+            }
+
+            res.status(403).json({ error: 'Accès réservé aux développeurs.' });
         },
 
         requireOverlayOwnership: (req: Request, res: Response, next: NextFunction): void => {

@@ -12,17 +12,15 @@ export class GuildPremiumCache {
     }
 
     public has(guildId: string): boolean {
-        const hit = this.plusGuildIds.has(guildId);
-        Logger.debug('GuildPremiumCache', hit ? 'Cache hit' : 'Cache miss', {
-            guildId,
-            plusGuildCount: this.plusGuildIds.size,
-        });
-        return hit;
+        return this.plusGuildIds.has(guildId);
+    }
+
+    public getCount(): number {
+        return this.plusGuildIds.size;
     }
 
     public async ensureReady(): Promise<void> {
         if (this.initialized) {
-            Logger.debug('GuildPremiumCache', 'Already initialized, skipping ensureReady');
             return;
         }
 
@@ -179,10 +177,6 @@ export class GuildPremiumCache {
     }
 
     private isActivePlusGuildEntitlement(entitlement: Entitlement): boolean {
-        return (
-            entitlement.skuId === this.skuPlusId &&
-            entitlement.isGuildSubscription() &&
-            entitlement.isActive()
-        );
+        return entitlement.skuId === this.skuPlusId && entitlement.isGuildSubscription() && entitlement.isActive();
     }
 }

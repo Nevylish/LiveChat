@@ -28,3 +28,5 @@ export interface RegisterPayloadV1 {
 export interface RegisterPayloadV2 {
     token: string;
 }
+
+export type OverlayVersion = 'v1' | 'v2';

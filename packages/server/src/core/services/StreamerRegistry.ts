@@ -1,10 +1,11 @@
 import { TargetsManager } from '../utils/Targets';
+import type { OverlayVersion } from '@livechat/types';
 
 export class StreamerRegistry {
     private readonly streamers = new Map<string, TargetsManager.ConnectedStreamer>();
 
-    add(socketId: string, username: string, guildId: string): void {
-        this.streamers.set(this.key(username, guildId), { socketId, username, guildId });
+    add(socketId: string, username: string, guildId: string, overlayVersion: OverlayVersion): void {
+        this.streamers.set(this.key(username, guildId), { socketId, username, guildId, overlayVersion });
     }
 
     remove(username: string, guildId: string): void {
@@ -38,6 +39,10 @@ export class StreamerRegistry {
 
     countByGuild(guildId: string): number {
         return this.getByGuild(guildId).length;
+    }
+
+    listAll(): TargetsManager.ConnectedStreamer[] {
+        return Array.from(this.streamers.values());
     }
 
     private key(username: string, guildId: string): string {

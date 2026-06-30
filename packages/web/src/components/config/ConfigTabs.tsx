@@ -15,8 +15,8 @@ interface ConfigTabsProps<T extends string> {
 
 export default function ConfigTabs<T extends string>({ tabs, active, onChange }: ConfigTabsProps<T>) {
     return (
-        <div className="mb-6 border-b border-border">
-            <div role="tablist" aria-label="Sections" className="flex gap-1 overflow-x-auto">
+        <div className="mb-6 overflow-hidden border-b border-border">
+            <div role="tablist" aria-label="Sections" className="tabs-scroll flex gap-1">
                 {tabs.map((tab) => {
                     const isActive = tab.id === active;
                     return (

@@ -43,7 +43,7 @@ export namespace Logger {
         }
     };
 
-    export const COLORS = {
+    const COLORS = {
         RESET: '\x1b[0m',
         REVERSE: '\x1b[7m',
         UNDERSCORE: '\x1b[4m',
@@ -174,9 +174,73 @@ export namespace Logger {
 
     let minLogLevel: LogLevel = LogLevel.DEBUG;
 
-    export const setMinLogLevel = (level: LogLevel): void => {
-        minLogLevel = level;
-        debug('Logger', 'Level set to ' + level);
+    const MAX_DEV_LOG_BUFFER = 500;
+    let devLogId = 0;
+    const devLogBuffer: DevLogRecord[] = [];
+    const devLogListeners = new Set<(entry: DevLogRecord) => void>();
+
+    type DevLogLevelName = 'debug' | 'info' | 'success' | 'warn' | 'error';
+
+    interface DevLogRecord {
+        id: number;
+        level: DevLogLevelName;
+        source: string;
+        message: string;
+        context?: Record<string, unknown>;
+        timestamp: string;
+    }
+
+    const logLevelName = (level: LogLevel): DevLogLevelName => {
+        switch (level) {
+            case LogLevel.DEBUG:
+                return 'debug';
+            case LogLevel.INFO:
+                return 'info';
+            case LogLevel.SUCCESS:
+                return 'success';
+            case LogLevel.WARN:
+                return 'warn';
+            case LogLevel.ERROR:
+                return 'error';
+        }
+    };
+
+    const recordDevLog = (level: LogLevel, source: string, args: any[]): void => {
+        if (level < minLogLevel) return;
+
+        const { message, context } = parseArgs(args);
+        const entry: DevLogRecord = {
+            id: ++devLogId,
+            level: logLevelName(level),
+            source,
+            message: message || '(aucun message)',
+            context: context && Object.keys(context).length > 0 ? context : undefined,
+            timestamp: new Date().toISOString(),
+        };
+
+        devLogBuffer.push(entry);
+        while (devLogBuffer.length > MAX_DEV_LOG_BUFFER) {
+            devLogBuffer.shift();
+        }
+
+        for (const listener of devLogListeners) {
+            listener(entry);
+        }
+    };
+
+    export const getDevLogs = (after = 0): DevLogRecord[] => {
+        return devLogBuffer.filter((entry) => entry.id > after);
+    };
+
+    export const subscribeDevLog = (listener: (entry: DevLogRecord) => void): (() => void) => {
+        devLogListeners.add(listener);
+        return () => {
+            devLogListeners.delete(listener);
+        };
+    };
+
+    export const clearDevLogs = (): void => {
+        devLogBuffer.length = 0;
     };
 
     const shouldLog = (level: LogLevel): boolean => {
@@ -187,6 +251,7 @@ export namespace Logger {
         if (shouldLog(LogLevel.INFO)) {
             console.log(formatMessage(LogLevel.INFO, source), message, ...optionalParams);
         }
+        recordDevLog(LogLevel.INFO, source, [message, ...optionalParams]);
         queueWebhook(LogLevel.INFO, source, [message, ...optionalParams]);
     };
 
@@ -194,6 +259,7 @@ export namespace Logger {
         if (shouldLog(LogLevel.ERROR)) {
             console.error(formatMessage(LogLevel.ERROR, source), message, ...optionalParams);
         }
+        recordDevLog(LogLevel.ERROR, source, [message, ...optionalParams]);
         queueWebhook(LogLevel.ERROR, source, [message, ...optionalParams]);
     };
 
@@ -201,6 +267,7 @@ export namespace Logger {
         if (shouldLog(LogLevel.WARN)) {
             console.warn(formatMessage(LogLevel.WARN, source), message, ...optionalParams);
         }
+        recordDevLog(LogLevel.WARN, source, [message, ...optionalParams]);
         queueWebhook(LogLevel.WARN, source, [message, ...optionalParams]);
     };
 
@@ -208,6 +275,7 @@ export namespace Logger {
         if (shouldLog(LogLevel.SUCCESS)) {
             console.log(formatMessage(LogLevel.SUCCESS, source), message, ...optionalParams);
         }
+        recordDevLog(LogLevel.SUCCESS, source, [message, ...optionalParams]);
         queueWebhook(LogLevel.SUCCESS, source, [message, ...optionalParams]);
     };
 
@@ -215,6 +283,7 @@ export namespace Logger {
         if (shouldLog(LogLevel.DEBUG)) {
             console.log(formatMessage(LogLevel.DEBUG, source), message, ...optionalParams);
         }
+        recordDevLog(LogLevel.DEBUG, source, [message, ...optionalParams]);
         queueWebhook(LogLevel.DEBUG, source, [message, ...optionalParams]);
     };
 }

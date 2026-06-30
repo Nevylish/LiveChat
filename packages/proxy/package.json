@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "wrangler dev",
+        "dev": "node scripts/sync-dev-vars.mjs && wrangler dev",
         "deploy": "wrangler deploy"
     },
     "dependencies": {

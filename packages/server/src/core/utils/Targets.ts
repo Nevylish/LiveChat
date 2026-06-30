@@ -1,12 +1,14 @@
 import { AutocompleteInteraction, ChatInputCommandInteraction } from 'discord.js';
 import DiscordClient from '../DiscordClient';
 import { Functions } from './Functions';
+import type { OverlayVersion } from '@livechat/types';
 
 export namespace TargetsManager {
     export interface ConnectedStreamer {
         socketId: string;
         username: string;
         guildId: string;
+        overlayVersion: OverlayVersion;
     }
 
     export const EVERYONE_OPTION_LABEL = '📌 Envoyer à tous les streameurs connectés';

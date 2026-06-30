@@ -7,6 +7,11 @@ import { StreamerRegistry } from '../services/StreamerRegistry';
 import { Logger } from '../utils/Logger';
 import { SupabaseService } from '../utils/SupabaseService';
 import { Validations } from '../utils/Validations';
+import type { OverlayVersion } from '@livechat/types';
+
+function detectOverlayVersion(data: { username?: string; guildId?: string; token?: string }): OverlayVersion {
+    return data.token && !data.username && !data.guildId ? 'v2' : 'v1';
+}
 
 interface OverlaySocketDeps {
     io: Server;
@@ -131,7 +136,8 @@ export function registerOverlaySocket({ io, discordClient, streamerRegistry, eve
                         return;
                     }
 
-                    streamerRegistry.add(socket.id, username, guildId);
+                    const overlayVersion = detectOverlayVersion(data);
+                    streamerRegistry.add(socket.id, username, guildId, overlayVersion);
                     socket.join(guildId);
 
                     if (guild.name) {
@@ -145,6 +151,7 @@ export function registerOverlaySocket({ io, discordClient, streamerRegistry, eve
                         guildId,
                         guildName: guild.name ?? 'Unknown',
                         socketId: socket.id,
+                        overlayVersion,
                     });
                 })
                 .catch((err) => {

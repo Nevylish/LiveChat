@@ -9,6 +9,7 @@ const Updates = lazy(() => import('./pages/Updates'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/updates" element={<Updates />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="*" element={<Home />} />
             </Routes>

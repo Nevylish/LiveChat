@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import DiscordClient from './DiscordClient';
 import { registerApiRoutes } from './routes/apiRoutes';
 import { registerAuthRoutes } from './routes/authRoutes';
+import { registerDevRoutes } from './routes/devRoutes';
 import { registerOverlaySocket } from './socket/overlaySocket';
 import { StreamerRegistry } from './services/StreamerRegistry';
 import { Constants } from './utils/Constants';
@@ -45,6 +46,11 @@ export class LiveChatServer extends EventEmitter {
             discordClient: this.discordClient,
             streamerRegistry: this.streamerRegistry,
         });
+        registerDevRoutes({
+            app: this.app,
+            discordClient: this.discordClient,
+            streamerRegistry: this.streamerRegistry,
+        });
         registerOverlaySocket({
             io: this.io,
             discordClient: this.discordClient,
@@ -80,20 +86,8 @@ export class LiveChatServer extends EventEmitter {
         });
     }
 
-    addStreamer(socketId: string, username: string, guildId: string): void {
-        this.streamerRegistry.add(socketId, username, guildId);
-    }
-
-    removeStreamer(username: string, guildId: string): void {
-        this.streamerRegistry.remove(username, guildId);
-    }
-
     getStreamerData(username: string, guildId: string): TargetsManager.ConnectedStreamer | undefined {
         return this.streamerRegistry.get(username, guildId);
-    }
-
-    isStreamerConnected(username: string, guildId: string): boolean {
-        return this.streamerRegistry.has(username, guildId);
     }
 
     getConnectedStreamersByGuild(guildId: string): TargetsManager.ConnectedStreamer[] {
@@ -102,9 +96,5 @@ export class LiveChatServer extends EventEmitter {
 
     getConnectedStreamersCount(): number {
         return this.streamerRegistry.count();
-    }
-
-    getConnectedStreamersCountByGuild(guildId: string): number {
-        return this.streamerRegistry.countByGuild(guildId);
     }
 }
