@@ -508,7 +508,7 @@ export default function Admin() {
                                             )}
                                             <span className="text-xs">
                                                 Ping {overview.discord.wsPing} ms · Uptime{' '}
-                                                {formatUptime(overview.uptimeSeconds)} · {overview.nodeEnv}
+                                                {formatUptime(overview.uptimeSeconds)}
                                             </span>
                                         </div>
                                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">

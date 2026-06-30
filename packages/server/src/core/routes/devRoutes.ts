@@ -45,7 +45,6 @@ export function registerDevRoutes({ app, discordClient, streamerRegistry }: DevR
 
             res.json({
                 uptimeSeconds: Math.floor((Date.now() - serverStartedAt) / 1000),
-                nodeEnv: process.env.NODE_ENV ?? 'development',
                 discord: {
                     guildCount: discordClient.guilds.cache.size,
                     wsPing: discordClient.ws.ping,

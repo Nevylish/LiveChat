@@ -78,7 +78,6 @@ export interface DevPaginationParams {
 
 export interface DevOverviewResponse {
     uptimeSeconds: number;
-    nodeEnv: string;
     discord: {
         guildCount: number;
         wsPing: number;
