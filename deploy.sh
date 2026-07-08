@@ -7,7 +7,8 @@ if [ ! -f .env ]; then
 fi
 
 echo "Fetching latest code..."
-git pull origin main
+git fetch origin main
+git reset --hard origin/main
 
 echo "Rebuilding and restarting the container..."
 docker compose up -d --build
