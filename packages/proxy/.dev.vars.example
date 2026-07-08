@@ -1,0 +1,3 @@
+# Copied automatically from the repo root .env by `pnpm dev:proxy` (see scripts/sync-dev-vars.mjs).
+# For production: wrangler secret put PROXY_SECRET
+PROXY_SECRET=

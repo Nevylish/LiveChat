@@ -1,0 +1,484 @@
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
+import { CacheManager } from './CacheManager';
+import { Logger } from './Logger';
+
+export type { GuildSettingsRow, OverlayConfigRow } from '@livechat/types';
+
+export class SupabaseService {
+    private static client: SupabaseClient | null = null;
+
+    private static getClient(): SupabaseClient {
+        if (!this.client) {
+            const url = process.env.SUPABASE_URL!;
+            const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+            this.client = createClient(url, serviceKey, {
+                auth: {
+                    persistSession: false,
+                },
+            });
+            Logger.success('SupabaseService', 'Supabase client successfully initialized');
+        }
+        return this.client;
+    }
+
+    public static async getOverlayConfig(guildId: string, username: string): Promise<OverlayConfigRow | null> {
+        const key = `overlay:config:${guildId}:${username.toLowerCase()}`;
+        return CacheManager.getOrFetch(
+            key,
+            async () => {
+                try {
+                    const supabase = this.getClient();
+                    const { data, error } = await supabase
+                        .from('overlay_configs')
+                        .select('*')
+                        .eq('guild_id', guildId)
+                        .eq('username', username.toLowerCase())
+                        .maybeSingle();
+
+                    if (error) {
+                        Logger.error('SupabaseService', `Error fetching config for ${username}:${guildId}`, error);
+                        return null;
+                    }
+
+                    return data as OverlayConfigRow;
+                } catch (err) {
+                    Logger.error('SupabaseService', `Unexpected error fetching config for ${username}:${guildId}`, err);
+                    return null;
+                }
+            },
+            5 * 60 * 1000,
+        );
+    }
+
+    public static async getOverlayConfigsByGuildAndUser(guildId: string, userId: string): Promise<OverlayConfigRow[]> {
+        const key = `overlay:configs:user:${guildId}:${userId}`;
+        return CacheManager.getOrFetch(
+            key,
+            async () => {
+                try {
+                    const supabase = this.getClient();
+                    const { data, error } = await supabase
+                        .from('overlay_configs')
+                        .select('*')
+                        .eq('guild_id', guildId)
+                        .eq('user_id', userId);
+
+                    if (error) {
+                        Logger.error(
+                            'SupabaseService',
+                            `Error fetching configs for guild ${guildId} and user ${userId}`,
+                            error,
+                        );
+                        return [];
+                    }
+
+                    return (data as OverlayConfigRow[]) || [];
+                } catch (err) {
+                    Logger.error(
+                        'SupabaseService',
+                        `Unexpected error fetching configs for guild ${guildId} and user ${userId}`,
+                        err,
+                    );
+                    return [];
+                }
+            },
+            5 * 60 * 1000,
+        );
+    }
+
+    public static async getOverlayCountsByGuildsAndUser(
+        guildIds: string[],
+        userId: string,
+    ): Promise<Record<string, number>> {
+        const counts: Record<string, number> = {};
+        const missingGuildIds: string[] = [];
+
+        for (const guildId of guildIds) {
+            const cacheKey = `overlay:count:${guildId}:${userId}`;
+            const cachedCount = CacheManager.get<number>(cacheKey);
+            if (cachedCount !== undefined) {
+                counts[guildId] = cachedCount;
+            } else {
+                missingGuildIds.push(guildId);
+            }
+        }
+
+        for (const guildId of missingGuildIds) {
+            counts[guildId] = 0;
+        }
+
+        if (missingGuildIds.length > 0) {
+            try {
+                const supabase = this.getClient();
+                const { data, error } = await supabase
+                    .from('overlay_configs')
+                    .select('guild_id')
+                    .in('guild_id', missingGuildIds)
+                    .eq('user_id', userId);
+
+                if (error) {
+                    Logger.error('SupabaseService', `Error fetching counts for user ${userId}`, error);
+                } else {
+                    const dbCounts: Record<string, number> = {};
+                    for (const guildId of missingGuildIds) {
+                        dbCounts[guildId] = 0;
+                    }
+                    if (data) {
+                        for (const row of data) {
+                            const gId = row.guild_id;
+                            dbCounts[gId] = (dbCounts[gId] || 0) + 1;
+                        }
+                    }
+
+                    for (const guildId of missingGuildIds) {
+                        const count = dbCounts[guildId];
+                        counts[guildId] = count;
+
+                        const cacheKey = `overlay:count:${guildId}:${userId}`;
+                        CacheManager.set(cacheKey, count, 5 * 60 * 1000);
+                    }
+                }
+            } catch (err) {
+                Logger.error('SupabaseService', `Unexpected error fetching counts for user ${userId}`, err);
+            }
+        }
+
+        return counts;
+    }
+
+    public static async getOverlayConfigsByGuild(guildId: string): Promise<OverlayConfigRow[]> {
+        const key = `overlay:configs:guild:${guildId}`;
+        return CacheManager.getOrFetch(
+            key,
+            async () => {
+                try {
+                    const supabase = this.getClient();
+                    const { data, error } = await supabase.from('overlay_configs').select('*').eq('guild_id', guildId);
+
+                    if (error) {
+                        Logger.error('SupabaseService', `Error fetching configs for guild ${guildId}`, error);
+                        return [];
+                    }
+
+                    return (data as OverlayConfigRow[]) || [];
+                } catch (err) {
+                    Logger.error('SupabaseService', `Unexpected error fetching configs for guild ${guildId}`, err);
+                    return [];
+                }
+            },
+            5 * 60 * 1000,
+        );
+    }
+
+    public static async getOverlayConfigByToken(token: string): Promise<OverlayConfigRow | null> {
+        const key = `overlay:token:${token}`;
+        return CacheManager.getOrFetch(
+            key,
+            async () => {
+                try {
+                    const supabase = this.getClient();
+                    const { data, error } = await supabase
+                        .from('overlay_configs')
+                        .select('*')
+                        .eq('token', token)
+                        .maybeSingle();
+
+                    if (error) {
+                        Logger.error('SupabaseService', `Error fetching config for token ${token}`, error);
+                        return null;
+                    }
+
+                    return data as OverlayConfigRow;
+                } catch (err) {
+                    Logger.error('SupabaseService', `Unexpected error fetching config for token ${token}`, err);
+                    return null;
+                }
+            },
+            5 * 60 * 1000,
+        );
+    }
+
+    public static async saveOverlayConfig(
+        guildId: string,
+        username: string,
+        token: string,
+        userId?: string,
+    ): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+            const payload: any = {
+                guild_id: guildId,
+                username: username.toLowerCase(),
+                token: token,
+                updated_at: new Date().toISOString(),
+            };
+            if (userId) {
+                payload.user_id = userId;
+            }
+            const { error } = await supabase.from('overlay_configs').upsert(payload);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error saving config for ${username}:${guildId}`, error);
+                return false;
+            }
+
+            CacheManager.delete(`overlay:config:${guildId}:${username.toLowerCase()}`);
+            CacheManager.delete(`overlay:configs:guild:${guildId}`);
+            CacheManager.delete(`overlay:token:${token}`);
+            if (userId) {
+                CacheManager.delete(`overlay:configs:user:${guildId}:${userId}`);
+                CacheManager.delete(`overlay:count:${guildId}:${userId}`);
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error saving config for ${username}:${guildId}`, err);
+            return false;
+        }
+    }
+
+    public static async deleteOverlayConfig(token: string): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+
+            const { data: config, error: fetchError } = await supabase
+                .from('overlay_configs')
+                .select('*')
+                .eq('token', token)
+                .maybeSingle();
+
+            if (fetchError) {
+                Logger.error('SupabaseService', `Error fetching config for deletion from DB: ${token}`, fetchError);
+            }
+
+            const { error } = await supabase.from('overlay_configs').delete().eq('token', token);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error deleting config for token ${token}`, error);
+                return false;
+            }
+
+            CacheManager.delete(`overlay:token:${token}`);
+            if (config) {
+                CacheManager.delete(`overlay:config:${config.guild_id}:${config.username.toLowerCase()}`);
+                CacheManager.delete(`overlay:configs:guild:${config.guild_id}`);
+                if (config.user_id) {
+                    CacheManager.delete(`overlay:configs:user:${config.guild_id}:${config.user_id}`);
+                    CacheManager.delete(`overlay:count:${config.guild_id}:${config.user_id}`);
+                }
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error deleting config for token ${token}`, err);
+            return false;
+        }
+    }
+
+    public static async updateOverlayToken(oldToken: string, newToken: string): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+
+            const { data: config, error: fetchError } = await supabase
+                .from('overlay_configs')
+                .select('*')
+                .eq('token', oldToken)
+                .maybeSingle();
+
+            if (fetchError) {
+                Logger.error(
+                    'SupabaseService',
+                    `Error fetching config for token update from DB: ${oldToken}`,
+                    fetchError,
+                );
+            }
+
+            const { error } = await supabase.from('overlay_configs').update({ token: newToken }).eq('token', oldToken);
+
+            if (error) {
+                Logger.error('SupabaseService', `Error updating token from ${oldToken} to ${newToken}`, error);
+                return false;
+            }
+
+            CacheManager.delete(`overlay:token:${oldToken}`);
+            CacheManager.delete(`overlay:token:${newToken}`);
+            if (config) {
+                CacheManager.delete(`overlay:config:${config.guild_id}:${config.username.toLowerCase()}`);
+                CacheManager.delete(`overlay:configs:guild:${config.guild_id}`);
+                if (config.user_id) {
+                    CacheManager.delete(`overlay:configs:user:${config.guild_id}:${config.user_id}`);
+                    CacheManager.delete(`overlay:count:${config.guild_id}:${config.user_id}`);
+                }
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error updating token from ${oldToken} to ${newToken}`, err);
+            return false;
+        }
+    }
+
+    public static async getGuildSettings(guildId: string): Promise<GuildSettingsRow | null> {
+        const key = `guild:settings:${guildId}`;
+        return CacheManager.getOrFetch(
+            key,
+            async () => {
+                try {
+                    const supabase = this.getClient();
+                    const { data, error } = await supabase
+                        .from('guild_settings')
+                        .select('*')
+                        .eq('guild_id', guildId)
+                        .maybeSingle();
+
+                    if (error) {
+                        Logger.error('SupabaseService', `Error fetching settings for guild ${guildId}`, error);
+                        return null;
+                    }
+
+                    return data as GuildSettingsRow;
+                } catch (err) {
+                    Logger.error('SupabaseService', `Unexpected error fetching settings for guild ${guildId}`, err);
+                    return null;
+                }
+            },
+            5 * 60 * 1000,
+        );
+    }
+
+    public static async saveGuildSettings(
+        guildId: string,
+        requiredRoleId: string | null,
+        maxOverlaysPerUser?: number | null,
+    ): Promise<boolean> {
+        try {
+            const supabase = this.getClient();
+            const { error } = await supabase.from('guild_settings').upsert({
+                guild_id: guildId,
+                required_role_id: requiredRoleId,
+                max_overlays_per_user: maxOverlaysPerUser !== undefined ? maxOverlaysPerUser : 5,
+                updated_at: new Date().toISOString(),
+            });
+
+            if (error) {
+                Logger.error('SupabaseService', `Error saving settings for guild ${guildId}`, error);
+                return false;
+            }
+
+            CacheManager.delete(`guild:settings:${guildId}`);
+
+            return true;
+        } catch (err) {
+            Logger.error('SupabaseService', `Unexpected error saving settings for guild ${guildId}`, err);
+            return false;
+        }
+    }
+
+    public static async countOverlayConfigs(): Promise<number> {
+        try {
+            const supabase = this.getClient();
+            const { count, error } = await supabase
+                .from('overlay_configs')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error counting overlay configs', error);
+                return 0;
+            }
+
+            return count ?? 0;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error counting overlay configs', err);
+            return 0;
+        }
+    }
+
+    public static async countGuildSettings(): Promise<number> {
+        try {
+            const supabase = this.getClient();
+            const { count, error } = await supabase
+                .from('guild_settings')
+                .select('*', { count: 'exact', head: true });
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error counting guild settings', error);
+                return 0;
+            }
+
+            return count ?? 0;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error counting guild settings', err);
+            return 0;
+        }
+    }
+
+    public static async getOverlayCountsByGuild(): Promise<Record<string, number>> {
+        try {
+            const supabase = this.getClient();
+            const { data, error } = await supabase.from('overlay_configs').select('guild_id');
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error fetching overlay counts by guild', error);
+                return {};
+            }
+
+            const counts: Record<string, number> = {};
+            for (const row of data ?? []) {
+                const guildId = row.guild_id as string;
+                counts[guildId] = (counts[guildId] ?? 0) + 1;
+            }
+            return counts;
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error fetching overlay counts by guild', err);
+            return {};
+        }
+    }
+
+    public static async searchOverlayConfigs(
+        filters: {
+            guildId?: string;
+            username?: string;
+            token?: string;
+            userId?: string;
+        },
+        options: { page: number; pageSize: number },
+    ): Promise<{ overlays: OverlayConfigRow[]; total: number }> {
+        try {
+            const { page, pageSize } = options;
+            const from = (page - 1) * pageSize;
+            const to = from + pageSize - 1;
+
+            const supabase = this.getClient();
+            let query = supabase.from('overlay_configs').select('*', { count: 'exact' });
+
+            if (filters.guildId) {
+                query = query.eq('guild_id', filters.guildId);
+            }
+            if (filters.username) {
+                query = query.eq('username', filters.username.toLowerCase());
+            }
+            if (filters.token) {
+                query = query.eq('token', filters.token);
+            }
+            if (filters.userId) {
+                query = query.eq('user_id', filters.userId);
+            }
+
+            const { data, error, count } = await query
+                .order('updated_at', { ascending: false })
+                .range(from, to);
+
+            if (error) {
+                Logger.error('SupabaseService', 'Error searching overlay configs', error);
+                return { overlays: [], total: 0 };
+            }
+
+            return { overlays: (data as OverlayConfigRow[]) ?? [], total: count ?? 0 };
+        } catch (err) {
+            Logger.error('SupabaseService', 'Unexpected error searching overlay configs', err);
+            return { overlays: [], total: 0 };
+        }
+    }
+}

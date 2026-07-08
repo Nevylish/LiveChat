@@ -1,0 +1,29 @@
+services:
+    livechat:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: livechat-server
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            - DOMAIN=${DOMAIN}
+            - FRONTEND_URI=${FRONTEND_URI}
+            - OVERLAY_URI=${OVERLAY_URI}
+            - OVERLAY_SECRET=${OVERLAY_SECRET}
+            - LIVECHAT_PORT=${LIVECHAT_PORT}
+            - TOKEN=${TOKEN}
+            - DISCORD_WEBHOOK_LOGS=${DISCORD_WEBHOOK_LOGS}
+            - TENOR_API_KEY=${TENOR_API_KEY}
+            - GIPHY_API_KEY=${GIPHY_API_KEY}
+            - SKU_PLUS_ID=${SKU_PLUS_ID}
+            - SUPABASE_URL=${SUPABASE_URL}
+            - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+            - AUTH_JWT_SECRET=${AUTH_JWT_SECRET}
+            - VITE_DISCORD_CLIENT_ID=${VITE_DISCORD_CLIENT_ID}
+            - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+        ports:
+            - '5000:5000'
+        volumes:
+            - ./logs:/app/logs

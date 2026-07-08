@@ -1,0 +1,296 @@
+@import 'tailwindcss';
+
+@font-face {
+    font-family: 'Geist';
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    src: url('/assets/fonts/Geist-Variable.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Geist Mono';
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    src: url('/assets/fonts/GeistMono-Variable.woff2') format('woff2');
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-outline-border: var(--outline-border);
+    --color-ring: var(--ring);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --radius-sm: calc(var(--radius) - 2px);
+    --radius-md: var(--radius);
+    --radius-lg: calc(var(--radius) + 2px);
+    --radius-xl: calc(var(--radius) + 6px);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+}
+
+:root {
+    --font-geist-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-geist-mono: 'Geist Mono', 'Fira Code', 'Cascadia Code', Menlo, monospace;
+
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+    --primary: #0a0a0a;
+    --primary-foreground: #fafafa;
+    --secondary: #f4f4f5;
+    --secondary-foreground: #0a0a0a;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #f4f4f5;
+    --accent-foreground: #0a0a0a;
+    --destructive: #e5484d;
+    --destructive-foreground: #fafafa;
+    --border: #e4e4e7;
+    --input: #e4e4e7;
+    --outline-border: #dcdcde;
+    --ring: #0070f3;
+    --radius: 0.375rem;
+    --sidebar: #fafafa;
+    --sidebar-foreground: #0a0a0a;
+    --sidebar-primary: #0a0a0a;
+    --sidebar-primary-foreground: #fafafa;
+    --sidebar-accent: #f4f4f5;
+    --sidebar-accent-foreground: #0a0a0a;
+    --sidebar-border: #e4e4e7;
+    --sidebar-ring: #0070f3;
+    --btn-secondary-border: hsl(0, 0%, 88%);
+    --btn-secondary-hover: hsl(0, 0%, 96%);
+}
+
+.dark {
+    --background: #000000;
+    --foreground: #ededed;
+    --card: #111111;
+    --card-foreground: #ededed;
+    --popover: #111111;
+    --popover-foreground: #ededed;
+    --primary: #ededed;
+    --primary-foreground: #0a0a0a;
+    --secondary: #1a1a1a;
+    --secondary-foreground: #ededed;
+    --muted: #1a1a1a;
+    --muted-foreground: #a1a1aa;
+    --accent: #1a1a1a;
+    --accent-foreground: #ededed;
+    --destructive: #e5484d;
+    --destructive-foreground: #fafafa;
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.06);
+    --outline-border: rgba(255, 255, 255, 0.085);
+    --ring: #0070f3;
+    --sidebar: #0a0a0a;
+    --sidebar-foreground: #ededed;
+    --sidebar-primary: #0070f3;
+    --sidebar-primary-foreground: #fafafa;
+    --sidebar-accent: #1a1a1a;
+    --sidebar-accent-foreground: #ededed;
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+    --sidebar-ring: #0070f3;
+    --btn-secondary-border: hsl(0, 0%, 18%);
+    --btn-secondary-hover: hsl(0, 0%, 10%);
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    button,
+    [role='button'],
+    summary,
+    select,
+    [type='checkbox'],
+    [type='radio'] {
+        cursor: pointer;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: var(--font-geist-sans);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: clip;
+    }
+
+    html {
+        overflow-x: clip;
+    }
+
+    #root {
+        overflow-x: clip;
+    }
+}
+
+::selection {
+    color: #0a0a0a;
+    background: #d4d4d8;
+}
+
+::-moz-selection {
+    color: #0a0a0a;
+    background: #d4d4d8;
+}
+
+.dark ::selection {
+    color: #ededed;
+    background: #52525b;
+}
+
+.dark ::-moz-selection {
+    color: #ededed;
+    background: #52525b;
+}
+
+/* Theme toggle — diagonal wipe via View Transitions API (mask gradient, no blur) */
+@supports (view-transition-name: root) {
+    @media (prefers-reduced-motion: no-preference) {
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            mix-blend-mode: normal;
+        }
+
+        ::view-transition-old(root) {
+            animation: none;
+            z-index: 1;
+        }
+
+        ::view-transition-new(root) {
+            z-index: 2;
+            mask-image: linear-gradient(105deg, black 40%, transparent 60%);
+            mask-size: 300% 100%;
+            animation: theme-sweep-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes theme-sweep-in {
+            from {
+                mask-position: 100% 0%;
+            }
+            to {
+                mask-position: 0% 0%;
+            }
+        }
+    }
+}
+
+/* Config step transition animations */
+@media (min-width: 768px) {
+    .config-step-enter-forward {
+        animation: configStepForward 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .config-step-enter-backward {
+        animation: configStepBackward 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+}
+
+@keyframes configStepForward {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes configStepBackward {
+    from {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes errorPop {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.config-error {
+    animation: errorPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pulse-discord {
+    0%,
+    100% {
+        background-color: #5865f2;
+        box-shadow: 0 0 0 0 rgba(88, 101, 242, 0.4);
+    }
+    50% {
+        background-color: #4752c4;
+        box-shadow: 0 0 0 8px rgba(88, 101, 242, 0);
+    }
+}
+
+.animate-pulse-discord {
+    animation: pulse-discord 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Vercel-style secondary CTA — 1px border via box-shadow, not border-width */
+@layer components {
+    .btn-secondary {
+        @apply inline-flex cursor-pointer items-center justify-center rounded-full bg-background px-5 py-3 text-sm font-medium text-foreground transition-[background-color,box-shadow,color] duration-150 ease-in-out;
+        box-shadow: 0 0 0 1px var(--btn-secondary-border);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--btn-secondary-hover);
+    }
+
+    .tabs-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+}

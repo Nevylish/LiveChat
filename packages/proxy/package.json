@@ -1,0 +1,19 @@
+{
+    "name": "@livechat/proxy",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "node scripts/sync-dev-vars.mjs && wrangler dev",
+        "deploy": "wrangler deploy"
+    },
+    "dependencies": {
+        "@livechat/types": "workspace:*",
+        "hono": "^4.0.0"
+    },
+    "devDependencies": {
+        "@cloudflare/workers-types": "^4.20240301.0",
+        "@types/node": "^20.11.0",
+        "typescript": "^5.9.3",
+        "wrangler": "^4.103.0"
+    }
+}

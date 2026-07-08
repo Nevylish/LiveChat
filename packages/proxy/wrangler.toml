@@ -1,0 +1,7 @@
+name = "livechat-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-03-01"
+compatibility_flags = [ "nodejs_compat" ]
+
+[vars]
+API_URL = "https://livechat-api.nevylish.fr"

@@ -1,0 +1,27 @@
+# LiveChat
+
+> LiveChat is a Discord bot paired with a stream overlay that lets friends display images, play videos, or trigger sounds live on a stream, via a simple Discord command (/livechat). Inspired by the streamers group Cacabox, it makes streams interactive by letting friends send media that appears directly on the streamer's screen.
+
+LiveChat natively supports Discord, TikTok, YouTube, Instagram Reels, Twitter/X, Tenor, and Giphy, as well as direct file uploads. It works with OBS Studio, Streamlabs, PRISM Live, and any software supporting browser sources. The project is open source under the GPL-3.0 license and supports self-hosting.
+
+## Features
+
+- Easy media sharing from Discord, TikTok, YouTube, Instagram Reels, Twitter/X, Tenor, Giphy, or file upload
+- Send media simultaneously to all connected streamers on the same Discord server
+- Add meme-style overlay text (Impact font) on top of media
+- Built-in proxy that protects streamers' IP addresses by relaying media through the server
+- Compatible with any streaming software that supports browser sources (OBS, Streamlabs, PRISM Live)
+
+## Pages
+
+- [Home](https://livechat.nevylish.fr/): demo, features, and setup steps
+- [Configuration](https://livechat.nevylish.fr/config): add the Discord bot and generate the overlay link
+- [Usage](https://livechat.nevylish.fr/usage): how to use the bot
+- [Updates](https://livechat.nevylish.fr/updates): release notes
+- [Privacy](https://livechat.nevylish.fr/privacy): privacy policy
+- [Terms](https://livechat.nevylish.fr/terms): terms of service
+
+## Technical resources
+
+- [GitHub repository](https://github.com/Nevylish/LiveChat): full source code, self-hosting instructions (Node.js, pnpm, Docker)
+- License: GPL-3.0

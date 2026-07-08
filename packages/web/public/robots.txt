@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /overlay/
+Disallow: /overlay.html
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://livechat.nevylish.fr/sitemap.xml

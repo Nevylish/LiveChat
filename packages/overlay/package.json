@@ -1,0 +1,8 @@
+{
+    "name": "@livechat/overlay",
+    "private": true,
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "serve . -p 4000"
+    }
+}

@@ -1,0 +1,10 @@
+dist
+*.tsbuildinfo
+node_modules
+.env
+.idea
+.vscode
+.DS_Store
+.wrangler
+.dev.vars
+.pnpm-store
