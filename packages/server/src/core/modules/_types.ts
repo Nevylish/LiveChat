@@ -8,25 +8,6 @@ interface GiphyApiResponse {
     };
 }
 
-interface TenorApiResponse {
-    results?: Array<{
-        media_formats?: {
-            gif?: {
-                url?: string;
-            };
-            mediumgif?: {
-                url?: string;
-            };
-            tinygif?: {
-                url?: string;
-            };
-            mp4?: {
-                url?: string;
-            };
-        };
-    }>;
-}
-
 interface TikTokApiResponse {
     data?: {
         play?: string;
@@ -50,4 +31,4 @@ interface TwitterApiResponse {
     };
 }
 
-export { GiphyApiResponse, TenorApiResponse, TikTokApiResponse, TwitterApiResponse };
+export { GiphyApiResponse, TikTokApiResponse, TwitterApiResponse };

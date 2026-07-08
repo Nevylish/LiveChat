@@ -14,7 +14,6 @@ const requiredEnvVars = [
     'LIVECHAT_PORT',
     'TOKEN',
     'DISCORD_WEBHOOK_LOGS',
-    'TENOR_API_KEY',
     'GIPHY_API_KEY',
     'SKU_PLUS_ID',
     'SUPABASE_URL',

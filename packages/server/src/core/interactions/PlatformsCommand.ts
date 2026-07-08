@@ -27,7 +27,6 @@ export default class PlatformsCommand extends Command {
             '**Discord** (*voir formats de fichiers supportés*)',
             '**Giphy**',
 
-            '**Tenor**',
             '**TikTok** *Vidéos*',
             '**Twitter** *Vidéos, Images*',
         ];

@@ -1,5 +1,14 @@
 [
     {
+        "version": "v2.1.1",
+        "date": "8 Juillet 2026",
+        "title": "Au revoir Tenor..",
+        "changes": [
+            "La prise en charge de Tenor n'est plus possible suite à leur décision de fermer leur API.",
+            "Correction de la lecture des liens Twitter/X."
+        ]
+    },
+    {
         "version": "v2.1.0",
         "date": "27 Juin 2026",
         "title": "Compatibilité 2K, 4K, 8K & 720p",

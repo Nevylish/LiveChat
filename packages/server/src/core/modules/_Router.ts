@@ -43,10 +43,9 @@ export namespace Router {
         }
 
         if (Tenor.isShortenedUrl(url)) {
-            const directUrl = await Tenor.fetchDirectUrl(url);
-            if (directUrl) return { url: directUrl, bypassProxy: true };
-
-            return routeGenericMediaError('Tenor', url);
+            return {
+                error: 'Les liens Tenor ne peuvent plus être pris en charge suite à leur décision de fermer leur API.',
+            };
         }
 
         if (TikTok.isTikTokUrl(url)) {

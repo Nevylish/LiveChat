@@ -15,7 +15,6 @@ services:
             - LIVECHAT_PORT=${LIVECHAT_PORT}
             - TOKEN=${TOKEN}
             - DISCORD_WEBHOOK_LOGS=${DISCORD_WEBHOOK_LOGS}
-            - TENOR_API_KEY=${TENOR_API_KEY}
             - GIPHY_API_KEY=${GIPHY_API_KEY}
             - SKU_PLUS_ID=${SKU_PLUS_ID}
             - SUPABASE_URL=${SUPABASE_URL}

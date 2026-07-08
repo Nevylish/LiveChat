@@ -1,7 +1,6 @@
 import { ChevronDown, MessageSquareText, MonitorPlay, Send } from 'lucide-react';
 import { useEffect } from 'react';
 import type { IconType } from 'react-icons';
-import { RiFilmLine } from 'react-icons/ri';
 import { SiDiscord, SiGiphy, SiTiktok, SiX } from 'react-icons/si';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import PageShell from '../components/PageShell';
@@ -41,7 +40,6 @@ const steps = [
 const platforms: { name: string; desc: string; icon: IconType }[] = [
     { name: 'Discord', desc: 'Fichiers envoyés directement sur Discord', icon: SiDiscord },
     { name: 'Giphy', desc: 'GIFs depuis Giphy', icon: SiGiphy },
-    { name: 'Tenor', desc: 'GIFs depuis Tenor', icon: RiFilmLine },
     { name: 'TikTok', desc: 'Vidéos TikTok', icon: SiTiktok },
     { name: 'X (Twitter)', desc: 'Vidéos et images de Tweets', icon: SiX },
 ];
@@ -81,7 +79,7 @@ export default function Usage() {
     return (
         <PageShell
             title="Comment utiliser LiveChat ? Guide complet"
-            description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, Tenor, TikTok, X) et les formats de fichiers acceptés."
+            description="Découvrez les commandes Discord de LiveChat, les plateformes supportées (Giphy, TikTok, X) et les formats de fichiers acceptés."
             path="/usage"
         >
             <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
