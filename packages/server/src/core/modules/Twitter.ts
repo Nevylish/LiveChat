@@ -4,19 +4,32 @@ import { Logger } from '../utils/Logger';
 import { ProxyService } from '../utils/ProxyService';
 import { TwitterApiResponse } from './_types';
 
+const STATUS_URL_RE = /^https?:\/\/(www\.)?(x|twitter)\.com\/([^/?#]+)\/status\/(\d+)/;
+
 export namespace Twitter {
+    export const normalizeStatusUrl = (url: string): string | null => {
+        const match = url.match(STATUS_URL_RE);
+        if (!match) return null;
+        const [, www = '', domain, username, statusId] = match;
+        return `https://${www}${domain}.com/${username}/status/${statusId}`;
+    };
+
     export const isStatusUrl = (url: string): boolean => {
-        return !!url.match(/^https?:\/\/(www\.)?(x|twitter)\.com\/[^\/]+\/status\/\d+/);
+        return STATUS_URL_RE.test(url);
     };
 
     export const getProxyUrl = async (url: string): Promise<string | null> => {
+        const normalizedUrl = normalizeStatusUrl(url);
+        if (!normalizedUrl) return null;
+
         const rawUrl = await CacheManager.getOrFetch(
-            `twitter:raw:${url}`,
+            `twitter:raw:${normalizedUrl}`,
             async () => {
                 try {
-                    const apiUrl = url
-                        .replace('https://x.com/', 'https://api.fxtwitter.com/')
-                        .replace('https://twitter.com/', 'https://api.fxtwitter.com/');
+                    const apiUrl = normalizedUrl.replace(
+                        /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\//,
+                        'https://api.fxtwitter.com/',
+                    );
 
                     const response = await fetch(apiUrl);
                     if (!response.ok) {
