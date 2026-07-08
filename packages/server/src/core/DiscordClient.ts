@@ -45,7 +45,7 @@ export default class DiscordClient extends Client {
 
         this.user?.setActivity(
             size > 0
-                ? `/livechat | ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
+                ? `/livechat | ${size} ${size > 1 ? 'streameurs·euses' : 'streameur·euse'} en ligne`
                 : `/livechat | ${process.env.FRONTEND_URI!}`,
             { type: 3 },
         );
