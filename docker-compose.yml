@@ -23,6 +23,6 @@ services:
             - VITE_DISCORD_CLIENT_ID=${VITE_DISCORD_CLIENT_ID}
             - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
         ports:
-            - '127.0.0.1:5000:5000'
+            - '5000:5000'
         volumes:
             - ./logs:/app/logs
