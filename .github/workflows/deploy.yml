@@ -9,82 +9,25 @@ jobs:
         name: Deploy to VPS
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-
-            - uses: pnpm/action-setup@v4
-
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: pnpm
-
-            - name: Install
-              run: pnpm install --frozen-lockfile
-
-            - name: Build
-              run: pnpm build
-
-            - name: Package release
-              run: |
-                  RELEASE=$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}
-                  echo "RELEASE=$RELEASE" >> $GITHUB_ENV
-                  tar -czf /tmp/livechat-release.tar.gz \
-                    --exclude='.git' \
-                    packages/ \
-                    node_modules/ \
-                    package.json \
-                    pnpm-workspace.yaml \
-                    pnpm-lock.yaml \
-                    .npmrc \
-                    patchnotes.json
-
-            - name: Upload & deploy
+            - name: Deploy via SSH
               env:
                   VPS_HOST: ${{ secrets.VPS_HOST }}
                   VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
               run: |
                   echo "$VPS_SSH_KEY" > /tmp/deploy_key
                   chmod 600 /tmp/deploy_key
-                  SSH="ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no -p 51588"
-                  SCP="scp -i /tmp/deploy_key -o StrictHostKeyChecking=no -P 51588"
 
-                  $SCP /tmp/livechat-release.tar.gz livechat@$VPS_HOST:/tmp/livechat-release.tar.gz
-
-                  $SSH bash << EOF
+                  ssh -i /tmp/deploy_key \
+                      -o StrictHostKeyChecking=no \
+                      -p 51588 \
+                      deploy@$VPS_HOST << 'EOF'
                   set -e
-                  RELEASE="${{ env.RELEASE }}"
-                  RELEASE_DIR=/opt/livechat/releases/\$RELEASE
-
-                  mkdir -p \$RELEASE_DIR
-                  tar -xzf /tmp/livechat-release.tar.gz -C \$RELEASE_DIR
-                  rm /tmp/livechat-release.tar.gz
-
-                  PREVIOUS=\$(readlink /opt/livechat/current || echo "")
-
-                  ln -sfn \$RELEASE_DIR /opt/livechat/current
+                  cd /opt/livechat/repo
+                  git pull
+                  CI=true pnpm install --frozen-lockfile
+                  pnpm build
                   sudo /usr/bin/systemctl restart livechat.service
-
-                  # Health check — 15 tentatives
-                  SUCCESS=false
-                  for i in \$(seq 1 15); do
-                    sleep 1
-                    if sudo /usr/bin/systemctl is-active --quiet livechat.service \
-                       && ss -tlnp | grep -q ':5000'; then
-                      SUCCESS=true
-                      break
-                    fi
-                  done
-
-                  if [ "\$SUCCESS" = "false" ]; then
-                    echo "Health check failed — rollback vers \$PREVIOUS"
-                    [ -n "\$PREVIOUS" ] && ln -sfn \$PREVIOUS /opt/livechat/current
-                    sudo /usr/bin/systemctl restart livechat.service
-                    exit 1
-                  fi
-
-                  # Garder les 5 dernières releases
-                  ls -dt /opt/livechat/releases/*/ | tail -n +6 | xargs rm -rf 2>/dev/null || true
-                  echo "Deploy OK : \$RELEASE"
+                  echo "Deploy OK"
                   EOF
 
                   rm /tmp/deploy_key
