@@ -45,10 +45,10 @@ jobs:
               run: |
                   echo "$VPS_SSH_KEY" > /tmp/deploy_key
                   chmod 600 /tmp/deploy_key
-                  SSH="ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no deploy@$VPS_HOST"
-                  SCP="scp -i /tmp/deploy_key -o StrictHostKeyChecking=no"
+                  SSH="ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no -p 51588"
+                  SCP="scp -i /tmp/deploy_key -o StrictHostKeyChecking=no -P 51588"
 
-                  $SCP /tmp/livechat-release.tar.gz deploy@$VPS_HOST:/tmp/livechat-release.tar.gz
+                  $SCP /tmp/livechat-release.tar.gz livechat@$VPS_HOST:/tmp/livechat-release.tar.gz
 
                   $SSH bash << EOF
                   set -e
