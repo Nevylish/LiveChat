@@ -15,7 +15,7 @@ const faqs = [
     },
     {
         question: 'Est-ce sécurisé ?',
-        answer: "Complètement, le code est libre et tout le monde peut le regarder, le système est prévu pour maîtriser les risques, notamment grâce au fait de créer un serveur Discord uniquement pour ça. De plus, vos informations personnelles sont protégées grâce à notre système de proxy, il est impossible de récupérer votre adresse IP par exemple.Vous pouvez consulter notre politique de confidentialité pour plus d'informations.",
+        answer: "Complètement, le code est libre et tout le monde peut le regarder, le système est prévu pour maîtriser les risques, notamment grâce au fait de créer un serveur Discord uniquement pour ça. De plus, vos informations personnelles sont protégées grâce à notre système de proxy, il est impossible de récupérer votre adresse IP par exemple. Vous pouvez consulter notre politique de confidentialité pour plus d'informations.",
     },
     {
         question: 'Est-ce autorisé par Twitch ?',
